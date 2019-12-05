@@ -1,5 +1,7 @@
 ' Gambas class file
 
+''' A container that lays out its content horizontally.
+
 Export
 
 Inherits WebContainer
