@@ -60,7 +60,7 @@ Private Sub ConvertMarkup(aLine As String[], Optional bDoNotSetLine As Boolean) 
   Dim hMarkupList As MarkupList
   Dim bJustList As Boolean
   Dim sLink As String
-  Dim iPos As Integer
+  Dim iPos, iPos2 As Integer
   Dim aList As New MarkupList[]
   Dim sTable As String
   Dim iIndexPos As Integer = -1
@@ -73,6 +73,7 @@ Private Sub ConvertMarkup(aLine As String[], Optional bDoNotSetLine As Boolean) 
   Dim sList As String
   Dim bSaveComment As Boolean
   Dim aTemp As String[]
+  Dim sCommand As String
   
   aResult = New String[]
   
@@ -156,12 +157,25 @@ Private Sub ConvertMarkup(aLine As String[], Optional bDoNotSetLine As Boolean) 
   
     ' Special command
     
-    If Left(sLine, 2) = "@{" And If Right(sLine) = "}" Then
-      If sLine = "@{index}" Then 
-        iIndexPos = aResult.Count
-        aResult.Add(sLine)
-      Else
-        aCommand = $hMarkdown.Command(Mid$(sLine, 3, -1))
+    If sLine = "@{index}" Then
+      iIndexPos = aResult.Count
+      aResult.Add(sLine)
+      Continue
+    Endif
+    
+    iPos = 0
+    Do
+      iPos = InStr(sLine, "@{", iPos + 1)
+      If iPos = 0 Then Break
+      iPos2 = InStr(sLine, "}", iPos + 2)
+      If iPos2 = 0 Then Break
+      sCommand = Mid$(sLine, iPos + 2, iPos2 - iPos - 2)
+      If Not sCommand Then Break
+      
+      aCommand = $hMarkdown.Command(sCommand)
+
+      If iPos = 1 And If iPos2 = Len(sLine) Then
+        
         If aCommand And If aCommand.Count Then
           If $hMarkdown.Reinterpret Then
             aLine.Insert(aCommand, iLine + 1)
@@ -170,9 +184,41 @@ Private Sub ConvertMarkup(aLine As String[], Optional bDoNotSetLine As Boolean) 
           Endif
           $hMarkdown.Reinterpret = True
         Endif
+        
+        Break
+        
+      Else
+        
+        If aCommand And If aCommand.Count Then
+          sLine = Left(sLine, iPos - 1) & aCommand[0] & Mid(sLine, iPos2 + 1)
+          iPos += Len(aCommand[0])
+        Endif
+        
+        $hMarkdown.Reinterpret = True
+        
       Endif
-      Continue
-    Endif
+      
+    Loop
+    
+    If iPos Then Continue
+    
+    ' If Left(sLine, 2) = "@{" And If Right(sLine) = "}" Then
+    '   If sLine = "@{index}" Then 
+    '     iIndexPos = aResult.Count
+    '     aResult.Add(sLine)
+    '   Else
+    '     aCommand = $hMarkdown.Command(Mid$(sLine, 3, -1))
+    '     If aCommand And If aCommand.Count Then
+    '       If $hMarkdown.Reinterpret Then
+    '         aLine.Insert(aCommand, iLine + 1)
+    '       Else
+    '         aResult.Insert(aCommand)
+    '       Endif
+    '       $hMarkdown.Reinterpret = True
+    '     Endif
+    '   Endif
+    '   Continue
+    ' Endif
     
     ' Blockquote
     
@@ -756,6 +802,8 @@ ENTER_MARKUP:
       Endif
     Endif
   Endif
+  
+  ' TODO: remove all attribute beginning with "on"
   
   'sPattern = LCase(sPattern)
   
