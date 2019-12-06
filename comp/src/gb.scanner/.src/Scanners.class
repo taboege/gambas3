@@ -151,6 +151,7 @@ Public Sub Process_kill()
   
   If hProcess.State <> hProcess.Crashed Then
     FillList($ret)
+    hProcess = Null
     Raise Found
   Endif
   
