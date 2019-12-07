@@ -273,7 +273,7 @@ Public Sub Scanner_PageBegin()
 End
 
 
-Public Sub Scanner_PageFinished()
+Public Sub Scanner_PageEnd()
 
   Dim hImg As Image
   Dim s As String
@@ -293,7 +293,7 @@ Public Sub Scanner_PageFinished()
 
 End
 
-Public Sub Scanner_Finished()
+Public Sub Scanner_End()
 
   hbProgress.Hide
   Spring1.Show

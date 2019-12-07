@@ -1,5 +1,6 @@
 ' Gambas class file
 
+Export
 Property Read Group As String      ''Return the group option name
 Property Read IsRange As Boolean   ''Indicate if the option give a range between too value
 Property Read MaxValue As Float    ''Return the range max value

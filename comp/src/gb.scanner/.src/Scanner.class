@@ -15,13 +15,13 @@ Private $sDeviceName As String
 Private $bASync As Boolean
 'Property _Name As String
 Private $sName As String
-'Private $Options As _Options
+'Private $Options As ScannerOptions
 
 Property Read Progress As Float
 Private bHaveInfo As Boolean
 
 Private $aOptionsNames As String[]
-Private $aOptions As _Option[]
+Private $aOptions As ScannerOption[]
 Private $aImgStack As New String[]
 Private $sCurImagePath As String
 
@@ -35,8 +35,9 @@ Private $fProgress As Float
 Private $stmpPath As String = File.Dir(Temp())
 Event Begin
 Event PageBegin
-Event PageFinished
+Event PageEnd
 Event Finished
+Event End
 Event Progress
 Event Error(ErrorText As String)
 
@@ -95,7 +96,7 @@ Private Sub GetOptions()
   Dim sRet As String
   Dim s, sCurGroup As String
   Dim aLine As String[]
-  Dim hOption As _Option
+  Dim hOption As ScannerOption
   Dim a As String[]
   Dim iTiret As Integer
   Dim sName As String
@@ -107,7 +108,7 @@ Private Sub GetOptions()
   If Not IsAvailable() Then Error.Raise("Unknown device or device not available")
 
   $aOptionsNames = New String[]
-  $aOptions = New _Option[]
+  $aOptions = New ScannerOption[]
   Shell "scanimage " & $sDeviceName & " -A" To sRet
 
   For Each s In Split(sRet, "\n")
@@ -136,7 +137,7 @@ Private Sub GetOptions()
       sValues = Trim(Mid(s, iStartOptions + 1, iEndOptions - iStartOptions - 1))
       sDefault = Mid(s, iEndOptions + 1)
       'aLine = Split(Mid(s, iStartOptions), " ", "()")
-      hOption = New _Option
+      hOption = New ScannerOption
       'Store the option group
       hOption._Group = sCurGroup
       'Manage the option cutting
@@ -254,7 +255,7 @@ Public Function Scan() As Image
   Dim sCommand As String
   'Dim sTemp As String = Temp
   Dim hImage As Image
-  Dim hOption As _Option
+  Dim hOption As ScannerOption
   Dim sCount As String
   
   If Not $aOptionsNames Then GetOptions
@@ -331,6 +332,7 @@ Public Sub Process_Kill()
   '$aImgStack.Push($sCurImagePath)
   $fProgress = 1
   Raise Finished
+  Raise End
 
 End
 
@@ -341,7 +343,7 @@ Public Sub Process_Read()
 
   s = Read #Last, Lof(Last)
   $aImgStack.Add(Trim(s))
-  Raise PageFinished
+  Raise PageEnd
 
 End
 
@@ -376,7 +378,7 @@ Public Function _next() As String
 End
 
 ''Find an option from it's name (same as hScan[key])
-Public Sub Find(Key As String) As _Option
+Public Sub Find(Key As String) As ScannerOption
 
   If Not $aOptionsNames Then GetOptions
   Try Return $aOptions[$aOptionsNames.Find(Key)]
@@ -392,7 +394,7 @@ Public Sub Exist(Key As String) As Boolean
 End
 
 ''Return an Option from it's name
-Public Function _get(Name As String) As _Option
+Public Function _get(Name As String) As ScannerOption
 
   If Not $aOptionsNames Then GetOptions
   If Not $aOptionsNames.Exist(Name) Then
