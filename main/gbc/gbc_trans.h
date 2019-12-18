@@ -49,6 +49,7 @@ enum {
 	TS_MODE_PIPE   = (1 << 7),
 	TS_MODE_MEMORY = (1 << 8),
 	TS_MODE_STRING = (1 << 9),
+	TS_MODE_NULL   = (1 << 10),
 	};
 
 enum {
@@ -220,7 +221,6 @@ void TRANS_write(void);
 void TRANS_open(void);
 void TRANS_pipe(void);
 void TRANS_memory(void);
-void TRANS_open_string(void);
 void TRANS_close(void);
 void TRANS_lock(void);
 void TRANS_unlock(void);

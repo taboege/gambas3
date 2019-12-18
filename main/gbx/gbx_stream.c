@@ -176,6 +176,8 @@ void STREAM_open(STREAM *stream, const char *path, int mode)
 		sclass = &STREAM_string;
 	else if (mode & STO_LOCK)
 		sclass = &STREAM_lock;
+	else if (mode & STO_NULL)
+		sclass = &STREAM_null;
 	else
 	{
 		// ".99" is used for opening a file descriptor in direct mode

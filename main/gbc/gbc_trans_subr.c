@@ -342,6 +342,7 @@ void TRANS_input(void)
 	}
 }
 
+
 void TRANS_read_old(void)
 {
 	PATTERN *save_var;
@@ -375,6 +376,7 @@ void TRANS_read_old(void)
 	JOB->current = save_current;
 }
 
+
 void TRANS_read(void)
 {
 	bool def = trans_stream_no_check(TS_STDIN);
@@ -393,6 +395,60 @@ void TRANS_read(void)
 		TRANS_subr(TS_SUBR_READ_BYTES, 2);
 	}
 }
+
+
+static void TRANS_open_null(void)
+{
+	int mode = TS_MODE_READ;
+
+	// file name
+
+	CODE_push_null();
+
+	// open mode
+
+	if (TRANS_is(RS_FOR))
+	{
+		if (TRANS_is(RS_READ))
+			mode |= TS_MODE_READ | TS_MODE_DIRECT;
+
+		if (TRANS_is(RS_WRITE))
+			mode |= TS_MODE_WRITE | TS_MODE_DIRECT;
+	}
+
+	CODE_push_number(mode | TS_MODE_NULL);
+
+	TRANS_subr(TS_SUBR_OPEN, 2);
+}
+
+
+static void TRANS_open_string(void)
+{
+	int mode = TS_MODE_READ;
+
+	// file name
+
+	if (!PATTERN_is(*JOB->current, RS_FOR))
+		TRANS_expression(FALSE);
+	else
+		CODE_push_null();
+
+	// open mode
+
+	if (TRANS_is(RS_FOR))
+	{
+		if (TRANS_is(RS_READ))
+			mode |= TS_MODE_READ | TS_MODE_DIRECT;
+
+		if (TRANS_is(RS_WRITE))
+			mode |= TS_MODE_WRITE | TS_MODE_DIRECT;
+	}
+
+	CODE_push_number(mode | TS_MODE_STRING);
+
+	TRANS_subr(TS_SUBR_OPEN, 2);
+}
+
 
 void TRANS_open(void)
 {
@@ -413,13 +469,17 @@ void TRANS_open(void)
 		TRANS_open_string();
 		return;
 	}
+	else if (TRANS_is(RS_NULL))
+	{
+		TRANS_open_null();
+		return;
+	}
 
-
-	/* Nom du fichier */
+	// file name
 
 	TRANS_expression(FALSE);
 
-	/* mode d'ouverture */
+	// open mode
 
 	if (TRANS_is(RS_FOR))
 	{
@@ -438,9 +498,6 @@ void TRANS_open(void)
 		else if (TRANS_is(RS_APPEND))
 			mode |= TS_MODE_APPEND;
 
-		//if (TRANS_is(RS_DIRECT))
-		//  mode |= TS_MODE_DIRECT;
-
 		if (TRANS_is(RS_WATCH))
 			mode |= TS_MODE_WATCH;
 
@@ -458,16 +515,6 @@ void TRANS_open(void)
 	CODE_push_number(mode);
 
 	TRANS_subr(TS_SUBR_OPEN, 2);
-
-	/*if (!TRANS_in_assignment)
-	{
-		//CODE_drop();
-
-		TRANS_want(RS_AS, NULL);
-		TRANS_ignore(RS_SHARP);
-
-		TRANS_reference();
-	}*/
 }
 
 
@@ -475,11 +522,11 @@ void TRANS_pipe(void)
 {
 	int mode = TS_MODE_READ;
 
-	/* Nom du fichier */
+	// file name
 
 	TRANS_expression(FALSE);
 
-	/* mode d'ouverture */
+	// open mode
 
 	if (TRANS_is(RS_FOR))
 	{
@@ -525,34 +572,6 @@ void TRANS_memory(void)
 	CODE_push_number(mode);
 
 	TRANS_subr(TS_SUBR_OPEN_MEMORY, 2);
-}
-
-
-void TRANS_open_string(void)
-{
-	int mode = TS_MODE_READ;
-
-	/* Nom du fichier */
-
-	if (!PATTERN_is(*JOB->current, RS_FOR))
-		TRANS_expression(FALSE);
-	else
-		CODE_push_null();
-
-	/* mode d'ouverture */
-
-	if (TRANS_is(RS_FOR))
-	{
-		if (TRANS_is(RS_READ))
-			mode |= TS_MODE_READ | TS_MODE_DIRECT;
-
-		if (TRANS_is(RS_WRITE))
-			mode |= TS_MODE_WRITE | TS_MODE_DIRECT;
-	}
-
-	CODE_push_number(mode | TS_MODE_STRING);
-
-	TRANS_subr(TS_SUBR_OPEN, 2);
 }
 
 
@@ -923,7 +942,7 @@ void TRANS_rmdir(void)
 	CODE_drop();
 }
 
-void TRANS_mid()
+void TRANS_mid(void)
 {
 	PATTERN *str;
 	PATTERN *pos;

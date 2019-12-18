@@ -130,6 +130,13 @@ typedef
 	STREAM_STRING;
 
 typedef
+	struct {
+		STREAM_COMMON common;
+		intptr_t pos;
+		}
+	STREAM_NULL;
+
+typedef
 	union STREAM {
 		STREAM_CLASS *type;
 		STREAM_COMMON common;
@@ -141,6 +148,7 @@ typedef
 		STREAM_ARCH arch;
 		STREAM_PROCESS process;
 		STREAM_STRING string;
+		STREAM_NULL null;
 		}
 	STREAM;
 
@@ -157,7 +165,8 @@ enum {
 	STO_WATCH       = (1 << 6),
 	STO_PIPE        = (1 << 7),
 	STO_MEMORY      = (1 << 8),
-	STO_STRING      = (1 << 9)
+	STO_STRING      = (1 << 9),
+	STO_NULL        = (1 << 10)
 	};
 
 enum {
@@ -178,7 +187,7 @@ EXTERN STREAM_CLASS STREAM_memory;
 EXTERN STREAM_CLASS STREAM_arch;
 EXTERN STREAM_CLASS STREAM_process;
 EXTERN STREAM_CLASS STREAM_string;
-/*EXTERN STREAM_CLASS STREAM_null;*/
+EXTERN STREAM_CLASS STREAM_null;
 
 #else
 
