@@ -831,6 +831,15 @@ BEGIN_PROPERTY(Stream_Eof)
 
 END_PROPERTY
 
+BEGIN_PROPERTY(Stream_NullTerminatedString)
+
+	if (READ_PROPERTY)
+		GB_ReturnBoolean(CSTREAM_stream(THIS_STREAM)->common.null_terminated);
+	else
+		CSTREAM_stream(THIS_STREAM)->common.null_terminated = VPROP(GB_BOOLEAN);
+
+END_PROPERTY
+
 BEGIN_METHOD(Stream_ReadLine, GB_STRING escape)
 
 	char *escape;
@@ -1046,6 +1055,7 @@ GB_DESC StreamDesc[] =
 	GB_PROPERTY("EndOfLine", "i", Stream_EndOfLine),
 	GB_METHOD("Close", NULL, Stream_Close, NULL),
 	GB_PROPERTY_READ("EndOfFile", "b", Stream_EndOfFile),
+	GB_PROPERTY("NullTerminatedString", "b", Stream_NullTerminatedString),
 	GB_PROPERTY("Blocking", "b", Stream_Blocking),
 	GB_PROPERTY("Tag", "v", Stream_Tag),
 	GB_METHOD("ReadLine", "s", Stream_ReadLine, "[(Escape)s]"),

@@ -233,7 +233,7 @@ __OPEN:
 	stream->common.redirected = FALSE;
 	stream->common.redirect = NULL;
 	stream->common.no_read_ahead = FALSE;
-	stream->common.memory = FALSE;
+	stream->common.null_terminated = FALSE;
 
 	if ((*(sclass->open))(stream, path, mode, NULL))
 		THROW_SYSTEM(errno, path);
@@ -1226,7 +1226,7 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 
 		case T_STRING:
 
-			if (stream->common.memory)
+			if (stream->common.null_terminated)
 			{
 				ssize_t slen;
 				if (CHECK_strlen(stream->memory.addr + stream->memory.pos, &slen))
@@ -1246,7 +1246,7 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 				STRING_void_value(value);
 			}
 
-			if (stream->common.memory)
+			if (stream->common.null_terminated)
 				STREAM_seek(stream, SEEK_CUR, 1);
 				
 			break;
@@ -1406,7 +1406,7 @@ void STREAM_write_type(STREAM *stream, TYPE type, VALUE *value)
 		case T_STRING:
 		case T_CSTRING:
 
-			if (stream->common.memory)
+			if (stream->common.null_terminated)
 			{
 				STREAM_write(stream, value->_string.addr + value->_string.start, value->_string.len);
 				buffer._byte = 0;
@@ -1421,15 +1421,19 @@ void STREAM_write_type(STREAM *stream, TYPE type, VALUE *value)
 
 		case T_OBJECT:
 		{
-			CLASS *class = OBJECT_class(value->_object.object);
+			CLASS *class;
 			void *structure;
 
 			if (!value->_object.object)
 			{
 				buffer._byte = 0;
 				STREAM_write(stream, &buffer._byte, 1);
+				break;
 			}
-			else if (class->quick_array == CQA_ARRAY || class->is_array_of_struct)
+
+			class = OBJECT_class(value->_object.object);
+			
+			if (class->quick_array == CQA_ARRAY || class->is_array_of_struct)
 			{
 				CARRAY *array = (CARRAY *)value->_object.object;
 				VALUE temp;
