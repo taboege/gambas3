@@ -1230,10 +1230,17 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 
 			if (stream->common.null_terminated)
 			{
-				ssize_t slen;
-				if (CHECK_strlen(stream->memory.addr + stream->memory.pos, &slen))
-					THROW(E_READ);
-				len = (int)slen;
+				if (stream->type == &STREAM_memory)
+				{
+					ssize_t slen;
+					if (CHECK_strlen(stream->memory.addr + stream->memory.pos, &slen))
+						THROW(E_READ);
+					len = (int)slen;
+				}
+				else
+				{
+					len = -1;
+				}
 			}
 			else
 				len = read_length(stream);
@@ -1242,6 +1249,24 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 			{
 				STRING_new_temp_value(value, NULL, len);
 				STREAM_read(stream, value->_string.addr, len);
+			}
+			else if (len < 0)
+			{
+				char *str = NULL;
+				
+				for(len = 0;; len++)
+				{
+					STREAM_read(stream, &buffer._byte, 1);
+					if (buffer._byte == 0)
+						break;
+					str = STRING_add_char(str, buffer._byte);
+				}
+				STRING_free_later(str);
+				
+				value->_string.addr = str;
+				value->_string.len = len;
+				value->_string.start = 0;
+				value->type = T_STRING;
 			}
 			else
 			{
