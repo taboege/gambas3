@@ -1166,34 +1166,37 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 			return;
 		}
 		
-		if (buffer._byte == 'O')
+		if (buffer._byte == 'O' || buffer._byte == 'o')
 		{
-			int len;
-			char *name = COMMON_buffer;
-			CLASS *class;
+			CLASS *class = NULL;
 			void *object;
 			void *cstream;
 			
-			if (variant || type == T_OBJECT)
+			if (buffer._byte == 'o')
 			{
+				int len;
+				char *name = COMMON_buffer;
+				
 				len = read_length(stream);
 				if (len > 255)
 					THROW_SERIAL();
 				STREAM_read(stream, name, len);
-				
+
 				class = CLASS_look(name, len);
 				if (!class)
 					THROW_SERIAL();
-
-				if (TYPE_is_pure_object(type) && (CLASS *)type != class)
+			}
+			
+			if (TYPE_is_pure_object(type))
+			{
+				if (class && (CLASS *)type != class)
 					THROW_SERIAL();
 			}
-			else if (TYPE_is_pure_object(type))
-			{
-				class = (CLASS *)type;
-			}
 			else
-				THROW_SERIAL();
+			{
+				if (!class)
+					THROW_SERIAL();
+			}
 			
 			object = OBJECT_ref(OBJECT_create(class, NULL, NULL, 0));
 			
@@ -1534,16 +1537,21 @@ void STREAM_write_type(STREAM *stream, TYPE type, VALUE *value)
 	{
 		CSTREAM *ob;
 		
-		buffer._byte = 'O';
-		STREAM_write(stream, &buffer._byte, 1);
-			
-		if (variant)
+		if (variant || type == T_OBJECT)
 		{
 			char *name = class->name;
 			int len = strlen(name);
 			
+			buffer._byte = 'o';
+			STREAM_write(stream, &buffer._byte, 1);
+			
 			write_length(stream, len);
 			STREAM_write(stream, name, len);
+		}
+		else
+		{
+			buffer._byte = 'O';
+			STREAM_write(stream, &buffer._byte, 1);
 		}
 		
 		ob = CSTREAM_FROM_STREAM(stream);
