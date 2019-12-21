@@ -928,7 +928,7 @@ __OBJECT:
 				{
 					if (!((*class->convert)(NULL, value->type, value)))
 					{
-						OBJECT_REF(value->_object.object);
+						OBJECT_REF_CHECK(value->_object.object);
 						goto __TYPE;
 					}
 				}
@@ -970,7 +970,7 @@ __RETRY:
 		if (!((*class->convert)(value->_object.object, type, value)))
 		{
 			OBJECT_UNREF(unref);
-			OBJECT_REF(value->_object.object);
+			OBJECT_REF_CHECK(value->_object.object);
 			goto __TYPE;
 		}
 	}
@@ -982,7 +982,7 @@ __RETRY:
 		if (!((*class2->convert)(NULL, OBJECT_class(unref), value)))
 		{
 			OBJECT_UNREF(unref);
-			OBJECT_REF(value->_object.object);
+			OBJECT_REF_CHECK(value->_object.object);
 			goto __TYPE;
 		}
 	}
@@ -1052,7 +1052,7 @@ __OBJECT:
 __CLASS:
 {
 	void *object = value->_variant.value._object;
-	OBJECT_REF(object);
+	OBJECT_REF_CHECK(object);
 	VARIANT_free((VARIANT *)addr);
 	((VARIANT *)addr)->type = type;
 	((VARIANT *)addr)->value._object = object;
@@ -1143,7 +1143,7 @@ __OBJECT:
 
 	VALUE_conv(value, type);
 
-	OBJECT_REF(value->_object.object);
+	OBJECT_REF_CHECK(value->_object.object);
 	OBJECT_UNREF(*((void **)addr));
 	*((void **)addr) = value->_object.object;
 	return;
@@ -1517,7 +1517,7 @@ void VALUE_class_write(CLASS *class, VALUE *value, char *addr, CTYPE ctype)
 
 		VALUE_conv(value, type);
 
-		OBJECT_REF(value->_object.object);
+		OBJECT_REF_CHECK(value->_object.object);
 		OBJECT_UNREF(*((void **)addr));
 		*((void **)addr) = value->_object.object;
 		//VALUE_write(value, addr, (ctype.value >= 0) ? (TYPE)class->load->class_ref[ctype.value] : T_OBJECT);

@@ -501,7 +501,7 @@ static void push(int nval, va_list args)
 
 			case T_OBJECT:
 				SP->_object.object = va_arg(args, void *);
-				OBJECT_REF(SP->_object.object);
+				OBJECT_REF_CHECK(SP->_object.object);
 				break;
 
 			default:
@@ -1819,9 +1819,7 @@ void GB_StoreObject(GB_OBJECT *src, void **dst)
 	else
 		object = NULL;
 
-	if (object)
-		OBJECT_REF(object);
-
+	OBJECT_REF_CHECK(object);
 	OBJECT_UNREF(*dst);
 	*dst = object;
 }
@@ -2188,7 +2186,7 @@ char *GB_SystemPath(void)
 
 GB_STREAM *GB_StreamGet(void *object)
 {
-	return (GB_STREAM *)CSTREAM_stream(object);
+	return (GB_STREAM *)CSTREAM_TO_STREAM(object);
 }
 
 void GB_StreamSetSwapping(GB_STREAM *stream, int v)

@@ -113,17 +113,22 @@ EXTERN const char *OBJECT_ref_where;
 char *OBJECT_where_am_i(const char *file, int line, const char *func);
 
 #define OBJECT_ref(_object) \
-{ \
-	if (_object) \
+({ \
+	OBJECT *_ob = (_object); \
+	if (OBJECT_class(_ob) == FREE_MARK) \
 	{ \
-		if (OBJECT_class(_object) == FREE_MARK) \
-		{ \
-			fprintf(stderr, "%s: **** ALREADY FREED **** %p\n", OBJECT_ref_where, (_object)); \
-			fflush(NULL); \
-			BREAKPOINT(); \
-		} \
-		CLASS_ref(_object); \
+		fprintf(stderr, "%s: **** ALREADY FREED **** %p\n", OBJECT_ref_where, _ob); \
+		fflush(NULL); \
+		BREAKPOINT(); \
 	} \
+	CLASS_ref(_ob); \
+	(void *)_ob; \
+})
+
+
+#define OBJECT_ref_check(_object) \
+{ \
+	if (_object) OBJECT_ref(_object);
 }
 
 
@@ -167,16 +172,23 @@ char *OBJECT_where_am_i(const char *file, int line, const char *func);
 	} \
 }
 
-#define OBJECT_REF(_ob) { OBJECT_ref_where = OBJECT_where_am_i(__FILE__, __LINE__, __func__); OBJECT_ref(_ob); }
+#define OBJECT_REF(_ob) ({ OBJECT_ref_where = OBJECT_where_am_i(__FILE__, __LINE__, __func__); OBJECT_ref(_ob); })
+#define OBJECT_REF_CHECK(_ob) { OBJECT_ref_where = OBJECT_where_am_i(__FILE__, __LINE__, __func__); OBJECT_ref_check(_ob); }
 #define OBJECT_UNREF(_ob) { OBJECT_ref_where = OBJECT_where_am_i(__FILE__, __LINE__, __func__); OBJECT_unref(_ob); }
 #define OBJECT_UNREF_KEEP(_ob) { OBJECT_ref_where = OBJECT_where_am_i(__FILE__, __LINE__, __func__); OBJECT_unref_keep(_ob); }
 
 #else /* DEBUG_REF */
 
 #define OBJECT_ref(_object) \
+({ \
+	OBJECT *_ob = (OBJECT *)(_object); \
+	_ob->ref++; \
+	(void *)_ob; \
+})
+
+#define OBJECT_ref_check(_object) \
 { \
-	if (_object) \
-		((OBJECT *)(_object))->ref++; \
+	if (_object) OBJECT_ref(_object); \
 }
 
 #define OBJECT_unref(_object) \
@@ -209,6 +221,7 @@ char *OBJECT_where_am_i(const char *file, int line, const char *func);
 }
 
 
+#define OBJECT_REF_CHECK(_ob) OBJECT_ref_check(_ob)
 #define OBJECT_REF(_ob) OBJECT_ref(_ob)
 #define OBJECT_UNREF(_ob) OBJECT_unref(_ob)
 #define OBJECT_UNREF_KEEP(_ob) OBJECT_unref_keep(_ob)

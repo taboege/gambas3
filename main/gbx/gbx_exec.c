@@ -123,11 +123,11 @@ __VARIANT:
 	if (value->_variant.vtype == T_STRING)
 		STRING_ref(value->_variant.value._string);
 	else if (TYPE_is_object(value->_variant.vtype))
-		OBJECT_REF(value->_variant.value._object);
+		OBJECT_REF_CHECK(value->_variant.value._object);
 	return;
 
 __FUNCTION:
-	OBJECT_REF(value->_function.object);
+	OBJECT_REF_CHECK(value->_function.object);
 	return;
 
 __STRING:
@@ -520,7 +520,7 @@ void EXEC_enter(void)
 		EC = NULL;
 
 	// Reference the object so that it is not destroyed during the function call
-	OBJECT_REF(OP);
+	OBJECT_REF_CHECK(OP);
 
 	// Local variables initialization
 
@@ -617,7 +617,7 @@ void EXEC_enter_quick(void)
 	PROFILE_ENTER_FUNCTION();
 
 	/* reference the object so that it is not destroyed during the function call */
-	OBJECT_REF(OP);
+	OBJECT_REF_CHECK(OP);
 
 	/* local variables initialization */
 
@@ -1586,6 +1586,7 @@ void EXEC_public_desc(CLASS *class, void *object, CLASS_DESC_METHOD *desc, int n
 	}
 }
 
+
 void EXEC_public(CLASS *class, void *object, const char *name, int nparam)
 {
 	CLASS_DESC *desc;
@@ -1598,7 +1599,6 @@ void EXEC_public(CLASS *class, void *object, const char *name, int nparam)
 	EXEC_public_desc(class, object, &desc->method, nparam);
 	EXEC_release_return_value();
 }
-
 
 
 bool EXEC_special(int special, CLASS *class, void *object, int nparam, bool drop)

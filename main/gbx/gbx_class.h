@@ -327,19 +327,19 @@ typedef
 		uint _reserved2;                  //     128
 		#endif
 
-		short special[12];                // 100 152  special functions index (_new, _free, ...)
+		short special[14];                // 104 156  special functions index (_new, _free, ...)
 
-		TYPE array_type;                  // 104 160  datatype of the contents if this class is an array class of objects
-		struct _CLASS *array_class;       // 108 168  array of class
-		struct _CLASS *astruct_class;     // 112 176  array of struct class
+		TYPE array_type;                  // 108 164  datatype of the contents if this class is an array class of objects
+		struct _CLASS *array_class;       // 112 172  array of class
+		struct _CLASS *astruct_class;     // 116 180  array of struct class
 
-		void *instance;                   // 116 184  automatically created instance
-		void **operators;                 // 120 192  arithmetic interface
-		bool (*convert)();                // 124 200  convert method
+		void *instance;                   // 120 188  automatically created instance
+		void **operators;                 // 124 196  arithmetic interface
+		bool (*convert)();                // 128 204  convert method
 
-		COMPONENT *component;             // 128 208  The component the class belongs to
+		COMPONENT *component;             // 132 212  The component the class belongs to
 
-		struct _CLASS *next;              // 132 216  next class
+		struct _CLASS *next;              // 136 220  next class
 		}
 	CLASS;
 
@@ -365,7 +365,8 @@ typedef
 		SPEC_COMPARE,
 		SPEC_ATTACH,
 		SPEC_READY,
-		MAX_SPEC = 11
+		SPEC_READ,
+		SPEC_WRITE
 		}
 	CLASS_SPECIAL;
 

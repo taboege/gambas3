@@ -268,9 +268,9 @@ _FREE:
 	EVAL.Free((void **)(void *)&eval);
 
 	VALUE_to_string(RETURN, &expr, &len);
-	STREAM_write(CSTREAM_stream(CFILE_out), expr, len);
-	STREAM_write_eol(CSTREAM_stream(CFILE_out));
-	STREAM_flush(CSTREAM_stream(CFILE_out));
+	STREAM_write(CSTREAM_TO_STREAM(CFILE_out), expr, len);
+	STREAM_write_eol(CSTREAM_TO_STREAM(CFILE_out));
+	STREAM_flush(CSTREAM_TO_STREAM(CFILE_out));
 }
 
 void SUBR_eval(ushort code)

@@ -1340,6 +1340,8 @@ void CLASS_search_special(CLASS *class)
 	class->special[SPEC_COMPARE] = CLASS_get_symbol_index_kind(class, "_compare", CD_METHOD, 0);
 	class->special[SPEC_ATTACH] = CLASS_get_symbol_index_kind(class, "_attach", CD_METHOD, 0);
 	class->special[SPEC_READY] = CLASS_get_symbol_index_kind(class, "_ready", CD_METHOD, 0);
+	class->special[SPEC_READ] = CLASS_get_symbol_index_kind(class, "_read", CD_METHOD, 0);
+	class->special[SPEC_WRITE] = CLASS_get_symbol_index_kind(class, "_write", CD_METHOD, 0);
 
 	sym = CLASS_get_symbol_index_kind(class, "_@_convert", CD_CONSTANT, 0);
 	if (sym != NO_SYMBOL)

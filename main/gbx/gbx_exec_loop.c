@@ -830,7 +830,7 @@ _PUSH_MISC:
 
 		SP->type = T_OBJECT;
 		SP->_object.object = EVENT_Last;
-		OBJECT_REF(EVENT_Last);
+		OBJECT_REF_CHECK(EVENT_Last);
 		SP++;
 		goto _NEXT;
 
@@ -1641,7 +1641,7 @@ _PUSH_FUNCTION:
 	SP->_function.index = GET_7XX();
 	SP->_function.defined = TRUE;
 
-	OBJECT_REF(OP);
+	OBJECT_REF_CHECK(OP);
 	SP++;
 
 	goto _NEXT;
