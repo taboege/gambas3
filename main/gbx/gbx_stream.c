@@ -1114,9 +1114,15 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 			TYPE atype;
 
 			STREAM_read(stream, &buffer._byte, 1);
-			atype = (TYPE)buffer._byte;
-			if (atype > T_OBJECT)
-				THROW_SERIAL();
+
+			if (TYPE_is_pure_object(type))
+				atype = ((CLASS *)type)->array_type;
+			else
+			{
+				atype = (TYPE)buffer._byte;
+				if (atype > T_OBJECT)
+					THROW_SERIAL();
+			}
 
 			size = read_length(stream);
 
@@ -1126,11 +1132,17 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 				data = CARRAY_get_data(array, i);
 				STREAM_read_type(stream, atype, &temp);
 				VALUE_write(&temp, data, atype);
+				//RELEASE(&temp);
 			}
 
 			value->type = (TYPE)OBJECT_class(array);
 			value->_object.object = array;
-			VALUE_conv(value, type);
+			if (value->type != type)
+			{
+				OBJECT_REF(array);
+				VALUE_convert(value, type);
+				OBJECT_UNREF_KEEP(value->_object.object);
+			}
 			return;
 		}
 
@@ -1156,13 +1168,19 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 				STREAM_read(stream, key, len);
 				STREAM_read_type(stream, T_VARIANT, &temp);
 				GB_CollectionSet(col, key, len, (GB_VARIANT *)&temp);
+				//RELEASE(&temp);
 				if (len >= 32)
 					STRING_free_real(key);
 			}
 
 			value->type = (TYPE)OBJECT_class(col);
 			value->_object.object = col;
-			VALUE_conv(value, type);
+			if (value->type != type)
+			{
+				OBJECT_REF(col);
+				VALUE_convert(value, type);
+				OBJECT_UNREF_KEEP(value->_object.object);
+			}
 			return;
 		}
 		
@@ -1177,9 +1195,8 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 				int len;
 				char *name = COMMON_buffer;
 				
-				len = read_length(stream);
-				if (len > 255)
-					THROW_SERIAL();
+				STREAM_read(stream, &buffer._byte, 1);
+				len = buffer._byte;
 				STREAM_read(stream, name, len);
 
 				class = CLASS_look(name, len);
@@ -1198,7 +1215,7 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 					THROW_SERIAL();
 			}
 			
-			object = OBJECT_ref(OBJECT_create(class, NULL, NULL, 0));
+			object = OBJECT_REF(OBJECT_create(class, NULL, NULL, 0));
 			
 			cstream = CSTREAM_FROM_STREAM(stream);
 			STACK_check(1);
@@ -1210,7 +1227,12 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 
 			value->type = (TYPE)class;
 			value->_object.object = object;
-			VALUE_conv(value, type);
+			if (value->type != type)
+			{
+				OBJECT_REF(object);
+				VALUE_convert(value, type);
+				OBJECT_UNREF_KEEP(value->_object.object);
+			}
 			return;
 		}
 
@@ -1544,8 +1566,9 @@ void STREAM_write_type(STREAM *stream, TYPE type, VALUE *value)
 			
 			buffer._byte = 'o';
 			STREAM_write(stream, &buffer._byte, 1);
+			buffer._byte = (unsigned char)len;
+			STREAM_write(stream, &buffer._byte, 1);
 			
-			write_length(stream, len);
 			STREAM_write(stream, name, len);
 		}
 		else
