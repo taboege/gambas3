@@ -77,13 +77,14 @@ typedef
 		TYPE type;
 		short nparam;
 		unsigned vararg : 1;
-		unsigned _reserved : 15;
+		unsigned no_warning : 1;    // The symbol name is between braces
+		unsigned fast : 1;
+		unsigned unsafe : 1;
+		unsigned _reserved : 12;
 		TRANS_PARAM param[MAX_PARAM_FUNC];
 		PATTERN *start;
 		int line;
 		uint64_t byref;
-		unsigned fast : 1;
-		unsigned unsafe : 1;
 		}
 	TRANS_FUNC;
 
@@ -103,7 +104,8 @@ typedef
 		TYPE type;
 		short nparam;
 		unsigned vararg : 1;
-		unsigned _reserved : 15;
+		unsigned no_warning : 1;    // The symbol name is between braces
+		unsigned _reserved : 14;
 		TRANS_PARAM param[MAX_PARAM_FUNC];
 		int library;
 		int alias;
@@ -118,8 +120,8 @@ typedef
 		int comment;
 		int synonymous[3];
 		int use;
-		unsigned nsynonymous:3;
-		unsigned read:1;
+		unsigned nsynonymous : 3;
+		unsigned read : 1;
 		}
 	TRANS_PROPERTY;
 
