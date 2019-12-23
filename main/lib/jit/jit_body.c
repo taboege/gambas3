@@ -61,7 +61,7 @@ enum {
 	CALL_SUBR_CODE       = 1,
 	CALL_SUBR_UNKNOWN    = 2,
 	CALL_NEW             = 3,
-	CALL_RETURN_UNKNWON  = 128
+	CALL_RETURN_UNKNOWN  = 128
 };
 
 enum {
@@ -1379,7 +1379,7 @@ static void push_subr(char mode, ushort code)
 	
 	STR_add(&expr, call, _pc, addr, code);
 	
-	if (mode & CALL_RETURN_UNKNWON)
+	if (mode & CALL_RETURN_UNKNOWN)
 		type = T_UNKNOWN;
 	
 	STR_add(&expr, ";POP_%s();", JIT_get_type(type));
@@ -1420,7 +1420,7 @@ static void push_subr_add(ushort code, const char *op, const char *opb, bool all
 				break;
 			
 		default:
-			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNWON, code);
+			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNOWN, code);
 			return;
 	}
 	
@@ -1465,7 +1465,7 @@ static void push_subr_div(ushort code)
 			break;
 			
 		default:
-			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNWON, code);
+			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNOWN, code);
 			return;
 	}
 	
@@ -1512,7 +1512,7 @@ static void push_subr_arithmetic(char op, ushort code)
 			break;
 
 		default:
-			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNWON, code);
+			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNOWN, code);
 			return;
 	}
 	
@@ -1548,7 +1548,7 @@ static void push_subr_float_arithmetic(char op, ushort code)
 			break;
 
 		default:
-			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNWON, code);
+			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNOWN, code);
 			return;
 	}
 	
@@ -1582,7 +1582,7 @@ static void push_subr_quo(ushort code, const char *op)
 			break;
 			
 		default:
-			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNWON, code);
+			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNOWN, code);
 			return;
 	}
 	
@@ -1626,7 +1626,7 @@ static void push_subr_and(ushort code, const char *op)
 			break;
 			
 		default:
-			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNWON, code);
+			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNOWN, code);
 			return;
 	}
 	
@@ -1662,7 +1662,7 @@ static void push_subr_not(ushort code)
 			break;
 
 		default:
-			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNWON, code);
+			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNOWN, code);
 			return;
 	}
 	
@@ -1712,11 +1712,11 @@ static void push_subr_comp(ushort code)
 		switch(code & 0xFF00)
 		{
 			case C_EQ: case C_NE:
-				push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNWON, code);
+				push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNOWN, code);
 				break;
 				
 			case C_GT: case C_LT: case C_GE: case C_LE:
-				push_subr(CALL_SUBR_UNKNOWN + CALL_RETURN_UNKNWON, code);
+				push_subr(CALL_SUBR_UNKNOWN + CALL_RETURN_UNKNOWN, code);
 				break;
 		}
 		
@@ -1789,7 +1789,7 @@ static void push_subr_bit(ushort code)
 			break;
 
 		default:
-			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNWON, code);
+			push_subr(CALL_SUBR_CODE + CALL_RETURN_UNKNOWN, code);
 			return;
 	}
 			
@@ -2328,6 +2328,40 @@ _ILLEGAL:
 }
 
 
+static void push_subr_ptr(ushort code)
+{
+	char *expr;
+	TYPE type;
+	
+	check_stack(1);
+	
+	if (_unsafe)
+	{
+		type = get_type(-1);
+		switch (type)
+		{
+			case T_POINTER:
+			case T_STRING:
+			case T_CSTRING:
+
+				expr = STR_copy(peek(-1, type));
+				pop_stack(1);
+				
+				code &= 0xF;
+
+				if (type == T_POINTER)
+					push(code, "*(%s *)(%s)", JIT_get_ctype(code), expr);
+				else
+					push(code, "*(%s *)GET_STRING_ADDR(%s)", JIT_get_ctype(code), expr);
+			
+				STR_free(expr);
+				return;
+		}
+	}
+
+	push_subr(CALL_SUBR_CODE, code);
+}
+
 #define GET_XXX()   (((signed short)(code << 4)) >> 4)
 #define GET_UXX()   (code & 0xFFF)
 #define GET_7XX()   (code & 0x7FF)
@@ -2500,7 +2534,7 @@ bool JIT_translate_body(FUNCTION *func, int ind)
 		/* 9C Quote$...       */  &&_SUBR_CODE,
 		/* 9D Unquote$...     */  &&_SUBR_CODE,
 		/* 9E MkInt$...       */  &&_SUBR_CODE,
-		/* 9F Byte@...        */  &&_SUBR_CODE,
+		/* 9F Byte@...        */  &&_SUBR_PTR,
 		/* A0 ADD QUICK       */  &&_ADD_QUICK,
 		/* A1 ADD QUICK       */  &&_ADD_QUICK,
 		/* A2 ADD QUICK       */  &&_ADD_QUICK,
@@ -3261,6 +3295,11 @@ _SUBR_BIT:
 _SUBR_VARPTR:
 
 	push_subr_varptr(code);
+	goto _MAIN;
+	
+_SUBR_PTR:
+
+	push_subr_ptr(code);
 	goto _MAIN;
 	
 _BREAK:
