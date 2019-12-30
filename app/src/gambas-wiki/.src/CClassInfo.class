@@ -254,7 +254,11 @@ Private Sub GetSymbolLink(sName As String, Optional sTitle As String, Optional s
     sRes &= "<div class=\"tooltip\"><div class=\"tooltip-contents\">" & sDesc & "</div></div>"
   Endif
   
-  sLink = "/comp" &/ LCase(hSym.Component &/ hSym.Class &/ sName)
+  If sName = "_new" Then
+    sLink = "/comp" &/ LCase(Component &/ Name &/ sName)
+  Else
+    sLink = "/comp" &/ LCase(hSym.Component &/ hSym.Class &/ sName)
+  Endif
 
   If hSym.Class <> Name Or If hSym.Component <> Component Then
   Else If hSym.Class <> Main.Class Or If hSym.Component <> Main.Component Then

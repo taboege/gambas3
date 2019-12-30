@@ -190,21 +190,35 @@ Private Sub _PrintPage()
       Main.Lang = Main.DEFAULT_LANG
       sPath = Main.SolvePath(Main.Path)
     Endif
-    
-    If Not Main.ExistPage(sPath) And If Main.Symbol Then
-      
-      Do
-        
-        hClass = CComponent.Get(Main.Component)[Main.Class]
-        If Not hClass.Parent Then Break
 
-        Main.Component = hClass.ParentComponent
-        Main.Class = hClass.Parent
-
+    If Main.Class Then    
+  
+      If Main.Class Ends "[]" And If Not CComponent.Get(Main.Component)[Main.Class] Then
+        Main.SubstClass = Main.Class
+        Main.Class = "*[]"
         sPath = Main.SolvePath("/comp/" & LCase(Main.Component &/ Main.Class &/ Main.Symbol))
-        If Main.ExistPage(sPath) Then Break
+      Endif
+      
+    Endif
+      
+    If Not Main.ExistPage(sPath) Then
+    
+      If Main.Symbol Then
+      
+        Do
+          
+          hClass = CComponent.Get(Main.Component)[Main.Class]
+          If Not hClass Or If Not hClass.Parent Then Break
+  
+          Main.Component = hClass.ParentComponent
+          Main.Class = hClass.Parent
+  
+          sPath = Main.SolvePath("/comp/" & LCase(Main.Component &/ Main.Class &/ Main.Symbol))
+          If Main.ExistPage(sPath) Then Break
+          
+        Loop
         
-      Loop
+      Endif
       
     Endif
     
@@ -320,6 +334,11 @@ DISPLAY_PAGE:
     Else
       sData = "# " & Main.GetClassTitle() & "\n" & sData
     Endif
+    
+    If Main.SubstClass Then
+      sData = Replace(sData, "\\*", Left(Main.SubstClass, -2)) 
+    Endif
+    
   Endif
   
   Print WikiMarkdown.ToHTML(sData)

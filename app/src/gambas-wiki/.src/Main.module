@@ -25,6 +25,7 @@ Public FullName As String
 Public (Component) As String
 Public (Class) As String
 Public Symbol As String
+Public SubstClass As String
 
 Private $aDeveloperTable As String[]
 Private $aTranslatorTable As String[]
@@ -551,6 +552,8 @@ Public Sub Main()
   If Request.Exist("logout") Then
     
     Session.Abandon
+    Redirect()
+    Return
     
   ' Else If Request.Exist("register") Then
   '   
@@ -941,7 +944,7 @@ Public Sub GetClassTitle(Optional sPath As String) As String
   
   If hClass Then
     If sPath Then Return hClass.Name
-    Return hClass.Name & " (" & sComponent & ")"
+    Return Replace(hClass.Name, "*", "\\*") & " (" & sComponent & ")"
   Else
     If sPath Then Return sClass
     Return sClass & " (" & sComponent & ")"
@@ -974,6 +977,9 @@ Public Sub GetSymbolTitle(Optional sPath As String) As String
   Try hSym = CComponent.Get(sComponent)[sClass].Symbols[sSymbol]
   
   If sPath Then
+    If Not hSym And If sClass Ends "[]" Then
+      Try hSym = CComponent.Get(sComponent)["*[]"].Symbols[sSymbol]
+    Endif
     If Not hSym Then Return sSymbol & " ?"
     If InStr("e:", hSym.Kind) Then
       Return Mid$(hSym.Name, 2)
@@ -988,9 +994,9 @@ Public Sub GetSymbolTitle(Optional sPath As String) As String
     Case "_new"
       sTitle = "New " & hSym.Class
     Case "_put"
-      sTitle = hSym.Class & "[] = ..."
+      sTitle = hSym.Class & "\\[…] = …"
     Case "_get"
-      sTitle = hSym.Class & "[]"
+      sTitle = "… = " & hSym.Class & "\\[…]"
     Case "_call"
       sTitle = hSym.Class & "()"
     Case "_next"
@@ -1003,7 +1009,7 @@ Public Sub GetSymbolTitle(Optional sPath As String) As String
       Endif
   End Select
 
-  Return sTitle & " (" & hSym.Component & ")"
+  Return Replace(sTitle, "*", "\\*") & " (" & hSym.Component & ")"
   
 End
 
@@ -1522,12 +1528,20 @@ End
 
 Public Sub GetImageHTML(sPath As String) As String
 
-  If Not Main.ExistPage(sPath) Then Return "<i>" & ("Please upload a file") & "</i>"
+  Dim sAdd As String
   
+  If Not Main.ExistPage(sPath) Then
+    If Not Main.ExistPage(sPath, "en") Then
+      Return "<i>" & ("Please upload a file") & "</i>"
+    Else
+      sAdd = "&l=en"
+    Endif
+  Endif
+
   If Main.GetContentTypeFrom(sPath) Begins "video/" Then
-    Return "<video src=\"" & Html(Application.Root &/ sPath) & "?v\" autoplay></video>"
+    Return "<video src=\"" & Html(Application.Root &/ sPath) & "?v" & sAdd & "\" autoplay></video>"
   Else
-    Return "<img src=\"" & Html(Application.Root &/ sPath) & "?v\" />"
+    Return "<img src=\"" & Html(Application.Root &/ sPath) & "?v" & sAdd & "\" />"
   Endif
   
 End
