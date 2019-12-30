@@ -40,27 +40,16 @@ End
 Public Sub TestAssertEqualsDate()
 
     Dim d As Date
+    Dim sdate As String
     Dim d2 As Date
 
     d = Now()
-    d2 = d
+    sdate = CString(d)
+    d2 = CDate(sdate)
 
     Assert.EqualsDate(d, d2, "Check with equal dates")
 
 End
-
-Public Sub TestSkip()
-
-    Dim d As Date
-    Dim d2 As Date
-
-    d = Now()
-    d2 = d
-
-    Assert.EqualsDate(d, d2, "Check sth", Null, True, "Skipmessage")
-
-End
-
 
 Public Sub TestAssertEqualsObject()
 
@@ -95,7 +84,14 @@ Public Sub TestAssertError()
 
     Dim r As Float
     Try r = 2 / 0
-    Assert.Error("Test Error")
+    Assert.Error("Test error")
 
 End
 
+Public Sub TestAssertErrorWithCode()
+
+    Dim r As Float
+    Try r = 2 / 0
+    Assert.ErrorWithCode(26, "Test error with code")
+
+End

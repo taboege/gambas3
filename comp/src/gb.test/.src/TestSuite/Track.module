@@ -1,6 +1,6 @@
 ' Gambas module file
 
-''' Keeps track of all tests
+''' Keeps track of test counts and result(s)
 
 '' Current Test Container
 Public ContainerName As String
@@ -8,35 +8,34 @@ Public ContainerName As String
 '' Current Test Method
 Public TestName As String
 
-'' Number of Testmethods
-Public MethodCount As Integer
+'' Number of Tests done inside a TestMethod.
+'' Is printed if no message was given at the assert.
+Public MethodTestsCount As Integer
 
-'' Number of Testmethods worked
-Public MethodDoneCount As Integer
+'' Counts Asserts done inside a TestContainer.
+Public ContainerTestsCount As Integer
 
-'' Counts single Tests(Asserts)
+'' Counts all Asserts done
 Public Counter As Long
+
+'' Planned Asserts count
+Public Plan As Long
 
 '' Counts Not Ok
 Public NOKs As New Long[]
 '' Counts Ok
 Public OKs As New Long[]
-'' Counts Skip
-Public SKIPs As New Long[]
-'' Counts Todo
-Public TODOs As New Long[]
 
-'' If Bailout happened
-Public Bailout As Boolean
 
 Public Sub Reset()
 
-    MethodCount = 0
-    MethodDoneCount = 0
+    ContainerName = Null
+    TestName = Null
+    MethodTestsCount = 0
+    ContainerTestsCount = 0
     Counter = 0
+    Plan = 0
     NOKs.Clear
     Oks.Clear
-    Skips.Clear
-    TODOs.Clear
 
 End
