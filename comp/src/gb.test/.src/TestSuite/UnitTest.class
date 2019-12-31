@@ -2,12 +2,13 @@
 
 Export
 
-Private Const MaxStringLen As Integer = 50
-Private Const MaxMessageLen As Integer = 200
-
 ''' This class identifies a test container. A test container is a
 ''' class that holds different TestMethods, it has to inherit UnitTest.
 ''' The static procedure Unittest.Main() starts test(s).
+
+'' Optional number of planned assertions. If > 0 then number of fulfilled assertions is compared with this.
+Public Plan As Integer
+Public Subtest As String
 
 '' Name of this testcontainer
 Property Read Name As String
@@ -47,22 +48,22 @@ End
 
 Static Private Sub PrintSummary()
 
-    Print ""
-
     If Track.NOKs.Count > 0 Then Print "# Failed tests: " & PrintNumbers(Track.NOKs)
-    If Track.SKIPs.Count > 0 Then Print "# Skipped tests: " & PrintNumbers(Track.SKIPs)
 
     'Plan
-    If Track.Counter > 0 Then
-        Print "# 1.." & Track.Counter
+    If Track.Plan > 0 Then
+        Print "1.." & Track.Plan
     Else
-        Print "# 0.." & Track.Counter
+        Print "0..0"
     Endif
-    
+
     If Track.NOKs.Count > 0 Or If Track.Counter = 0 Then
-        Print "# ------- No success!  -------" & gb.Lf
-    Else If Track.Counter > 0 
-        Print "# ------- Success!  -------" & gb.Lf
+        Print "# ------- No success!  -------"
+    Else If Track.Plan <> Track.Counter Then
+        Print "# Plan was " & Track.Plan & " but assertions counted was " & Track.Counter
+        Print "# ------- No success!  -------"
+    Else If Track.Counter > 0
+        Print "# ------- Success!  -------"
     Endif
 
     Track.Reset()
@@ -72,7 +73,6 @@ End
 Static Private Function PrintNumbers(Numbers As Long[]) As String
 
     Dim Number As Long
-
     Dim s As New String[]
 
     For Each Number In Numbers
@@ -188,6 +188,7 @@ Public Sub _RunCase(oCase As ITestCase)
     Assert $CaseNames
 
     For Each MethodName In $CaseNames
+        Track.MethodTestsCount = 0
         If hClass[MethodName].Kind = Class.Method Then
             If MethodName = oCase.Name Then
                 Try Object.Call(Me, MethodName)
@@ -223,6 +224,22 @@ End Sub
 
 ''Destroy the test fixture for container
 Public Sub TearDownContainer()
+
+End Sub
+
+'' Bail out = stop immediately 
+
+Public Sub BailOut(Optional Reason As String)
+
+    'Bail out
+    
+    If Reason <> Null Then
+        Reason = Trim(" with reason \"" & Reason & "\"")
+    Endif
+    
+    Print "Bail out! Unittest stopped" & Reason
+    Print "# ------- No success!  -------"
+    Quit
 
 End Sub
 

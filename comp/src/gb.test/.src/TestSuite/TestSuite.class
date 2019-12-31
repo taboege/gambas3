@@ -26,45 +26,63 @@ Public Sub Run()
 
     Assert $Tests
 
-    Track.MethodCount = $Tests.Count
-
     For Each oTest In $Tests
         CurrentContainer = oTest.Container
         If LastContainer Then
             If LastContainer <> CurrentContainer Then
                 CurrentAction = LastContainer.Name & ":TearDownContainer"
-                LastContainer.TearDownContainer
+                StopContainer(LastContainer)
                 CurrentAction = CurrentContainer.Name & ":SetupContainer"
-                CurrentContainer.SetupContainer
+                StartContainer(CurrentContainer)
             Endif
         Else
             'Assert.Note("-------------------- " & CurrentContainer.Name)
             CurrentAction = CurrentContainer.Name & ":SetupContainer"
-            CurrentContainer.SetupContainer
+            StartContainer(CurrentContainer)
         Endif
 
         With Track
             .ContainerName = oTest.Container.Name
             .TestName = oTest.Name
         End With
-        
-        oTest.Run()
 
+        oTest.Run()
         LastContainer = CurrentContainer
     Next
 
     If LastContainer Then
         CurrentAction = LastContainer.Name & ":TearDownContainer"
-        LastContainer.TearDownContainer()
+        StopContainer(LastContainer)
     Endif
 
 Catch
     'Bail out
-    Print "Bail out! " & "Unittest stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & "."
+    Print "Bail out! " & "Unittest StopContainerped with error \"" & Error.Text & "\" caused by " & CurrentAction & "."
     Print "# ------- No success!  -------"
     Quit
 
 End Sub
+
+Private Sub StartContainer(Container As UnitTest)
+
+    Container.SetupContainer()
+    ' Tracks tests in a container, reset if container changes
+    Track.ContainerTestsCount = 0
+
+End
+
+Private Sub StopContainer(Container As UnitTest)
+
+    With container
+        .TearDownContainer()
+        If .Plan > 0 Then
+            Track.Plan += .Plan
+        Else
+            Track.Plan += Track.ContainerTestsCount
+        Endif
+    End With
+
+End
 
 '' Add a object implementing ITest (either a TestCase or TestSuite) to the suite.
 Public Sub AddTest(oTest As ITest)

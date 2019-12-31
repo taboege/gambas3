@@ -2,19 +2,17 @@
 
 Public Sub Main()
 
-    Dim msg As String
-    UnitTest.Main("TestAllAsserts", Null, True)
-    UnitTest.Main("TestSetup", Null, True)
-    msg = "The following \"Not ok\"s and failures are intentional\n and needed to test the functionality of unittest itself."
-    Assert.Note(msg)
-    msg = "Nothing wrong. No success was needed to test unittest itself.\nIf you want succeed with Gambas, test your own projects."
-    UnitTest.Main("TestFailures", Null, True)
-    UnitTest.Main("TestError", Null, True)
-    Assert.Note(msg)
-    
-    
-    '
-    '
-    '
+    ' These must succeed:
+    ' UnitTest.Main("TestAllAsserts", Null, True)
+    ' UnitTest.Main("TestSetup", Null, True)
+    ' UnitTest.Main("TestElse", Null, True)
+    ' UnitTest.Main("TestError", Null, True)
+    ' UnitTest.Main("TestSetupTeardown", Null, True)
+
+    ' Here every test must fail:
+    'UnitTest.Main("TestFailures", Null, True)
+
+    'Test all
+    UnitTest.Main(Null, Null, True)
 
 End

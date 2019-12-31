@@ -1,54 +1,42 @@
 ' Gambas class file
 
+''' Self test to check setup and teardown
+
 Inherits UnitTest
 
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
 Public Sub SetupContainer()
 
-    ' Leads to bail out
-    ' Dim f As Float
-    ' f = 2 / 0
     Print "# Setup Container"
 
 End
 
 Public Sub TeardownContainer()
 
-    ' Leads to bail out
-    ' Dim f As Float
-    ' f = 2 / 0
     Print "# Teardown Container"
 
 End
 
 Public Sub SetupEach()
 
-    ' Leads to bail out
-    ' Dim f As Float
-    ' f = 2 / 0
     Print "# Setup Each"
 
 End
 
 Public Sub TeardownEach()
 
-    ' Leads to bail out
-    ' Dim f As Float
-    ' f = 2 / 0
     Print "# Teardown Each"
 
 End
 
 Public Sub TestFirstTest()
 
-    Assert.Null("", "Empty")
+    Assert.Null("")
 
 End
 
 Public Sub TestSecondTest()
-
-    'Debug "Debug";; "TestExample2::Test Second Test"
 
     Assert.EqualsLong(200, 200)
 
@@ -56,7 +44,6 @@ End
 
 Public Sub TestThirdTest()
 
-    'Debug "Debug";; "TestExample2::Test Second Test"
-    Assert.True(True, "Intentionally skipped", Null, True)
+    Assert.True(True)
 
 End

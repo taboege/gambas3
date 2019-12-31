@@ -38,14 +38,10 @@ End
 'Create the fixture, run the test and collect the results in Track
 Public Sub Run()
 
-    'Track.StartTest(Me)
-
     Assert $MyContainer
     $MyContainer.SetupEach
     $MyContainer._RunCase(Me)
     $MyContainer.TearDownEach
-
-    'Track.EndTest
 
 Catch
     

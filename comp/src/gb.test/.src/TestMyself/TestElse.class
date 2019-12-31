@@ -1,0 +1,38 @@
+' Gambas class file
+
+Inherits UnitTest
+
+' Signal, that this is a selftest
+Public Const ThisIsAnUnitTestSelfTest As Boolean = True
+
+
+Public Sub _new()
+
+  Me.Plan = 5
+
+End
+
+
+' A Test with no message, should display then method name as message
+
+Public Sub TestNoMessage()
+
+    'There is no message whicht
+    Assert.True(True)
+
+End
+
+Public Sub TestNoMessageInbetween()
+
+    Assert.True(True, "TestNoMessageInbetween Assert 1 description defined")
+    Assert.True(True)
+    Assert.True(True, "Assert 3 description defined")
+    Assert.True(True)
+
+End
+
+Public Sub TestNote()
+
+  Assert.Note("This\nis\na\nnote")
+
+End

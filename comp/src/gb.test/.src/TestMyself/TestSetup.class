@@ -5,19 +5,27 @@ Inherits UnitTest
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
 Public Sub SetupContainer()
+
     Assert.Note("Setup Container")
+
 End
 
 Public Sub TeardownContainer()
+
     Assert.Note("Teardown Container")
+
 End
 
 Public Sub SetupEach()
+
     Assert.Note("Setup Each")
+
 End
 
 Public Sub TeardownEach()
+
     Assert.Note("Teardown Each")
+
 End
 
 Public Sub TestStringNull()
@@ -28,12 +36,12 @@ End
 
 Public Sub TestStringOk()
 
-    Assert.EqualsString("ja", "ja", "discussion1")
+    Assert.EqualsString("ja", "ja")
 
 End
 
 Public Sub NameOfMethodDoesNotStartWithTest()
 
-    Assert.EqualsString("no", "no", "discussion2")
+    Assert.EqualsString("no", "no")
 
 End

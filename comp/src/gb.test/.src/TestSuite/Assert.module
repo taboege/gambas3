@@ -2,16 +2,18 @@
 
 Export
 
-Public Sub Note(sMessage As String)
+'' Prints Message preceded by a hash (#) in each line as comment.
 
-    PrintBody(sMessage)
+Public Sub Note(Message As String)
+
+    PrintBody(Message)
 
 End
-'' Asserts that Value equals Expected, sMessage contains Description, Body optional larger Text, Use Skipmessage also for Todo
+'' Asserts that Value equals Expected
 
-Public Sub Equals(Expected As Variant, Value As Variant, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
+Public Sub Equals(Expected As Variant, Value As Variant, Optional Message As String)
 
-    Test(Value = Expected, sMessage, Body, Skip, Skipmessage, Todo)
+    Test(Value = Expected, Message)
 
 End
 
@@ -19,100 +21,144 @@ End
 '' Expected: the expected value
 '' Value: the actual value
 '' Delta: tolerated precision
-'' sMessage: optional message describing the asserted condition
+'' Message: optional message describing the asserted condition
 
-Public Sub EqualsFloat(Expected As Float, Value As Float, Delta As Float, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
+Public Sub EqualsFloat(Expected As Float, Value As Float, Delta As Float, Optional Message As String)
 
-    Test(Abs(Expected - Value) <= Delta, sMessage, Body, Skip, Skipmessage, Todo)
-
-End
-
-Public Sub EqualsLong(Expected As Long, Value As Long, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
-
-    Test(Expected = Value, sMessage, Body, Skip, Skipmessage, Todo)
+    Test(Abs(Expected - Value) <= Delta, Message)
 
 End
 
-Public Sub EqualsInteger(Expected As Integer, Value As Integer, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
+'' Asserts that the expected Long value equals the actual Long value
 
-    Test(Expected = Value, sMessage, Body, Skip, Skipmessage, Todo)
+Public Sub EqualsLong(Expected As Long, Value As Long, Optional Message As String)
 
-End
-
-Public Sub EqualsDate(Expected As Date, Value As Date, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
-
-    Test(Expected = Value, sMessage, Body, Skip, Skipmessage, Todo)
+    Test(Expected = Value, Message)
 
 End
 
-Public Sub EqualsObject(Expected As Object, Value As Object, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
+'' Asserts that the expected Integer value equals the actual Integer value
 
-    Test(Expected = Value, sMessage, Body, Skip, Skipmessage, Todo)
+Public Sub EqualsInteger(Expected As Integer, Value As Integer, Optional Message As String)
 
-End
-
-Public Sub EqualsString(Expected As String, Value As String, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
-
-    Test(Expected = Value, sMessage, Body, Skip, Skipmessage, Todo)
+    ' There is no difference, long values are also stored in integer variables
+    EqualsLong(Expected, Value, Message)
 
 End
 
-Public Sub NotEquals(Expected As Variant, Value As Variant, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
+'' Asserts that the expected date equals the value
 
-    Test(Value <> Expected, sMessage, Body, Skip, Skipmessage, Todo)
+Public Sub EqualsDate(Expected As Date, Value As Date, Optional Message As String)
 
-End
-
-Public Sub Null(Value As Variant, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
-
-    Test(Value = Null, sMessage, Body, Skip, Skipmessage, Todo)
+    Test(Expected = Value, Message)
 
 End
 
-Public Sub NotNull(Value As Variant, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
+'' Asserts that the expected object equals the object in Value
 
-    Test(Value <> Null, sMessage, Body, Skip, Skipmessage, Todo)
+Public Sub EqualsObject(Expected As Object, Value As Object, Optional Message As String)
 
-End
-
-Public Sub True(Value As Variant, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
-
-    Test(Value = True, sMessage, Body, Skip, Skipmessage, Todo)
+    Test(Expected = Value, Message)
 
 End
 
-Public Sub False(Value As Variant, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
+'' Asserts that the expected string equals the string in Value
 
-    Test(Value = False, sMessage, Body, Skip, Skipmessage, Todo)
+Public Sub EqualsString(Expected As String, Value As String, Optional Message As String)
+
+    Test(Expected = Value, Message)
 
 End
 
-Public Sub Error(Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
+'' Asserts that Expected <> Value
+
+Public Sub NotEquals(Expected As Variant, Value As Variant, Optional Message As String)
+
+    Test(Value <> Expected, Message)
+
+End
+
+'' Asserts that Value = Null
+
+Public Sub Null(Value As Variant, Optional Message As String)
+
+    Test(Value = Null, Message)
+
+End
+
+'' Asserts that Value <> Null
+
+Public Sub NotNull(Value As Variant, Optional Message As String)
+
+    Test(Value <> Null, Message)
+
+End
+
+'' Asserts that Value = True
+
+Public Sub True(Value As Boolean, Optional Message As String)
+
+    Test(Value = True, Message)
+
+End
+
+'' Asserts that Value = False
+
+Public Sub False(Value As Boolean, Optional Message As String)
+
+    Test(Value = False, Message)
+
+End
+
+'' Asserts that an error happened. You have to create the error with Try. For example: Try(2/0)
+
+Public Sub Error(Optional Message As String)
+
+    Dim Body As String
 
     If DetectError() <> 0 Then
-        Test(True, sMessage, Body, Skip, Skipmessage, Todo)
+        If Error.Text Then
+            Body = gb.lf & "Error: " & Error.Text & gb.lf & "Where: " & Error.Where
+            Body = Trim(Body)
+            Message &= Body
+        Endif
+        
+        Test(True, Message)
     Else
-        Test(False, sMessage, Body, Skip, Skipmessage, Todo)
+        Test(False, Message)
     Endif
 
 End
 
-Public Sub ErrorWithCode(Code As Integer, Optional sMessage As String, Optional Body As String, Optional Skip As Boolean, Optional Skipmessage As String, Optional Todo As Boolean)
+'' Asserts that an error happened with Code number. You have to create the error with Try. For example: Try(2/0)
+
+Public Sub ErrorWithCode(Code As Integer, Optional Message As String)
 
     Dim ReceivedCode As Integer
+    Dim Body, Errorbody As String
 
     ReceivedCode = DetectError()
+
+    If Error.Text Then
+        Errorbody = gb.lf & "Error: " & Error.Text & gb.lf & "Where: " & Error.Where
+        Errorbody = Trim(Errorbody)
+    Endif
+
     Error.Clear
 
     If ReceivedCode <> 0 Then
         If ReceivedCode = Code Then
-            Test(True, sMessage, Body, Skip, Skipmessage, Todo)
+            Body &= gb.lf & Errorbody
+            Body = Trim(Body)
+            Test(True, Message)
         Else
-            Body = "Wrong error code, expected " & Code & ", but got " & ReceivedCode & gb.lf
-            Test(False, sMessage, Body, Skip, Skipmessage, Todo)
+            Body = "Wrong error code, expected " & Code & ", but got " & ReceivedCode
+            Body &= gb.lf & Errorbody
+            Body = Trim(Body)
+            Test(False, Message)
         Endif
     Else
-        Test(False, sMessage, Body, Skip, Skipmessage, Todo)
+        Test(False, Message)
     Endif
 
 End
@@ -135,36 +181,32 @@ End
 
 ' ------------------------------------------------- End Of Assertions
 
-Private Sub Test(Evaluated As Boolean, sMessage As String, Body As String, Skip As Boolean, Skipmessage As String, Todo As Boolean)
+Private Sub Test(Evaluated As Boolean, Message As String, Optional Body As String)
 
     Inc Track.Counter
+    Inc Track.MethodTestsCount
+    Inc Track.ContainerTestsCount
+
+    If Message = Null Then
+        Message = Track.ContainerName & ":" & Track.TestName & " Assert " & Track.MethodTestsCount
+    Endif
 
     If Error Then
         If Error.Code > 0
             Body = "Error found: " & Error.Text
             Track.NOKs.Add(Track.Counter)
             Error.Clear
-            Print "not ok " & Track.Counter & " - " & sMessage
+            Print "not ok " & Track.Counter & " - " & Message
             Goto TheEnd
         Endif
     Endif
 
-    If Skip = True Then
-        SkipTest(sMessage, Skipmessage)
-        Goto TheEnd
-    Endif
-
-    If Todo = True Then
-        TodoTest(sMessage, Skipmessage)
-        Goto TheEnd
-    Endif
-
     If Evaluated = True Then
         Track.OKs.Add(Track.Counter)
-        Print "ok " & Track.Counter & " - " & sMessage
+        Print "ok " & Track.Counter & " - " & Message
     Else
         Track.NOKs.Add(Track.Counter)
-        Print "not ok " & Track.Counter & " - " & sMessage
+        Print "not ok " & Track.Counter & " - " & Message
         If Body <> Null Then
             Body = "In " & Track.ContainerName & ":" & Track.TestName & gb.lf & Body
         Else
@@ -175,21 +217,6 @@ Private Sub Test(Evaluated As Boolean, sMessage As String, Body As String, Skip 
 TheEnd:
 
     PrintBody(Body)
-
-End
-
-Private Sub SkipTest(sMessage As String, Skipmessage As String)
-
-    Track.Skips.Add(Track.Counter)
-    Print "ok " & Track.Counter & " - " & sMessage & " # skip " & Skipmessage
-
-End
-
-Private Sub TodoTest(sMessage As String, Skipmessage As String)
-
-    Track.OKs.Add(Track.Counter)
-    Track.TODOs.Add(Track.Counter)
-    Print "not ok " & Track.Counter & " - " & sMessage & " # TODO " & Skipmessage
 
 End
 
@@ -205,3 +232,4 @@ Private Sub PrintBody(Body As String)
     Next
 
 End
+

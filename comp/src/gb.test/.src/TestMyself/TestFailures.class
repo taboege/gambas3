@@ -4,9 +4,18 @@ Inherits UnitTest
 
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
+Public Sub SetupContainer()
+    Assert.Note("------------------ Intentional Failures ------------------")
+End
+
+Public Sub TeardownContainer()
+    Assert.Note("------------------ End Intentional Failures ------------------")
+End
+
+
 Public Sub TestStringFailure()
 
-    Assert.EqualsString("Lisa", "Paul", "Intentional String failure.  Ok if not ok.")
+    Assert.EqualsString("Lisa", "Paul", "Intentional String failure. Ok if not ok.")
 
 End
 
@@ -15,3 +24,51 @@ Public Sub TestLongFailure()
     Assert.EqualsLong(2, 3, "Intentional Long failure. Ok if not ok.")
 
 End
+
+Public Sub TestLongTypeMismatchFailure()
+
+    Dim s As String = "3.0"
+
+    Assert.EqualsLong(s, 3, "Intentional Long type mismatch failure. Ok if not ok.")
+
+End
+
+
+Public Sub TestEqualsFailure()
+
+    Dim oOne, oTwo As Object
+
+    Assert.Note("Equals failures")
+    Assert.Equals(2, 3)
+    Assert.Equals("3", 2.0)
+    Assert.Equals("2", 2.1)
+    oOne = New ITest
+    oTwo = New ITest
+    Assert.Equals(oOne, oTwo)
+
+End
+
+Public Sub TestDoACrash()
+
+    Dim a As Long
+
+    'Me.AddTrace("This will be a crash, then its ok")
+
+    'This is a crash
+    a = 3 / 0
+
+End
+
+Public Sub TestError()
+
+    Dim a As Long
+
+    Try a = 3 / 0
+    Assert.ErrorWithCode(5, "Wanted error 5. Ok if not ok.")
+    
+    ' No Error, AssertError has to report a failure
+    Assert.Error("No Error but error expected. Ok if not ok.")
+
+End
+'
+
