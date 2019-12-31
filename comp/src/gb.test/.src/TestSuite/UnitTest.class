@@ -48,6 +48,8 @@ End
 
 Static Private Sub PrintSummary()
 
+    Dim bSuccess As Boolean = True
+
     If Track.NOKs.Count > 0 Then Print "# Failed tests: " & PrintNumbers(Track.NOKs)
 
     'Plan
@@ -58,12 +60,18 @@ Static Private Sub PrintSummary()
     Endif
 
     If Track.NOKs.Count > 0 Or If Track.Counter = 0 Then
-        Print "# ------- No success!  -------"
-    Else If Track.Plan <> Track.Counter Then
+        bSuccess = False
+    Endif
+    
+    If Track.Plan <> Track.Counter Then
+        bSuccess = False
         Print "# Plan was " & Track.Plan & " but assertions counted was " & Track.Counter
-        Print "# ------- No success!  -------"
-    Else If Track.Counter > 0
+    Endif
+
+    If bSuccess = True Then
         Print "# ------- Success!  -------"
+    Else
+        Print "# ------- No success!  -------"
     Endif
 
     Track.Reset()
