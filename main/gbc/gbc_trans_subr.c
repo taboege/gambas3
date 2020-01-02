@@ -57,7 +57,7 @@ void TRANS_subr(int subr, int nparam)
 		{ ".LockWait" }, { ".InputFrom" }, { ".OutputTo" }, { ".Debug" }, { ".Sleep" },
 		{ ".Randomize" }, { ".ErrorTo" }, { "Left" }, { "Mid" }, { ".OpenMemory" },
 		{ ".Chmod" }, { ".Chown" }, { ".Chgrp" }, { ".Use" }, { ".CheckExec" },
-		{ ".MoveKill" }
+		{ ".MoveKill" }, { ".WaitDelay" }, { ".WaitNext" }
 	};
 
 	TRANS_SUBR_INFO *tsi = &subr_info[subr];
@@ -788,15 +788,16 @@ void TRANS_shell(void)
 
 void TRANS_wait(void)
 {
-	int nparam = 0;
-
-	if (!PATTERN_is_newline(*JOB->current))
+	if (TRANS_is(RS_NEXT))
+		TRANS_subr(TS_SUBR_WAIT_NEXT, 0);
+	else if (!PATTERN_is_newline(*JOB->current))
 	{
 		TRANS_expression(FALSE);
-		nparam = 1;
+		TRANS_subr(TS_SUBR_WAIT_DELAY, 1);
 	}
+	else
+		TRANS_subr(TS_SUBR_WAIT, 0);
 
-	TRANS_subr(TS_SUBR_WAIT, nparam);
 	CODE_drop();
 }
 

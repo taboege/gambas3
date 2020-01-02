@@ -1037,6 +1037,7 @@ static void hook_wait(int duration)
 	}
 
 	MAIN_in_wait++;
+	
 	if (duration > 0)
 	{
 		if (CKEY_is_valid())
@@ -1044,8 +1045,11 @@ static void hook_wait(int duration)
 		else
 			qApp->processEvents(QEventLoop::AllEvents, duration);
 	}
+	else if (duration < 0)
+		qApp->processEvents(QEventLoop::AllEvents | QEventLoop::WaitForMoreEvents);
 	else
 		qApp->processEvents(QEventLoop::ExcludeUserInputEvents, duration);
+	
 	MAIN_in_wait--;
 }
 

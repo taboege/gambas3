@@ -66,13 +66,25 @@ void SUBR_error(void)
 void SUBR_wait(ushort code)
 {
 	SUBR_ENTER();
-
+	
+	code &= 0x1F;
+	
 	EXEC_set_native_error(FALSE);
-
-	if (NPARAM == 0)
+	
+	if (code == 0)
 		GB_Wait(0);
-	else
-		GB_Wait((int)(SUBR_get_float(PARAM) * 1000 + 0.5));
+	else if (code == 1)
+	{
+		int delay = (int)(SUBR_get_float(PARAM) * 1000 + 0.5);
+		if (delay < 0)
+			delay = 0;
+		GB_Wait(delay);
+	}
+	else if (code == 2)
+	{
+		NPARAM = 0;
+		GB_Wait(-1);
+	}
 
 	if (EXEC_has_native_error())
 	{

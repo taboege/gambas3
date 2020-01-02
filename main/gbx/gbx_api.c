@@ -2433,9 +2433,9 @@ void GB_Wait(int delay)
 
 	DEBUG_enter_event_loop();
 
-	if (delay == 0)
+	if (delay <= 0)
 	{
-		HOOK_DEFAULT(wait, WATCH_wait)(0);
+		HOOK_DEFAULT(wait, WATCH_wait)(delay);
 	}
 	else
 	{
