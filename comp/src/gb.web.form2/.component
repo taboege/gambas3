@@ -1,0 +1,7 @@
+[Component]
+Key=gb.web.form2
+Version=3.14.90
+State=2
+Needs=EventLoop
+Requires=gb.util,gb.web,gb.util.web
+Excludes=gb.web.form

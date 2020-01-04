@@ -1,0 +1,58 @@
+# Gambas Form File 3.0
+
+{ WebForm WebForm
+  #MoveScaled(0,0,83,91)
+  Arrangement = Arrange.Vertical
+  Margin = True
+  Spacing = True
+  { WebHBox1 WebHBox
+    #MoveScaled(1,1,81,6)
+    Spacing = True
+    { WebButton1 WebButton
+      #MoveScaled(1,1,18,4)
+      Text = ("OK")
+    }
+    { WebLabel1 WebLabel
+      #MoveScaled(20,1,30,4)
+      Expand = True
+      Font = "bold,2em"
+      Alignment = Align.Left
+      Border = True
+    }
+    { WebButton2 WebButton
+      #MoveScaled(51,1,11,4)
+      Text = ("Reload")
+    }
+  }
+  { WebHBox2 WebHBox
+    #MoveScaled(1,8,81,6)
+    Spacing = True
+    { WebCheckBox1 WebCheckBox
+      #MoveScaled(1,1,18,4)
+      Text = ("Check me")
+    }
+    { WebTextBox1 WebTextBox
+      #MoveScaled(20,1,27,4)
+      Enabled = False
+    }
+  }
+  { WebVBox1 WebVBox
+    #MoveScaled(1,15,81,14)
+    { WebRadioButton1 WebRadioButton
+      #MoveScaled(1,1,79,4)
+      Text = ("Alpha")
+    }
+    { WebRadioButton2 WebRadioButton
+      #MoveScaled(1,5,79,4)
+      Text = ("Beta")
+    }
+    { WebRadioButton3 WebRadioButton
+      #MoveScaled(1,9,79,4)
+      Text = ("Gamma")
+    }
+  }
+  { WebTimer1 WebTimer
+    #MoveScaled(43,52)
+    Delay = 5000
+  }
+}

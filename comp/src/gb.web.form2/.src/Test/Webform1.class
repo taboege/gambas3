@@ -1,0 +1,43 @@
+' Gambas class file
+
+Export
+
+Public Sub WebForm_Open()
+
+  WebTimer1_Timer
+
+End
+
+Public Sub WebButton1_Click()
+
+  WebButton1.Text = "Message !"
+  Message(Message.Question("Happy new year!", "Yes", "No", "Cancel"))
+  WebLabel1.Text = "Happy new year!"
+  WebButton1.Text = "OK"
+  
+End
+
+Public Sub WebTimer1_Timer()
+
+  WebLabel1.Text = Format(Now, "hh:nn:ss")
+
+End
+
+Public Sub WebCheckBox1_Click()
+
+  WebTextBox1.Enabled = WebCheckBox1.Value
+  If WebTextBox1.Enabled Then WebTextBox1.SetFocus()
+
+End
+
+Public Sub WebTextBox1_Change()
+
+  WebLabel1.Text = WebTextBox1.Text
+
+End
+
+Public Sub WebButton2_Click()
+
+  Me.Close
+
+End

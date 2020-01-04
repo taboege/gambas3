@@ -1,0 +1,14 @@
+' Gambas class file
+
+''' Constants used by the ScrollBar property of many controls.
+
+Export
+
+'' No scrollbar is visible.
+Public Const None As Integer = 0
+'' The horizontal scrollbar is visible if needed.
+Public Const Horizontal As Integer = 1
+'' The vertical scrollbar is visible if needed.
+Public Const Vertical As Integer = 2
+'' Both horizontal and vertical scrollbars are visible if needed.
+Public Const Both As Integer = 3

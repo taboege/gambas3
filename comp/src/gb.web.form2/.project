@@ -1,0 +1,18 @@
+# Gambas Project File 3.0
+Startup=Webform1
+Icon=.hidden/webform.png
+Version=3.14.90
+VersionFile=1
+Component=gb.util
+Component=gb.signal
+Component=gb.util.web
+Component=gb.web
+Arguments=[["","TEST"]]
+CurrentArgument=1
+TabSize=2
+Translate=1
+Language=en_US
+RunAfter=cp -f $(FILE) /home/guygle/guygle/cgi-bin/test
+Type=Component
+Packager=1
+DoNotTranslate=".src/Test"

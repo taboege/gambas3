@@ -1,0 +1,11 @@
+' Gambas class file
+
+''' This class provides constants for alignment of text, cells...
+
+Export
+
+Public Const Normal As Integer = 0
+Public Const Left As Integer = 1
+Public Const Right As Integer = 2
+Public Const Center As Integer = 3
+
