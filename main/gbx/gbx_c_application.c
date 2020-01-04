@@ -236,6 +236,7 @@ static void init_again(int old_pid)
 	FILE_remove_temp_file();
 	snprintf(old, sizeof(old),FILE_TEMP_DIR, getuid(), old_pid);
 	rename(old, FILE_make_temp(NULL, NULL));
+	FILE_chdir(PROJECT_path);
 }
 
 BEGIN_PROPERTY(Application_Daemon)

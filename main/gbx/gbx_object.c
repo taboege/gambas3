@@ -515,3 +515,8 @@ OBJECT *OBJECT_active_parent(void *object)
 
 	return parent;
 }
+
+int OBJECT_check_valid(void *object)
+{
+	return *((char *)object + OBJECT_class(object)->special[SPEC_INVALID]);
+}

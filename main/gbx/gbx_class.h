@@ -327,19 +327,19 @@ typedef
 		uint _reserved2;                  //     128
 		#endif
 
-		short special[14];                // 104 156  special functions index (_new, _free, ...)
+		short special[16];                // 108 160  special functions index (_new, _free, ...)
 
-		TYPE array_type;                  // 108 164  datatype of the contents if this class is an array class of objects
-		struct _CLASS *array_class;       // 112 172  array of class
-		struct _CLASS *astruct_class;     // 116 180  array of struct class
+		TYPE array_type;                  // 112 168  datatype of the contents if this class is an array class of objects
+		struct _CLASS *array_class;       // 116 176  array of class
+		struct _CLASS *astruct_class;     // 120 184  array of struct class
 
-		void *instance;                   // 120 188  automatically created instance
-		void **operators;                 // 124 196  arithmetic interface
-		bool (*convert)();                // 128 204  convert method
+		void *instance;                   // 124 192  automatically created instance
+		void **operators;                 // 128 200  arithmetic interface
+		bool (*convert)();                // 132 208  convert method
 
-		COMPONENT *component;             // 132 212  The component the class belongs to
+		COMPONENT *component;             // 136 216  The component the class belongs to
 
-		struct _CLASS *next;              // 136 220  next class
+		struct _CLASS *next;              // 140 224  next class
 		}
 	CLASS;
 
@@ -366,7 +366,8 @@ typedef
 		SPEC_ATTACH,
 		SPEC_READY,
 		SPEC_READ,
-		SPEC_WRITE
+		SPEC_WRITE,
+		SPEC_INVALID
 		}
 	CLASS_SPECIAL;
 
@@ -459,8 +460,8 @@ char *CLASS_get_name(CLASS *class);
 CLASS_DESC_SYMBOL *CLASS_get_symbol(CLASS *class, const char *name);
 CLASS_DESC *CLASS_get_symbol_desc(CLASS *class, const char *name);
 
-short CLASS_get_symbol_index_kind(CLASS *class, const char *name, int kind, int kind2);
-CLASS_DESC *CLASS_get_symbol_desc_kind(CLASS *class, const char *name, int kind, int kind2);
+//short CLASS_get_symbol_index_kind(CLASS *class, const char *name, int kind, int kind2);
+CLASS_DESC *CLASS_get_symbol_desc_kind(CLASS *class, const char *name, int kind, int kind2, TYPE type);
 CLASS_DESC_METHOD *CLASS_get_special_desc(CLASS *class, int spec);
 
 #define CLASS_get_desc(_class, _index) (((_class)->table[_index].desc))

@@ -203,6 +203,18 @@ static bool is_long_option(const char *arg, char option, char *long_option)
 		return (arg[0] == '-' && arg[1] == '-' && !strcmp(&arg[2], long_option));
 }
 
+static void print_version()
+{
+#ifdef TRUNK_VERSION
+#ifdef TRUNK_VERSION_GIT
+	printf(VERSION " " TRUNK_VERSION "\n");
+#else /* from svn */
+	printf(VERSION " r" TRUNK_VERSION "\n");
+#endif
+#else /* no TRUNK_VERSION */
+	printf(VERSION "\n");
+#endif
+}
 
 int main(int argc, char *argv[])
 {
@@ -242,7 +254,7 @@ int main(int argc, char *argv[])
 			{
 				printf(
 					"\nExecute a Gambas project or evaluate a Gambas expression (-e option).\n"
-					"\nUsage: gbx" GAMBAS_VERSION_STRING " [options] [<project file>] [-- <arguments>]\n"
+					"\nUsage: gbx" GAMBAS_VERSION_STRING " [options] [<project directory>] [-- <arguments>]\n"
 					"       gbx" GAMBAS_VERSION_STRING " -e <expression>\n\n"
 					);
 			}
@@ -271,23 +283,14 @@ int main(int argc, char *argv[])
 		}
 		else if (is_long_option(argv[1], 'V', "version"))
 		{
-#ifdef TRUNK_VERSION
-#ifdef TRUNK_VERSION_GIT
-			printf(VERSION " " TRUNK_VERSION "\n");
-#else /* from svn */
-			printf(VERSION " r" TRUNK_VERSION "\n");
-#endif
-#else /* no TRUNK_VERSION */
-			printf(VERSION "\n");
-#endif
+			print_version();
 			my_exit(0);
 		}
 		else if (is_long_option(argv[1], 'L', "license"))
 		{
-			printf(
-				"\nGambas interpreter version " VERSION "\n"
-				COPYRIGHT
-				);
+			printf("\nGambas interpreter version ");
+			print_version();
+			printf(COPYRIGHT);
 			my_exit(0);
 		}
 	}
@@ -405,7 +408,7 @@ int main(int argc, char *argv[])
 
 		/* Startup class */
 		CLASS_load(PROJECT_class);
-		startup = (CLASS_DESC_METHOD *)CLASS_get_symbol_desc_kind(PROJECT_class, "main", CD_STATIC_METHOD, 0);
+		startup = (CLASS_DESC_METHOD *)CLASS_get_symbol_desc_kind(PROJECT_class, "main", CD_STATIC_METHOD, 0, T_ANY);
 		if (startup == NULL)
 			THROW(E_MAIN);
 

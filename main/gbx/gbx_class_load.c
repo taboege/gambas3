@@ -463,8 +463,6 @@ static void load_structure(CLASS *class, int *structure, int nfield)
 		sclass->load->sort = sclass->sort;
 
 	CLASS_search_special(sclass);
-	/*for (i = 0; i < MAX_SPEC; i++)
-		sclass->special[i] = NO_SYMBOL;*/
 
 	sclass->is_struct = TRUE;
 
@@ -1024,12 +1022,9 @@ static void load_without_inits(CLASS *class)
 		CATCH
 		{
 			COMPONENT_current = save;
-			THROW_CLASS(class, "Unable to load class file", "");
+			THROW_CLASS(class, ERROR_last.msg, "");
 		}
 		END_TRY
-
-		/*if (BUFFER_load_file(&class->data, FILE_get(name)))
-			THROW(E_CLASS, _class_name, "Unable to load class file", "");*/
 	}
 
 	COMPONENT_current = save;

@@ -87,6 +87,7 @@ void *OBJECT_create_native(CLASS *class, VALUE *param);
 OBJECT *OBJECT_parent(void *object);
 OBJECT *OBJECT_active_parent(void *object);
 
+int OBJECT_check_valid(void *object);
 
 /*
 static INLINE CLASS *OBJECT_class(void *object)

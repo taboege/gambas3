@@ -1591,7 +1591,7 @@ void EXEC_public(CLASS *class, void *object, const char *name, int nparam)
 {
 	CLASS_DESC *desc;
 
-	desc = CLASS_get_symbol_desc_kind(class, name, (object != NULL) ? CD_METHOD : CD_STATIC_METHOD, 0);
+	desc = CLASS_get_symbol_desc_kind(class, name, (object != NULL) ? CD_METHOD : CD_STATIC_METHOD, 0, T_VOID);
 
 	if (UNLIKELY(desc == NULL))
 		return;
