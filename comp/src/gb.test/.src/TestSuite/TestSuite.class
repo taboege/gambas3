@@ -57,7 +57,7 @@ Public Sub Run()
 
 Catch
     'Bail out
-    Print "Bail out! " & "Unittest StopContainerped with error \"" & Error.Text & "\" caused by " & CurrentAction & "."
+    Print "Bail out! " & "Unittest Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & "."
     Print "# ------- No success!  -------"
     Quit
 

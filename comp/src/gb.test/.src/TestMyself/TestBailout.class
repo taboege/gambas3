@@ -7,6 +7,7 @@ Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
 Public Sub TestBailout()
 
-  Me.BailOut("Bo-Test")
+    Assert.True(True, "Ok if ok")
+    Me.BailOut("Bo-Test")
 
 End
