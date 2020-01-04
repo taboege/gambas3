@@ -5,6 +5,8 @@
 Export
 Create Private
 
+Public _Invalid As Boolean
+
 Public Const _IsControl As Boolean = True
 Public Const _Properties As String = "Class,Width{WebCoord},Height{WebCoord},Visible=True,Enabled=True,Tag,Expand,Ignore,Background{Color},Foreground{Color},Tooltip,Font{WebFont}"
 Public Const _Family As String = "WebForm"
@@ -73,6 +75,7 @@ Property Tooltip As String
 '' Return or set the specific font of the control.
 Property Font As String
 
+Static Private $iCount As Integer
 Static Private $iLastId As Integer
 Static Private $iLastFormId As Integer
 Static Private $cFromId As New Collection
@@ -113,6 +116,9 @@ Private $sTooltip As String
 Public Sub _new(Optional Parent As WebContainer)
   
   Dim sName As String
+  
+  Inc $iCount
+  WebForm.PrintLog("==== " & $iCount & " controls")
   
   Inc $iLastId
   $iId = $iLastId
@@ -508,9 +514,16 @@ Public Sub Refresh()
   Else
     WebForm.PrintLog("Refresh " & Me.Name)
   Endif
+  
   _Refresh = True
   WebForm._HasRefresh = True
   
+  _CancelChildrenRefresh()
+  
+End
+
+Public Sub _CancelChildrenRefresh()
+
 End
 
 Public Sub _RefreshReply() As Boolean
@@ -792,8 +805,12 @@ Public Sub Delete()
   hParent = Parent_Read()
   If hParent Then hParent._Remove(Me)
   
+  Object.Detach(Me)
   $cFromName[$sName] = Null
   $cFromId[$iId] = Null
+  _Invalid = True
+  Dec $iCount
+  WebForm.PrintLog("==== " & $iCount & " controls")
   'Debug $sName;; $iId;; System.Backtrace.Join(" ")
   
 End

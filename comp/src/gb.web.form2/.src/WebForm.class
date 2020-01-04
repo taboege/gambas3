@@ -26,16 +26,16 @@ Property Title As String
 Property Resizable As Boolean
 '' Return or set the minimum width of the form.
 ''
-' '' This property can take any valid CSS size. If not set, the control will have no minimum width.
-' Property Width, W As String
-' '' Return or set the minimum height of the form.
-' ''
-' '' This property can take any valid CSS size. If not set, the control will have no minimum height.
-' Property Height, H As String
-' '' Return if the form is a popup.
-' Property Read Popup As Boolean
-' '' Return the control that owns the popup.
-' Property Read PopupParent As WebControl
+'' This property can take any valid CSS size. If not set, the control will have no minimum width.
+Property Width, W As String
+'' Return or set the minimum height of the form.
+''
+'' This property can take any valid CSS size. If not set, the control will have no minimum height.
+Property Height, H As String
+'' Return if the form is a popup.
+Property Read Popup As Boolean
+'' Return the control that owns the popup.
+Property Read PopupParent As WebControl
 '' Return or set if the form is persistent.
 ''
 '' Closing a non-persistent form automatically destroys it.
@@ -256,17 +256,29 @@ Static Public Sub Main()
   Signal[Signal.SIGUSR1].Catch()
     
   If Not sCookie Then 
+    
     sCookie = MakeSessionId()
     Try hLock = Lock sTemp &/ sCookie & ".lock" Wait 10
-    PrintLog("EXEC " & Application.Path &/ Args[0])
-    hProcess = Exec [Application.Path &/ Args[0], "", sCookie] Wait
+
+    If Not Exist(Application.Path &/ Args[0]) Then
+      PrintLog("EXEC gbx3 " & Application.Path)
+      hProcess = Exec ["gbx3", Application.Path, "--", "", sCookie] Wait
+    Else
+      PrintLog("EXEC " & Application.Path &/ Args[0])
+      hProcess = Exec [Application.Path &/ Args[0], "", sCookie] Wait
+    Endif
+    
     While Not Exist(sTemp &/ sCookie, True)
       Sleep 0.05
     Wend
+    
     PrintLog("COOKIE = " & sCookie & " [NEW]")
+    
   Else
+    
     Try hLock = Lock sTemp &/ sCookie & ".lock" Wait 10
     PrintLog("COOKIE = " & sCookie)
+    
   Endif
   
   If Error Then
@@ -310,7 +322,7 @@ Static Public Sub Main()
   
 Catch
   
-  PrintLog("**** " & Error.Where & ": " & Error.Text)
+  PrintLog("**** " & Error.Where & ": " & Error.Backtrace.Join(" "))
   
 End
 
@@ -351,7 +363,7 @@ Static Private Sub BeginResponse()
   PrintLog("Send SIGUSR1 to request process " & CStr($iRequestProcess))
   Signal.Send($iRequestProcess, Signal.SIGUSR1)
   
-  Sleep 0.01 ' FIXME: To let the parent process receive the signal
+  Sleep 0.01 ' FIXME: Let the parent process receive the signal
   
 End
 
@@ -427,7 +439,7 @@ Static Public Sub Application_Signal(Num As Integer)
   
 Catch
 
-  PrintLog("**** " & Error.Text & ": " & Error.Where)  
+  PrintLog("**** " & Error.Text & ": " & Error.Backtrace.Join(" "))  
   Signal.Send($iRequestProcess, Signal.SIGKILL)
   Exit()
   
@@ -891,6 +903,13 @@ Private Sub ExitEventLoop(vReturnValue As Variant)
   
 End
 
+Public Sub Delete()
+  
+  PrintLog("Delete " & Me.Name & " (" & Object.Count(Me) & ") " & System.Backtrace.Join(" "))
+  Super.Delete()
+  $hWindowContainer = Null
+  
+End
 
 '' Close the form.
 ''
@@ -905,16 +924,14 @@ Public Sub Close(Optional ReturnValue As Variant)
   
   Raise Close
   
-  If Me._Window Then
+  If _Window Then
   
-    hWindow = WebControl.FromId(Me._Window)
+    hWindow = WebControl.FromId(_Window)
     With hWindow
       .Close()
-      If $bPersistent Then 
-        .Hide
-      Else
-        .Delete
-      Endif
+      If $bPersistent Then .Child = Null
+      .Delete
+      _Window = 0
     End With
   
     ExitEventLoop(ReturnValue)
@@ -978,27 +995,9 @@ Public Sub Show()
   
 End
 
-'' Show the form as a modal dialog.
-''
-'' ~Parent~ is the owner of the dialog. If not specified, then the value of [/lang/last] is used as owner.
-'' 
-'' An error is raised if you try to call this method on an embedded form.
+Private Sub RunEventLoop()
 
-Public Sub ShowModal(Optional Parent As WebControl) As Variant
-  
-  Dim hWindow As WebWindow
   Dim iLevel As Integer
-  Dim vReturn As Variant
-  
-  If Me.Parent Then Error.Raise("Form is embedded")
-  If _Window = 0 Then DoShow()
-  
-  hWindow = WebControl.FromId(_Window)
-  If hWindow Then
-    hWindow.Modal = True
-    If IsMissing(Parent) Then Try Parent = Last
-    If Parent Then hWindow.ParentControl = Parent.Name
-  Endif
   
   Inc $iEventLoopLevel
   iLevel = $iEventLoopLevel
@@ -1012,15 +1011,40 @@ Public Sub ShowModal(Optional Parent As WebControl) As Variant
     SendResponse
     EndResponse
   
-    PrintLog("ShowModal: entering event loop")
+    PrintLog("Entering event loop (" & Object.Count(Me) & ")")
     $bDoNotRespond = False
     While $iEventLoopLevel = iLevel
       Wait Next
     Wend
     $bDoNotRespond = False
-    PrintLog("ShowModal: exiting event loop")
+    PrintLog("Exiting event loop (" & Object.Count(Me) & ")")
     
   Endif
+
+End
+
+'' Show the form as a modal dialog.
+''
+'' ~Parent~ is the owner of the dialog. If not specified, then the value of [/lang/last] is used as owner.
+'' 
+'' An error is raised if you try to call this method on an embedded form.
+
+Public Sub ShowModal(Optional Parent As WebControl) As Variant
+  
+  Dim hWindow As WebWindow
+  Dim vReturn As Variant
+  
+  If Me.Parent Then Error.Raise("Form is embedded")
+  If _Window = 0 Then DoShow()
+  
+  hWindow = WebControl.FromId(_Window)
+  If hWindow Then
+    hWindow.Modal = True
+    If IsMissing(Parent) Then Try Parent = Last
+    If Parent Then hWindow.ParentControl = Parent.Name
+  Endif
+  
+  RunEventLoop
   
   vReturn = $vEventLoopReturn
   $vEventLoopReturn = Null
@@ -1032,28 +1056,30 @@ End
 ''
 '' - ~Control~ is the owner of the popup. It is normally the control the popup is attached to.
 '' - ~Alignment~ defines the position of the popup on the screen:
-''   - [Align.Left](../../align/left) : the popup is aligned to the left of its owner.
+''   - [Align.Left](../../align/left) : the popup is aligned to the left of its owner (this is the default).
 ''   - [Align.Right](../../align/eight) : the popup is aligned to the right of its owner.
-''
-'' By default the popup is aligned to the left of its owner.
 
 Public Sub ShowPopup(Control As WebControl, Optional Alignment As Integer = Align.Left)
   
   Dim hWindow As WebWindow
   
   If Me.Parent Then Error.Raise("Form is embedded")
-  If _Window Then Return
+  If _Window Then 
+    hWindow = WebControl.FromId(_Window)
+    If hWindow.Visible Then Return
+    hWindow.Show()
+  Endif
   
-  hWindow = New WebWindow(WebForm._Current._GetWindowContainer())
+  If Not hWindow Then hWindow = New WebWindow(WebForm._Current._GetWindowContainer())
   hWindow.Child = Me
   hWindow.Resizable = $bResizable
   hWindow.PopupAlignment = Alignment
   hWindow.PopupControl = Control.Name
-  hWindow.Modal = True  
+  hWindow.Modal = True
   
   _Window = hWindow.Id
   
-  Raise Open
+  RunEventLoop
   
 End
 
@@ -1061,6 +1087,7 @@ End
 '' [[ warning
 '' A main form cannot be moved nor resized.
 '' ]]
+
 Public Sub Move(X As String, Y As String, Optional Width As String, Optional Height As String)
   
   Dim hWindow As WebWindow = WebControl.FromId(_Window)
@@ -1079,6 +1106,7 @@ End
 '' [[ warning
 '' A main form cannot be resized.
 '' ]]
+
 Public Sub Resize(Width As String, Height As String)
   
   Dim hWindow As WebWindow = WebControl.FromId(_Window)
@@ -1112,8 +1140,34 @@ End
 
 Static Public Sub Application_Error()
   
-  PrintLog(Error.Text & ": " & Error.Backtrace.Join(" "))
+  PrintLog("**** " & Error.Text & ": " & Error.Backtrace.Join(" "))
   
+End
+
+Private Function Width_Read() As String
+
+  Return Me.Style["min-width"]
+
+End
+
+Private Sub Width_Write(Value As String)
+
+  Me.Style["min-width"] = Value
+  UpdateSize
+
+End
+
+Private Function Height_Read() As String
+
+  Return Me.Style["min-height"]
+
+End
+
+Private Sub Height_Write(Value As String)
+
+  Me.Style["min-height"] = Value
+  UpdateSize
+
 End
 
 Public Sub _GetWindowContainer() As WebContainer
@@ -1122,3 +1176,25 @@ Public Sub _GetWindowContainer() As WebContainer
   Return $hWindowContainer
   
 End
+
+Private Function Popup_Read() As Boolean
+
+  Dim hWindow As WebWindow = WebForm.FromId(Me._Window)
+  If hWindow Then Return hWindow.IsPopup()
+  
+End
+
+Private Function PopupParent_Read() As WebControl
+
+  Dim hWindow As WebWindow = WebForm.FromId(Me._Window)
+  If hWindow Then Return WebControl.FromName(hWindow.PopupControl)
+
+End
+
+Public Sub _RefreshReply() As Boolean
+  
+  If Super._RefreshReply() Then Return
+  If $hWindowContainer Then $hWindowContainer._RefreshReply()
+  
+End
+

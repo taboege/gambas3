@@ -235,7 +235,11 @@ End
 
 Private Sub Child_Write(Value As WebForm)
 
-  $iFormId = Value.Id
+  If Value Then
+    $iFormId = Value.Id
+  Else
+    $iFormId = 0
+  Endif
   Me.Refresh
 
 End
@@ -295,6 +299,7 @@ Private Sub PopupControl_Write(Value As String)
   Else
     Me.Class = ""
   Endif
+  Me.Refresh
 
 End
 
@@ -307,14 +312,15 @@ End
 Private Sub PopupAlignment_Write(Value As Integer)
 
   $iPopupAlignment = Value
+  Me.Refresh
 
 End
 
 Public Sub Close()
   
-  If Not Me.Child.Persistent Then
+  'If Not Me.Child.Persistent Then
     WebForm._AddJavascriptBefore("gw.window.close(" & JS(Me.Name) & ")")
-  Endif
+  'Endif
   WebForm._AddJavascriptBefore("gw.window.refresh()")
   
   If IsPopup() Then WebControl.FromName($sPopupControl).SetFocus

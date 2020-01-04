@@ -41,3 +41,9 @@ Public Sub WebButton2_Click()
   Me.Close
 
 End
+
+Public Sub WebComboBox1_Click()
+
+  WebLabel1.Text = Last.Text
+
+End

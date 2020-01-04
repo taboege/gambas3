@@ -224,6 +224,21 @@ Public Sub _RefreshReply() As Boolean
   
 End
 
+Public Sub _CancelChildrenRefresh()
+
+  Dim I As Integer
+
+  For I = 0 To $aChildren.Max
+    With WebControl.FromName($aChildren[I])
+      If ._Refresh Then
+        ._Refresh = False
+        ._CancelChildrenRefresh()
+      Endif
+    End With
+  Next
+  
+End
+
 Public Sub _SetContainer(hCont As WebContainer)
   
   If _Container = hCont Then Return
@@ -302,6 +317,7 @@ Public Sub Delete()
   DeleteChildren
   Dec WebForm._DisableRefresh
   Super.Delete
+  _Container = Null
   
 End
 

@@ -30,6 +30,14 @@ Public Sub _new()
   
 End
 
+Public Sub Delete()
+  
+  Super.Delete()
+  $aTab.Clear
+  
+End
+
+
 Private Function Count_Read() As Integer
 
   Return $aTab.Count

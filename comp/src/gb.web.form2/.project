@@ -1,5 +1,6 @@
 # Gambas Project File 3.0
 Startup=Webform1
+UseHttpServer=1
 Icon=.hidden/webform.png
 Version=3.14.90
 VersionFile=1
@@ -8,7 +9,7 @@ Component=gb.signal
 Component=gb.util.web
 Component=gb.web
 Arguments=[["","TEST"]]
-CurrentArgument=1
+CurrentArgument=0
 TabSize=2
 Translate=1
 Language=en_US
