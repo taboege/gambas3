@@ -41,6 +41,14 @@ Public Sub _put(sVal As String, sVar As String)
 
 End
 
+Public Sub Reset()
+  
+  $cKey.Clear
+  $cCache.Clear
+  Request.Reset
+  
+End
+
 Public Sub Encode(Path As String) As String
   
   Return URL.Encode(Path)
