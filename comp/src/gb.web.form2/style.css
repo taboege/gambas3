@@ -108,8 +108,8 @@ P:first-child,UL:first-child,OL:first-child {
   border-left: solid #C0C0C0 1px;
   border-top: solid #C0C0C0 1px;
   border-right: solid #C0C0C0 1px;
-  border-top-left-radius: 0.5em;
-  border-top-right-radius: 0.5em;
+  /*border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;*/
   background: white;
 }
 

@@ -3,11 +3,17 @@
 Export
 Inherits WebControl
 
-Public Const _Properties As String = "*,Border,Image{WebImage}"
+Public Const _Properties As String = "*,Border,Image{WebImage},Mode{WebImage.*}=Normal,Alignment{Align.*}=Normal"
+
+Public Enum Normal, Fill, Cover, Contain, {Repeat}
 
 Property Image As String
+Property Mode As Integer
+Property Alignment As Integer
 
 Private $sImage As String
+Private $iMode As Integer
+Private $iAlignment As Integer
 
 Public Sub _new()
   
@@ -15,25 +21,70 @@ Public Sub _new()
   
 End
 
-
-Public Sub _BeforeRender()
+Public Sub _RenderStyleSheet()
   
+  Dim sAlign As String
+  
+  Me._StartStyleSheet
+  
+  Super._RenderStyleSheet()
+
   If $sImage Then
-    Print "<img"; Me._GetClassId(); 
-    If $sImage Then
-      Print " src=\""; Me._GetImageLink($sImage); "\"";
+  
+    Me._AddStyleSheet("background-image:url(" & JS(Me._GetImageLink($sImage)) & ");")
+  
+    Select Case $iMode
+      
+      Case Fill
+        Me._AddStyleSheet("background-size:100%;")
+      
+      Case Cover
+        Me._AddStyleSheet("background-size:cover;")
+        Me._AddStyleSheet("background-repeat:no-repeat;")
+        
+      Case Contain
+        Me._AddStyleSheet("background-size:contain;")
+        Me._AddStyleSheet("background-repeat:no-repeat;")
+
+      Case {Repeat}
+      
+      Default
+        Me._AddStyleSheet("background-repeat:no-repeat;")
+      
+    End Select
+    
+    If Align.IsLeft($iAlignment) Then 
+      sAlign = "left"
+    Else If Align.IsRight($iAlignment) Then
+      sAlign = "right"
+    Else
+      sAlign = "center"
     Endif
-    Me._RenderStyleSheet()
-    Print ">";
-  Else
-    Super._BeforeRender()
+    
+    If Align.IsTop($iAlignment) Then
+      sAlign &= " top"
+    Else If Align.IsBottom($iAlignment) Then
+      sAlign &= " bottom"
+    Else
+      sAlign &= " center"
+    Endif
+    
+    Me._AddStyleSheet("background-position:" & sAlign & ";")
+    
   Endif
+    
+  Me._AddStyleSheet("display:flex;")
+  Me._AddStyleSheet("flex-flow:column;")
+  
+  Me._EndStyleSheet
   
 End
 
-Public Sub _AfterRender()
+Public Sub _Render()
   
-  If Not $sImage Then Super._AfterRender()
+  If $sImage And If $iMode = Normal Then
+    Print "<img"; Me._GetClassId(); " style=\"visibility:hidden\" src=\""; Me._GetImageLink($sImage); "\">";
+  Endif
   
 End
 
@@ -56,3 +107,29 @@ End
 '   If sProp = "#count" Then $iCpt = vVal
 '   
 ' End
+
+Private Function Mode_Read() As Integer
+
+  Return $iMode
+
+End
+
+Private Sub Mode_Write(Value As Integer)
+
+  $iMode = Value
+  Me.Refresh
+
+End
+
+Private Function Alignment_Read() As Integer
+
+  Return $iAlignment
+
+End
+
+Private Sub Alignment_Write(Value As Integer)
+
+  $iAlignment = Value
+  Me.Refresh
+
+End

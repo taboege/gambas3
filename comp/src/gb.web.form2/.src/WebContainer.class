@@ -165,6 +165,7 @@ End
 
 Private Sub Arrangement_Write(Value As Integer)
 
+  If $iArrangement = Value Then Return
   $iArrangement = Value
   UpdateContainer()
 
@@ -178,6 +179,7 @@ End
 
 Private Sub Margin_Write(Value As Boolean)
 
+  If $bMargin = Value Then Return
   $bMargin = Value
   UpdateContainer()
 
@@ -191,6 +193,7 @@ End
 
 Private Sub Spacing_Write(Value As Boolean)
 
+  If $bSpacing = Value Then Return
   $bSpacing = Value
   UpdateContainer()
 
@@ -205,6 +208,7 @@ End
 Private Sub Border_Write(Value As Boolean)
 
   $bBorder = Value
+  Me.Refresh
 
 End
 
@@ -222,6 +226,7 @@ End
 
 Public Sub _SetContainer(hCont As WebContainer)
   
+  If _Container = hCont Then Return
   _Container = hCont
   UpdateContainer()
   
@@ -229,13 +234,16 @@ End
 
 Private Sub UpdateContainer()
 
-  If Not _Container Then Return
-  
-  With _Container
-    .Arrangement = $iArrangement
-    .Spacing = $bSpacing
-    .Margin = $bMargin
-  End With
+  If _Container Then
+    With _Container
+      .Arrangement = $iArrangement
+      .Spacing = $bSpacing
+      .Margin = $bMargin
+      .Indent = $bIndent
+    End With
+  Else
+    Me.Refresh
+  Endif
   
 End
 
@@ -305,6 +313,8 @@ End
 
 Private Sub Indent_Write(Value As Boolean)
 
+  If $bIndent = Value Then Return
   $bIndent = Value
+  UpdateContainer()
 
 End
