@@ -72,7 +72,7 @@ Public Sub GetBranches(ByRef sCurrent As String) As String[]
   Dim sBranch As String
   Dim aBranches As New String[]
   
-  sResult = RunShell("git branch") 'VersionControl.Shell("cd " & Shell$(Project.Dir) & " && git branch")
+  sResult = RunShell("git branch", True) 
   
   For Each sBranch In Split(Trim(sResult), "\n")
     sBranch = Trim(sBranch)

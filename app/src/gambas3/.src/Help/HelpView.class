@@ -156,6 +156,8 @@ Public Sub WebView_Progress()
       'Me.Stop
       hTimer = New Timer As "TimerUrl"
       hTimer.Trigger
+      
+      Me.Stop
      
     Endif
   
