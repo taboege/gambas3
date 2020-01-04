@@ -10,9 +10,10 @@ Public Sub Main()
     ' UnitTest.Main("TestSetupTeardown", Null, True)
 
     ' Here every test must fail:
-    'UnitTest.Main("TestFailures", Null, True)
+    UnitTest.Main("TestFailures", Null, True)
+    UnitTest.Main("TestBailout", Null, True)
 
     'Test all
-    UnitTest.Main(Null, Null, True)
+    'UnitTest.Main(Null, Null, True)
 
 End
