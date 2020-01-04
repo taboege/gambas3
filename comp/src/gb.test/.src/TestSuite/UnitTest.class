@@ -111,6 +111,7 @@ Static Private Function RunTests(SingleTestContainer As String, Optional NamePro
 
 End
 
+
 Static Function GetAllTestContainerNames(Optional SingleTestContainer As String, Optional DoSelfTest As Boolean) As String[]
 
     Dim TestClass As Class
@@ -118,40 +119,47 @@ Static Function GetAllTestContainerNames(Optional SingleTestContainer As String,
     Dim sNames As New String[]
     Dim sName As String
 
-    If Not DoSelfTest Then
-        sNames = Dir("../.gambas")
-    Else
-        sNames = Dir(".gambas")
-    Endif
+    sNames = Dir(".../.gambas")
 
     Assert sNames
 
     sNames.Sort
     For Each sName In sNames
+        ' 1st Alternative:
+        ' 
         Try TestClass = Class.Load(sName)
         If TestClass Then
             If TestClass.Parent Then
                 If TestClass.Parent.Name = "UnitTest" Then
-                    'Print sName
-                    GoSub AddClass
+                     GoSub AddClass
                 Endif
             Endif
         Endif
-        ' FIXME: Class.Stat(sName).Parent = "UnitTest" if included as component
-        ' This does not work if gb.test is included as component
+
+        ' 2nd Alternative:
+        'Usage of 2nd Alternative creates this error:
+        '"Class.GotoNextSection.12"
+        'which unfortunately happens only if gb.test is a component of a project.
+
         ' If Class.Stat(sName).Parent = "UnitTest" Then
         '     GoSub AddClass
         ' Endif
+
     Next
 
     Goto Done
 
 AddClass:
 
-    Try TestClass = Class.Load(sName)
+    TestClass = Class.Load(sName)
     If TestClass Then
-        'FIXME: Class.Stat(sName).Name does not work if included as component
+        
         'sName = Class.Stat(sName).Name
+        
+        'FIXME: Class.Stat(sName).Name does not work if included as component
+        'Then this creates the error:
+        'Bail out! Error in Unittest->GetAllTestContainerNames: Unknown symbol 'Stat' in class 'Class'
+
         If Not TestContainernames.Exist(sName) Then
             If testclass.Symbols.Exist("ThisIsAnUnitTestSelfTest")
                 If DoSelfTest = True Then
@@ -162,7 +170,6 @@ AddClass:
             Endif
         Endif
     Endif
-
     Return
 
 AddTestContainer:
@@ -181,6 +188,11 @@ Done:
     TestContainernames.Sort
     ' Print "# These TestContainer will be executed:\n#\n# " & TestContainernames.Join("\n# ") & "\n"
     Return TestContainernames
+
+Catch
+    Print "Bail out! Error in Unittest->GetAllTestContainerNames: " & Error.Text
+    Print "# ------- No success!  -------"
+    Quit
 
 End
 
