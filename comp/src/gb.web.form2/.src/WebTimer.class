@@ -31,7 +31,8 @@ End
 Private Sub Delay_Write(Value As Integer)
 
   $iDelay = Value
-  Me.Refresh
+  'If $bEnabled Then Restart()
+  ' Me.Refresh
 
 End
 
@@ -44,8 +45,6 @@ Public Sub _Render()
   
   If $bEnabled Then
     WebForm._AddJavascript("gw.addTimer(" & JS(Me.Name) & "," & CStr($iDelay) & ")")
-  Else
-    WebForm._AddJavascript("gw.removeTimer(" & JS(Me.Name) & ")")
   Endif
   
 End
@@ -64,14 +63,15 @@ Private Sub Enabled_Write(Value As Boolean)
 
   If $bEnabled = Value Then Return
   $bEnabled = Value
-  Refresh
 
-End
+  If Me._CanRefresh() Then
+    If $bEnabled Then
+      WebForm._AddJavascript("gw.addTimer(" & JS(Me.Name) & "," & CStr($iDelay) & ")")
+    Else
+      WebForm._AddJavascript("gw.removeTimer(" & JS(Me.Name) & ")")
+    Endif
+  Endif
 
-Public Sub Refresh()
-  
-  If WebForm._InMessage Then _Render
-  
 End
 
 Public Sub Start()
@@ -90,5 +90,19 @@ Public Sub Restart()
   
   Enabled_Write(False)
   Enabled_Write(True)
+  
+End
+
+Public Sub Delete()
+  
+  Dim iSave As Integer
+  
+  ' Virtual controls must be refreshed
+  iSave = WebForm._DisableRefresh
+  WebForm._DisableRefresh = 0
+  Stop()
+  WebForm._DisableRefresh = iSave
+  
+  Super.Delete
   
 End

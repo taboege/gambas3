@@ -117,6 +117,8 @@ Public Sub _new(Optional Parent As WebContainer)
   
   Dim sName As String
   
+  _NoRefresh = 1
+  
   Inc $iCount
   WebForm.PrintLog("==== " & $iCount & " controls")
   
@@ -145,6 +147,8 @@ Public Sub _new(Optional Parent As WebContainer)
   $cFromId[$iId] = Me
   
   Parent_Write(Parent)
+  
+  _NoRefresh = 0
   
   'Debug Object.Type(Me);; $sName;; $iId
   
@@ -492,14 +496,44 @@ End
 
 Public Sub _CanRefresh() As Boolean
   
-  If WebForm._InMessage = 0 Then Return
-  If WebForm._DisableRefresh Then Return
-  If _NoRefresh Then Return
-  If IsHidden() Then Return
+  WebForm.PrintLog("_CanRefresh " & Me.Name & " ?")
+  
+  If _Refresh Then 
+    WebForm.PrintLog("_CanRefresh " & Me.Name & " --> no (_Refresh)")
+    Return
+  Endif
+  
+  If _NoRefresh Then 
+    WebForm.PrintLog("_CanRefresh " & Me.Name & " --> no (_NoRefresh)")
+    Return
+  Endif
+  
+  If WebForm._InMessage = 0 Then 
+    WebForm.PrintLog("_CanRefresh " & Me.Name & " --> no (_InMessage)")
+    Return
+  Endif
+  
+  If WebForm._DisableRefresh Then 
+    WebForm.PrintLog("_CanRefresh " & Me.Name & " --> no (_DisableRefresh)")
+    Return
+  Endif
+  
+  If Not Form_Read()._Loaded Then
+    WebForm.PrintLog("_CanRefresh " & Me.Name & " --> no (Form not loaded)")
+    Return
+  Endif
+  
+  If IsHidden() Then 
+    WebForm.PrintLog("_CanRefresh " & Me.Name & " --> no (IsHidden)")
+    Return
+  Endif
 
-  If _Refresh Then Return
-  If $iParentId And If Not Parent_Read()._CanRefresh() Then Return
+  If $iParentId And If Not Parent_Read()._CanRefresh() Then
+    WebForm.PrintLog("_CanRefresh " & Me.Name & " --> no (Parent)")
+    Return
+  Endif
 
+  'WebForm.PrintLog("_CanRefresh " & Me.Name & " --> yes !")
   Return True
   
 End
@@ -512,13 +546,21 @@ Public Sub Refresh()
     WebForm.PrintLog("Cannot refresh " & Me.Name & ": " & WebForm._InMessage & " / " & _NoRefresh & " / " & IsHidden() & " / " & _Refresh)
     Return  
   Else
-    WebForm.PrintLog("Refresh " & Me.Name)
+    WebForm.PrintLog("Refresh: " & Me.Name)
   Endif
   
   _Refresh = True
   WebForm._HasRefresh = True
   
-  _CancelChildrenRefresh()
+  Me._CancelChildrenRefresh()
+  
+End
+
+Public Sub _CancelRefresh()
+  
+  WebForm.PrintLog("Cancel refresh: " & Me.Name)
+  _Refresh = False
+  Me._CancelChildrenRefresh()
   
 End
 
@@ -538,9 +580,11 @@ Public Sub _RefreshReply() As Boolean
   hFile = Open String For Write
   Output To #hFile
   
-  If Not _Naked Then Me._BeforeRender()
-  Me._Render()
-  If Not _Naked Then Me._AfterRender()
+  If _Naked Then
+    Me._Render()
+  Else
+    _Redraw()
+  Endif
   
   sResult = Close #hFile
   Output To Default
@@ -802,6 +846,8 @@ Public Sub Delete()
 
   Dim hParent As WebContainer
   
+  WebForm.PrintLog("Delete " & Me.Name)
+
   hParent = Parent_Read()
   If hParent Then hParent._Remove(Me)
   
@@ -1072,5 +1118,14 @@ Private Sub Font_Write(Value As String)
 End
 
 Public Sub _UpdateProperty((sProp) As String, (vValue) As Variant)
+  
+End
+
+Public Sub _Redraw()
+  
+  Me._BeforeRender()
+  Me._Render()
+  Me._AfterRender()
+  '_Refresh = False
   
 End

@@ -129,11 +129,7 @@ Public Sub _Render()
   If Not Me.Border Then Print " gw-noborder";
   Print "\">"
   
-  With $aTab[$iIndex]
-    ._BeforeRender()
-    ._Render()
-    ._AfterRender()
-  End With
+  $aTab[$iIndex]._Redraw()
   
   Print "</div>"
   

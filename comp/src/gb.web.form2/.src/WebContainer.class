@@ -93,12 +93,7 @@ Public Sub _Render()
   Dim I As Integer
   
   For I = 0 To $aChildren.Max
-    With WebControl.FromName($aChildren[I])
-      'If Not .Visible Then Continue
-      ._BeforeRender()
-      ._Render()
-      ._AfterRender()
-    End With
+    WebControl.FromName($aChildren[I])._Redraw()
   Next
   
 End
@@ -229,12 +224,7 @@ Public Sub _CancelChildrenRefresh()
   Dim I As Integer
 
   For I = 0 To $aChildren.Max
-    With WebControl.FromName($aChildren[I])
-      If ._Refresh Then
-        ._Refresh = False
-        ._CancelChildrenRefresh()
-      Endif
-    End With
+    WebControl.FromName($aChildren[I])._CancelRefresh()
   Next
   
 End

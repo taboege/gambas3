@@ -60,6 +60,7 @@ Public Sub _Render()
   $hCont._RenderStyleSheet
   Print ">";
   $hCont._Render()
+  $hCont._Refresh = False
   'Print "</div>";
   Print "</div>";
   

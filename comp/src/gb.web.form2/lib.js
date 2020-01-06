@@ -592,25 +592,31 @@ gw = {
   {
     zIndex: 0,
     
+    exist: function(id)
+    {
+      return gw.windows.indexOf(id) >= 0;
+    },
+    
     open: function(id, resizable, modal, minw, minh)
     {
-      gw.window.close(id);
-
-      if (gw.windows.length == 0)
+      if (!gw.window.exist(id))
       {
-        document.addEventListener('mousemove', gw.window.onMove);
-        document.addEventListener('mouseup', gw.window.onUp);
-        gw.log('document.addEventListener');
+        if (gw.windows.length == 0)
+        {
+          document.addEventListener('mousemove', gw.window.onMove);
+          document.addEventListener('mouseup', gw.window.onUp);
+          gw.log('document.addEventListener');
+        }
+        
+        gw.windows.push(id);
+        
+        $(id).addEventListener('mousedown', gw.window.onMouseDown);
       }
-      
-      gw.windows.push(id);
-      
-      $(id).addEventListener('mousedown', gw.window.onMouseDown);
       
       $(id).gw_resizable = resizable;
       $(id).gw_modal = modal;
       
-      if (modal)
+      if (modal && $(id).gw_focus == undefined)
         $(id).gw_focus = gw.saveFocus();
       
       if (minw != undefined)
@@ -618,7 +624,7 @@ gw = {
         $(id).gw_minw = minw;
         $(id).gw_minh = minh;
       }
-      else
+      else if ($(id).gw_minw == undefined)
       {
         $(id).gw_minw = $(id).offsetWidth;
         $(id).gw_minh = $(id).offsetHeight;
@@ -638,41 +644,44 @@ gw = {
     {
       var pos;
       
-      gw.window.close(id);
-
-      if (gw.windows.length == 0)
+      if (!gw.window.exist(id))
       {
-        document.addEventListener('mousemove', gw.window.onMove);
-        document.addEventListener('mouseup', gw.window.onUp);
-        gw.log('document.addEventListener');
+        if (gw.windows.length == 0)
+        {
+          document.addEventListener('mousemove', gw.window.onMove);
+          document.addEventListener('mouseup', gw.window.onUp);
+          gw.log('document.addEventListener');
+        }
+        
+        gw.windows.push(id);
+        
+        $(id).addEventListener('mousedown', gw.window.onMouseDown);
+
+        pos = gw.getPos($(control));
+        //console.log(pos);
+        
+        /*$(id).style.left = pos.left + 'px';
+        $(id).style.top = pos.bottom + 'px';*/
+        $(id).style.transform = 'translate(' + pos.left + 'px,' + pos.bottom + 'px)';
       }
-      
-      gw.windows.push(id);
-      
-      $(id).addEventListener('mousedown', gw.window.onMouseDown);
       
       $(id).gw_resizable = resizable;
       $(id).gw_modal = true;
       $(id).gw_popup = true;
-      $(id).gw_focus = gw.saveFocus();
+      
+      if ($(id).gw_focus == undefined)
+        $(id).gw_focus = gw.saveFocus();
       
       if (minw != undefined)
       {
         $(id).gw_minw = minw;
         $(id).gw_minh = minh;
       }
-      else
+      else if ($(id).gw_minw == undefined)
       {
         $(id).gw_minw = $(id).offsetWidth;
         $(id).gw_minh = $(id).offsetHeight;
       }
-      
-      pos = gw.getPos($(control));
-      //console.log(pos);
-      
-      /*$(id).style.left = pos.left + 'px';
-      $(id).style.top = pos.bottom + 'px';*/
-      $(id).style.transform = 'translate(' + pos.left + 'px,' + pos.bottom + 'px)';
       
       gw.window.refresh();
     },
@@ -695,6 +704,8 @@ gw = {
         gw.restoreFocus($(id).gw_focus);
         $(id).gw_focus = undefined;
       }
+      
+      $(id).gw_minw = $(id).gw_minh = undefined;
     },
     
     refresh: function()

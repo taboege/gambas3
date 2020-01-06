@@ -294,6 +294,9 @@ Static Public Sub Main()
   sRead = sTemp &/ $sCookie & ".out"
   sWrite = sTemp &/ $sCookie & ".in"
   
+  PrintLog("OPEN READ " & sRead)
+  $hRead = Open Pipe sRead For Read
+    
   PrintLog("OPEN WRITE " & sWrite)
   $hWrite = Open Pipe sWrite For Write
   
@@ -354,6 +357,7 @@ Static Private Sub BeginResponse()
   For Each sVal In cEnv
     CGI[cEnv.Key] = sVal
   Next
+  ' To disable compression
   CGI["HTTP_ACCEPT_ENCODING"] = ""
   
   PrintLog("Open write " & sWrite)
@@ -363,13 +367,14 @@ Static Private Sub BeginResponse()
   PrintLog("Send SIGUSR1 to request process " & CStr($iRequestProcess))
   Signal.Send($iRequestProcess, Signal.SIGUSR1)
   
-  Sleep 0.01 ' FIXME: Let the parent process receive the signal
-  
 End
 
 Static Private Sub EndResponse()
   
-  If $bDoNotRespond Then Return
+  If $bDoNotRespond Then 
+    PrintLog("EndResponse ignore")
+    Return
+  Endif
 
   Input From Default
   Output To Default
@@ -382,13 +387,16 @@ Static Private Sub EndResponse()
   Close $hWrite
   $hWrite = Null
   
-  $hTimeout.Start
+  $hTimeout.Restart
   
 End
 
 Static Private Sub SendResponse()
   
-  If $bDoNotRespond Then Return
+  If $bDoNotRespond Then 
+    PrintLog("SendResponse ignore")
+    Return
+  Endif
 
   PrintLog("SendResponse")  
   Response.Buffered = True
@@ -401,10 +409,7 @@ End
 
 Static Public Sub Application_Signal(Num As Integer)
   
-  Dim hRead As File
   Dim sData As String
-  Dim sTemp As String
-  Dim sRead As String
   
   If Num <> Signal.SIGUSR1 Then Return
   
@@ -420,15 +425,15 @@ Static Public Sub Application_Signal(Num As Integer)
     
     PrintLog("CAUGHT SIGUSR1")
     
-    sTemp = File.Dir(File.Dir(Temp$())) &/ "session"
-    sRead = sTemp &/ $sCookie & ".out"
-    
-    PrintLog("OPEN READ " & sRead)
-    hRead = Open Pipe sRead For Read
+    ' sTemp = File.Dir(File.Dir(Temp$())) &/ "session"
+    ' sRead = sTemp &/ $sCookie & ".out"
+    ' 
+    ' PrintLog("OPEN READ " & sRead)
+    ' hRead = Open Pipe sRead For Read
     
     PrintLog("READ RESPONSE")
-    While Not Eof(hRead)
-      sData = Read #hRead, -4096
+    While Not Eof($hRead)
+      sData = Read #$hRead, -4096
       Print sData;
       PrintLog("READ RESPONSE ==> " & Replace(sData, "\n", "\nREAD RESPONSE ==> "))
     Wend
@@ -667,9 +672,7 @@ Public Sub Render()
     "</div>"
     "</div>"
   
-  Me._BeforeRender()
-  Me._Render()
-  Me._AfterRender()
+  Me._Redraw()
   
   Print "<script type=\"text/javascript\">"
   Print "gw.form = "; JS(Object.Type(Me)); ";"
@@ -905,7 +908,6 @@ End
 
 Public Sub Delete()
   
-  PrintLog("Delete " & Me.Name & " (" & Object.Count(Me) & ") " & System.Backtrace.Join(" "))
   Super.Delete()
   $hWindowContainer = Null
   
@@ -928,13 +930,12 @@ Public Sub Close(Optional ReturnValue As Variant)
   
     hWindow = WebControl.FromId(_Window)
     With hWindow
+      If .Modal Then ExitEventLoop(ReturnValue)
       .Close()
       If $bPersistent Then .Child = Null
       .Delete
       _Window = 0
     End With
-  
-    ExitEventLoop(ReturnValue)
     
   Else
     
@@ -1191,10 +1192,17 @@ Private Function PopupParent_Read() As WebControl
 
 End
 
-Public Sub _RefreshReply() As Boolean
-  
-  If Super._RefreshReply() Then Return
-  If $hWindowContainer Then $hWindowContainer._RefreshReply()
-  
-End
-
+' Public Sub _RefreshReply() As Boolean
+'   
+'   If Super._RefreshReply() Then Return
+'   'If $hWindowContainer Then $hWindowContainer._RefreshReply()
+'   
+' End
+' 
+' Public Sub _CancelChildrenRefresh()
+' 
+'   Super._CancelChildrenRefresh()
+'   'If $hWindowContainer Then $hWindowContainer._CancelRefresh()
+'   
+' End
+' 

@@ -47,3 +47,18 @@ Public Sub WebComboBox1_Click()
   WebLabel1.Text = Last.Text
 
 End
+
+Public Sub WebButton3_Click()
+
+  Dim hForm As Webform2
+  Dim I As Integer
+
+  For I = 1 To 10
+    
+    hForm = New Webform2
+    hForm.Move(Rand(0, 800) & "px", Rand(100, 500) & "px")
+    hForm.Show
+    
+  Next
+
+End

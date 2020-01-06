@@ -40,6 +40,9 @@ End
 
 Public Sub _RenderStyleSheet()
   
+  Dim sX As String
+  Dim sY As String
+  
   Me._StartStyleSheet
   
   Me._AddStyleSheet("display:flex;")
@@ -48,7 +51,11 @@ Public Sub _RenderStyleSheet()
   If Not IsPopup() Then
   
     If $sX And If $sY Then
-      Me._AddStyleSheet("transform:translate(" & $sX & "," & $sY & ");")
+      sX = $sX
+      If IsNumber(sX) Then sX &= "px"
+      sY = $sY
+      If IsNumber(sY) Then sY &= "px"
+      Me._AddStyleSheet("transform:translate(" & sX & "," & sY & ");")
     Else
   
     ' If $sX Then Me._AddStyleSheet("left:" & $sX & ";")
@@ -59,10 +66,7 @@ Public Sub _RenderStyleSheet()
     
   Endif
   
-  If $sWidth Then 
-    Me._AddStyleSheet("width:" & $sWidth & ";")
-    'Me._AddStyleSheet("max-width:" & $sWidth & ";")
-  Endif
+  If $sWidth Then Me._AddStyleSheet("width:" & $sWidth & ";")
   If $sHeight Then Me._AddStyleSheet("height:" & $sHeight & ";")
   
   Me._EndStyleSheet
@@ -99,26 +103,20 @@ Public Sub _Render()
   Endif
   
   Print "<div class=\"gw-window-contents\">"
-  If $iFormId Then 
-    With WebControl.FromId($iFormId)
-      ._BeforeRender()
-      ._Render()
-      ._AfterRender()
-    End With
-  Endif
+  If $iFormId Then WebControl.FromId($iFormId)._Redraw()
   Print "</div>"
   
   If IsPopup() Then
   
     sOpen = "gw.window.popup(" & JS(Me.Name) & "," & JS($bResizable) & "," & JS($sPopupControl) & "," & If($iPopupAlignment = Align.Right, "'right'", "'left'")
     If $sMinWidth Then sOpen &= "," & JS($sMinWidth) & "," & JS($sMinHeight) 
-    sOpen &= ");"
+    sOpen &= ")"
     
   Else
     
     sOpen = "gw.window.open(" & JS(Me.Name) & "," & JS($bResizable) & "," & JS($bModal)
     If $sMinWidth Then sOpen &= "," & JS($sMinWidth) & "," & JS($sMinHeight) 
-    sOpen &= ");"
+    sOpen &= ")"
     
   Endif
   
@@ -253,6 +251,7 @@ End
 Private Sub Resizable_Write(Value As Boolean)
 
   $bResizable = Value
+  Me.Refresh
 
 End
 
@@ -275,6 +274,7 @@ End
 Private Sub Modal_Write(Value As Boolean)
 
   $bModal = Value
+  Me.Refresh
 
 End
 
@@ -339,4 +339,13 @@ Private Sub ParentControl_Write(Value As String)
 
   $sParentControl = Value
 
+End
+
+Public Sub _CancelChildrenRefresh()
+
+  Dim hChild As WebForm
+  
+  hChild = Child_Read()
+  If hChild Then hChild._CancelRefresh()
+  
 End

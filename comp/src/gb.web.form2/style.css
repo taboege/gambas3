@@ -253,8 +253,9 @@ P:first-child,UL:first-child,OL:first-child {
   position: fixed;
   top: 0;
   left: 0;
-  border: solid 1px white;
-  box-shadow: 0 0 0.5em black;
+  border: solid 1px gray;
+  padding: 1px;
+  box-shadow: 0 0 0.5em gray;
   background: white;
   z-index: 10;
   overflow: hidden;
