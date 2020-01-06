@@ -127,7 +127,7 @@ static const char *const _message[77] =
 	/* 73 E_ASSERT      */ "Assertion failed",
 	/* 74 E_MARRAY      */ "Multidimensional array",
 	/* 75 E_UCLASS      */ ".1Unknown class '&1'",
-	/* 76 E_SPEC        */ ".1Incorrect declaration of symbol '&1'"
+	/* 76 E_SPEC        */ ".2Incorrect declaration of symbol '&1' in class '&2'"
 };
 
 #if DEBUG_ERROR

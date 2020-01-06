@@ -620,10 +620,7 @@ static short CLASS_get_symbol_index_kind(CLASS *class, const char *name, int kin
 					return (short)index;
 				
 				if (error)
-				{
-					//fprintf(stderr, "Incorrect declaration: %s.%s: %ld != %ld\n", class->name, name, type, desc->method.type);
-					THROW(E_SPEC, name);
-				}
+					THROW(E_SPEC, name, class->name);
 			}
 	}
 
