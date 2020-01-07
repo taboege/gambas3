@@ -5261,7 +5261,7 @@ Public Sub OpenWebPage(sLink As String, Optional bNewInstance As Boolean) As Pro
         aTest = ["seamonkey"]
         
       Case "chromium"
-        aTest = ["chromium", "chromium-browser"]
+        aTest = ["chromium", "chromium-browser", "google-chrome-stable"]
 
       Case Else
 

@@ -14,9 +14,6 @@ Private $bUpdateRecentMenu As Boolean
 Private $dRecentMenu As Date
 Private $bInTreeView As Boolean
 Private $bInRename As Boolean
-' Private $bHasJustCollapsed As Boolean
-' Private $bExpandOnMouseUp As Boolean
-' Private $iTreeToolbarRow As Integer
 
 Private frmWelcome As FWelcome
 Private $hCornerNW As Image
@@ -28,7 +25,7 @@ Private $hBorderS As Image
 Private $hBorderW As Image
 Private $hBorderE As Image
 
-'Private $bInOpenExtern As Boolean
+Private $iTabBarHeight As Integer
 
 Static Private $sCompressMessage As String
 
@@ -1143,9 +1140,13 @@ Public Sub ReadConfig()
   
   Project.SetNormalFont(tvwProject)
   tabProperty.TextFont = Project.GetSmallFont()
+  $iTabBarHeight = tabProperty.TextFont.H + Desktop.Scale * 2 - 1
+  'txtSearchProject.H = Container(tabProperty.Children[0]).Children[0].H - 2
+  txtSearchProject.H = $iTabBarHeight
   wrkProject.Font = tabProperty.TextFont
   Me.Menus.Visible = Settings["/ShowMenus", True]
   wrkProject.CloseWithMouse = Settings["/CloseWithMiddleClick", False]
+  UpdateWorkspaceButtons
   
 End
 
@@ -3007,3 +3008,59 @@ End
 '   HideTreeToolbar
 '   
 ' End
+
+Private Sub UpdateWorkspaceButtons()
+
+  If panProject.Hidden And If panProject.Visible Then
+    wrkProject.TabBarPaddingStart = $iTabBarHeight
+    btnWorkspaceProject.Move(If(System.RightToLeft, wrkProject.W - $iTabBarHeight, 0), 0, $iTabBarHeight, $iTabBarHeight)
+    btnWorkspaceProject.Show
+    btnWorkspaceProject.Raise
+  Else
+    wrkProject.TabBarPaddingStart = 0
+    btnWorkspaceProject.Hide
+  Endif
+  
+  If panProperty.Hidden And If panProperty.Visible Then
+    wrkProject.TabBarPaddingEnd = $iTabBarHeight
+    btnWorkspaceProperty.Move(If(System.RightToLeft, 0, wrkProject.W - $iTabBarHeight), 0, $iTabBarHeight, $iTabBarHeight)
+    btnWorkspaceProperty.Show
+    btnWorkspaceProperty.Raise
+  Else
+    wrkProject.TabBarPaddingEnd = 0
+    btnWorkspaceProperty.Hide
+  Endif
+
+End
+
+Public Sub wrkProject_Arrange()
+  
+  UpdateWorkspaceButtons
+  
+End
+
+Private Sub UpdatePropertyButtons()
+
+  If panTool.Hidden And If panTool.Visible Then
+    tabProperty.TabBarPaddingEnd = $iTabBarHeight
+    btnPropertyToolbar.Move(If(System.RightToLeft, 0, tabProperty.W - $iTabBarHeight), 0, $iTabBarHeight, $iTabBarHeight)
+    btnPropertyToolbar.Show
+    btnPropertyToolbar.Raise
+  Else
+    tabProperty.TabBarPaddingEnd = 0
+    btnPropertyToolbar.Hide
+  Endif
+
+End
+
+Public Sub tabProperty_Arrange()
+
+  UpdatePropertyButtons
+
+End
+
+Public Sub btnPropertyToolbar_Click()
+
+  panTool.Hidden = False
+
+End

@@ -1272,14 +1272,14 @@
           Expand = True
           Arrangement = Arrange.Vertical
           { Panel2 HBox
-            MoveScaled(1,2,88,32)
+            MoveScaled(1,1,88,32)
             Expand = True
             { Separator5 Separator
               MoveScaled(1,7,0,10)
               Visible = False
             }
             { wrkProject Workspace
-              MoveScaled(3,1,81,31)
+              MoveScaled(3,3,81,29)
               Background = Color.LightForeground
               Expand = True
               Border = False
@@ -1287,6 +1287,24 @@
             { Separator8 Separator
               MoveScaled(86,8,0,9)
               Visible = False
+            }
+            { btnWorkspaceProperty ToolButton
+              MoveScaled(27,1,4,4)
+              Visible = False
+              ToolTip = ("Properties sheet")
+              Ignore = True
+              Action = "property"
+              Picture = Picture["icon:/small/properties"]
+              Toggle = True
+            }
+            { btnWorkspaceProject ToolButton
+              MoveScaled(22,1,4,4)
+              Visible = False
+              ToolTip = ("Project")
+              Ignore = True
+              Action = "project"
+              Picture = Picture["icon:/small/view-split-h"]
+              Toggle = True
             }
           }
           { panDebug SidePanel
@@ -1341,6 +1359,13 @@
               Index = 1
               Text = ("Hierarchy")
               Index = 0
+            }
+            { btnPropertyToolbar ToolButton
+              MoveScaled(0,0,4,4)
+              Visible = False
+              ToolTip = ("Properties sheet")
+              Ignore = True
+              Picture = Picture["img/16/control.png"]
             }
           }
           { panTool SidePanel

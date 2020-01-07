@@ -10,6 +10,7 @@
     Arrangement = Arrange.Fill
     Padding = 2
     Border = False
+    CloseButton = True
     Index = 0
     Text = ("")
     Index = 0

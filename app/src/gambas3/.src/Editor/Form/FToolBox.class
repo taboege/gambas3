@@ -373,3 +373,10 @@ Public Sub OnProjectActivate()
   tabTool.Index = iIndex
   
 End
+
+Public Sub tabTool_CloseAll()
+
+  Dim hPanel As SidePanel = Me.Parent
+  hPanel.Hidden = True
+
+End
