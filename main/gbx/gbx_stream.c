@@ -1141,7 +1141,7 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 			{
 				OBJECT_REF(array);
 				VALUE_convert(value, type);
-				OBJECT_UNREF_KEEP(value->_object.object);
+				UNBORROW(value);
 			}
 			return;
 		}
@@ -1179,7 +1179,7 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 			{
 				OBJECT_REF(col);
 				VALUE_convert(value, type);
-				OBJECT_UNREF_KEEP(value->_object.object);
+				UNBORROW(value);
 			}
 			return;
 		}
@@ -1231,7 +1231,7 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 			{
 				OBJECT_REF(object);
 				VALUE_convert(value, type);
-				OBJECT_UNREF_KEEP(value->_object.object);
+				UNBORROW(value);
 			}
 			return;
 		}
