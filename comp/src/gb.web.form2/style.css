@@ -654,6 +654,12 @@ P:first-child,UL:first-child,OL:first-child {
   position: sticky;
   top: 0;
   z-index: 1;
+  box-sizing: border-box;
+}
+
+.gw-table > DIV > TABLE > THEAD > TR > TH.gw-table-check {
+  padding: 0 0.5em;
+  vertical-align: middle;
 }
 
 .gw-table > DIV > TABLE > THEAD > TR > TH:last-child {
@@ -665,6 +671,11 @@ P:first-child,UL:first-child,OL:first-child {
   padding: 0.1em 0.5em;
   vertical-align: top;
   border-bottom: solid 1px #F0F0F0;
+}
+
+.gw-table > DIV > TABLE > TBODY > TR > TD.gw-table-check {
+  padding: 0 0.5em;
+  vertical-align: middle;
 }
 
 .gw-table > DIV > TABLE > TBODY > TR:hover {
@@ -688,10 +699,24 @@ P:first-child,UL:first-child,OL:first-child {
   padding-left: 4px;
 }
 
-IMG.gw-table-sort {
+.gw-table-sort-ascent {
   position: absolute;
-  right: 0.1em;
-  top: 0.25em;
+  right: 0.25em;
+  top: 0;
+  height: 100%;
+  width: 1em;
+  background: center no-repeat url('//gw-arrow-down.png');
+  background-size: contain;
+}
+
+.gw-table-sort-descent {
+  position: absolute;
+  right: 0.25em;
+  top: 0;
+  height: 100%;
+  width: 1em;
+  background: center no-repeat url('//gw-arrow-up.png');
+  background-size: contain;
 }
 
 TH.gw-table-sortable {
@@ -700,7 +725,7 @@ TH.gw-table-sortable {
 }
 
 TH.gw-table-sortable > DIV {
-  margin-right: 2em;
+  /*margin-right: 2em;*/
 }
 
 TH.gw-table-sortable:hover {

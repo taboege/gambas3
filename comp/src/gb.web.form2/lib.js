@@ -806,6 +806,11 @@ gw = {
       gw.window.updateGeometry(id);
     },
     
+    isMaximized: function(id)
+    {
+      return $(id).gw_save_geometry != undefined;
+    },
+    
     maximize: function(id)
     {
       var geom = $(id).gw_save_geometry;
@@ -825,7 +830,7 @@ gw = {
         $(id).style.width = '100%';
         $(id).style.height = '100%';
       }
-      //gw.window.updateGeometry(id);
+      gw.window.updateGeometry(id);
     },
     
     onMouseDown: function(e)
@@ -947,7 +952,7 @@ gw = {
     updateGeometry: function(id)
     {
       var b = $(id).getBoundingClientRect();
-      gw.update(id, '#geometry', [ b.left + 'px', b.top + 'px', b.width + 'px', b.height + 'px']);
+      gw.update(id, '#geometry', [ b.left + 'px', b.top + 'px', b.width + 'px', b.height + 'px', gw.window.isMaximized(id)]);
     },
     
     onUp: function(e)

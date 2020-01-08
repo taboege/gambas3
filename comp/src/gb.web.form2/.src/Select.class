@@ -1,0 +1,12 @@
+' Gambas class file
+
+''' Constants used for the selection mode of WebTable control.
+
+Export
+
+'' No selection is possible.
+Public Const None As Integer = 0
+'' Only one element can be selected.
+Public Const Single As Integer = 1
+'' Many elements can be selected at the same time.
+Public Const Multiple As Integer = 2

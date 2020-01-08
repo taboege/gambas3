@@ -14,6 +14,7 @@ Property Height, H As String
 Property Child As WebForm
 Property Resizable As Boolean
 Property Modal As Boolean
+Property Maximized As Boolean
 
 Property PopupControl As String
 Property PopupAlignment As Integer
@@ -31,6 +32,7 @@ Private $iPopupAlignment As Integer
 Private $sParentControl As String
 Private $sMinWidth As String
 Private $sMinHeight As String
+Private $bMaximized As Boolean
 
 Public Sub IsPopup() As Boolean
 
@@ -95,7 +97,7 @@ Public Sub _Render()
     Print "<div class=\"gw-window-title\">"; GetTitle(); "</div>"
     If $bResizable Then
       Print "<button class=\"gw-window-button gw-window-max-button\" onclick=\"gw.window.maximize("; JS(Me.Name); ");\">";
-      Print "<img src=\""; Html(Application.Root &/ "gw-max.png"); "\">";
+      Print "<img src=\""; Html(Application.Root &/ "gw-arrow-up.png"); "\">";
       Print "</button>"
     Endif
     Print "</div>"
@@ -214,6 +216,7 @@ Public Sub _UpdateProperty(sProp As String, vValue As Variant)
     
     Inc Me._NoRefresh
     Try Move(vValue[0], vValue[1], vValue[2], vValue[3])
+    $bMaximized = vValue[4]
     Dec Me._NoRefresh
   
   Else If sProp = "#close" Then
@@ -348,4 +351,18 @@ Public Sub _CancelChildrenRefresh()
   hChild = Child_Read()
   If hChild Then hChild._CancelRefresh()
   
+End
+
+Private Function Maximized_Read() As Boolean
+
+  Return $bMaximized
+
+End
+
+Private Sub Maximized_Write(Value As Boolean)
+
+  If $bMaximized = Value Then Return
+  $bMaximized = Value
+  If Me._CanRefresh() Then WebForm._AddJavascript("gw.window.maximize(" & JS(Me.Name) & ")")
+
 End

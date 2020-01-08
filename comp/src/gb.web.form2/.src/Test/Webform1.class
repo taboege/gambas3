@@ -2,7 +2,22 @@
 
 Export
 
+Private $aFile As String[]
+Private $aStat As Stat[]
+Private $sDir As String
+
+Public Sub _new()
+  
+  WebTable1.AddColumn("Name")
+  WebTable1.AddColumn("Size", "8em", Align.Right)
+  WebTable1.AddColumn("Last modified", "12em", Align.Right)
+  
+End
+
+
 Public Sub WebForm_Open()
+
+  ReloadTable
 
   WebTimer1_Timer
 
@@ -60,5 +75,46 @@ Public Sub WebButton3_Click()
     hForm.Show
     
   Next
+
+End
+
+Private Sub ReloadTable()
+
+  $sDir = "/home/benoit"
+  $aFile = Dir($sDir).Sort(gb.Natural)
+  $aStat = New Stat[$aFile.Count]
+  WebTable1.Count = $aFile.Count
+
+End
+
+Public Sub WebTable1_Data(Row As Integer, Column As Integer, Data As WebTableData)
+
+  Dim hStat As Stat
+  
+  hStat = $aStat[Row]
+  If Not hStat Then
+    Try hStat = Stat($sDir &/ $aFile[Row])
+    If Not hStat Then Return
+    $aStat[Row] = hStat
+  Endif
+
+  Select Case Column
+    Case 0
+      Data.Text = $aFile[Row]
+    Case 1
+      Data.Text = File.FormatSize(hStat.Size, True)
+    Case 2
+      Data.Text = Format(hStat.LastModified, "dd/mm/yyyy hh:nn:ss")
+  End Select
+  
+Catch
+  
+  Data.Text = Error.Where & ": " & Error.Text
+
+End
+
+Public Sub WebButton4_Click()
+
+  ReloadTable
 
 End

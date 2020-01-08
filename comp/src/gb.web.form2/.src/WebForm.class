@@ -143,7 +143,7 @@ Static Public Sub Main()
   
   ' Beware that a CGI script receives the Request query in its first argument as soon as there is no "=" character in it!
   
-  If Args.Count = 3 And If Args[1] = "" Then
+  If Args.Count = 3 And If Args[1] = Application.ParentHandle Then
   
     PrintLog("Start: " & Args.All.Join(" | "))
     
@@ -262,10 +262,10 @@ Static Public Sub Main()
 
     If Not Exist(Application.Path &/ Args[0]) Then
       PrintLog("EXEC gbx3 " & Application.Path)
-      hProcess = Exec ["gbx3", Application.Path, "--", "", sCookie] Wait
+      hProcess = Exec ["gbx3", Application.Path, "--", Application.Handle, sCookie] Wait
     Else
       PrintLog("EXEC " & Application.Path &/ Args[0])
-      hProcess = Exec [Application.Path &/ Args[0], "", sCookie] Wait
+      hProcess = Exec [Application.Path &/ Args[0], Application.Handle, sCookie] Wait
     Endif
     
     While Not Exist(sTemp &/ sCookie, True)
