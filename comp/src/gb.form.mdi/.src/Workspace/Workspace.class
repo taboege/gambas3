@@ -25,8 +25,7 @@ Property Image As Image
 Property Picture As Picture
 Property CloseWithMouse As Boolean
 Property CloseButton As Boolean ''if false the close all tabs button is not shown
-Property TabBarPaddingStart As Integer
-Property TabBarPaddingEnd As Integer
+Property Read TabPanel As TabPanel
 
 Static Private $bPictureWarning As Boolean
 
@@ -277,26 +276,8 @@ Private Sub CloseButton_Write(Value As Boolean)
 
 End
 
-Private Function TabBarPaddingStart_Read() As Integer
+Private Function TabPanel_Read() As TabPanel
 
-  Return $hWorkspace.GetTabPanel().TabBarPaddingStart
-
-End
-
-Private Sub TabBarPaddingStart_Write(Value As Integer)
-
-  $hWorkspace.GetTabPanel().TabBarPaddingStart = Value
-
-End
-
-Private Function TabBarPaddingEnd_Read() As Integer
-
-  Return $hWorkspace.GetTabPanel().TabBarPaddingEnd
-
-End
-
-Private Sub TabBarPaddingEnd_Write(Value As Integer)
-
-  $hWorkspace.GetTabPanel().TabBarPaddingEnd = Value
+  Return $hWorkspace.GetTabPanel()
 
 End
