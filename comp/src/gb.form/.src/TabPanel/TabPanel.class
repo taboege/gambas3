@@ -269,19 +269,23 @@ Private Sub UpdateLayout()
   
   X += PL
   W -= PL + PR
-  
-  If Not $hClosePanel Or If W < H * 3 Then
-    If $hClosePanel Then $hClosePanel.Hide
-  Else
-    W -= H - 1
-    If System.RightToLeft Then
-      $hClosePanel.Move(X - (H - 1), Y, H - 1, H)
+  W = Max(W, 0)
+
+  If $hClosePanel Then
+    If W >= H - 1 Then
+      W -= H - 1
+      If System.RightToLeft Then
+        $hClosePanel.Move(X, Y, H - 1, H)
+        X += H - 1
+      Else
+        $hClosePanel.Move(X + W, Y, H - 1, H)
+      Endif
+      $hCloseAll.Move(0, 0, H - 1, H - 1)
+      $hClosePanel.Show
+      $hClosePanel.Raise
     Else
-      $hClosePanel.Move(X + W, Y, H - 1, H)
+      $hClosePanel.Hide
     Endif
-    $hCloseAll.Move(0, 0, H - 1, H - 1)
-    $hClosePanel.Show
-    $hClosePanel.Raise
   Endif
   
   Me._Arrangement = Arrange.None
