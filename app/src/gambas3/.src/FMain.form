@@ -1213,8 +1213,14 @@
       { Separator4 Separator
         MoveScaled(0,6,9,0)
       }
+      { btnUseInheritance ToolButton
+        MoveScaled(13,12,4,4)
+        ToolTip = ("Dispose class files according to inheritance")
+        Picture = Picture["icon:/small/vector"]
+        Toggle = True
+      }
       { tvwProject TreeView
-        MoveScaled(1,16,20,47)
+        MoveScaled(1,18,20,45)
         Drop = True
         Expand = True
         Border = False
@@ -1257,7 +1263,7 @@
         }
       }
       { timSearchProject #Timer
-        #MoveScaled(20,15)
+        #MoveScaled(22,13)
         Delay = 500
       }
     }
@@ -1291,7 +1297,7 @@
             { btnWorkspaceProperty ToolButton
               MoveScaled(27,1,4,4)
               Visible = False
-              ToolTip = ("Properties sheet")
+              ToolTip = ("Show properties sheet")
               Ignore = True
               Action = "property"
               Picture = Picture["icon:/small/properties"]
@@ -1300,7 +1306,7 @@
             { btnWorkspaceProject ToolButton
               MoveScaled(22,1,4,4)
               Visible = False
-              ToolTip = ("Project")
+              ToolTip = ("Show project tree")
               Ignore = True
               Action = "project"
               Picture = Picture["icon:/small/view-split-h"]
@@ -1344,7 +1350,7 @@
             Arrangement = Arrange.Fill
           }
           { panTabProperty Panel
-            MoveScaled(3,6,28,42)
+            MoveScaled(2,6,28,42)
             Expand = True
             Arrangement = Arrange.Vertical
             { tabProperty TabPanel
@@ -1360,10 +1366,17 @@
               Text = ("Hierarchy")
               Index = 0
             }
+            { btnPropertyHelp ToolButton
+              MoveScaled(4,0,4,4)
+              Visible = False
+              ToolTip = ("Show property help")
+              Ignore = True
+              Picture = Picture["icon:/small/help"]
+            }
             { btnPropertyToolbar ToolButton
               MoveScaled(0,0,4,4)
               Visible = False
-              ToolTip = ("Properties sheet")
+              ToolTip = ("Show controls")
               Ignore = True
               Picture = Picture["img/16/control.png"]
             }

@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,62,60)
+  MoveScaled(0,0,62,82)
   Text = ("Properties")
   Icon = Picture["img/16/grid.png"]
   Persistent = True
@@ -82,13 +82,30 @@
     }
   }
   { spnHelp SidePanel
-    MoveScaled(15,46,24,13)
-    Arrangement = Arrange.Fill
+    MoveScaled(15,46,36,17)
+    Arrangement = Arrange.Vertical
     Orientation = Align.Bottom
     Separator = True
     Transparent = True
+    { HBox1 HBox
+      MoveScaled(3,1,21,3)
+      Indent = True
+      { lblHelp Label
+        MoveScaled(3,0,8,3)
+        Expand = True
+        Text = ("Help")
+      }
+      { btnCloseHelp ToolButton
+        MoveScaled(15,0,3,3)
+        Picture = Picture["icon:/small/close"]
+      }
+    }
+    { Separator1 Separator
+      MoveScaled(16,5,10,0)
+    }
     { webHelp HelpView
-      MoveScaled(3,1,16,9)
+      MoveScaled(2,7,16,9)
+      Expand = True
       NoHeader = True
     }
   }

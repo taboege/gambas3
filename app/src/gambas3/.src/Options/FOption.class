@@ -127,7 +127,6 @@ Public Sub _new()
     [btnAnimation, "/Animations", 1],
     [btnShadow, "/Shadows", 1],
     [btnShowFileInTitle, "/ShowFileInTitle", 1],
-    [btnIntegratedHelp, "/PropertyHelp", 1],
     [btnHelpCompletion, "/ShowHelpInPopup", 1],
     [btnMinimize, "/MinimizeOnRun", 0],
     [btnSeparateStatic, "/Editor/SeparateStaticMethod", 1],
@@ -622,12 +621,12 @@ End
 ' 
 ' End
 
-Public Sub btnIntegratedHelp_Click()
-
-  Settings["/PropertyHelp"] = btnIntegratedHelp.Value
-  FProperty.CheckIntegratedHelpSetting
-  
-End
+' Public Sub btnIntegratedHelp_Click()
+' 
+'   Settings["/PropertyHelp"] = btnIntegratedHelp.Value
+'   FProperty.CheckIntegratedHelpSetting
+'   
+' End
 
 Public Sub btnHelpCompletion_Click()
 

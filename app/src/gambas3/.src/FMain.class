@@ -35,6 +35,11 @@ Public Sub _new()
   
   'Project.ProjectTree = tvwProject
   Project.Workspace = wrkProject
+  wrkProject.TabPanel.AddButton(btnWorkspaceProject, Align.Left)
+  wrkProject.TabPanel.AddButton(btnWorkspaceProperty, Align.Right)
+  
+  tabProperty.AddButton(btnPropertyToolbar, Align.Right)
+  tabProperty.AddButton(btnPropertyHelp, Align.Right)
   
   'ScrollArea(tvwProject.Proxy.Proxy).Shadow = True
   'tvwProject.Columns.Count = 2
@@ -51,6 +56,8 @@ Public Sub _new()
   tabProperty.Index = 1
   FFormStack.Load(tabProperty)
   tabProperty.Index = 0
+  
+  txtSearchProject._AddButton(btnUseInheritance)
   
   'FSearch.Load
   FOption.Load
@@ -89,6 +96,9 @@ Public Sub Form_Open()
   frmWelcome = New FWelcome(dwgWelcome)
   frmWelcome.Hide
   
+  Project.UseInheritance = Settings["/UseInheritance", True] 
+  btnUseInheritance.Value = Project.UseInheritance
+  
   UpdateGlobalLayout
   
 End
@@ -106,6 +116,9 @@ Public Sub Form_Close()
   If Project.Close() Then
     Stop Event
   Else
+    
+    Settings["/UseInheritance"] = Project.UseInheritance
+    
     Settings.Write(Me)
     Settings.Write(panProject, "panProject") 
     Settings.Write(panProperty, "panProperty") 
@@ -1136,6 +1149,12 @@ Public Sub mnuCloseAll_Click()
   
 End
 
+Public Sub GetTabBarHeight() As Integer
+  
+  Return $iTabBarHeight
+  
+End
+
 Public Sub ReadConfig()
   
   Project.SetNormalFont(tvwProject)
@@ -1146,7 +1165,9 @@ Public Sub ReadConfig()
   wrkProject.Font = tabProperty.TextFont
   Me.Menus.Visible = Settings["/ShowMenus", True]
   wrkProject.CloseWithMouse = Settings["/CloseWithMiddleClick", False]
+  
   UpdateWorkspaceButtons
+  UpdatePropertyButtons
   
 End
 
@@ -1314,6 +1335,7 @@ Public Sub ShowTool(sType As String)
   panTabProperty.Visible = panTool.Visible
   panImageProperty.Visible = sType = "FImageEditor"
   UpdateProperty
+  UpdateWorkspaceButtons
   
   ' If bShow <> panProperty.Hidden Then Return
   ' 
@@ -3012,55 +3034,77 @@ End
 Private Sub UpdateWorkspaceButtons()
 
   If panProject.Hidden And If panProject.Visible Then
-    wrkProject.TabBarPaddingStart = $iTabBarHeight
-    btnWorkspaceProject.Move(If(System.RightToLeft, wrkProject.W - $iTabBarHeight, 0), 0, $iTabBarHeight, $iTabBarHeight)
-    btnWorkspaceProject.Show
-    btnWorkspaceProject.Raise
+    wrkProject.TabPanel.ShowButton(btnWorkspaceProject, True)
   Else
-    wrkProject.TabBarPaddingStart = 0
-    btnWorkspaceProject.Hide
+    wrkProject.TabPanel.ShowButton(btnWorkspaceProject, False)
   Endif
   
   If panProperty.Hidden And If panProperty.Visible Then
-    wrkProject.TabBarPaddingEnd = $iTabBarHeight
-    btnWorkspaceProperty.Move(If(System.RightToLeft, 0, wrkProject.W - $iTabBarHeight), 0, $iTabBarHeight, $iTabBarHeight)
-    btnWorkspaceProperty.Show
-    btnWorkspaceProperty.Raise
+    wrkProject.TabPanel.ShowButton(btnWorkspaceProperty, True)
   Else
-    wrkProject.TabBarPaddingEnd = 0
-    btnWorkspaceProperty.Hide
+    wrkProject.TabPanel.ShowButton(btnWorkspaceProperty, False)
   Endif
 
 End
 
-Public Sub wrkProject_Arrange()
-  
-  UpdateWorkspaceButtons
-  
-End
+Public Sub UpdatePropertyButtons()
 
-Private Sub UpdatePropertyButtons()
-
-  If panTool.Hidden And If panTool.Visible Then
-    tabProperty.TabBarPaddingEnd = $iTabBarHeight
-    btnPropertyToolbar.Move(If(System.RightToLeft, 0, tabProperty.W - $iTabBarHeight), 0, $iTabBarHeight, $iTabBarHeight)
-    btnPropertyToolbar.Show
-    btnPropertyToolbar.Raise
-  Else
-    tabProperty.TabBarPaddingEnd = 0
-    btnPropertyToolbar.Hide
-  Endif
-
-End
-
-Public Sub tabProperty_Arrange()
-
-  UpdatePropertyButtons
+  tabProperty.ShowButton(btnPropertyToolbar, panTool.Hidden)
+  tabProperty.ShowButton(btnPropertyHelp, FProperty.IsHelpHidden())
 
 End
 
 Public Sub btnPropertyToolbar_Click()
 
   panTool.Hidden = False
+
+End
+
+Public Sub btnUseInheritance_Click()
+
+  Project.UseInheritance = btnUseInheritance.Value
+  Project.Refresh
+
+End
+
+Public Sub btnPropertyHelp_Click()
+
+  FProperty.ShowHelp
+
+End
+
+Public Sub panProject_Show()
+
+  UpdateWorkspaceButtons
+
+End
+
+Public Sub panProject_Hide()
+
+  UpdateWorkspaceButtons
+
+End
+
+Public Sub panProperty_Show()
+
+  UpdateWorkspaceButtons
+
+End
+
+Public Sub panProperty_Hide()
+
+  UpdateWorkspaceButtons
+
+End
+
+Public Sub panTool_Show()
+
+  UpdatePropertyButtons
+
+End
+
+Public Sub panTool_Hide()
+
+  UpdatePropertyButtons
 
 End

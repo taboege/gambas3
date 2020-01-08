@@ -143,7 +143,7 @@ Private Sub AddFile(sDir As String, sFile As String, Optional bAfter As Boolean,
 
             If Not bIgnore Then
               'IF sFile = "ReportContainer.class" THEN STOP
-              sParent = FindKey(Project.GetParentClass(sPath))
+              If Project.UseInheritance Then sParent = FindKey(Project.GetParentClass(sPath))
               If sParent Then
                 If File.Ext(sParent) <> "class" Then 
                   sParent = ""

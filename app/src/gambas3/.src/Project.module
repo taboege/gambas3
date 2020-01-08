@@ -108,10 +108,6 @@ Public ProfileIndex As Integer
 Public DoNotTranslate As String[]
 
 Public Running As Boolean
-'Public JustUpdateVersion As Boolean
-
-'Private Recent As New String[]
-'Private RecentDate As New Date[]
 
 ' Project type
 Public Enum TYPE_NORMAL, TYPE_LIBRARY, TYPE_COMPONENT
@@ -218,6 +214,8 @@ Private $bBackgroundValid As Boolean
 ' Global documentation object
 ' Another one is created for the offline wiki
 Public Documentation As CDocumentation
+
+Public UseInheritance As Boolean
 
 Private $bFileIsUnknown As Boolean
 
@@ -1762,6 +1760,7 @@ Private Sub DoRefresh(Optional bReset As Boolean, Optional bDoNotRefreshCache As
 
   '$bDisplayForm = Settings["/DisplayForm"]
 
+  If Not ProjectTree Then Return
   If $iNoRefresh Then Return
 
   If Not bReset Then
@@ -1771,42 +1770,6 @@ Private Sub DoRefresh(Optional bReset As Boolean, Optional bDoNotRefreshCache As
   InitProjectFilter
   VersionControl.CheckPaths
   Tree.Refresh(bDoNotRefreshCache, $cProjectFilter)
-
-  ' If Not bDoNotRefreshCache Then
-  '   RefreshSourceCache
-  ' Endif
-  ' 
-  ' With ProjectTree
-  ' 
-  '   .Clear()
-  ' 
-  '   .Background = If(Len(ProjectFilter), Color.Merge(Color.TextBackground, Color.LightBackground, 0.25), Color.Default)
-  ' 
-  '   sKey = Project.Dir
-  '   .Add(sKey, Name, GetIcon(Project.Dir, 16))
-  ' 
-  '   .Add(KEY_PROJECT, ("Project"), Picture["icon:/small/open"], sKey)
-  '   .Add(KEY_SOURCE, ("Sources"), Picture["icon:/small/open"], sKey)
-  '   If Components.Exist("gb.db") Then .Add(KEY_CONNECTION, ("Connections"), Picture["icon:/small/open"], sKey)
-  '   If Components.Exist("gb.web") Then .Add(KEY_PUBLIC, ("Public"), Picture["icon:/small/open"], sKey)
-  '   .Add(KEY_MISC, ("Data"), Picture["icon:/small/open"], sKey)
-  ' 
-  '   '$bGetSource = TRUE
-  ' 
-  '   AddDir()
-  '   If Exist(Project.Dir &/ ".hidden") Then AddDir(Project.Dir &/ ".hidden")
-  '   If Components.Exist("gb.db") And If Exist(Project.Dir &/ ".connection") Then AddDir(Project.Dir &/ ".connection")
-  '   If Components.Exist("gb.web") And If Exist(Project.Dir &/ ".public") Then AddDir(Project.Dir &/ ".public")
-  ' 
-  ' End With
-  ' 
-  ' With ProjectTree
-  '   .MoveFirst
-  '   While .Available
-  '     .Item.Expanded = True
-  '     .MoveNext
-  '   Wend
-  ' End With
 
   If sKeyReset Then sKey = sKeyReset
 
