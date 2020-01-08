@@ -79,9 +79,16 @@ BEGIN_PROPERTY(Application_Title)
 END_PROPERTY
 
 
-BEGIN_PROPERTY(Application_Id)
+BEGIN_PROPERTY(Application_Handle)
 
   GB_ReturnInt(getpid());
+
+END_PROPERTY
+
+
+BEGIN_PROPERTY(Application_ParentHandle)
+
+  GB_ReturnInt(getppid());
 
 END_PROPERTY
 
@@ -335,8 +342,9 @@ GB_DESC NATIVE_App[] =
   GB_STATIC_PROPERTY_READ("Path", "s", Application_Path),
   GB_STATIC_PROPERTY_READ("Name", "s", Application_Name),
   GB_STATIC_PROPERTY_READ("Title", "s", Application_Title),
-  GB_STATIC_PROPERTY_READ("Id", "i", Application_Id),
-  GB_STATIC_PROPERTY_READ("Handle", "i", Application_Id),
+  GB_STATIC_PROPERTY_READ("Id", "i", Application_Handle),
+  GB_STATIC_PROPERTY_READ("Handle", "i", Application_Handle),
+  GB_STATIC_PROPERTY_READ("ParentHandle", "i", Application_ParentHandle),
   GB_STATIC_PROPERTY_READ("Version", "s", Application_Version),
   GB_STATIC_PROPERTY_READ("Dir", "s", Application_Dir),
   GB_STATIC_PROPERTY("Daemon", "b", Application_Daemon),
