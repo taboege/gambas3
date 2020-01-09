@@ -232,17 +232,20 @@ char *OBJECT_where_am_i(const char *file, int line, const char *func);
 #define OBJECT_get_var_addr(_object, _desc) ((void *)((char *)(_object) + (_desc)->variable.offset))
 
 
-static INLINE void OBJECT_null(VALUE *value, CLASS *class)
-{
-	value->_object.class = class;
-	value->_object.object = NULL;
-}
+#define OBJECT_null(_value, _class) \
+({ \
+	VALUE *__value = (_value); \
+	__value->_object.class = (_class); \
+	__value->_object.object = NULL; \
+})
 
 
-static INLINE void OBJECT_put(VALUE *value, void *object)
-{
-	value->_object.class = OBJECT_class(object);
-	value->_object.object = object;
-}
+#define OBJECT_put(_value, _ob) \
+({ \
+	VALUE *__value = (_value); \
+	void *__object = (void *)(_ob); \
+	__value->_object.class = OBJECT_class(__object); \
+	__value->_object.object = __object; \
+})
 
 #endif

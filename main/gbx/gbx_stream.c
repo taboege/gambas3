@@ -1054,6 +1054,11 @@ static void read_structure(STREAM *stream, CLASS *class, char *base)
 	}
 }
 
+static void error_STREAM_read_type(void *object)
+{
+	OBJECT_UNREF(object);
+}
+
 void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 {
 	bool variant;
@@ -1218,10 +1223,16 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 			object = OBJECT_REF(OBJECT_create(class, NULL, NULL, 0));
 			
 			cstream = CSTREAM_FROM_STREAM(stream);
+			
 			STACK_check(1);
 			PUSH_OBJECT(OBJECT_class(cstream), cstream);
-			if (EXEC_special(SPEC_READ, class, object, 1, FALSE))
-				THROW_SERIAL();
+			
+			ON_ERROR_1(error_STREAM_read_type, object)
+			{
+				if (EXEC_special(SPEC_READ, class, object, 1, FALSE))
+					THROW_SERIAL();
+			}
+			END_ERROR
 			
 			OBJECT_UNREF_KEEP(object);
 
