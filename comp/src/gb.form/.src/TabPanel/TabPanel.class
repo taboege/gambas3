@@ -27,6 +27,7 @@ Property Read Current As _TabPanelContainer
 Property Background As Integer
 Property Moveable As Boolean
 Property CloseButton As Boolean
+Property Read TabBarSize As Integer
 Property TabBarPaddingStart As Integer
 Property TabBarPaddingEnd As Integer
 
@@ -247,40 +248,24 @@ Private Sub UpdateLayout()
   
   If $bUpdateLayout Then Return
   $bUpdateLayout = True
-  
-  $hTabBar.Height = $hTabBar.Font.Height + Desktop.Scale * 2
-  
+
   W = Me.W
-  H = $hTabBar.H
+  H = TabBarSize_Read()
+  $hTabBar.Height = H + 1
+  
   
   Y = If(Align.Top, 0, $hTabBar.Y)
   
-  PL = TabBarPaddingStart_Read()
-  PR = TabBarPaddingEnd_Read()
-  
-  If System.RightToLeft Then 
-    If $hTabBarLeft Then $hTabBarLeft.Move(W - PL, Y, PL, H)
-    If $hTabBarRight Then $hTabBarRight.Move(0, Y, PR, H)
-    Swap PL, PR
-  Else
-    If $hTabBarLeft Then $hTabBarLeft.Move(0, Y, PL, H)
-    If $hTabBarRight Then $hTabBarRight.Move(W - PR, Y, PR, H)
-  Endif
-  
-  X += PL
-  W -= PL + PR
-  W = Max(W, 0)
-
   If $hClosePanel Then
-    If W >= H - 1 Then
-      W -= H - 1
+    If W >= H Then
+      W -= H
       If System.RightToLeft Then
-        $hClosePanel.Move(X, Y, H - 1, H)
-        X += H - 1
+        $hClosePanel.Move(X, Y, H, H + 1)
+        X += H
       Else
-        $hClosePanel.Move(X + W, Y, H - 1, H)
+        $hClosePanel.Move(X + W, Y, H, H + 1)
       Endif
-      $hCloseAll.Move(0, 0, H - 1, H - 1)
+      $hCloseAll.Move(0, 0, H, H)
       $hClosePanel.Show
       $hClosePanel.Raise
     Else
@@ -288,6 +273,22 @@ Private Sub UpdateLayout()
     Endif
   Endif
   
+  PL = TabBarPaddingStart_Read()
+  PR = TabBarPaddingEnd_Read()
+  
+  If System.RightToLeft Then 
+    If $hTabBarLeft Then $hTabBarLeft.Move(W - PL, Y, PL, H + 1)
+    If $hTabBarRight Then $hTabBarRight.Move(0, Y, PR, H + 1)
+    Swap PL, PR
+  Else
+    If $hTabBarLeft Then $hTabBarLeft.Move(0, Y, PL, H + 1)
+    If $hTabBarRight Then $hTabBarRight.Move(W - PR, Y, PR, H + 1)
+  Endif
+  
+  X += PL
+  W -= PL + PR
+  W = Max(W, 0)
+
   Me._Arrangement = Arrange.None
   
   Select Case $iOrientation
@@ -1075,3 +1076,8 @@ Private Sub TabBarPaddingEnd_Write(Value As Integer)
 
 End
 
+Private Function TabBarSize_Read() As Integer
+
+  Return $hTabBar.Font.Height + Desktop.Scale * 1.75
+
+End

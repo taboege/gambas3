@@ -260,6 +260,9 @@ End
 Public Sub _AddButton(hButton As ToolButton)
   
   hButton.Reparent($hBackground)
+  hButton.Raise
+  If $hClearButton Then $hClearButton.Raise
+  $hButton.Lower
   
 End
 
