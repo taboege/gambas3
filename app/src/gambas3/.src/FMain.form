@@ -1192,7 +1192,7 @@
     Arrangement = Arrange.Horizontal
     Border = Border.Plain
     { panProject SidePanel
-      MoveScaled(2,3,29,66)
+      MoveScaled(1,3,31,66)
       Visible = False
       Background = Color.TextBackground
       ToolTip = ("Project")
@@ -1201,23 +1201,27 @@
       Orientation = Align.Left
       Separator = True
       Transparent = True
-      { txtSearchProject ButtonBox
-        MoveScaled(1,1,25,3)
-        Foreground = Color.LightForeground
-        Picture = Picture["icon:/small/close"]
-        Border = False
-        ClearButton = True
-        Filter = True
-        FilterMenu = "mnuFilter"
+      { panSearchProject HBox
+        MoveScaled(1,0,28,5)
+        { btnUseInheritance ToolButton
+          MoveScaled(0,0,4,4)
+          ToolTip = ("Dispose class files according to inheritance")
+          Picture = Picture["icon:/small/vector"]
+          Toggle = True
+        }
+        { txtSearchProject ButtonBox
+          MoveScaled(5,1,22,3)
+          Foreground = Color.LightForeground
+          Expand = True
+          Picture = Picture["icon:/small/close"]
+          Border = False
+          ClearButton = True
+          Filter = True
+          FilterMenu = "mnuFilter"
+        }
       }
       { Separator4 Separator
         MoveScaled(0,6,9,0)
-      }
-      { btnUseInheritance ToolButton
-        MoveScaled(13,12,4,4)
-        ToolTip = ("Dispose class files according to inheritance")
-        Picture = Picture["icon:/small/vector"]
-        Toggle = True
       }
       { tvwProject TreeView
         MoveScaled(1,18,20,45)
@@ -1294,23 +1298,19 @@
               MoveScaled(86,8,0,9)
               Visible = False
             }
-            { btnWorkspaceProperty ToolButton
-              MoveScaled(27,1,4,4)
-              Visible = False
-              ToolTip = ("Show properties sheet")
-              Ignore = True
-              Action = "property"
-              Picture = Picture["icon:/small/properties"]
-              Toggle = True
-            }
             { btnWorkspaceProject ToolButton
               MoveScaled(22,1,4,4)
               Visible = False
               ToolTip = ("Show project tree")
               Ignore = True
-              Action = "project"
               Picture = Picture["icon:/small/view-split-h"]
-              Toggle = True
+            }
+            { btnWorkspaceProperty ToolButton
+              MoveScaled(27,1,4,4)
+              Visible = False
+              ToolTip = ("Show properties sheet")
+              Ignore = True
+              Picture = Picture["icon:/small/properties"]
             }
           }
           { panDebug SidePanel
@@ -1366,19 +1366,19 @@
               Text = ("Hierarchy")
               Index = 0
             }
-            { btnPropertyHelp ToolButton
-              MoveScaled(4,0,4,4)
-              Visible = False
-              ToolTip = ("Show property help")
-              Ignore = True
-              Picture = Picture["icon:/small/help"]
-            }
             { btnPropertyToolbar ToolButton
               MoveScaled(0,0,4,4)
               Visible = False
               ToolTip = ("Show controls")
               Ignore = True
               Picture = Picture["img/16/control.png"]
+            }
+            { btnPropertyHelp ToolButton
+              MoveScaled(4,0,4,4)
+              Visible = False
+              ToolTip = ("Show property help")
+              Ignore = True
+              Picture = Picture["icon:/small/help"]
             }
           }
           { panTool SidePanel

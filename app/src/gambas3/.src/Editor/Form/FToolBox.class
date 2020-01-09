@@ -13,11 +13,12 @@ Private $iSize As Integer
 
 Private $aOrder As New String[]
 
-' Public Sub _new()
-'   
-'   Settings.Read(Me)
-'   
-' End
+Public Sub _new()
+  
+  tabTool.AddButton(btnZoom, Align.Right)
+  tabTool.ShowButton(btnZoom, True)
+  
+End
 
 
 Public Sub Form_Open()
@@ -299,28 +300,30 @@ End
 '
 ' END
 
+Public Sub GetSize() As Integer
+  
+  Return 24 + Settings["/ToolboxSize", 0] * 8
+  
+End
 
-Public Sub ReadConfig()
 
-  Dim iSize As Integer
-
-  tabTool.TextFont = Project.GetSmallFont()
-
-  Select Case Settings["/ToolboxSize", 0]
-    Case 0
-      iSize = 32
-    Case 1
-      iSize = 24
-    Case 2
-      iSize = 48
-  End Select
+Private Sub UpdateSize()
+  
+  Dim iSize As Integer = GetSize()
   
   If iSize <> $iSize Then
     $iSize = iSize
     ClearToolBar
   Endif
+  
+End
 
-  '$bAnimate = Settings["/Toolbar/Animate", TRUE]
+
+
+Public Sub ReadConfig()
+
+  tabTool.TextFont = Project.GetSmallFont()
+  UpdateSize
 
 End
 
@@ -378,5 +381,16 @@ Public Sub tabTool_CloseAll()
 
   Dim hPanel As SidePanel = Me.Parent
   hPanel.Hidden = True
+
+End
+
+Public Sub btnZoom_Click()
+
+  Dim iSize As Integer
+
+  iSize = Settings["/ToolboxSize", 0]
+  iSize = (iSize + 1) Mod 4
+  Settings["/ToolboxSize"] = iSize
+  UpdateSize
 
 End

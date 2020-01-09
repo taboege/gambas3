@@ -252,12 +252,12 @@
       }
     }
     { Label83 Label
-      MoveScaled(0,43,63,3)
+      MoveScaled(0,35,63,3)
       Font = Font["Bold"]
       Text = ("Images")
     }
     { panCompressPng Panel
-      MoveScaled(1,47,66,4)
+      MoveScaled(1,39,66,4)
       Arrangement = Arrange.Horizontal
       Spacing = True
       Indent = True
@@ -282,12 +282,12 @@
       }
     }
     { Label82 Label
-      MoveScaled(0,54,63,3)
+      MoveScaled(0,46,63,3)
       Font = Font["Bold"]
       Text = ("Translation")
     }
     { panAutoTrans HBox
-      MoveScaled(1,58,66,4)
+      MoveScaled(1,50,66,4)
       Spacing = True
       Indent = True
       { Label80 Label
@@ -417,37 +417,8 @@
         Animated = True
       }
     }
-    { HBox7 HBox
-      MoveScaled(1,35,66,4)
-      Spacing = True
-      Indent = True
-      { Label1 Label
-        MoveScaled(0,0,42,4)
-        Expand = True
-        Text = ("Toolbox size")
-      }
-      { cmbToolbox ComboBox
-        MoveScaled(43,0,15,4)
-        ReadOnly = True
-        List = [("Normal"), ("Small"), ("Large")]
-      }
-    }
-    { HBox8 HBox
-      MoveScaled(1,40,66,4)
-      Spacing = True
-      Indent = True
-      { Label2 Label
-        MoveScaled(0,0,42,4)
-        Expand = True
-        Text = ("Sort properties")
-      }
-      { btnSortProperty SwitchButton
-        MoveScaled(51,0,8,4)
-        Animated = True
-      }
-    }
     { HBox56 HBox
-      MoveScaled(1,45,66,4)
+      MoveScaled(1,35,66,4)
       Spacing = True
       Indent = True
       { Label70 Label
@@ -461,7 +432,7 @@
       }
     }
     { HBox21 HBox
-      MoveScaled(1,50,66,4)
+      MoveScaled(1,40,66,4)
       Spacing = True
       Indent = True
       { Label21 Label
@@ -475,7 +446,7 @@
       }
     }
     { HBox57 HBox
-      MoveScaled(1,55,66,4)
+      MoveScaled(1,45,66,4)
       Spacing = True
       Indent = True
       { Label49 Label
@@ -489,7 +460,7 @@
       }
     }
     { HBox10 HBox
-      MoveScaled(1,60,66,4)
+      MoveScaled(1,50,66,4)
       Spacing = True
       Indent = True
       { Label16 Label

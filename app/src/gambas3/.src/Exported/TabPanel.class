@@ -46,6 +46,7 @@ Private Sub UpdateButtons()
   Dim X As Integer
   Dim H As Integer
   Dim Y As Integer
+  Dim W As Integer
   
   If Not $aButtonLeft And If Not $aButtonRight Then Return
   
@@ -54,7 +55,7 @@ Private Sub UpdateButtons()
   
   X = 0
   Y = If(Me.Orientation = Align.Top, 0, Me.H - H)
-  H = Me.TextFont.H + Desktop.Scale * 2 - 1
+  H = Me.TabBarSize
   
   If $aButtonLeft Then
     
@@ -70,13 +71,15 @@ Private Sub UpdateButtons()
   Me.TabBarPaddingStart = X
   
   X = 0
+  W = Me.W
+  If Me.CloseButton Then W -= H
   
   If $aButtonRight Then
     
     For I = 0 To $aButtonRight.Max
       hButton = $aButtonRight[I]
       If Not hButton.Visible Then Continue
-      hButton.Move(Me.W - X - H, Y, H, H)
+      hButton.Move(W - X - H, Y, H, H)
       X += H
     Next
     

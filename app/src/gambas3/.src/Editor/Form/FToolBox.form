@@ -15,4 +15,11 @@
     Text = ("")
     Index = 0
   }
+  { btnZoom ToolButton
+    MoveScaled(24,6,4,4)
+    Visible = False
+    ToolTip = ("Toolbox button size")
+    Ignore = True
+    Picture = Picture["icon:/small/zoom-in"]
+  }
 }

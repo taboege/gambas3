@@ -81,6 +81,8 @@ Public Sub _new()
   HideTab(TAB_COMPILATION)
   'wizDebug[TAB_SEARCH].Closable = True
   
+  splDebug.MinSize = Desktop.Scale * 24
+  
   ReadConfig
   'UpdateLocal
   
@@ -1277,6 +1279,8 @@ Public Sub DefineVariable(sLocal As String, sObject As String)
       cvwVariable.Add("~" & sVar, sVar, Picture["img/symbol/symbol.png"], "~")
     Next
     
+    If cvwVariable["~"].Children = 0 Then cvwVariable.Remove("~")
+
   Endif
   
   If vLayout Then cvwVariable.Layout = vLayout

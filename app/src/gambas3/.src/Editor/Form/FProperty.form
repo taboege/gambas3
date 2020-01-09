@@ -10,19 +10,25 @@
     { Menu1 Menu
     }
   }
-  { panProperty Panel
+  { panProperty HBox
     MoveScaled(4,1,54,4)
-    AutoResize = True
+    Indent = True
     { lblName TextLabel
       MoveScaled(0,0,28,4)
       Expand = True
-      Padding = 4
       Alignment = Align.Normal
+      Wrap = False
     }
     { btnLock ToolButton
-      MoveScaled(50,0,4,4)
+      MoveScaled(45,0,4,4)
       ToolTip = ("Lock property")
       Picture = Picture["icon:/small/lock"]
+      Toggle = True
+    }
+    { btnSortProperties ToolButton
+      MoveScaled(49,0,4,4)
+      ToolTip = ("Sort properties")
+      Picture = Picture["icon:/small/sort-ascent"]
       Toggle = True
     }
   }

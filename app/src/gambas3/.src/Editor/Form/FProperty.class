@@ -1198,7 +1198,8 @@ Public Sub ReadConfig()
 
   Dim H As Integer
   
-  $bSort = Settings["/SortProperties", True]
+  btnSortProperties.Value = Settings["/SortProperties", True]
+  
   Project.SetNormalFont(grdProperty)
 
   webHelp.Zoom = Settings["/Help/Zoom", 80] / 100
@@ -1269,12 +1270,12 @@ Public Sub Form_KeyPress()
 
 End
 
-Public Sub panProperty_Arrange()
-
-  lblName.Move(4, (panProperty.H - lblName.H) \ 2, panProperty.ClientW - btnLock.W, panProperty.ClientH)
-  btnLock.Move(panProperty.W - btnLock.W, (panProperty.H - btnLock.H) \ 2)
-
-End
+' Public Sub panProperty_Arrange()
+' 
+'   lblName.Move(4, (panProperty.H - lblName.H) \ 2, panProperty.ClientW - btnLock.W, panProperty.ClientH)
+'   btnLock.Move(panProperty.W - btnLock.W, (panProperty.H - btnLock.H) \ 2)
+' 
+' End
 
 Public Sub btnLock_Click()
 
@@ -1358,4 +1359,12 @@ Private Sub GetWebView() As HelpView
   If spnHelp.Hidden Then Return
   Return webHelp
   
+End
+
+Public Sub btnSortProperties_Click()
+
+  $bSort = btnSortProperties.Value
+  Settings["/SortProperties"] = $bSort
+  RefreshAll
+
 End

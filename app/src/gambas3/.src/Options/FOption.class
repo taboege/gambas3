@@ -100,8 +100,6 @@ Public Sub _new()
     [txtGlobalFont, "/Font", ""],
     [txtHelpDefaultFont, "/Browser/Font", ""],
     [txtHelpFixedFont, "/Browser/FixedFont", ""],
-    [cmbToolbox, "/ToolboxSize", 0],
-    [btnSortProperty, "/SortProperties", 1],
     [btnCloseWithMiddleClick, "/CloseWithMiddleClick", 0],
     [txtTabSize, "/DefaultTabSize", 2],
     [btnFoldProc, "/Editor/CollapseByDefault", 0],
@@ -476,13 +474,6 @@ Public Sub btnImport_Click()
 
 End
 
-Public Sub btnSortProperty_Click()
-
-  Settings["/SortProperties"] = btnSortProperty.Value
-  FProperty.ReadConfig
-
-End
-
 Public Sub btnCloseWithMiddleClick_Click()
 
   Settings["/CloseWithMiddleClick"] = btnCloseWithMiddleClick.Value
@@ -529,35 +520,6 @@ Public Sub cmbTerminal_Click()
     Settings["/Terminal"] = ""
   Endif
   
-End
-
-' Public Sub cmbImageEditor_Click()
-' 
-'   If cmbImageEditor.Index > 0 Then 
-'     Settings["/ImageEditor"] = $aImageEditor[cmbImageEditor.Index - 1]
-'   Else   
-'     Settings["/ImageEditor"] = ""
-'   Endif
-'   
-' End
-
-' PUBLIC SUB cmbImageEditor_Click()
-' 
-'   IF cmbImageEditor.Index > 0 THEN 
-'     Settings["/ImageEditor"] = LCase(cmbImageEditor.Text)
-'   ELSE   
-'     Settings["/ImageEditor"] = ""
-'   ENDIF
-'   
-'   Project.ImageEditor = ""
-' 
-' END
-
-Public Sub cmbToolbox_Click()
-
-  Settings["/ToolboxSize"] = cmbToolbox.Index
-  FToolBox.ReadConfig
-
 End
 
 Public Sub btnOutput_Click()

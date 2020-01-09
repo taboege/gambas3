@@ -1157,14 +1157,20 @@ End
 
 Public Sub ReadConfig()
   
+  Dim H As Integer
+  
   Project.SetNormalFont(tvwProject)
   tabProperty.TextFont = Project.GetSmallFont()
-  $iTabBarHeight = tabProperty.TextFont.H + Desktop.Scale * 2 - 1
-  'txtSearchProject.H = Container(tabProperty.Children[0]).Children[0].H - 2
-  txtSearchProject.H = $iTabBarHeight
+
+  H = tabProperty.TabBarSize
+  $iTabBarHeight = H  
+  
+  panSearchProject.H = H
+
   wrkProject.Font = tabProperty.TextFont
-  Me.Menus.Visible = Settings["/ShowMenus", True]
   wrkProject.CloseWithMouse = Settings["/CloseWithMiddleClick", False]
+
+  Me.Menus.Visible = Settings["/ShowMenus", True]
   
   UpdateWorkspaceButtons
   UpdatePropertyButtons
@@ -3106,5 +3112,17 @@ End
 Public Sub panTool_Hide()
 
   UpdatePropertyButtons
+
+End
+
+Public Sub btnWorkspaceProperty_Click()
+
+  panProperty.Hidden = False
+
+End
+
+Public Sub btnWorkspaceProject_Click()
+
+  panProject.Hidden = False
 
 End

@@ -24,62 +24,62 @@
     { panDebug HBox
       MoveScaled(2,1,112,36)
       Expand = True
-      { lvwStack ListView
-        MoveScaled(5,2,16,33)
-        Mouse = Mouse.Pointing
-        Border = False
-      }
-      { Separator2 Separator
-        MoveScaled(27,2,0,23)
-      }
-      { Panel7 VBox
-        MoveScaled(32,2,74,32)
+      { splDebug HSplit
+        MoveScaled(6,1,94,34)
         Expand = True
-        { panWatch HBox
-          MoveScaled(1,1,71,3)
-          Drop = True
-          { Panel5 HBox
-            MoveScaled(1,0,41,3)
-            Background = Color.TextBackground
-            Expand = True
-            { btnKillWatch ToolButton
-              MoveScaled(0,0,3,3)
-              ToolTip = ("Remove current expression")
-              Picture = Picture["icon:/tiny/remove"]
-            }
-            { btnAddWatch ToolButton
-              MoveScaled(3,0,3,3)
-              ToolTip = ("Add expression")
-              Picture = Picture["icon:/tiny/watch"]
-            }
-            { cmbWatch ComboBox
-              MoveScaled(6,0,27,3)
-              Expand = True
-              Border = False
-            }
-          }
-          { Separator6 Separator
-            MoveScaled(52,0,0,3)
-          }
-          { btnShowMe ToolButton
-            MoveScaled(56,0,4,3)
-            #Translate = False
-            Font = Font["-1"]
-            ToolTip = "Display ME"
-            Text = "ME"
-          }
-          { Separator3 Separator
-            MoveScaled(63,0,0,3)
-          }
-        }
-        { Separator4 Separator
-          MoveScaled(4,11,30,0)
-        }
-        { cvwVariable ColumnView
-          MoveScaled(2,13,42,18)
-          Expand = True
-          Header = False
+        { lvwStack ListView
+          MoveScaled(0,0,14,33)
+          Mouse = Mouse.Pointing
           Border = False
+        }
+        { Panel7 VBox
+          MoveScaled(16,1,74,32)
+          { panWatch HBox
+            MoveScaled(1,1,71,3)
+            Drop = True
+            { Panel5 HBox
+              MoveScaled(1,0,41,3)
+              Background = Color.TextBackground
+              Expand = True
+              { btnKillWatch ToolButton
+                MoveScaled(0,0,3,3)
+                ToolTip = ("Remove current expression")
+                Picture = Picture["icon:/tiny/remove"]
+              }
+              { btnAddWatch ToolButton
+                MoveScaled(3,0,3,3)
+                ToolTip = ("Add expression")
+                Picture = Picture["icon:/tiny/watch"]
+              }
+              { cmbWatch ComboBox
+                MoveScaled(6,0,27,3)
+                Expand = True
+                Border = False
+              }
+            }
+            { Separator6 Separator
+              MoveScaled(52,0,0,3)
+            }
+            { btnShowMe ToolButton
+              MoveScaled(56,0,4,3)
+              #Translate = False
+              Font = Font["-1"]
+              ToolTip = "Display ME"
+              Text = "ME"
+            }
+            { Separator3 Separator
+              MoveScaled(63,0,0,3)
+            }
+          }
+          { Separator4 Separator
+            MoveScaled(4,11,30,0)
+          }
+          { cvwVariable ColumnView
+            MoveScaled(2,13,42,18)
+            Expand = True
+            Header = False
+            Border = False
+          }
         }
       }
       { Panel4 Panel
