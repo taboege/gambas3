@@ -236,6 +236,21 @@ BEGIN_METHOD_VOID(CDEBUG_end)
 
 END_METHOD
 
+static bool write_nointr(int fd, const char *data, int len)
+{
+	int n;
+	
+	while (len > 0)
+	{
+		n = write(fd, data, len);
+		if (n <= 0 && errno != EINTR)
+			return TRUE;
+		data += n;
+		len -= n;
+	}
+	
+	return FALSE;
+}
 
 BEGIN_METHOD(CDEBUG_write, GB_STRING data)
 
@@ -247,10 +262,10 @@ BEGIN_METHOD(CDEBUG_write, GB_STRING data)
 
 	if (data && len > 0)
 	{
-		if (write(_fdw, data, len) != len)
+		if (write_nointr(_fdw, data, len))
 			goto __ERROR;
 	}
-	if (write(_fdw, "\n", 1) != 1)
+	if (write_nointr(_fdw, "\n", 1))
 		goto __ERROR;
 
 	return;
