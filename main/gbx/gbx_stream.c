@@ -1229,7 +1229,7 @@ void STREAM_read_type(STREAM *stream, TYPE type, VALUE *value)
 			
 			ON_ERROR_1(error_STREAM_read_type, object)
 			{
-				if (EXEC_special(SPEC_READ, class, object, 1, FALSE))
+				if (EXEC_special(SPEC_READ, class, object, 1, TRUE))
 					THROW_SERIAL();
 			}
 			END_ERROR
@@ -1591,7 +1591,7 @@ void STREAM_write_type(STREAM *stream, TYPE type, VALUE *value)
 		ob = CSTREAM_FROM_STREAM(stream);
 		STACK_check(1);
 		PUSH_OBJECT(OBJECT_class(ob), ob);
-		EXEC_special(SPEC_WRITE, class, object, 1, FALSE);
+		EXEC_special(SPEC_WRITE, class, object, 1, TRUE);
 		
 		return;
 	}
