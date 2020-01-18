@@ -2302,6 +2302,10 @@ static void push_subr_varptr(ushort code)
 				expr = STR_print("(%s.value.addr + %s.value.start)", var, var);
 				break;
 				
+			case T_VARIANT:
+				expr = STR_print("(%s.value.type == GB_T_STRING ? %s.value.value._string : &%s.value.value.data)", var, var, var);
+				break;
+				
 			default:
 				goto _ILLEGAL;
 		}
