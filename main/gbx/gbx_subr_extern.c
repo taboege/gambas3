@@ -218,9 +218,16 @@ void SUBR_varptr(ushort code)
 				case T_POINTER:
 					ptr = &val->_pointer.value;
 					break;
+					
+				case T_VARIANT:
+					if (val->_variant.vtype == T_STRING)
+						ptr = val->_variant.value._string;
+					else
+						ptr = &val->_variant.value.data;
+					break;
 
 				default:
-					THROW(E_TYPE, "Number", TYPE_get_name(val->type));
+					THROW(E_TYPE, "Number, date or string", TYPE_get_name(val->type));
 			}
 		}
 		else if ((op & 0xF800) == C_PUSH_DYNAMIC)
