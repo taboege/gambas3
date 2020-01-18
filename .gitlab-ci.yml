@@ -110,7 +110,7 @@ build:debian-testing:
        libssl-dev
   script:
     - ./reconf-all
-    - GAMBAS_CONFIG_FAILURE=1 ./configure -C --disable-keyring --disable-qtwebkit
+    - GAMBAS_CONFIG_FAILURE=1 ./configure -C --disable-keyring --disable-qt4 --disable-qtwebkit
     - make -j$(nproc)
     - make install
 
