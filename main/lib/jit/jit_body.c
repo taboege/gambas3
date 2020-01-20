@@ -2268,7 +2268,7 @@ static void push_subr_varptr(ushort code)
 	{
 		if ((op & 0xFF00) == C_PUSH_PARAM)
 		{
-			index = _func->n_param + (op & 0xFF);
+			index = _func->n_param + (signed char)(op & 0xFF);
 			type = _func->param[index].type;
 			sprintf(var, "p%d", index);
 		}
