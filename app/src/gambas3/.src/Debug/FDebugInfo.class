@@ -1509,3 +1509,9 @@ Public Sub btnVcClear_Click()
   trmVersionControl.Clear
 
 End
+
+Public Sub cvwVariable_Select()
+
+  Balloon.Hide(cvwVariable)
+
+End

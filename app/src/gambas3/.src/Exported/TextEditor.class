@@ -375,7 +375,7 @@ Static Public Sub GetModeFromPath(sPath As String) As String
       sMode = "c++"
     Case "gbs"
       sMode = "gambas"
-    Case "html", "htm", "xml", "kml"
+    Case "html", "htm", "xml", "kml", "rss"
       sMode = "html"
     Case "module", "class"
       If Project.IsSourcePath(sPath) Then sMode = "gambas"
@@ -385,3 +385,79 @@ Static Public Sub GetModeFromPath(sPath As String) As String
   Return sMode
   
 End
+
+Public Sub EnterDiffModeWith(Path As String)
+
+  Dim sLine As String
+  Dim iLine As Integer
+  Dim aAdded As New Integer[]
+  Dim cRemoved As New Collection
+  Dim aRemoved As String[]
+  Dim iLineRemoved As Integer
+  Dim aDiff As String[]
+  Dim bStart As Boolean
+
+  aDiff = Split(VersionControl.Diff(Path), "\n")
+  
+  For Each sLine In aDiff
+    
+    If sLine Begins "@@ " Then
+      GoSub HANDLE_REMOVED
+      iLine = CInt(Scan(sLine, "*+*,*")[1]) - 1
+      bStart = True
+      Continue
+    Endif
+    
+    If Not bStart Then Continue
+    
+    If sLine Begins "-" Then
+      
+      If Not aRemoved Then
+        iLineRemoved = iLine
+        aRemoved = New String[]
+      Endif
+      
+      aRemoved.Add(Mid$(sLine, 2))
+      
+      Continue
+      
+    Endif
+    
+    If sLine Begins "+" Then
+      
+      GoSub HANDLE_REMOVED
+      
+      If aAdded.Count And If aAdded[aAdded.Max - 1] + aAdded[aAdded.Max] = iLine Then
+        Inc aAdded[aAdded.Max]
+      Else
+        aAdded.Add(iLine)
+        aAdded.Add(1)
+      Endif
+      
+      Inc iLine
+      Continue
+      
+    Endif
+    
+    If sLine Begins " " Then
+      GoSub HANDLE_REMOVED
+      Inc iLine
+    Endif
+    
+  Next
+  
+  GoSub HANDLE_REMOVED
+  
+  Me.EnterDiffMode(aAdded, cRemoved)
+  
+HANDLE_REMOVED:
+
+  If aRemoved Then
+    cRemoved[iLineRemoved] = aRemoved
+    aRemoved = Null
+    iLineRemoved = 0
+  Endif
+  Return
+
+End
+

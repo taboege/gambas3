@@ -27,7 +27,7 @@ Public Age As Integer
 
 Property Read ReadOnly As Boolean
 
-Static Private $aExt As String[] = ["htm", "html", "xml", "kml", "svg", "css", "webpage", "js", "c", "h", "cpp", "gbs"]
+Static Private $aExt As String[] = ["htm", "html", "xml", "kml", "svg", "css", "webpage", "js", "c", "h", "cpp", "gbs", "rss"]
 
 Private $hEditor As TextEditor
 Private $bNoHighlight As Boolean
@@ -57,6 +57,8 @@ Private $aProc As String[]
 
 Private $bWebPage As Boolean
 Private $iLastLine As Integer
+
+Private $bDiffMode As Boolean
 
 Public Sub _new(sPath As String, Optional bModule As Boolean)
 
@@ -202,6 +204,8 @@ Public Function Save() As Boolean
   DrawTitle
 
   Save.End()
+
+  UpdateDiffAction
 
 Catch
 
@@ -687,6 +691,8 @@ Public Sub Reload()
   Modify(True)
   
   If Settings["/FormatCode/FormatOnLoad"] Then MPrettyCode.Run(Me)
+
+  UpdateDiffAction
 
 End
 
@@ -1220,6 +1226,7 @@ End
 Public Sub panToolBar_Configure()
 
   UpdateMenu
+  UpdateDiffAction
 
   If $bModule Then
     'Action[".show-class"].Picture = Project.GetFileIcon(File.SetExt(Path, "class"), 16)
@@ -1511,6 +1518,9 @@ Public Sub Action_Activate((Key) As String) As Boolean
         $hEditor2.TabIndent = $hEditor.TabIndent
       Endif
     
+    Case ".diff"
+      UpdateDiffMode
+    
     Case Else
       Return True
   
@@ -1792,5 +1802,50 @@ End
 Public Sub mnuPrint_Click()
 
   MPrint.Run($hEditor, Me.Title)
+
+End
+
+Private Sub UpdateDiffAction()
+
+  Action[".diff", Me].Visible = Project.IsModified(Path)
+  Action[".diff-next,.diff-previous", Me].Visible = Action[".diff", Me].Visible And Action[".diff", Me].Value
+
+End
+
+Private Sub UpdateDiffMode()
+
+  If Action[".diff", Me].Value = $bDiffMode Then Return
+  $bDiffMode = Action[".diff", Me].Value
+  
+  UpdateDiffAction
+  
+  If $bDiffMode Then
+    
+    Me.Save()
+    $hEditor.EnterDiffModeWith(Path)
+    
+  Else
+  
+    $hEditor.LeaveDiffMode()  
+  
+  Endif
+  
+  SetReadOnly
+
+End
+
+Public Sub btnDiffPrevious_Click()
+
+  Dim Y As Integer
+  Y = $hEditor.FindPreviousDiff($hEditor.Line)
+  If Y >= 0 Then $hEditor.Goto($hEditor.Column, Y)
+
+End
+
+Public Sub btnDiffNext_Click()
+
+  Dim Y As Integer
+  Y = $hEditor.FindNextDiff($hEditor.Line)
+  If Y >= 0 Then $hEditor.Goto($hEditor.Column, Y)
 
 End
