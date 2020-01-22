@@ -4,12 +4,20 @@ Inherits UnitTest
 
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
+Public Sub _new()
+
+  Me.Plan = 11
+
+End
+
 Public Sub SetupContainer()
+
     Assert.Note("------------------ Intentional Failures ------------------")
 End
 
 Public Sub TeardownContainer()
     Assert.Note("------------------ End Intentional Failures ------------------")
+    Assert.Note("11 Tests, 11 Failures, then everything is ok.")
 End
 
 
@@ -70,5 +78,13 @@ Public Sub TestError()
     Assert.Error("No Error but error expected. Ok if not ok.")
 
 End
+
+Public Sub TestErrorTwo()
+
+    Error.Raise("I shot the sheriff.") 
+    Assert.True(True)
+
+End
+
 '
 
