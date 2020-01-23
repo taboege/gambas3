@@ -140,7 +140,6 @@ Static Function GetAllTestContainerNames(Optional SingleTestContainer As String,
         'Usage of 2nd Alternative creates this error:
         '"Class.GotoNextSection.12"
         'which unfortunately happens only if gb.test is a component of a project.
-
         ' If Class.Stat(sName).Parent = "UnitTest" Then
         '     GoSub AddClass
         ' Endif
@@ -156,7 +155,7 @@ AddClass:
         
         'sName = Class.Stat(sName).Name
         
-        'FIXME: Class.Stat(sName).Name does not work if included as component
+        'Atention: Class.Stat(sName).Name does not work if included as component
         'Then this creates the error:
         'Bail out! Error in Unittest->GetAllTestContainerNames: Unknown symbol 'Stat' in class 'Class'
 
@@ -213,13 +212,13 @@ Public Sub _RunCase(oCase As ITestCase)
             If MethodName = oCase.Name Then
                 Try Object.Call(Me, MethodName)
                 If Error Then
-                    If Error.Code > 0 Then
+                    'If Error.Code > 0 Then
                         Inc Track.Counter
                         Track.NOKs.Add(Track.Counter)
                         Print "not ok " & Track.Counter & " " &
-                            Track.ContainerName & ":" & Track.TestName & " crashed with " & Error.Text
+                            Track.ContainerName & ":" & Track.TestName & " Raised error: " & Error.Text
                         Error.Clear
-                    Endif
+                    'Endif
                 Endif
             Endif
         Endif
