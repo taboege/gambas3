@@ -1661,12 +1661,14 @@ Private Sub RefreshLayout()
     $aLayout.Add(Html(sName))
   Next
   
-  For Each sFile In Dir(sDir, "*.layout").Sort(gb.Natural)
-    sName = File.BaseName(sFile)
-    $aLayout.Add(sName)
-    If $cLayoutName.Exist(sName) Then sName = $cLayoutName[sName]
-    $aLayout.Add(Html(sName))
-  Next
+  If IsDir(sDir) Then
+    For Each sFile In Dir(sDir, "*.layout").Sort(gb.Natural)
+      sName = File.BaseName(sFile)
+      $aLayout.Add(sName)
+      If $cLayoutName.Exist(sName) Then sName = $cLayoutName[sName]
+      $aLayout.Add(Html(sName))
+    Next
+  Endif
   
   gvwLayout.Rows.Count = $aLayout.Count \ 2
   
