@@ -179,6 +179,9 @@ static void myMessageHandler(QtMsgType type, const QMessageLogContext &context, 
 	
 	if (msg == "QXcbClipboard: SelectionRequest too old")
 		return;
+	
+	if (msg.startsWith("QXcbConnection: ") && msg.contains("(TranslateCoords)"))
+		return;
 
 	_previousMessageHandler(type, context, msg);
 }
