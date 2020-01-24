@@ -739,7 +739,9 @@ static int open_database(DB_DESC *desc, DB_DATABASE *db)
 	char *host;
 	char *socket;
 	my_bool reconnect = TRUE;
+	unsigned int mode;
 	unsigned int timeout;
+	char *env;
 
 	conn = mysql_init(NULL);
 
@@ -763,8 +765,13 @@ static int open_database(DB_DESC *desc, DB_DATABASE *db)
 	
 	timeout = db->timeout;
 	mysql_options(conn, MYSQL_OPT_CONNECT_TIMEOUT, &timeout);
-	/*timeout /= 3;
-	mysql_options(conn, MYSQL_OPT_READ_TIMEOUT, &timeout);*/
+	
+	env = getenv("GB_DB_MYSQL_NOSSL");
+	if (env && strcmp(env, "0"))
+	{
+		mode = SSL_MODE_DISABLED;
+		mysql_options(conn, MYSQL_OPT_SSL_MODE, &mode);
+	}
 	
 	if (!mysql_real_connect(conn, host, desc->user, desc->password,
 			name, desc->port == NULL ? 0 : atoi(desc->port), socket,
