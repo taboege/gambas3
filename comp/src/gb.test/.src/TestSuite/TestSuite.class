@@ -73,7 +73,7 @@ End
 
 Private Sub StopContainer(Container As UnitTest)
 
-    With container
+    With Container
         .TearDownContainer()
         If .Plan > 0 Then
             Track.Plan += .Plan
@@ -130,6 +130,8 @@ Public Function AddAllTestCases(oTestContainer As UnitTest, Optional NameProcedu
             If NameProcedure = Null Then
                 AddNewTestCase(CStr(sTests[i]), oTestContainer)
             Else
+                ' just one TestMethod was called, change plan
+                oTestContainer.Plan = 1
                 If sTests[i] = NameProcedure Then
                     AddNewTestCase(CStr(sTests[i]), oTestContainer)
                 Endif
