@@ -576,7 +576,6 @@ Public Sub ScrollArea_Arrange()
     
   Else
     
-    
     $iGridHeight = Max(DS * 4, $iIconSize) + $iIconLines * Me.Font.Height + DS * 4
     
     If $iGridSize Then
