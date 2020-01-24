@@ -1160,6 +1160,7 @@ Public Sub ReadConfig()
   Dim H As Integer
   
   Project.SetNormalFont(tvwProject)
+  Project.SetNormalFont(tlbMain)
   tabProperty.TextFont = Project.GetSmallFont()
 
   H = tabProperty.TabBarSize
@@ -3126,3 +3127,4 @@ Public Sub btnWorkspaceProject_Click()
   panProject.Hidden = False
 
 End
+

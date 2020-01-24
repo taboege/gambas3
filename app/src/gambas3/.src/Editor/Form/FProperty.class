@@ -1334,9 +1334,9 @@ Public Sub btnCloseHelp_Click()
 
 End
 
-Public Sub ShowHelp()
+Public Sub ShowHelp(Optional bShow As Boolean = True)
   
-  spnHelp.Hidden = False
+  spnHelp.Hidden = Not bShow
   
 End
 

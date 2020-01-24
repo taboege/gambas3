@@ -73,7 +73,7 @@ Public Sub Insert(sText As String)
   If $hEditor Then
     $hEditor.Print(DConv(sText))
   Else
-    If Not Settings["/QuietExternalCommands", False] Then FDebugInfo.InsertVersionControl(sText)
+    FDebugInfo.InsertVersionControl(sText)
   Endif
 
 End

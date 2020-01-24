@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,98,67)
+  MoveScaled(0,0,98,72)
   Action = "option"
   Text = ("Preferences")
   Icon = Picture["icon:/small/options"]
@@ -31,14 +31,14 @@
     }
   }
   { ipnOption IconPanel
-    MoveScaled(1,1,94,65)
+    MoveScaled(1,1,94,70)
     Arrangement = Arrange.Vertical
     Spacing = True
     Count = 10
     Border = True
     Index = 0
     Text = ("Identity")
-    Picture = Picture["icon:/medium/user"]
+    Picture = Picture["icon:/large/user"]
     { Label60 Label
       MoveScaled(1,1,61,3)
       Font = Font["Bold"]
@@ -149,7 +149,7 @@
     }
     Index = 1
     Text = ("Projects")
-    Picture = Picture["icon:/medium/copy"]
+    Picture = Picture["icon:/large/copy"]
     { Label67 Label
       MoveScaled(0,1,63,3)
       Font = Font["Bold"]
@@ -311,7 +311,7 @@
       }
     }
     { panAutoTransEngine HBox
-      MoveScaled(1,65,66,4)
+      MoveScaled(1,56,66,4)
       Visible = False
       Spacing = True
       Indent = True
@@ -327,7 +327,7 @@
     }
     Index = 2
     Text = ("Interface")
-    Picture = Picture["icon:/medium/menu"]
+    Picture = Picture["icon:/large/view-icon"]
     { Label43 Label
       MoveScaled(0,1,63,3)
       Font = Font["Bold"]
@@ -417,36 +417,8 @@
         Animated = True
       }
     }
-    { HBox56 HBox
-      MoveScaled(1,35,66,4)
-      Spacing = True
-      Indent = True
-      { Label70 Label
-        MoveScaled(0,0,47,4)
-        Expand = True
-        Text = ("Separate static symbols in method selector")
-      }
-      { btnSeparateStatic SwitchButton
-        MoveScaled(48,0,8,4)
-        Animated = True
-      }
-    }
-    { HBox21 HBox
-      MoveScaled(1,40,66,4)
-      Spacing = True
-      Indent = True
-      { Label21 Label
-        MoveScaled(0,0,42,4)
-        Expand = True
-        Text = ("Minimize at runtime")
-      }
-      { btnMinimize SwitchButton
-        MoveScaled(51,0,8,4)
-        Animated = True
-      }
-    }
     { HBox57 HBox
-      MoveScaled(1,45,66,4)
+      MoveScaled(1,35,66,4)
       Spacing = True
       Indent = True
       { Label49 Label
@@ -459,23 +431,44 @@
         Animated = True
       }
     }
-    { HBox10 HBox
-      MoveScaled(1,50,66,4)
+    { Panel7 Panel
+      MoveScaled(23,40,4,1)
+    }
+    { Label1 Label
+      MoveScaled(1,45,63,3)
+      Font = Font["Bold"]
+      Text = ("Layout")
+    }
+    { Panel6 HBox
+      MoveScaled(1,50,63,16)
+      Expand = True
       Spacing = True
-      Indent = True
-      { Label16 Label
-        MoveScaled(0,0,47,4)
+      { gvwLayout GridView
+        MoveScaled(0,0,39,15)
         Expand = True
-        Text = ("Quiet external commands")
+        Mode = Select.Single
+        Grid = False
       }
-      { btnOutput SwitchButton
-        MoveScaled(48,0,8,4)
-        Animated = True
+      { VBox3 VBox
+        MoveScaled(40,0,19,12)
+        Spacing = True
+        { btnSaveLayout Button
+          MoveScaled(0,0,19,4)
+          AutoResize = True
+          Text = ("Save") & "..."
+          Picture = Picture["icon:/small/save"]
+        }
+        { btnDeleteLayout Button
+          MoveScaled(0,5,19,4)
+          AutoResize = True
+          Text = ("Delete")
+          Picture = Picture["icon:/small/delete"]
+        }
       }
     }
     Index = 3
     Text = ("Fonts")
-    Picture = Picture["icon:/medium/font"]
+    Picture = Picture["icon:/large/font"]
     { Label42 Label
       MoveScaled(1,1,63,3)
       Font = Font["Bold"]
@@ -658,7 +651,7 @@
     }
     Index = 4
     Text = ("Themes")
-    Picture = Picture["icon:/medium/color"]
+    Picture = Picture["icon:/large/color"]
     { Label27 Label
       MoveScaled(0,1,63,3)
       Font = Font["Bold"]
@@ -735,7 +728,7 @@
     }
     Index = 5
     Text = ("Editor")
-    Picture = Picture["icon:/medium/edit"]
+    Picture = Picture["icon:/large/edit"]
     { Label44 Label
       MoveScaled(0,1,63,3)
       Font = Font["Bold"]
@@ -812,7 +805,7 @@
       }
     }
     { HBox18 HBox
-      MoveScaled(1,35,66,4)
+      MoveScaled(1,30,66,4)
       Spacing = True
       Indent = True
       { Label5 Label
@@ -826,7 +819,7 @@
       }
     }
     { HBox29 HBox
-      MoveScaled(1,40,66,4)
+      MoveScaled(1,35,66,4)
       Spacing = True
       Indent = True
       { Label25 Label
@@ -840,7 +833,7 @@
       }
     }
     { HBox51 HBox
-      MoveScaled(1,45,66,4)
+      MoveScaled(1,40,66,4)
       Spacing = True
       Indent = True
       { Label62 Label
@@ -854,7 +847,7 @@
       }
     }
     { HBox20 HBox
-      MoveScaled(1,50,66,4)
+      MoveScaled(1,45,66,4)
       Visible = False
       Spacing = True
       Indent = True
@@ -868,9 +861,23 @@
         Animated = True
       }
     }
+    { HBox56 HBox
+      MoveScaled(1,50,66,4)
+      Spacing = True
+      Indent = True
+      { Label70 Label
+        MoveScaled(0,0,47,4)
+        Expand = True
+        Text = ("Separate static symbols in method selector")
+      }
+      { btnSeparateStatic SwitchButton
+        MoveScaled(48,0,8,4)
+        Animated = True
+      }
+    }
     Index = 6
     Text = ("Code formatting")
-    Picture = Picture["icon:/medium/wizard"]
+    Picture = Picture["icon:/large/wizard"]
     { Label52 Label
       MoveScaled(1,0,63,3)
       Font = Font["Bold"]
@@ -1009,7 +1016,7 @@
     }
     Index = 7
     Text = ("Code snippets")
-    Picture = Picture["icon:/medium/insert-text"]
+    Picture = Picture["icon:/large/insert-text"]
     { Label47 Label
       MoveScaled(1,0,63,3)
       Font = Font["Bold"]
@@ -1074,7 +1081,7 @@
     }
     Index = 8
     Text = ("Background")
-    Picture = Picture["icon:/medium/image"]
+    Picture = Picture["icon:/large/image"]
     { Label14 Label
       MoveScaled(1,1,15,3)
       Font = Font["Bold"]
@@ -1094,7 +1101,7 @@
     }
     Index = 9
     Text = ("Help & applications")
-    Picture = Picture["icon:/medium/help"]
+    Picture = Picture["icon:/large/help"]
     { Label46 Label
       MoveScaled(1,0,63,3)
       Font = Font["Bold"]

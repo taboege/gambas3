@@ -3966,6 +3966,7 @@ End
 Private Sub UpdateDiffMode()
 
   If Action[".diff", Me].Value = $bDiffMode Then Return
+  
   $bDiffMode = Action[".diff", Me].Value
   
   UpdateDiffAction
@@ -3973,6 +3974,11 @@ Private Sub UpdateDiffMode()
   If $bDiffMode Then
     
     Me.Save()
+    If Not Action[".diff", Me].Visible Then 
+      $bDiffMode = False
+      Action[".diff", Me].Value = False
+      Return
+    Endif
     $hEditor.EnterDiffModeWith(Path)
     
   Else
