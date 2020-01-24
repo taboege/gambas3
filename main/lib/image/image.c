@@ -256,7 +256,7 @@ static void convert_image(uchar *dst, int dst_format, uchar *src, int src_format
 	psrc = GB_IMAGE_FMT_IS_PREMULTIPLIED(src_format);
 	pdst = GB_IMAGE_FMT_IS_PREMULTIPLIED(dst_format);
 
-	if (psrc != pdst && GB_IMAGE_FMT_IS_SWAPPED(dst_format))
+	/*if (psrc != pdst && GB_IMAGE_FMT_IS_SWAPPED(dst_format))
 	{
 		p = (uint *)dst;
 		pm = (uint *)dm;
@@ -285,7 +285,7 @@ static void convert_image(uchar *dst, int dst_format, uchar *src, int src_format
 				p++;
 			}
 		}
-	}
+	}*/
 
 	src_format = GB_IMAGE_FMT_CLEAR_PREMULTIPLIED(src_format);
 	dst_format = GB_IMAGE_FMT_CLEAR_PREMULTIPLIED(dst_format);
