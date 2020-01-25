@@ -766,12 +766,14 @@ static int open_database(DB_DESC *desc, DB_DATABASE *db)
 	timeout = db->timeout;
 	mysql_options(conn, MYSQL_OPT_CONNECT_TIMEOUT, &timeout);
 	
+	#if MYSQL_VERSION_ID >= 50636
 	env = getenv("GB_DB_MYSQL_NOSSL");
 	if (env && strcmp(env, "0"))
 	{
 		mode = SSL_MODE_DISABLED;
 		mysql_options(conn, MYSQL_OPT_SSL_MODE, &mode);
 	}
+	#endif
 	
 	if (!mysql_real_connect(conn, host, desc->user, desc->password,
 			name, desc->port == NULL ? 0 : atoi(desc->port), socket,
