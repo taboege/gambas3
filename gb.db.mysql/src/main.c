@@ -766,7 +766,7 @@ static int open_database(DB_DESC *desc, DB_DATABASE *db)
 	timeout = db->timeout;
 	mysql_options(conn, MYSQL_OPT_CONNECT_TIMEOUT, &timeout);
 	
-	#if MYSQL_VERSION_ID >= 50636
+	#if MYSQL_VERSION_ID >= 50711
 	env = getenv("GB_DB_MYSQL_NOSSL");
 	if (env && strcmp(env, "0"))
 	{
