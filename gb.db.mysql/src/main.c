@@ -739,9 +739,11 @@ static int open_database(DB_DESC *desc, DB_DATABASE *db)
 	char *host;
 	char *socket;
 	my_bool reconnect = TRUE;
-	unsigned int mode;
 	unsigned int timeout;
+	#if HAVE_MYSQL_SSL_MODE_DISABLED
 	char *env;
+	unsigned int mode;
+	#endif
 
 	conn = mysql_init(NULL);
 
@@ -766,7 +768,7 @@ static int open_database(DB_DESC *desc, DB_DATABASE *db)
 	timeout = db->timeout;
 	mysql_options(conn, MYSQL_OPT_CONNECT_TIMEOUT, &timeout);
 	
-	#if MYSQL_VERSION_ID >= 80000
+	#if HAVE_MYSQL_SSL_MODE_DISABLED
 	env = getenv("GB_DB_MYSQL_NOSSL");
 	if (env && strcmp(env, "0"))
 	{
