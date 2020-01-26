@@ -102,8 +102,9 @@ End
 
 Public Sub Wait() As String
   
+  If Jit.Debug Then Error "gb.jit: waiting for compilation of '"; Name; "'..."
+  
   If $hProcess Then
-    If Jit.Debug Then Error "gb.jit: waiting for compilation of '"; Name; "'..."
     $hProcess.Wait
     If Jit.Debug Then Error "gb.jit: compilation of '"; Name; "' is available"
   Endif

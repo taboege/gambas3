@@ -262,10 +262,10 @@ BEGIN_METHOD(CDEBUG_write, GB_STRING data)
 
 	if (data && len > 0)
 	{
-		if (write_nointr(_fdw, data, len))
+		if (write(_fdw, data, len) != len)
 			goto __ERROR;
 	}
-	if (write_nointr(_fdw, "\n", 1))
+	if (write(_fdw, "\n", 1) != 1)
 		goto __ERROR;
 
 	return;
