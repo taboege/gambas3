@@ -2467,7 +2467,7 @@ Private Function MakeArchPackage(sSys As String)
   
         Print #hFile, "  install -d ${pkgdir}/usr/bin"
         Print #hFile, "  install -m755 " & $sName & ".gambas ${pkgdir}/usr/bin" &/ $sName
-        If $sName <> sPackageName Then Print #hFile, "  ln -s " & Shell$($sName) & " \"$(pkgdir)\"/usr/bin" &/ Shell$(sPackageName)
+        If $sName <> sPackageName Then Print #hFile, "  ln -s " & Shell$($sName) & " \"${pkgdir}\"/usr/bin" &/ Shell$(sPackageName)
         Print #hFile, "  install -D .." &/ Project.Name & ".png \\"
         Print #hFile, "    ${pkgdir}/usr/share/pixmaps" &/ Project.Name & ".png"
         Print #hFile, "  install -D .." &/ sPackageName & ".desktop \\"
