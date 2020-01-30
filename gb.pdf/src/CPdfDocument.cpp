@@ -104,12 +104,14 @@ END_PROPERTY
 
 static void return_unicode_string(const Unicode *unicode, int len)
 {
-	static UnicodeMap *uMap = NULL;
-	
 	GooString gstr;
 	char buf[8]; /* 8 is enough for mapping an unicode char to a string */
 	int i, n;
 
+#if POPPLER_VERSION_0_85
+	const UnicodeMap *uMap = globalParams->getUtf8Map();
+#else
+	static UnicodeMap *uMap = NULL;
 	if (uMap == NULL) 
 	{
 		GooString *enc = new GooString("UTF-8");
@@ -117,6 +119,7 @@ static void return_unicode_string(const Unicode *unicode, int len)
 		uMap->incRefCnt();
 		delete enc;
 	}
+#endif
 		
 	for (i = 0; i < len; ++i) {
 		n = uMap->mapUnicode(unicode[i], buf, sizeof(buf));
