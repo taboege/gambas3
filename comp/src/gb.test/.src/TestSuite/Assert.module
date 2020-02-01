@@ -11,9 +11,9 @@ Public Sub Note(Message As String)
 End
 '' Asserts that Value equals Expected
 
-Public Sub Equals(Expected As Variant, Value As Variant, Optional Message As String)
+Public Sub Equals(Expected As Variant, Value As Variant, Optional Message As String) As Boolean
 
-    Test(Value = Expected, Message)
+    Return Test(Value = Expected, Message)
 
 End
 
@@ -23,23 +23,23 @@ End
 '' Delta: tolerated precision
 '' Message: optional message describing the asserted condition
 
-Public Sub EqualsFloat(Expected As Float, Value As Float, Delta As Float, Optional Message As String)
+Public Sub EqualsFloat(Expected As Float, Value As Float, Delta As Float, Optional Message As String) As Boolean
 
-    Test(Abs(Expected - Value) <= Delta, Message)
+    Return Test(Abs(Expected - Value) <= Delta, Message)
 
 End
 
 '' Asserts that the expected Long value equals the actual Long value
 
-Public Sub EqualsLong(Expected As Long, Value As Long, Optional Message As String)
+Public Sub EqualsLong(Expected As Long, Value As Long, Optional Message As String) As Boolean
 
-    Test(Expected = Value, Message)
+    Return Test(Expected = Value, Message)
 
 End
 
 '' Asserts that the expected Integer value equals the actual Integer value
 
-Public Sub EqualsInteger(Expected As Integer, Value As Integer, Optional Message As String)
+Public Sub EqualsInteger(Expected As Integer, Value As Integer, Optional Message As String) As Boolean
 
     ' There is no difference, long values are also stored in integer variables
     EqualsLong(Expected, Value, Message)
@@ -48,71 +48,71 @@ End
 
 '' Asserts that the expected date equals the value
 
-Public Sub EqualsDate(Expected As Date, Value As Date, Optional Message As String)
+Public Sub EqualsDate(Expected As Date, Value As Date, Optional Message As String) As Boolean
 
-    Test(Expected = Value, Message)
+    Return Test(Expected = Value, Message)
 
 End
 
 '' Asserts that the expected object equals the object in Value
 
-Public Sub EqualsObject(Expected As Object, Value As Object, Optional Message As String)
+Public Sub EqualsObject(Expected As Object, Value As Object, Optional Message As String) As Boolean
 
-    Test(Expected = Value, Message)
+    Return Test(Expected = Value, Message)
 
 End
 
 '' Asserts that the expected string equals the string in Value
 
-Public Sub EqualsString(Expected As String, Value As String, Optional Message As String)
+Public Sub EqualsString(Expected As String, Value As String, Optional Message As String) As Boolean
 
-    Test(Expected = Value, Message)
+    Return Test(Expected = Value, Message)
 
 End
 
 '' Asserts that Expected <> Value
 
-Public Sub NotEquals(Expected As Variant, Value As Variant, Optional Message As String)
+Public Sub NotEquals(Expected As Variant, Value As Variant, Optional Message As String) As Boolean
 
-    Test(Value <> Expected, Message)
+    Return Test(Value <> Expected, Message)
 
 End
 
 '' Asserts that Value = Null
 
-Public Sub Null(Value As Variant, Optional Message As String)
+Public Sub Null(Value As Variant, Optional Message As String) As Boolean
 
-    Test(Value = Null, Message)
+    Return Test(Value = Null, Message)
 
 End
 
 '' Asserts that Value <> Null
 
-Public Sub NotNull(Value As Variant, Optional Message As String)
+Public Sub NotNull(Value As Variant, Optional Message As String) As Boolean
 
-    Test(Value <> Null, Message)
+    Return Test(Value <> Null, Message)
 
 End
 
 '' Asserts that Value = True
 
-Public Sub True(Value As Boolean, Optional Message As String)
+Public Sub True(Value As Boolean, Optional Message As String) As Boolean
 
-    Test(Value = True, Message)
+    Return Test(Value = True, Message)
 
 End
 
 '' Asserts that Value = False
 
-Public Sub False(Value As Boolean, Optional Message As String)
+Public Sub False(Value As Boolean, Optional Message As String) As Boolean
 
-    Test(Value = False, Message)
+    Return Test(Value = False, Message)
 
 End
 
 '' Asserts that an error happened. You have to create the error with Try. For example: Try(2/0)
 
-Public Sub Error(Optional Message As String)
+Public Sub Error(Optional Message As String) As Boolean
 
     Dim Body As String
 
@@ -123,16 +123,16 @@ Public Sub Error(Optional Message As String)
             Message &= Body
         Endif
         
-        Test(True, Message)
+        Return Test(True, Message)
     Else
-        Test(False, Message)
+        Return Test(False, Message)
     Endif
 
 End
 
 '' Asserts that an error happened with Code number. You have to create the error with Try. For example: Try(2/0)
 
-Public Sub ErrorWithCode(Code As Integer, Optional Message As String)
+Public Sub ErrorWithCode(Code As Integer, Optional Message As String) As Boolean
 
     Dim ReceivedCode As Integer
     Dim Body, Errorbody As String
@@ -150,15 +150,15 @@ Public Sub ErrorWithCode(Code As Integer, Optional Message As String)
         If ReceivedCode = Code Then
             Body &= gb.lf & Errorbody
             Body = Trim(Body)
-            Test(True, Message)
+            Return Test(True, Message)
         Else
             Body = "Wrong error code, expected " & Code & ", but got " & ReceivedCode
             Body &= gb.lf & Errorbody
             Body = Trim(Body)
-            Test(False, Message)
+            Return Test(False, Message)
         Endif
     Else
-        Test(False, Message)
+        Return Test(False, Message)
     Endif
 
 End
@@ -181,7 +181,7 @@ End
 
 ' ------------------------------------------------- End Of Assertions
 
-Private Sub Test(Evaluated As Boolean, Message As String, Optional Body As String)
+Private Sub Test(Evaluated As Boolean, Message As String, Optional Body As String) As Boolean
 
     Inc Track.Counter
     Inc Track.MethodTestsCount
@@ -217,6 +217,7 @@ Private Sub Test(Evaluated As Boolean, Message As String, Optional Body As Strin
 TheEnd:
 
     PrintBody(Body)
+    Return Evaluated
 
 End
 
