@@ -4,7 +4,7 @@ Public Sub Main()
 
     ' These must succeed:
     
-    ' UnitTest.Main("TestAllAsserts", Null, True)
+     UnitTest.Main("TestAllAsserts", Null, True)
     ' UnitTest.Main("TestSetup", Null, True)
     ' UnitTest.Main("TestElse", Null, True)
     ' UnitTest.Main("TestError", Null, True)
@@ -18,7 +18,7 @@ Public Sub Main()
     'UnitTest.Main(Null, Null, True)
 
     ' Just one test
-    UnitTest.Main("TestAllAsserts", "TestAssert", True)
+    'UnitTest.Main("TestAllAsserts", "TestAssert", True)
 
     'Cheese()
 

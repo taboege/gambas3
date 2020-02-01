@@ -102,3 +102,10 @@ Public Sub TestAssertErrorWithCode()
     Assert.ErrorWithCode(26, "Test error with code")
 
 End
+
+Public Sub TestNote()
+
+    Assert.Note("The next note is Null and it should complain about it:")
+    Assert.Note(Null)
+
+End

@@ -6,6 +6,10 @@ Export
 
 Public Sub Note(Message As String)
 
+    If Message = Null Then
+        Message = "Got Null in " & Track.ContainerName & ":" & Track.TestName & " ... WHAT???"
+    Endif
+
     PrintBody(Message)
 
 End
