@@ -222,7 +222,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gambas3 3.14.90\n"
-"PO-Revision-Date: 2020-01-24 07:02 UTC\n"
+"PO-Revision-Date: 2020-01-28 22:13 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -3183,7 +3183,7 @@ msgstr "Champ clef"
 msgid "Please enter the name of the layout."
 msgstr "Veuillez saisir le nom de la disposition"
 
-#: FLayout.class:30 FOption.class:1692
+#: FLayout.class:30 FOption.class:1694
 msgid "Override"
 msgstr "Écraser"
 
@@ -4307,7 +4307,7 @@ msgid "Do you really want to delete this snippet?"
 msgstr "Voulez-vous vraiment supprimer ce fragment ?"
 
 #: FOption.class:1190
-msgid "Do you really want to install the Gambas font to your personal font directory?"
+msgid "Do you really want to install the Gambas font into your personal font directory?"
 msgstr "Voulez-vous vraiment installer la police Gambas dans votre répertoire personnel de polices ?"
 
 #: FOption.class:1190 FSoftwareFarm.class:593
@@ -4354,11 +4354,11 @@ msgstr "Compacte"
 msgid "Current"
 msgstr "Courante"
 
-#: FOption.class:1692
+#: FOption.class:1694
 msgid "Do you really want to override the existing layout?"
 msgstr "Voulez-vous vraiment écraser la disposition existante ?"
 
-#: FOption.class:1784
+#: FOption.class:1796
 msgid "Do you really want to delete that layout?"
 msgstr "Voulez-vous vraiment supprimer cette disposition ?"
 

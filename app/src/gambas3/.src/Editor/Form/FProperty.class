@@ -361,7 +361,7 @@ Public Function SaveProperty() As Boolean
   Dim sOldVal As String
 
   If Not $hForm Or If Not Object.IsValid($hForm) Then Return
-  If $hForm.ReadOnly Then Return
+  If $hForm.ReadOnly Or If $hForm.DiffMode Then Return
   If IsNull($hEditor) Then Return False
 
   sVal = $hEditor.Text
@@ -601,7 +601,7 @@ Private Sub ShowProperty(Optional sFocus As String)
 
   If Project.Running Then Return
   If Not $hForm Then Return
-  If $hForm.ReadOnly Then Return
+  If $hForm.ReadOnly Or If $hForm.DiffMode Then Return
 
   If $sFocus Then sFocus = $sFocus
 

@@ -6398,11 +6398,12 @@ Public Sub AllFlags(iFlag As Integer) As String[]
   
 End
 
-Public Sub IsModified(sPath As String) As Boolean
+Public Sub IsModified(sPath As String, Optional bNoClass As Boolean) As Boolean
   
   If HasFlag(sPath, FLAG_MODIFIED) Then Return True
   If Not IsSourcePath(sPath) Then Return
   If File.Ext(sPath) <> "form" Then Return
+  If bNoClass Then Return
   Return HasFlag(File.SetExt(sPath, "class"), FLAG_MODIFIED)
   
 End

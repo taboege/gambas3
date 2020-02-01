@@ -1187,7 +1187,7 @@ Public Sub btnInstallFont_Click()
   Dim sData As String
   Dim sFont As String
 
-  If Message.Question(("Do you really want to install the Gambas font to your personal font directory?"), ("Install"), ("Cancel")) <> 1 Then Return
+  If Message.Question(("Do you really want to install the Gambas font into your personal font directory?"), ("Install"), ("Cancel")) <> 1 Then Return
   
   If Not Exist(sDir) Then Mkdir sDir
   

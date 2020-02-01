@@ -50,7 +50,7 @@ NameList: Adobe Glyph List
 DisplaySize: 13
 AntiAlias: 1
 FitToEm: 1
-WinInfo: 70 70 18
+WinInfo: 700 70 18
 OnlyBitmaps: 1
 BeginPrivate: 0
 EndPrivate
@@ -21720,7 +21720,7 @@ Lle:FJA@h>L]@DT
 BDFChar: 45 76 7 1 5 0 8
 J:N0#J:N0#p](9o
 BDFChar: 46 77 7 1 5 0 8
-LtJZ)LkpkCL]@DT
+Lks^9W2PN.L]@DT
 BDFChar: 47 78 7 1 5 0 8
 LrdZ9W0is.L]@DT
 BDFChar: 48 79 7 1 5 0 8
@@ -21740,7 +21740,7 @@ LkpkCLkpkCDu]k<
 BDFChar: 55 86 7 1 5 0 8
 Lkpj`:f&8W+92BA
 BDFChar: 56 87 7 1 5 0 8
-LkpkCW2QZIL]@DT
+LkpkcW7]aYL]@DT
 BDFChar: 57 88 7 1 5 0 8
 Lknl(+AbmjL]@DT
 BDFChar: 58 89 7 1 5 0 8
@@ -22238,7 +22238,7 @@ LkpkCLkpkCE$,tt
 BDFChar: 307 371 7 1 6 -2 6
 LkpkCLkp9e$ig8-
 BDFChar: 308 372 7 1 5 0 10
-+A`&oLkpkcW7Zn+
++A`&oLo@9)fSG=`
 BDFChar: 309 373 7 1 5 0 9
 +A`&oLkr".W)*Ho
 BDFChar: 310 376 7 1 5 0 10
@@ -22378,7 +22378,7 @@ Lle:FJA@h>L]@DT
 BDFChar: 377 923 7 1 5 0 8
 +<Ve':f)t(L]@DT
 BDFChar: 378 924 7 1 5 0 8
-LtJZ)W/-7cL]@DT
+Lks^9W2PN.L]@DT
 BDFChar: 379 925 7 1 5 0 8
 LrdZ9W0is.L]@DT
 BDFChar: 380 926 7 1 5 0 8
@@ -22398,7 +22398,7 @@ Lknl(+<VdL+92BA
 BDFChar: 387 934 7 1 5 0 8
 +E49XW2QY6+92BA
 BDFChar: 388 935 7 1 5 0 8
-LknkM+<XL:L]@DT
+Lknl(+AbmjL]@DT
 BDFChar: 389 936 7 1 5 0 8
 W2QYnW2OYX+92BA
 BDFChar: 390 937 7 1 5 0 8
@@ -24400,7 +24400,7 @@ LmXR.aN0/;
 BDFChar: 1388 1014 7 1 5 0 6
 n-B<p#RKo"
 BDFChar: 1389 1018 7 1 5 0 8
-LtJZ)W/-7cL]@DT
+Lks^9W2PN.L]@DT
 BDFChar: 1390 1019 7 1 5 -2 6
 LtJZ)Lkpk;J,fQL
 BDFChar: 1391 1136 7 1 5 0 8
@@ -25174,15 +25174,15 @@ J:N0#J:N1F!$G)<
 BDFChar: 1775 7741 7 2 4 -2 8
 ^d(.M5X7RW!'m1W
 BDFChar: 1776 7742 7 1 5 0 10
-&0Qe]W2PN.Lkpie
+&0Qdbf\!.$Lkpie
 BDFChar: 1777 7743 7 1 5 0 9
 &0LuBW2QYnW2K[r
 BDFChar: 1778 7744 7 1 5 0 10
-+975MW2PN.Lkpie
++974Rf\!.$Lkpie
 BDFChar: 1779 7745 7 1 5 0 8
 +9:o0W2QYnVuQet
 BDFChar: 1780 7746 7 1 5 -2 8
-LtJZ)LkpkCL]AOt
+Lks^9W2PN.L]AOt
 BDFChar: 1781 7747 7 1 5 -2 6
 n>N:aW2QWp+92BA
 BDFChar: 1782 7748 7 1 5 0 10
@@ -25298,23 +25298,23 @@ Lkpj`:f&8W+93Ma
 BDFChar: 1837 7807 7 1 5 -2 6
 Lkpj`:`pk\+92BA
 BDFChar: 1838 7808 7 1 5 0 10
-5Tkl=LkpkcW7Zn+
+5Tkl=Lo@9)fSG=`
 BDFChar: 1839 7809 7 1 5 0 9
 5Tg&_Lkr".W,M_:
 BDFChar: 1840 7810 7 1 5 0 10
-&0QdbLkpkcW7Zn+
+&0QdbLo@9)fSG=`
 BDFChar: 1841 7811 7 1 5 0 9
 &0Lt/Lkr".W,M_:
 BDFChar: 1842 7812 7 1 5 0 10
-:]Q<-LkpkcW7Zn+
+:]Q<-Lo@9)fSG=`
 BDFChar: 1843 7813 7 1 5 0 8
 :]Q<-Lo@8NDu]k<
 BDFChar: 1844 7814 7 1 5 0 10
-+974RLkpkcW7Zn+
++974RLo@9)fSG=`
 BDFChar: 1845 7815 7 1 5 0 8
 +974RLo@8NDu]k<
 BDFChar: 1846 7816 7 1 5 -2 8
-LkpkCW2QZIL]AOt
+LkpkcW7]aYL]AOt
 BDFChar: 1847 7817 7 1 5 -2 6
 LkpkcW2OY8+92BA
 BDFChar: 1848 7818 7 1 5 0 10
@@ -25740,7 +25740,7 @@ LkpkCGR+Q\(_@5Y
 BDFChar: 2058 1228 7 1 5 -2 6
 Lkpk3#RD7Y&-)\1
 BDFChar: 2059 1229 7 1 6 -2 8
-LtJZ)LkpkCL]dt`
+Lks^9W2PN.L]dt`
 BDFChar: 2060 1230 7 1 6 -2 6
 LtJZ)Lkpii#QOi)
 BDFChar: 2061 1231 7 1 5 0 8
@@ -25774,7 +25774,7 @@ E/9=+LkpkCE!QFD
 BDFChar: 2075 1307 7 1 5 -2 6
 G_h03LmVi]#QOi)
 BDFChar: 2076 1308 7 1 5 0 8
-LkpkCW2QZIL]@DT
+LkpkcW7]aYL]@DT
 BDFChar: 2077 1309 7 1 5 0 6
 LkpkcW7Zn+
 BDFChar: 2078 1282 7 0 5 0 8

@@ -15,6 +15,7 @@ Public AllMenus As New CControl[]
 Public Container As Container
 
 Property Read ReadOnly As Boolean
+Property Read DiffMode As Boolean
 
 Private $bDoNotModify As Boolean
 Private $bModify As Boolean
@@ -96,6 +97,7 @@ Private $bLockArrangement As Boolean
 
 Private $cInfo As Collection
 Private $bInfoTop As Boolean
+Private $bDiffMode As Boolean
 
 Public Sub _new(sPath As String)
 
@@ -175,6 +177,8 @@ Public Sub Reload() As Boolean
   
   SetReadOnly
   Modify(True)
+  
+  UpdateDiffAction
 
 End
 
@@ -647,6 +651,8 @@ Public Function Save(Optional bForce As Boolean) As Boolean
   DrawTitle
 
   Save.End()
+  
+  UpdateDiffAction
 
 Catch
 
@@ -2419,26 +2425,29 @@ Private Sub UpdateMenu()
   Dim bOn As Boolean
   Dim hCCtrl As CControl
   Dim hCtrl As Control
+  Dim bReadOnly As Boolean
 
   If $bNoUpdateMenu Then Return
+  
+  bReadOnly = $bReadOnly Or $bDiffMode
 
-  Action[".menu", Me].Visible = Not $bReadOnly And $hFamily.HasMenuEditor
+  Action[".menu", Me].Visible = Not bReadOnly And $hFamily.HasMenuEditor
   
-  Action[".text-*,.format-*,.undo,.redo", Me].Visible = Not $bReadOnly
+  Action[".text-*,.format-*,.undo,.redo", Me].Visible = Not bReadOnly
   
-  bOn = Not IsNull(Master) And Not $bReadOnly
+  bOn = Not IsNull(Master) And Not bReadOnly
   
   Action[".cut,.copy,.copy-same,.delete,.lower,.raise", Me].Enabled = bOn
 
   Action[".paste", Me].Enabled = CanPaste()
 
-  mnuArrange.Visible = Not $bReadOnly
-  mnuChange.Visible = Not $bReadOnly
+  mnuArrange.Visible = Not bReadOnly
+  mnuChange.Visible = Not bReadOnly
   If mnuChange.Children.Count = 0 Then mnuChange.Hide
   
-  Action[".save,.cut,.paste,paste-form,.delete,.lower,.raise,.arrange*", Me].Visible = Not $bReadOnly
+  Action[".save,.cut,.paste,paste-form,.delete,.lower,.raise,.arrange*", Me].Visible = Not bReadOnly
 
-  bOn = Selection.Count >= 2 And Not $bReadOnly
+  bOn = Selection.Count >= 2 And Not bReadOnly
 
   mnuAlign.Enabled = bOn
   mnuAlign.Visible = bOn
@@ -2460,16 +2469,16 @@ Private Sub UpdateMenu()
   Endif
 
   Action[".show-tab", Me].Visible = mnuShowTab.Visible
-  Action[".move-tab*", Me].Visible = mnuShowTab.Visible And Not $bReadOnly
-  If $bReadOnly Then mnuMoveTab.Hide
+  Action[".move-tab*", Me].Visible = mnuShowTab.Visible And Not bReadOnly
+  If bReadOnly Then mnuMoveTab.Hide
 
-  If Not $bReadOnly And If Selection.Count = 1 And If Master <> RootControl And If Master.IsContainer() And If GetChildren(Master.Name).Count Then
+  If Not bReadOnly And If Selection.Count = 1 And If Master <> RootControl And If Master.IsContainer() And If GetChildren(Master.Name).Count Then
     Action[".delete-container", Me].Visible = True
   Else
     Action[".delete-container", Me].Visible = False
   Endif
 
-  If Not $bReadOnly And If Selection.Count Then
+  If Not bReadOnly And If Selection.Count Then
     
     bOn = True
     For Each hCCtrl In Selection
@@ -3259,6 +3268,9 @@ Public Sub Action_Activate((Key) As String) As Boolean
 
     Case ".run-me"
       Project.Run(False, 0, Me.Name)
+      
+    Case ".diff"
+      UpdateDiffMode
 
     Default
       Return True
@@ -3968,6 +3980,7 @@ Public Sub tlbForm_Configure()
 
   'Action[".show-class"].Picture = Project.GetFileIcon(File.SetExt(Path, "class"), 16)
   UpdateMenu
+  UpdateDiffAction
 
 End
 
@@ -4124,6 +4137,7 @@ End
 Public Sub ReadConfig()
   
   Project.SetSmallFont(tlbForm)
+  edtDiff.ReadConfig
   
 End
 
@@ -4412,5 +4426,73 @@ Public Sub dwgInfo_Enter()
 
   $bInfoTop = Not $bInfoTop
   MoveInfo
+
+End
+
+Private Sub UpdateDiffAction()
+
+  Action[".diff", Me].Visible = Project.IsModified(Path, True)
+  Action[".diff-next,.diff-previous", Me].Visible = Action[".diff", Me].Visible And Action[".diff", Me].Value
+
+End
+
+Private Sub UpdateDiffMode()
+
+  If Action[".diff", Me].Value = $bDiffMode Then Return
+  
+  $bDiffMode = Action[".diff", Me].Value
+  
+  UpdateDiffAction
+  
+  If $bDiffMode Then
+    
+    Me.Save()
+    If Not Action[".diff", Me].Visible Then 
+      $bDiffMode = False
+      Action[".diff", Me].Value = False
+      Return
+    Endif
+    edtDiff.Load(Path)
+    edtDiff.EnterDiffModeWith(Path)
+    panDiff.Show
+    panDiff.Raise
+    
+  Else
+  
+    edtDiff.LeaveDiffMode()
+    edtDiff.Clear()
+    panDiff.Hide
+  
+  Endif
+  
+  SetReadOnly
+
+End
+
+Public Sub btnDiffPrevious_Click()
+
+  Dim Y As Integer
+  Y = edtDiff.FindPreviousDiff(edtDiff.Line)
+  If Y >= 0 Then edtDiff.Goto(edtDiff.Column, Y)
+
+End
+
+Public Sub btnDiffNext_Click()
+
+  Dim Y As Integer
+  Y = edtDiff.FindNextDiff(edtDiff.Line)
+  If Y >= 0 Then edtDiff.Goto(edtDiff.Column, Y)
+
+End
+
+Public Sub Form_Arrange()
+
+  panDiff.Move(0, tlbForm.H, Me.W, Me.H - tlbForm.H)
+
+End
+
+Private Function DiffMode_Read() As Boolean
+
+  Return $bDiffMode
 
 End

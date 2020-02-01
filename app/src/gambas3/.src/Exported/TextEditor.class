@@ -449,6 +449,8 @@ Public Sub EnterDiffModeWith(Path As String)
   GoSub HANDLE_REMOVED
   
   Me.EnterDiffMode(aAdded, cRemoved)
+  Me.Goto(0, Me.Line)
+  Me.SetFocus
   
 HANDLE_REMOVED:
 

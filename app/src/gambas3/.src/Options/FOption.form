@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,98,72)
+  MoveScaled(0,0,98,66)
   Action = "option"
   Text = ("Preferences")
   Icon = Picture["icon:/small/options"]
@@ -31,7 +31,7 @@
     }
   }
   { ipnOption IconPanel
-    MoveScaled(1,1,94,70)
+    MoveScaled(1,1,94,64)
     Arrangement = Arrange.Vertical
     Spacing = True
     Count = 10
@@ -435,12 +435,12 @@
       MoveScaled(23,40,4,1)
     }
     { Label1 Label
-      MoveScaled(1,45,63,3)
+      MoveScaled(1,40,63,3)
       Font = Font["Bold"]
       Text = ("Layout")
     }
     { Panel6 HBox
-      MoveScaled(1,50,63,16)
+      MoveScaled(1,45,63,16)
       Expand = True
       Spacing = True
       { gvwLayout GridView
@@ -634,10 +634,10 @@
       }
     }
     { Spring1 Spring
-      MoveScaled(32,59,7,2)
+      MoveScaled(31,58,7,2)
     }
     { HBox46 HBox
-      MoveScaled(2,61,66,4)
+      MoveScaled(1,60,66,4)
       Spacing = True
       Indent = True
       { Spring2 Spring
