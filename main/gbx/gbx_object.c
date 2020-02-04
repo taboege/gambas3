@@ -209,7 +209,7 @@ void OBJECT_attach(OBJECT *ob, OBJECT *parent, const char *name)
 	CLASS *class = OBJECT_class(ob);
 	OBJECT_EVENT *ev;
 
-	if (!name)
+	if (!name || !*name)
 		return;
 
 	if (!class->is_observer && class->n_event == 0)
