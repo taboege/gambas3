@@ -109,7 +109,7 @@ gw = {
     console.log('load: ' + src);
   },
   
-  setInnerHtml : function(id, html)
+  setInnerHtml: function(id, html)
   {
     var oldDiv = $(id);
     var newDiv = oldDiv.cloneNode(false);
@@ -117,7 +117,7 @@ gw = {
     oldDiv.parentNode.replaceChild(newDiv, oldDiv);
   },
   
-  setOuterHtml : function(id, html)
+  setOuterHtml: function(id, html)
   {
     if ($(id))
       $(id).outerHTML = html;
@@ -125,7 +125,7 @@ gw = {
       console.log('setOuterHtml: ' + id + '? ' + html);
   },
   
-  removeElement : function(id)
+  removeElement: function(id)
   {
     var elt = $(id);
     //for (i = 0; i < id_list.length; i++)
@@ -140,7 +140,7 @@ gw = {
     //}
   },
   
-  insertElement : function(id, parent)
+  insertElement: function(id, parent)
   {
     var elt;
     var pelt = $(parent);
@@ -153,7 +153,7 @@ gw = {
     pelt.appendChild(elt);
   },
 
-  setVisible : function(id, visible)
+  setVisible: function(id, visible)
   {
     var elt = $(id);
     if (elt)
@@ -204,6 +204,7 @@ gw = {
         
         gw.lock_id = setTimeout(function() {
           $('gw-lock').style.opacity = '1';
+          gw.lock_id = undefined;
           }, 500);
       }
       

@@ -923,8 +923,10 @@ Public Sub Close(Optional ReturnValue As Variant)
   
   ' Dim bCancel As Boolean
   Dim hWindow As WebWindow
+  Dim bCancel As Boolean
   
-  Raise Close
+  bCancel = Raise Close
+  If bCancel Then Return
   
   If _Window Then
   
