@@ -1335,7 +1335,7 @@ static int commit_transaction(DB_DATABASE *db)
 	}
 	else
 	{
-		char buffer[8];
+		char buffer[16];
 		sprintf(buffer, "%d", trans);
 		return do_query(db, "Unable to commit transaction: Unable to release savepoint: &1", NULL, "RELEASE SAVEPOINT t&1", 1, buffer);
 	}
@@ -1366,7 +1366,7 @@ static int rollback_transaction(DB_DATABASE *db)
 	}
 	else
 	{
-		char buffer[8];
+		char buffer[16];
 		sprintf(buffer, "%d", trans);
 		return do_query(db, "Unable to begin transaction: &1", NULL, "ROLLBACK TO SAVEPOINT t&1", 1, buffer);
 	}
