@@ -1,0 +1,102 @@
+' Gambas class file
+
+Export
+
+Property Read Process As Process Use $hProcess
+
+' Event Read
+' Event Kill
+' Event Error({Error} As String)
+Event Prompt(Prompt As String, Answer As String)
+
+Private $aExpect As String[]
+Private $sBuffer As String
+Private $hObs As Observer
+Private $hObsAfter As Observer
+
+Public Sub _new((Process) As Process)
+  
+  $hProcess = Process
+  $hObs = New Observer($hProcess) As "Command"
+  $hObsAfter = New Observer($hProcess, True) As "CommandAfter"
+  
+End
+
+' Public Sub Exec(Command As String[], Optional Environment As String[]) As Process
+'   
+'   If $hProcess Then Error.Raise("Command is running")
+'   $hProcess = Exec Command With Environment For Input Output As "Command"
+'   Return $hProcess
+'   
+' End
+' 
+' Public Sub Shell(Command As String, Optional Environment As String[]) As Process
+'   
+'   If $hProcess Then Error.Raise("Command is running")
+'   $hProcess = Shell Command With Environment For Input Output As "Command"
+'   Return $hProcess
+'   
+' End
+
+Public Sub Expect(Prompt As String, Optional Answer As String)
+  
+  If Not Prompt Then Return
+    
+  If Not $aExpect Then $aExpect = New String[]
+  If Prompt Not Begins "*" Then Prompt = "*" & Prompt
+  $aExpect.Add(Prompt)
+  $aExpect.Add(Answer)
+  
+End
+
+Public Sub Command_Read()
+
+  Dim sData As String
+  
+  sData = Peek #$hProcess, Lof($hProcess)
+  
+  If Len(sData) >= 1024 Then
+    $sBuffer = Right(sData, 1024)
+  Else
+    $sBuffer = Right($sBuffer & sData, 1024)
+  Endif
+  
+End
+
+Public Sub CommandAfter_Read()
+  
+  Dim I As Integer
+  
+  For I = 0 To $aExpect.Max Step 2
+    If RTrim($sBuffer) Like $aExpect[I] Then
+      If $aExpect[I + 1] Then Print #$hProcess, $aExpect[I + 1]
+      Raise Prompt($aExpect[I], $aExpect[I + 1])
+      $sBuffer = ""
+    Endif
+  Next
+  
+End
+
+Public Sub Command_Kill()
+  
+  $hProcess = Null
+  $sBuffer = ""
+  $aExpect = Null
+  $hObs = Null
+  'Raise Kill
+  
+End
+
+' Public Sub Command_Error((Error) As String)
+'   
+'   Raise Error({Error})
+'   
+' End
+' 
+' Public Sub Wait(Optional Timeout As Float)
+'   
+'   If Not $hProcess Then Return
+'   $hProcess.Wait(Timeout)
+'   
+' End
+' 
