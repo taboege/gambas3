@@ -1,6 +1,7 @@
 ' Gambas class file
 
 Inherits UnitTest
+''' Tests all Asserts
 
 ' Signal, that this is a selftest
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
@@ -10,7 +11,6 @@ Public Sub _new()
   Me.Plan = 12
 
 End
-
 
 Public Sub TestAssert()
 

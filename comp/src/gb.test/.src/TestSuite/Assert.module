@@ -114,7 +114,8 @@ Public Sub False(Value As Boolean, Optional Message As String) As Boolean
 
 End
 
-'' Asserts that an error happened. You have to create the error with Try. For example: Try(2/0)
+'' Asserts that an error happened. You have to create the error with Try. 
+'' For example: Try 2/0
 
 Public Sub Error(Optional Message As String) As Boolean
 
@@ -126,6 +127,7 @@ Public Sub Error(Optional Message As String) As Boolean
             Body = Trim(Body)
             Message &= Body
         Endif
+        Error.Clear
         
         Return Test(True, Message)
     Else
