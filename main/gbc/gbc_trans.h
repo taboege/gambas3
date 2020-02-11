@@ -105,7 +105,8 @@ enum {
 	TS_SUBR_CHECK_EXEC,
 	TS_SUBR_MOVE_KILL,
 	TS_SUBR_WAIT_DELAY,
-	TS_SUBR_WAIT_NEXT
+	TS_SUBR_WAIT_NEXT,
+	TS_SUBR_PEEK
 	};
 
 enum {
@@ -219,6 +220,7 @@ void TRANS_print(void);
 void TRANS_input(void);
 void TRANS_read(void);
 void TRANS_read_old(void);
+void TRANS_peek(void);
 void TRANS_write(void);
 void TRANS_open(void);
 void TRANS_pipe(void);

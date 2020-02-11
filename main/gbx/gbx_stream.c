@@ -55,6 +55,8 @@
 #include "gbx_c_file.h"
 #include "gbx_stream.h"
 
+#define EXTRA(_stream) ((_stream)->common.extra)
+
 static CFILE *_temp_stream = NULL;
 static STREAM *_temp_save = NULL;
 static int _temp_level;
@@ -76,6 +78,13 @@ void STREAM_exit(void)
 		ERROR_warning("%d streams yet opened", _nopen);
 #endif
 	OBJECT_UNREF(_temp_stream);
+}
+
+static STREAM_EXTRA *ENSURE_EXTRA(STREAM *stream)
+{
+	if (!stream->common.extra)
+		ALLOC_ZERO(&stream->common.extra, sizeof(STREAM_EXTRA));
+	return stream->common.extra;
 }
 
 static void wait_for_fd_ready_to_read(int fd)
@@ -230,16 +239,13 @@ __OPEN:
 	stream->common.swap = FALSE;
 	stream->common.eol = 0;
 	stream->common.eof = FALSE;
-	stream->common.buffer = NULL;
-	stream->common.buffer_pos = 0;
-	stream->common.buffer_len = 0;
+	stream->common.extra = NULL;
 	stream->common.no_fionread = FALSE;
 	stream->common.no_lseek = FALSE;
 	stream->common.standard = FALSE;
 	stream->common.blocking = TRUE;
 	stream->common.available_now = FALSE;
 	stream->common.redirected = FALSE;
-	stream->common.redirect = NULL;
 	stream->common.no_read_ahead = FALSE;
 	stream->common.null_terminated = FALSE;
 
@@ -260,23 +266,42 @@ __OPEN:
 	#endif
 }
 
-static void release_buffer(STREAM *stream)
+static void release_buffer(STREAM_EXTRA *extra)
 {
-	if (stream->common.buffer)
+	if (extra && extra->buffer)
 	{
 		#if DEBUG_STREAM
 		fprintf(stderr, "Stream %p [%d]: Free buffer\n", stream, stream->common.tag);
 		#endif
-		FREE(&stream->common.buffer);
-		stream->common.buffer_pos = 0;
-		stream->common.buffer_len = 0;
+		FREE(&extra->buffer);
+		extra->buffer_pos = 0;
+		extra->buffer_len = 0;
+	}
+}
+
+static void release_unread(STREAM_EXTRA *extra)
+{
+	if (extra && extra->unread)
+	{
+		FREE(&extra->unread);
+		extra->unread_pos = 0;
+		extra->unread_len = 0;
 	}
 }
 
 void STREAM_release(STREAM *stream)
 {
-	release_buffer(stream);
+	STREAM_EXTRA *extra = EXTRA(stream);
+	
 	STREAM_cancel(stream);
+	release_buffer(extra);
+	release_unread(extra);
+	
+	if (extra)
+	{
+		IFREE(extra);
+		stream->common.extra = NULL;
+	}
 }
 
 static void stop_watching(STREAM *stream, int mode)
@@ -323,15 +348,33 @@ void STREAM_flush(STREAM *stream)
 	(*(stream->type->flush))(stream);
 }
 
-static int read_buffer(STREAM *stream, void *addr, int len)
+static int read_unread(STREAM_EXTRA *extra, void *addr, int len)
 {
-	int l = stream->common.buffer_len - stream->common.buffer_pos;
+	int l = extra->unread_len - extra->unread_pos;
+	if (l > len)
+		l = len;
+	
+	if (l > 0)
+	{
+		memcpy(addr, extra->unread + extra->unread_pos, l);
+		extra->unread_pos += l;
+		if (extra->unread_pos >= extra->unread_len)
+			release_unread(extra);
+		return l;
+	}
+	else
+		return 0;
+}
+
+static int read_buffer(STREAM_EXTRA *extra, void *addr, int len)
+{
+	int l = extra->buffer_len - extra->buffer_pos;
 	if (l > len)
 		l = len;
 	if (l > 0)
 	{
-		memcpy(addr, stream->common.buffer + stream->common.buffer_pos, l);
-		stream->common.buffer_pos += l;
+		memcpy(addr, extra->buffer + extra->buffer_pos, l);
+		extra->buffer_pos += l;
 		return l;
 	}
 	else
@@ -349,11 +392,21 @@ int STREAM_read(STREAM *stream, void *addr, int len)
 	if (len <= 0)
 		return 0;
 
-	if (stream->common.buffer)
+	if (EXTRA(stream))
 	{
-		eff = read_buffer(stream, addr, len);
-		addr += eff;
-		len -= eff;
+		if (EXTRA(stream)->unread)
+		{
+			eff = read_unread(EXTRA(stream), addr, len);
+			addr += eff;
+			len -= eff;
+		}
+		
+		if (len > 0 && EXTRA(stream)->buffer)
+		{
+			eff = read_buffer(EXTRA(stream), addr, len);
+			addr += eff;
+			len -= eff;
+		}
 	}
 
 	while (len > 0)
@@ -385,6 +438,20 @@ int STREAM_read(STREAM *stream, void *addr, int len)
 	}
 	
 	return eff;
+}
+
+void STREAM_peek(STREAM *stream, void *addr, int len)
+{
+	STREAM_EXTRA *extra = ENSURE_EXTRA(stream);
+	
+	release_unread(extra);
+	
+	STREAM_read(stream, addr, len);
+	
+	ALLOC(&extra->unread, len);
+	extra->unread_len = len;
+	extra->unread_pos = 0;
+	memcpy(extra->unread, addr, len);
 }
 
 #if 0
@@ -444,9 +511,9 @@ int STREAM_read_max(STREAM *stream, void *addr, int len)
 	if (len <= 0)
 		return 0;
 
-	if (stream->common.buffer)
+	if (EXTRA(stream) && EXTRA(stream)->buffer)
 	{
-		eff += read_buffer(stream, addr, len);
+		eff += read_buffer(EXTRA(stream), addr, len);
 		addr += eff;
 		len -= eff;
 	}
@@ -520,7 +587,7 @@ void STREAM_write(STREAM *stream, void *addr, int len)
 		return;
 	
 	if (stream->common.redirected)
-		stream = stream->common.redirect;
+		stream = EXTRA(stream)->redirect;
 
 	do
 	{
@@ -606,7 +673,7 @@ void STREAM_seek(STREAM *stream, int64_t pos, int whence)
 		}
 	}
 
-	release_buffer(stream);
+	release_buffer(EXTRA(stream));
 }
 
 static int fill_buffer(STREAM *stream, char *addr, bool do_not_wait_ready)
@@ -674,20 +741,23 @@ static int fill_buffer(STREAM *stream, char *addr, bool do_not_wait_ready)
 bool STREAM_read_ahead(STREAM *stream)
 {
 	int eff;
+	STREAM_EXTRA *extra = EXTRA(stream);
 	
 	if (stream->common.no_read_ahead)
 		return FALSE;
 
-	if (stream->common.buffer && stream->common.buffer_pos < stream->common.buffer_len)
+	if (extra && extra->buffer && extra->buffer_pos < extra->buffer_len)
 		return FALSE;
 
-	if (!stream->common.buffer)
-		ALLOC(&stream->common.buffer, STREAM_BUFFER_SIZE);
+	extra = ENSURE_EXTRA(stream);
+	
+	if (!extra->buffer)
+		ALLOC(&extra->buffer, STREAM_BUFFER_SIZE);
 
-	eff = fill_buffer(stream, stream->common.buffer, TRUE);
+	eff = fill_buffer(stream, extra->buffer, TRUE);
 
-	stream->common.buffer_pos = 0;
-	stream->common.buffer_len = eff;
+	extra->buffer_pos = 0;
+	extra->buffer_len = eff;
 
 	if (eff == 0)
 	{
@@ -715,6 +785,7 @@ static char *input(STREAM *stream, bool line, char *escape)
 	char *addr;
 	char ec;
 	bool inside_escape = FALSE;
+	STREAM_EXTRA *extra;
 
 	addr = NULL;
 
@@ -738,9 +809,11 @@ static char *input(STREAM *stream, bool line, char *escape)
 	if (!STREAM_is_blocking(stream) && STREAM_eof(stream))
 		THROW(E_EOF);
 
-	buffer = stream->common.buffer;
-	buffer_len = stream->common.buffer_len;
-	buffer_pos = stream->common.buffer_pos;
+	extra = ENSURE_EXTRA(stream);
+	
+	buffer = extra->buffer;
+	buffer_len = extra->buffer_len;
+	buffer_pos = extra->buffer_pos;
 
 	if (!buffer)
 	{
@@ -864,9 +937,9 @@ static char *input(STREAM *stream, bool line, char *escape)
 			len = 0;
 		}
 
-		stream->common.buffer = buffer;
-		stream->common.buffer_pos = buffer_pos;
-		stream->common.buffer_len = buffer_len;
+		extra->buffer = buffer;
+		extra->buffer_pos = buffer_pos;
+		extra->buffer_len = buffer_len;
 
 		buffer_pos = 0;
 		buffer_len = fill_buffer(stream, buffer, FALSE);
@@ -892,9 +965,9 @@ __FINISH:
 	else if (len < 0)
 		addr = STRING_extend(addr, STRING_length(addr) + len);
 
-	stream->common.buffer = buffer;
-	stream->common.buffer_pos = buffer_pos;
-	stream->common.buffer_len = buffer_len;
+	extra->buffer = buffer;
+	extra->buffer_pos = buffer_pos;
+	extra->buffer_len = buffer_len;
 
 	return addr;
 }
@@ -1845,11 +1918,11 @@ __ERROR:
 }
 
 
-
 void STREAM_lof(STREAM *stream, int64_t *len)
 {
 	int fd;
 	int ilen;
+	STREAM_EXTRA *extra;
 
 	if (STREAM_is_closed(stream))
 		THROW(E_CLOSED);
@@ -1868,17 +1941,31 @@ void STREAM_lof(STREAM *stream, int64_t *len)
 
 ADD_BUFFER:
 
-	if (stream->common.buffer)
-		*len += stream->common.buffer_len - stream->common.buffer_pos;
+	extra = EXTRA(stream);
+	if (extra)
+	{
+		if (extra->unread)
+			*len += extra->unread_len - extra->unread_pos;
+		if (extra->buffer)
+			*len += extra->buffer_len - extra->buffer_pos;
+	}
 }
+
 
 bool STREAM_eof(STREAM *stream)
 {
+	STREAM_EXTRA *extra = EXTRA(stream);
+	
 	if (STREAM_is_closed(stream))
 		THROW(E_CLOSED);
 
-	if (stream->common.buffer && stream->common.buffer_pos < stream->common.buffer_len)
-		return FALSE;
+	if (extra)
+	{
+		if (extra->unread && extra->unread_pos < extra->unread_len)
+			return FALSE;
+		if (extra->buffer && extra->buffer_pos < extra->buffer_len)
+			return FALSE;
+	}
 
 	if (stream->type->eof)
 		return ((*(stream->type->eof))(stream));
@@ -1965,11 +2052,11 @@ void STREAM_check_blocking(STREAM *stream)
 
 void STREAM_cancel(STREAM *stream)
 {
-	if (!stream->common.redirect)
+	if (!stream->common.redirected)
 		return;
 
-	STREAM_close(stream->common.redirect);
-	FREE(&stream->common.redirect);
+	STREAM_close(EXTRA(stream)->redirect);
+	FREE(&EXTRA(stream)->redirect);
 	stream->common.redirected = FALSE;
 }
 
@@ -1977,10 +2064,11 @@ void STREAM_begin(STREAM *stream)
 {
 	STREAM_cancel(stream);
 
-	if (!stream->common.redirect)
+	if (!stream->common.redirected)
 	{
-		ALLOC_ZERO(&stream->common.redirect, sizeof(STREAM));
-		STREAM_open(stream->common.redirect, NULL, STO_STRING | STO_WRITE);
+		STREAM_EXTRA *extra = ENSURE_EXTRA(stream);
+		ALLOC_ZERO(&extra->redirect, sizeof(STREAM));
+		STREAM_open(extra->redirect, NULL, STO_STRING | STO_WRITE);
 	}
 
 	stream->common.redirected = TRUE;
@@ -1988,11 +2076,13 @@ void STREAM_begin(STREAM *stream)
 
 void STREAM_end(STREAM *stream)
 {
-	if (!stream->common.redirect)
+	STREAM_EXTRA *extra = EXTRA(stream);
+	
+	if (!stream->common.redirected)
 		return;
 
 	stream->common.redirected = FALSE;
-	STREAM_write(stream, stream->common.redirect->string.buffer, STRING_length(stream->common.redirect->string.buffer));
+	STREAM_write(stream, extra->redirect->string.buffer, STRING_length(extra->redirect->string.buffer));
 	stream->common.redirected = TRUE;
 	STREAM_cancel(stream);
 }

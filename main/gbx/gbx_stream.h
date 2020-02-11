@@ -46,6 +46,18 @@ typedef
 
 typedef
 	struct {
+		union STREAM *redirect;
+		char *buffer;
+		short buffer_pos;
+		short buffer_len;
+		char *unread;
+		int unread_pos;
+		int unread_len;
+	}
+	STREAM_EXTRA;
+	
+typedef
+	struct {
 		STREAM_CLASS *type;
 		short mode;
 		unsigned swap : 1;
@@ -60,10 +72,10 @@ typedef
 		unsigned no_read_ahead : 1;
 		unsigned null_terminated : 1;
 		unsigned _reserved : 4;
-		short buffer_pos;
-		short buffer_len;
-		char *buffer;
-		union STREAM *redirect;
+		#if __WORDSIZE == 64
+		unsigned _reserved2 : 32;
+		#endif
+		STREAM_EXTRA *extra;
 		#if DEBUG_STREAM
 		int tag;
 		#endif
@@ -223,6 +235,7 @@ char *STREAM_input(STREAM *stream);
 int64_t STREAM_tell(STREAM *stream);
 void STREAM_seek(STREAM *stream, int64_t pos, int whence);
 int STREAM_read(STREAM *stream, void *addr, int len);
+void STREAM_peek(STREAM *stream, void *addr, int len);
 int STREAM_read_max(STREAM *stream, void *addr, int len);
 bool STREAM_read_ahead(STREAM *stream);
 //char STREAM_getchar(STREAM *stream);

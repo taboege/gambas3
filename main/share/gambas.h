@@ -758,9 +758,11 @@ typedef
 typedef
 	struct {
 		GB_STREAM_DESC *desc;
-		int64_t _reserved;
+		int _reserved;
+		#if __WORDSIZE == 64
+			int _reserved1;
+		#endif
 		intptr_t _reserved2;
-		intptr_t _reserved3;
 		void *tag;
 		}
 	GB_STREAM_BASE;
@@ -768,16 +770,18 @@ typedef
 typedef
 	struct GB_STREAM {
 		GB_STREAM_DESC *desc;
-		int64_t _reserved;
+		int _reserved;
+		#if __WORDSIZE == 64
+			int _reserved1;
+		#endif
 		intptr_t _reserved2;
-		intptr_t _reserved3;
 		void *tag;
 		#if __WORDSIZE == 64
 		int _free[4];
 		#else
 		int _free[5];
 		#endif
-		GB_VARIANT_VALUE _reserved4;
+		GB_VARIANT_VALUE _reserved3;
 		}
 	GB_STREAM;
 

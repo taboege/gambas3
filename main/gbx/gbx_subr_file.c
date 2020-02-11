@@ -499,7 +499,10 @@ void SUBR_read(ushort code)
 		{
 			data = STRING_new_temp(NULL, len);
 			
-			STREAM_read(stream, data, len);
+			if ((code & 0x3F) == 2)
+				STREAM_peek(stream, data, len);
+			else
+				STREAM_read(stream, data, len);
 			
 			RETURN->type = T_STRING;
 			RETURN->_string.addr = data;

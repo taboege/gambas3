@@ -57,7 +57,7 @@ void TRANS_subr(int subr, int nparam)
 		{ ".LockWait" }, { ".InputFrom" }, { ".OutputTo" }, { ".Debug" }, { ".Sleep" },
 		{ ".Randomize" }, { ".ErrorTo" }, { "Left" }, { "Mid" }, { ".OpenMemory" },
 		{ ".Chmod" }, { ".Chown" }, { ".Chgrp" }, { ".Use" }, { ".CheckExec" },
-		{ ".MoveKill" }, { ".WaitDelay" }, { ".WaitNext" }
+		{ ".MoveKill" }, { ".WaitDelay" }, { ".WaitNext" }, { ".Peek" }
 	};
 
 	TRANS_SUBR_INFO *tsi = &subr_info[subr];
@@ -394,6 +394,18 @@ void TRANS_read(void)
 		TRANS_expression(FALSE);
 		TRANS_subr(TS_SUBR_READ_BYTES, 2);
 	}
+}
+
+
+void TRANS_peek(void)
+{
+	bool def = trans_stream_no_check(TS_STDIN);
+
+	if (!def)
+		TRANS_want(RS_COMMA, NULL);
+		
+	TRANS_expression(FALSE);
+	TRANS_subr(TS_SUBR_PEEK, 2);
 }
 
 

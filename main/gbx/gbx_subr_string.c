@@ -826,67 +826,32 @@ void SUBR_sconv(ushort code)
 	SUBR_LEAVE();
 }
 
-static int _is_ascii(int c)
-{
-	return (c & ~0x7F) == 0;
-}
-
-static int _is_letter(int c)
-{
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-
-static int _is_lower(int c)
-{
-	return (c >= 'a' && c <= 'z');
-}
-
-static int _is_upper(int c)
-{
-	return (c >= 'A' && c <= 'Z');
-}
-
-static int _is_digit(int c)
-{
-	return (c >= '0' && c <= '9');
-}
-
-static int _is_hexa(int c)
-{
-	return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
-}
-
-static int _is_space(int c)
-{
-	return strchr(" \n\r\t\f\v", c) != NULL;
-}
-
-static int _is_blank(int c)
-{
-	return (c == 32 || c == '\t');
-}
-
-static int _is_punct(int c)
-{
-	return ((c > 32) && (c < 128) && !(_is_letter(c) || _is_digit(c)));
-}
-
-static int _is_alnum(int c)
-{
-	return _is_letter(c) || _is_digit(c);
-}
-
 void SUBR_is_chr(ushort code)
 {
-	static void *jump[] =
-	{
-		NULL, _is_ascii, _is_letter, _is_lower, _is_upper, _is_digit, _is_hexa, _is_space, _is_blank, _is_punct, _is_alnum
+	static ushort test[256] = {
+		0x0041, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 
+		0x0001, 0x00C1, 0x0041, 0x0041, 0x0041, 0x0041, 0x0001, 0x0001, 
+		0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 
+		0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 
+		0x00C1, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 
+		0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 
+		0x0231, 0x0231, 0x0231, 0x0231, 0x0231, 0x0231, 0x0231, 0x0231, 
+		0x0231, 0x0231, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 
+		0x0101, 0x022B, 0x022B, 0x022B, 0x022B, 0x022B, 0x022B, 0x020B, 
+		0x020B, 0x020B, 0x020B, 0x020B, 0x020B, 0x020B, 0x020B, 0x020B, 
+		0x020B, 0x020B, 0x020B, 0x020B, 0x020B, 0x020B, 0x020B, 0x020B, 
+		0x020B, 0x020B, 0x020B, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 
+		0x0101, 0x0227, 0x0227, 0x0227, 0x0227, 0x0227, 0x0227, 0x0207, 
+		0x0207, 0x0207, 0x0207, 0x0207, 0x0207, 0x0207, 0x0207, 0x0207, 
+		0x0207, 0x0207, 0x0207, 0x0207, 0x0207, 0x0207, 0x0207, 0x0207, 
+		0x0207, 0x0207, 0x0207, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101
 	};
-
+	
 	char *addr;
 	int len;
 	int i;
-	int (*func)(int);
+	bool ret;
+	ushort bit;
 
 	SUBR_ENTER_PARAM(1);
 
@@ -895,20 +860,29 @@ void SUBR_is_chr(ushort code)
 	//SUBR_get_string_len(PARAM, &addr, &len);
 	VALUE_get_string(PARAM, &addr, &len);
 
-	func = jump[code & 0x3F];
-
-	i = len;
-	while(i)
+	if (len == 1)
+		ret = (test[(unsigned char)*addr] & (1 << ((code & 0xF) - 1))) != 0;
+	else if (len <= 0)
+		ret = FALSE;
+	else
 	{
-		if (!(*func)(*addr++))
-			break;
-		i--;
+		bit = 1 << ((code & 0xF) - 1);
+		ret = TRUE;
+		for (i = 0; i < len; i++)
+		{
+			if ((test[(unsigned char)addr[i]] & bit) == 0)
+			{
+				ret = FALSE;
+				break;
+			}
+		}
 	}
-
+	
 	RELEASE_STRING(PARAM);
+	
 	SP--;
 	SP->type = T_BOOLEAN;
-	SP->_boolean.value = (len > 0 && i == 0) ? -1 : 0;
+	SP->_boolean.value = ret;
 	SP++;
 }
 

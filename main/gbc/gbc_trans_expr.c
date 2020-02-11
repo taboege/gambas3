@@ -883,6 +883,11 @@ static void trans_expression(bool check_statement)
 			TRANS_read();
 			return;
 		}
+		else if (TRANS_is(RS_PEEK))
+		{
+			TRANS_peek();
+			return;
+		}
 	}
 
 	_tree_line = JOB->line;
