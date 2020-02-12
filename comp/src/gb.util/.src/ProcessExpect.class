@@ -43,7 +43,7 @@ Public Sub ExpectAfter_Read()
   
   For I = 0 To $aExpect.Max Step 2
     If RTrim($sBuffer) Like $aExpect[I] Then
-      If $aExpect[I + 1] Then Print #Me, $aExpect[I + 1]
+      If $aExpect[I + 1] Then Print #hProcess, $aExpect[I + 1]
       Object.Raise(hProcess, "Prompt", [$aExpect[I], $aExpect[I + 1]])
       $sBuffer = ""
     Endif
