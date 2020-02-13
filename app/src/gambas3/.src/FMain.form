@@ -368,7 +368,7 @@
     { mnuViewProject Menu
       Action = "project"
       Text = ("Project")
-      Picture = Picture["icon:/small/view-split-h"]
+      Picture = Picture["icon:/small/view-tree"]
       Toggle = True
       Checked = True
       Shortcut = "F10"
@@ -1303,7 +1303,7 @@
               Visible = False
               ToolTip = ("Show project tree")
               Ignore = True
-              Picture = Picture["icon:/small/view-split-h"]
+              Picture = Picture["icon:/small/view-tree"]
             }
             { btnWorkspaceProperty ToolButton
               MoveScaled(27,1,4,4)

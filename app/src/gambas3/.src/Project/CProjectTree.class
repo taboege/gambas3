@@ -210,6 +210,8 @@ Private Sub AddFile(sDir As String, sFile As String, Optional bAfter As Boolean,
         bIgnore = True
       Endif
     Endif
+    
+    If Not $hTree.Exist(sParent) Then bIgnore = True
 
     If Not bIgnore Then
 

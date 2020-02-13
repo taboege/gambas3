@@ -102,11 +102,7 @@
         Action = ".compress"
         Text = ("Compress file")
         Picture = Picture["icon:/small/archive"]
-      }
-      { mnuUncompress Menu
-        Action = ".uncompress"
-        Text = ("Uncompress file")
-        Picture = Picture["icon:/small/undo"]
+        Toggle = True
       }
     }
     { mnuSep3 Menu
@@ -418,29 +414,22 @@
       Action = ".pretty"
       Picture = Picture["icon:/small/wizard"]
     }
-    { Separator1 Separator
-      MoveScaled(78,0,1,4)
-    }
     { btnCompress ToolButton mnuCompress
       Name = "btnCompress"
-      MoveScaled(79,0,4,4)
+      MoveScaled(79,0,16,4)
       ToolTip = ("Compress file")
       Action = ".compress"
+      AutoResize = True
+      Text = ("Compress file")
       Picture = Picture["icon:/small/archive"]
-    }
-    { btnUncompress ToolButton mnuUncompress
-      Name = "btnUncompress"
-      MoveScaled(82,0,4,4)
-      ToolTip = ("Uncompress file")
-      Action = ".uncompress"
-      Picture = Picture["icon:/small/undo"]
+      Toggle = True
     }
     { Separator2 Separator
-      MoveScaled(86,0,1,4)
+      MoveScaled(95,0,1,4)
     }
     { btnNoSplit ToolButton mnuNoSplit
       Name = "btnNoSplit"
-      MoveScaled(87,0,4,4)
+      MoveScaled(96,0,4,4)
       Visible = False
       ToolTip = ("No split")
       Action = ".view-nosplit"
@@ -448,7 +437,7 @@
     }
     { btnHorizontalSplit ToolButton mnuHorizontalSplit
       Name = "btnHorizontalSplit"
-      MoveScaled(90,0,4,4)
+      MoveScaled(99,0,4,4)
       Visible = False
       ToolTip = ("Horizontal split")
       Action = ".view-hsplit"
@@ -456,17 +445,17 @@
     }
     { btnVerticalSplit ToolButton mnuVerticalSplit
       Name = "btnVerticalSplit"
-      MoveScaled(93,0,4,4)
+      MoveScaled(102,0,4,4)
       Visible = False
       ToolTip = ("Vertical split")
       Action = ".view-vsplit"
       Picture = Picture["icon:/small/view-split-v"]
     }
     { Separator3 Separator
-      MoveScaled(97,0,1,4)
+      MoveScaled(106,0,1,4)
     }
     { btnProc MenuButton
-      MoveScaled(98,0,52,4)
+      MoveScaled(107,0,52,4)
       Mouse = Mouse.Pointing
       Action = ".proc"
       Text = ("Procedure list")
@@ -714,11 +703,6 @@
     Shortcut = "Ctrl+U"
     Picture = "img/32/uncomment.png"
   }
-  { Action uncompress
-    Text = "Uncompress file"
-    Shortcut = ""
-    Picture = "icon:/small/undo"
-  }
   { Action undo
     Text = "Undo"
     Shortcut = "Ctrl+Z"
@@ -753,7 +737,7 @@
 { Toolbars
   { Toolbar text
     Text = "Text editor"
-    List = "show-class,diff,diff-previous,diff-next,save,reload,print,undo,redo,cut,copy,paste,bookmark,color,date,char,indent,unindent,comment,uncomment,pretty,compress,uncompress,view-nosplit,view-hsplit,view-vsplit,proc,wrap,tab-indent,eol,locked"
-    Default = "show-class,diff,diff-previous,diff-next,|,save,reload,print,|,undo,redo,|,paste,color,date,char,comment,uncomment,|,compress,uncompress,|,|,proc,~,wrap,tab-indent,locked"
+    List = "show-class,diff,diff-previous,diff-next,save,reload,print,undo,redo,cut,copy,paste,bookmark,color,date,char,indent,unindent,comment,uncomment,pretty,compress,view-nosplit,view-hsplit,view-vsplit,proc,wrap,tab-indent,eol,locked"
+    Default = "show-class,diff,diff-previous,diff-next,|,save,reload,print,|,undo,redo,|,paste,color,date,char,comment,uncomment,compress,|,|,proc,~,wrap,tab-indent,locked"
   }
 }
