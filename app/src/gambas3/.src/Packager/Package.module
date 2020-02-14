@@ -25,7 +25,8 @@ Private $sLibraryName As String         ' Library name, with the version
 Private $sUnsafePackageName As String   ' Package name, i.e project name with prefix, but with possible forbidden characters inside
 Private $sCategories As String          ' Categories list
 Private $sHome As String                ' Home user directory
-Private $sVersion As String
+Private $sVersion As String             ' Package version
+Private $sVersionWithRelease As String  ' Package version with release number
 Private $sDescription As String
 Private $bDescription As Boolean
 
@@ -231,7 +232,12 @@ Private Sub InitMake(sSys As String)
   If $sCategories Then $sCategories &= ";"
 
   $sVersion = GetVersion()
-
+  If sSys = "ubuntu" Then
+    $sVersionWithRelease = $sVersion & "-0ubuntu" & CStr(Project.PackageVersion)
+  Else
+    $sVersionWithRelease = $sVersion & "-" & CStr(Project.PackageVersion)
+  Endif
+  
   $sDescription = RemoveEmptyLines(Project.Description)
   If $sDescription Then
     $bDescription = True
@@ -959,7 +965,7 @@ Private Function MakeDebPackage(sSys As String)
   
   'debian/changelog
   hFile = Open sPackagePath &/ "debian/changelog" For Create 
-  Print #hFile, ChangelogToDebChangelog(sSys, sPackageName)
+  Print #hFile, ChangelogToDebChangelog(sPackageName)
   Close #hFile
 
   'debian/compat
@@ -1172,6 +1178,7 @@ Private Function MakeDebSupportPackage(sSys As String, sSupport As String, aComp
   Dim sPackagePath As String
   Dim sDesc As String
   Dim sLine As String
+  Dim sRelease As String
       
   Inc Application.Busy
   
@@ -1182,6 +1189,8 @@ Private Function MakeDebSupportPackage(sSys As String, sSupport As String, aComp
   $sFormatEqual = $sFormatMin & Replace($sFormatMax, "<<", "<=")
   
   sPackageName = FormatDebPackageName($sUnsafePackageName) & "-" & sSupport
+  
+  sRelease = CStr(Project.PackageVersion)
   
   ' Step 1. Create the build directory
 
@@ -1208,7 +1217,7 @@ Private Function MakeDebSupportPackage(sSys As String, sSupport As String, aComp
   
   'debian/changelog
   hFile = Open sPackagePath &/ "debian/changelog" For Create 
-  Print #hFile, ChangelogToDebChangelog(sSys, sPackageName)
+  Print #hFile, ChangelogToDebChangelog(sPackageName)
   Close #hFile
 
   'debian/compat
@@ -1227,7 +1236,7 @@ Private Function MakeDebSupportPackage(sSys As String, sSupport As String, aComp
   Print #hFile
   Print #hFile, "Package: "; sPackageName
   Print #hFile, "Architecture: all"
-  Print #hFile, "Depends: "; FormatDebPackageName($sUnsafePackageName);; "(>=";; $sVersion;; "), "; FormatDebPackageName($sUnsafePackageName);; "(<=";; $sVersion; ")"; GetDependencies(aComp)
+  Print #hFile, "Depends: "; FormatDebPackageName($sUnsafePackageName);; "(>=";; $sVersionWithRelease;; "), "; FormatDebPackageName($sUnsafePackageName);; "(<=";; $sVersionWithRelease; ")"; GetDependencies(aComp)
   
   sDesc = sSupport & " package for " & If(Project.Title, Project.Title, Project.Name)
   
@@ -1292,13 +1301,12 @@ Private Function MakeDebSupportPackage(sSys As String, sSupport As String, aComp
 
 End
 
-Private Sub ChangelogToDebChangelog(sSys As String, sPackageName As String) As String
+Private Sub ChangelogToDebChangelog(sPackageName As String) As String
  
   Dim aLine As String[]
   Dim sLine As String
   Dim debChangelog As String
   Dim sDate As String
-  Dim sVersion As String
   Dim sBits As String[]
   Dim previousLine As String
   Dim sWord As String
@@ -1313,7 +1321,7 @@ Private Sub ChangelogToDebChangelog(sSys As String, sPackageName As String) As S
       
       If sDate <> "" Then
         'Debian packages don't accept an empty changelog line for the release:
-        If previousLine = sPackageName & " (" & sVersion & ") unstable; urgency=low" & "\n\n" Then 
+        If previousLine = sPackageName & " (" & $sVersionWithRelease & ") unstable; urgency=low" & "\n\n" Then 
           debChangelog = debChangelog & "  * New release version\n"
         Endif   
         debChangelog = debChangelog & "\n -- " & Project.Maintainer & " <" & Project.Address & ">  " & sDate & "\n\n"
@@ -1321,12 +1329,7 @@ Private Sub ChangelogToDebChangelog(sSys As String, sPackageName As String) As S
       sbits = Split(Trim$(sLine), " ")
       sDate = sbits[1] & ", " & sbits[3] & " " & sbits[2] & " " & sbits[4] & " 12:00:00 +0000"
       'sVersion = GetDebVersion()
-      If sSys = "ubuntu" Then
-        sVersion = $sVersion & "-0ubuntu" & CStr(Project.PackageVersion)
-      Else
-        sVersion = $sVersion & "-" & CStr(Project.PackageVersion)
-      Endif
-      previousLine = sPackageName & " (" & sVersion & ") unstable; urgency=low" & "\n\n"
+      previousLine = sPackageName & " (" & $sVersionWithRelease & ") unstable; urgency=low" & "\n\n"
       debChangelog &= previousLine
     
     Else 
@@ -1848,7 +1851,7 @@ Private Function MakeRpmSupportPackage(sSys As String, sSupport As String, aComp
     'PRINT #hFile, "BuildRequires: gambas2-ide"
   Print #hFile, "BuildArch: noarch"
 
-  Print #hFile, "Requires: "; FormatRpmPackageName($sUnsafePackageName);; ">=";; $sVersion;; ","; FormatRpmPackageName($sUnsafePackageName);; "<=";; $sVersion; GetDependencies(aComp)
+  Print #hFile, "Requires: "; FormatRpmPackageName($sUnsafePackageName);; ">=";; $sVersionWithRelease;; ","; FormatRpmPackageName($sUnsafePackageName);; "<=";; $sVersionWithRelease; GetDependencies(aComp)
 
   Print #hFile
 
