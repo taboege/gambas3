@@ -87,7 +87,7 @@ js                      $(mime)/application-javascript
 jump                    actions/go-jump
 keyboard                preferences/preferences-desktop-keyboard;apps/preferences-desktop-keyboard
 lamp                    actions/help-hint
-/language                [-breeze*]actions/im-google-talk;apps/preferences-desktop-locale
+language                [-breeze*]actions/im-google-talk;apps/preferences-desktop-locale
 last                    actions/go-last
 left                    actions/go-previous
 link                    emblems/emblem-symbolic-link
