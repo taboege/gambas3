@@ -18,6 +18,8 @@ Property CloseBraces As Boolean
 Property CloseStrings As Boolean
 Property Read DiffMode As Boolean
 
+Public Const ROW_NOT_FOUND As Integer = -2
+
 Public Lines As String[]
 Public LinesInfo As CLineInfo[]
 Public LineLength As Integer[]

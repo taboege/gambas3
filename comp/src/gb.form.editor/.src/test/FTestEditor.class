@@ -199,10 +199,17 @@ End
 
 Public Sub Button5_Click()
 
+  Dim aText As String[]
+  Dim I As Integer
+  
   If TextEditor1.DiffMode Then
     TextEditor1.LeaveDiffMode()
   Else
-    TextEditor1.EnterDiffMode([3, 4, 12, 2, 20, 6], ["0": ["Différence initiale", "sur plusieurs lignes"], "3": ["Différence", "sur plusieurs lignes", "c'est possible ?"]])
+    aText = New String[]
+    For I = 1 To 100
+      aText.Add(String$(80, CStr(I) & "."))
+    Next
+    TextEditor1.EnterDiffMode([3, 4, 12, 2, 20, 6], ["0": aText, "3": ["Différence", "sur plusieurs lignes", "c'est possible ?"]])
   Endif
 
 End

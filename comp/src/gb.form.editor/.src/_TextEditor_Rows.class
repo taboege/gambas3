@@ -245,7 +245,7 @@ Public Sub _FindRowFromPos(Y As Integer) As Integer
   
   Try iCache = $cCacheRowFromPos[Y]
   If Not Error Then
-    If iCache < 0 Then Return -1
+    If iCache < 0 Then Return CDocument.ROW_NOT_FOUND
     RelativeY = iCache And &HFFFFFFFF&
     Return Lsr(iCache, 32)
   Endif
@@ -270,8 +270,8 @@ Public Sub _FindRowFromPos(Y As Integer) As Integer
   RelativeY = Y - RY
   
   If I >= hView.Count Then
-    I = -1
-    iCache = -1
+    I = CDocument.ROW_NOT_FOUND
+    iCache = CDocument.ROW_NOT_FOUND
   Else
     iCache = Shl(CLong(I), 32) + RelativeY
   Endif

@@ -423,6 +423,14 @@ Public Sub Clear()
   
 End
 
+Private Sub HasWidthLayout() As Boolean
+  
+  If Not $cLineLayout Then Return
+  If $cLineLayout.Count Then Return True
+  If $cDiffLayout And If $cDiffLayout.Count Then Return True
+  
+End
+
 Private Sub UpdateMargin()
   
   Dim MW As Integer
@@ -840,7 +848,7 @@ Private Sub PaintMultiLine(X As Integer, Y As Integer, Width As Integer, Height 
   Dim D As Float
   Dim LW As Integer
   
-  If Not $cLineLayout Then Return
+  If Not Wrap_Read() Then Return
 
   Paint.Save
   Paint.AntiAlias = False
@@ -1181,14 +1189,19 @@ TOP_DIFF:
         XS = X + GetTextStartPos(sText)
         
         For I = 0 To aLayout.Max
-          DrawText(RTrim(String.Mid$(sText, P, aLayout[I])), X, XX, YY)
-          PaintMultiLine(X, YY, Width - $MW, H, I = 0, False)
+          If YY > -H Then
+            DrawText(RTrim(String.Mid$(sText, P, aLayout[I])), X, XX, YY)
+            PaintMultiLine(X, YY, Width - $MW, H, I = 0, False)
+          Endif
           YY += H
+          If YY >= Height Then Break
           XX = XS
           P += aLayout[I]
         Next
-        DrawText(String.Mid$(sText, P), X, XX, YY)
-        PaintMultiLine(X, YY, Width - $MW, H, False, True)
+        If YY > -H And If YY < Height Then
+          DrawText(String.Mid$(sText, P), X, XX, YY)
+          PaintMultiLine(X, YY, Width - $MW, H, False, True)
+        Endif
         YY += H
           
       Else
@@ -1541,7 +1554,7 @@ Private Sub UpdateWidth(Optional Y As Integer = -1)
   
   Dim W As Integer
   
-  If $cLineLayout Then
+  If Wrap_Read() Then
     If $iWidth <> $hView.ClientWidth Then
       $iWidth = $hView.ClientWidth
       _ResizeContents
@@ -2313,7 +2326,7 @@ Public Sub _AfterInsert(Y1 As Integer, Y2 As Integer, N As Integer)
   
   _ExpandInsert(Y1, N)
   
-  If Not $cLineLayout Then
+  If Not Wrap_Read() Then
     
     If $iLargestLine >= Y1 Then $iLargestLine += N
     
@@ -2323,11 +2336,11 @@ Public Sub _AfterInsert(Y1 As Integer, Y2 As Integer, N As Integer)
     
   Endif
   
-  If $cLineLayout Then
-    
-    'If N > 0 Then _UpdateAllHeight(True)
-    
-  Endif
+  ' If $cLineLayout Then
+  '   
+  '   'If N > 0 Then _UpdateAllHeight(True)
+  '   
+  ' Endif
   
   UpdateMargin
   UpdateCount
@@ -2407,7 +2420,7 @@ Public Sub _AfterRemove(Y1 As Integer, Y2 As Integer)
   $SX = $X
   $SY = $Y
   
-  If Not $cLineLayout Then
+  If Not Wrap_Read() Then
     
     If $iLargestLine >= Y1 Then
       If $iLargestLine <= Y2 Then
@@ -3046,7 +3059,7 @@ Public Sub _ResizeContents()
   
   If $iWidth < $hView.ScrollWidth Then
     _UpdateAllHeight
-  Else If $iWidth > $hView.ScrollWidth And If $cLineLayout And If $cLineLayout.Count Then
+  Else If $iWidth > $hView.ScrollWidth And If HasWidthLayout() Then
     _UpdateAllHeight
   Endif
   
@@ -3095,9 +3108,8 @@ Public Sub View_Draw()
   If iCount < NL Then Paint.FillRect(hClip.X, hClip.Y, hClip.W, hClip.H, $iBackground)
   
   iRow = $hRows._FindRowFromPos($hView.ScrollY + hClip.Y)
-  'If iRow < 0 Then iRow = 0
   iRow2 = $hRows._FindRowFromPos($hView.ScrollY + hClip.Y + hClip.H - 1)
-  If iRow2 < 0 Then iRow2 = $hRows.Count - 1
+  If iRow2 = CDocument.ROW_NOT_FOUND Then iRow2 = $hRows.Count - 1
   
   XO = -$hView.ScrollX
   XX = XO
@@ -5025,16 +5037,21 @@ Private Sub LayoutDiff(Y As Integer, WMax As Integer) As Integer
   If aText Then
     
     aDiffLayout = New Integer[][]
-    For Each sText In aText
-      aLayout = LayoutText(sText, String.Len(sText), WMax)
-      If aLayout.Count = 0 Then
-        aDiffLayout.Add(Null)
-        Inc H
-      Else
-        aDiffLayout.Add(aLayout)
-        H += aLayout.Count + 1
-      Endif
-    Next
+    If Wrap_Read() Then
+      For Each sText In aText
+        aLayout = LayoutText(sText, String.Len(sText), WMax)
+        If aLayout.Count = 0 Then
+          aDiffLayout.Add(Null)
+          Inc H
+        Else
+          aDiffLayout.Add(aLayout)
+          H += aLayout.Count + 1
+        Endif
+      Next
+    Else
+      H = aText.Count
+      aDiffLayout.Resize(H)
+    Endif
     
     If H > 1 Then
       $cDiffLayout[Y] = aDiffLayout
