@@ -1774,6 +1774,7 @@ Private Function MakeRpmSupportPackage(sSys As String, sSupport As String, aComp
   Dim sVendor As String
   Dim sRelease As String
   Dim sPackageName As String
+  Dim sDependency As String
 
   Inc Application.Busy
 
@@ -1851,7 +1852,9 @@ Private Function MakeRpmSupportPackage(sSys As String, sSupport As String, aComp
     'PRINT #hFile, "BuildRequires: gambas2-ide"
   Print #hFile, "BuildArch: noarch"
 
-  Print #hFile, "Requires: "; FormatRpmPackageName($sUnsafePackageName);; ">=";; $sVersionWithRelease;; ","; FormatRpmPackageName($sUnsafePackageName);; "<=";; $sVersionWithRelease; GetDependencies(aComp)
+  sDependency = $sVersion & "-" & sRelease
+
+  Print #hFile, "Requires: "; FormatRpmPackageName($sUnsafePackageName);; ">=";; sDependency;; ","; FormatRpmPackageName($sUnsafePackageName);; "<=";; sDependency; GetDependencies(aComp)
 
   Print #hFile
 
