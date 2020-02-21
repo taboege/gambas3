@@ -50,7 +50,7 @@ NameList: Adobe Glyph List
 DisplaySize: 16
 AntiAlias: 1
 FitToEm: 1
-WinInfo: 7011 57 16
+WinInfo: 0 57 16
 OnlyBitmaps: 1
 BeginPrivate: 0
 EndPrivate
@@ -24784,16 +24784,16 @@ BDFChar: 1 32 9 8 8 -2 -2
 z
 BDFChar: 2 33 9 3 4 0 10
 ^qdb$^qdb$!5QAM
-BDFChar: 3 34 9 1 5 8 11
-f[r`V
+BDFChar: 3 34 9 2 6 9 11
+f\"gV
 BDFChar: 4 35 9 1 7 0 10
 Ci!qeCi!qeCi!nf
 BDFChar: 5 36 9 1 6 -1 11
 0JImi^qb1'$k2nb0E;(Q
 BDFChar: 6 37 9 0 8 0 11
-@fWh8[K'n>$ig\9(]YBQ1B9:_AUn7j
+Eraqph>h^!$ig\9(]YBQ2ZQ!kD1H7!
 BDFChar: 7 38 9 0 7 0 10
-3,EDI3&#F)bhR7>
+3,EDI3&#F1bhdC@
 BDFChar: 8 39 9 3 4 9 11
 ^qd_c
 BDFChar: 9 40 9 2 5 -1 11
@@ -24845,7 +24845,7 @@ BDFChar: 31 62 9 2 7 1 9
 BDFChar: 32 63 9 1 7 0 10
 I)Z?p$lCZP!&-),
 BDFChar: 33 64 9 0 7 0 10
-5%Djfe^`4#c<rj:
+5%DpngY:K;c<rj:
 BDFChar: 34 65 9 1 7 0 10
 I)a1G`r<ut`l?!u
 BDFChar: 35 66 9 1 7 0 10
@@ -24975,7 +24975,7 @@ z
 BDFChar: 97 161 9 3 4 0 10
 ^q]pM^qdb$^qd_c
 BDFChar: 98 162 9 1 7 -2 9
-&.j6/^qdb$`dA=/
+(`7_;^qdb$^j[+;
 BDFChar: 99 163 9 1 7 0 10
 *\^u0@/+,;?srs6
 BDFChar: 100 164 9 0 7 1 7
