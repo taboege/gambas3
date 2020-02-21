@@ -8,6 +8,7 @@ Options:
   -e              execute the source code provided by the command line ( ':' separator )
   -c --nocache    force the script compilation (do not check cache)
   -v --verbose    be verbose
+  -w --warn       display warning during compile
   -f --fast       use just-in-time compiler
   -V --version    display version
   -L --license    display license
