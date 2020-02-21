@@ -489,6 +489,21 @@ CANCEL:
   
 End
 
+Private Sub UpdateCount()
+
+  Dim iCount As Integer
+
+  iCount = datData.Count
+  If iCount = 0 Then
+    lblCount.Text = ("No record") & " "
+  Else If iCount = 1 Then
+    lblCount.Text = ("One record") & " "
+  Else
+    lblCount.Text = Subst(("&1 records"), Format(iCount, ",0")) & " "
+  Endif
+
+End
+
 Private Sub ReloadTable()
   
   Dim hTable As Table
@@ -501,7 +516,6 @@ Private Sub ReloadTable()
   Dim hResult As Result
   Dim cDescField As Collection
   Dim cDescIndex As Collection
-  Dim iCount As Integer
   
   'UpdateDefinition($sTable)
   
@@ -591,14 +605,7 @@ Private Sub ReloadTable()
   datData.Table = $sTable
   datData.Refresh
   
-  iCount = datData.Count
-  If iCount = 0 Then
-    lblCount.Text = ("No record") & " "
-  Else If iCount = 1 Then
-    lblCount.Text = ("One record") & " "
-  Else
-    lblCount.Text = Subst(("&1 records"), Format(iCount, ",0")) & " "
-  Endif
+  UpdateCount
   
   splTable.Enabled = True
   
@@ -1765,6 +1772,7 @@ Public Sub btnRemoveData_Click()
   If Message.Warning(("Do you really want to remove the selected rows?"), ("Remove"), ("Cancel")) = 2 Then Return
   
   dvwData.Remove
+  UpdateCount
   
 End
 
@@ -1824,6 +1832,7 @@ End
 Public Sub btnSaveData_Click()
   
   dvwData.Save
+  UpdateCount
   
 End
 
@@ -1982,13 +1991,13 @@ End
 
 Public Sub btnSelectAll_Click()
 
-  dvwData.View.SelectAll
+  dvwData.SelectAll()
 
 End
 
 Public Sub btnUnselectAll_Click()
 
-  dvwData.View.UnSelectAll
+  dvwData.UnselectAll()
 
 End
 
