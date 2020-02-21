@@ -10,6 +10,7 @@ Private $sMainScriptPath As String
 Private $aIncFiles As New String[]
 Private $iLevel As Integer
 Private $cComponents As New Collection
+Private $cLibraries As New Collection
 Private $aSortKey As New Integer[]
 Private $aAppArgs As New String[]
 Private $bNoCache As Boolean
@@ -64,8 +65,8 @@ Public Sub Main() As Integer
   If $bExecuteFromArgs Then
     Shell ("echo '" & $sPath & "'|md5sum") To $sMd5
   Else
-    Exec ["md5sum", $sPath] To $sMd5
-     'Shell "md5sum " & $sPath To $sMd5
+    'Exec ["md5sum", $sPath] To $sMd5
+    Shell "md5sum " & $sPath To $sMd5
     
   Endif
   $sMd5 = Scan($sMd5, "* *")[0]
@@ -271,6 +272,11 @@ Private Sub MakeVirtualProject()
     sPrjFileContent &= "Component=" & $cComponents[i] & "\n"
 
   Next
+  
+  For Each ci As String In $cLibraries
+    sPrjFileContent &= "Library=" & ci & "\n"
+
+  Next
 
   File.Save($sPrjPath &/ ".project", sPrjFileContent)
 
@@ -372,6 +378,36 @@ Private Sub GenerateFiles(Path As String)
         $cComponents[CComponent.All[s].SortKey] = s
         $aSortKey.Add(CComponent.All[s].SortKey)
         $aImplemented.Insert(CComponent.All[s].Implement)
+        If iInd < aSym.Max Then
+          s = aSym[iInd + 1]
+          If s <> "," Then CompileError(Path, iLine, "Comma missing")
+        Endif
+      Next
+      Continue
+    Endif
+    
+    If aSym.Count >= 2 And If aSym[0] == "LIB" Then
+
+      For iInd = 1 To aSym.Max Step 2
+        If Highlight.Types[iInd] <> Highlight.String Then CompileError(Path, iLine, "Syntax error")
+        s = Mid$(aSym[iInd], 2, -1)
+        
+        If Exist(User.home & "/.local/gambas" & System.version & "/lib/" & s & ".gambas") Then
+          s = User.home & "/.local/gambas" & System.version & "/lib/" & s & ".gambas"
+        Else
+           If Not Exist(s & ".gambas") Then
+             If Exist("/usr/lib/gambas" & System.version & "/lib/" & s & ".gambas")
+                s = "/usr/lib/gambas" & System.version & "/lib/" & s & ".gambas"
+             Else
+                CompileError(s, iLine, Subst("Unknown Library: &1", s))
+             Endif
+           Else
+              s = s & ".gambas"
+           Endif
+        Endif
+        If $bVerbose Then Print "gbs: use Library: "; s
+        $cLibraries.Add(s, File.Name(s))
+        
         If iInd < aSym.Max Then
           s = aSym[iInd + 1]
           If s <> "," Then CompileError(Path, iLine, "Comma missing")
