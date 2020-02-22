@@ -472,11 +472,12 @@ static void init_files(const char *first)
 static void exit_files(void)
 {
 	int i;
-	FILE *f;
-	const char *file;
 
 	if (make_test)
 	{
+		FILE *f = NULL;
+		const char *file;
+		
 		if (main_verbose)
 			puts("creating '.test' file");
 		
