@@ -347,16 +347,6 @@ static void export_signature(int nparam, int npmin, PARAM *param, bool vararg)
 }
 
 
-static void create_file(FILE **fw, const char *file)
-{
-	if (!*fw)
-	{
-		*fw = fopen(file, "w");
-		if (!*fw)
-			THROW("Cannot create file: &1", FILE_cat(FILE_get_dir(COMP_project), file, NULL));
-	}
-}
-
 static void close_file_and_rename(FILE *f, const char *file, const char *dest)
 {
 	if (f)
@@ -478,7 +468,7 @@ static void class_update_exported(CLASS *class)
 		}
 		else if ((cmp > 0) && class->exported && !inserted)
 		{
-			create_file(&fw, ".list#");
+			COMPILE_create_file(&fw, ".list#");
 			if (JOB->verbose)
 				printf("Insert '%s%s' into .list file\n", class->name, class->optional ? "?" : "");
 			fputs(class->name, fw);
@@ -498,7 +488,7 @@ static void class_update_exported(CLASS *class)
 			if (JOB->verbose)
 				printf("Copy '%s' in .list file\n", name);
 
-			create_file(&fw, ".list#");
+			COMPILE_create_file(&fw, ".list#");
 			fputs(name, fw);
 			if (has_static && COMPILE_version >= 0x03060090)
 				fputc('!', fw);
@@ -798,7 +788,7 @@ void CLASS_export(void)
 
 		if (cmp > 0 && class->exported && !inserted)
 		{
-			create_file(&fw, ".info#");
+			COMPILE_create_file(&fw, ".info#");
 			insert_class_info(class, fw);
 			inserted = TRUE;
 		}
@@ -814,7 +804,7 @@ void CLASS_export(void)
 				printf("Copy '%s' information in .info file\n", &line[1]);
 			for(;;)
 			{
-				create_file(&fw, ".info#");
+				COMPILE_create_file(&fw, ".info#");
 				fputs(line, fw);
 				fputc('\n', fw);
 				read_line(&line, &len);

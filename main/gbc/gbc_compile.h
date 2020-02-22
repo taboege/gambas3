@@ -118,6 +118,7 @@ void COMPILE_add_class(const char *name, int len);
 void COMPILE_end_class(void);
 void COMPILE_enum_class(char **name, int *len);
 void COMPILE_print(int type, int line, const char *msg, ...);
+void COMPILE_create_file(FILE **fw, const char *file);
 
 #define COMPILE_get_column(_pattern) (JOB->pattern_pos[(_pattern) - JOB->pattern])
 

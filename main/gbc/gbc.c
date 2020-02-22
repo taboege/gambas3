@@ -88,9 +88,11 @@ static bool main_public = FALSE;
 static bool main_public_module = FALSE;
 static bool main_swap = FALSE;
 static bool main_no_old_read_syntax = FALSE;
+
 //static char *main_class_file = NULL;
 
 static char **_files = NULL;
+static bool make_test = FALSE;
 
 static void get_arguments(int argc, char **argv)
 {
@@ -424,6 +426,11 @@ static void fill_files(const char *root, bool recursive)
 			{
 				*((char **)ARRAY_add(&_files)) = STR_copy(file);
 			}
+			else if (strcmp(ext, "test") == 0)
+			{
+				*((char **)ARRAY_add(&_files)) = STR_copy(file);
+				make_test = TRUE;
+			}
 		}
 	}
 
@@ -465,7 +472,31 @@ static void init_files(const char *first)
 static void exit_files(void)
 {
 	int i;
+	FILE *f;
+	const char *file;
 
+	if (make_test)
+	{
+		if (main_verbose)
+			puts("creating '.test' file");
+		
+		COMPILE_create_file(&f, ".test");
+
+		for (i = 0; i < ARRAY_count(_files); i++)
+		{
+			file = _files[i];
+			if (strcmp(FILE_get_ext(file), "test") == 0)
+			{
+				fputs(FILE_get_basename(file), f);
+				fputc('\n', f);
+			}
+		}
+		
+		fclose(f);
+	}
+	else
+		unlink(".test");
+	
 	for (i = 0; i < ARRAY_count(_files); i++)
 		STR_free(_files[i]);
 

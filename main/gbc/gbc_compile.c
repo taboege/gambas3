@@ -712,3 +712,14 @@ void COMPILE_print(int type, int line, const char *msg, ...)
 	va_end(args);
 }
 
+
+void COMPILE_create_file(FILE **fw, const char *file)
+{
+	if (!*fw)
+	{
+		*fw = fopen(file, "w");
+		if (!*fw)
+			THROW("Cannot create file: &1", FILE_cat(FILE_get_dir(COMP_project), file, NULL));
+	}
+}
+
