@@ -907,6 +907,10 @@ Private Sub GetModule(sClass As String) As Object
   
   sPath = Project.FindPath(sClass & ".module")
   If sPath Then Return Project.LoadFile(sPath)
+  If Project.HasTest Then
+    sPath = Project.FindPath(sClass & ".test")
+    If sPath Then Return Project.LoadFile(sPath)
+  Endif
   For Each sFamily In CFamily.List
     sPath = Project.FindPath(sClass & "." & sFamily)
     If sPath Then Return Project.LoadFile(sPath)
@@ -974,7 +978,7 @@ Public Sub ScanSingleClass(hPModule As FEditor) As Collection
 
   cSymbol = New Collection(gb.IgnoreCase)
   hPModule.Scan = cSymbol
-  ScanClass(hPModule, cSymbol, File.Ext(hPModule.Path) = "module", False)
+  ScanClass(hPModule, cSymbol, Project.IsModuleExt(hPModule.Path), False)
   Return cSymbol
   
 End
@@ -1032,16 +1036,20 @@ Public Function GetClassSymbols(sClass As String, Optional sComponent As String)
   Endif
   
   sPath = Project.FindPath(sClass & ".module")
-  If Exist(sPath) Then hPModule = Project.LoadFile(sPath)
-  For Each sFamily In CFamily.List
-    sPath = Project.FindPath(sClass & "." & sFamily)
-    If Exist(sPath) Then 
-      Try hPForm = Project.LoadFile(sPath)
-      Break
-    Endif
-  Next
-  sPath = Project.FindPath(sClass & ".class")
-  If Exist(sPath) Then hPClass = Project.LoadFile(sPath)
+  If Not Exist(sPath) Then sPath = Project.FindPath(sClass & ".test")
+  If Exist(sPath) Then
+    hPModule = Project.LoadFile(sPath)
+  Else
+    For Each sFamily In CFamily.List
+      sPath = Project.FindPath(sClass & "." & sFamily)
+      If Exist(sPath) Then 
+        Try hPForm = Project.LoadFile(sPath)
+        Break
+      Endif
+    Next
+    sPath = Project.FindPath(sClass & ".class")
+    If Exist(sPath) Then hPClass = Project.LoadFile(sPath)
+  Endif
   
   cSymbol = New Collection
   

@@ -219,6 +219,9 @@ Public UseInheritance As Boolean
 
 Private $bFileIsUnknown As Boolean
 
+' If 'gb.test' is checked
+Public HasTest As Boolean
+
 ' If GetFileIcon() has been called on an added file
 'Private $bLastAdded As Boolean
 
@@ -1971,7 +1974,7 @@ Public Function LoadFile(sPath As String, Optional bNoErrorIfUnknown As Boolean)
 
       Select Case sType
 
-        Case "module", "class"
+        Case "module", "test", "class"
           hForm = New FEditor(sPath)
 
         Case "form", "report", "webform", "termform"
@@ -2003,7 +2006,7 @@ Public Function LoadFile(sPath As String, Optional bNoErrorIfUnknown As Boolean)
         Case "png", "gif", "jpg", "jpeg", "bmp", "xpm"
           hForm = New FImageEditor(sPath)
 
-        Case "module", "class"
+        Case "module", "test", "class"
           hForm = New FEditor(sPath)
 
         Case Else
@@ -3080,14 +3083,12 @@ Public Function GetClasses(Optional bFullPath As Boolean) As String[]
 
   Dim sPath As String
   Dim aClass As New String[]
-  Dim sExt As String
 
   If Not Path Then Return aClass
 
   For Each sPath In Tree.Sources
 
-    sExt = File.Ext(sPath)
-    If sExt = "class" Or If sExt = "module" Then
+    If IsModuleExt(sPath) Or If sPath Ends ".class" Then
       If bFullPath Then
         aClass.Add(sPath)
       Else
@@ -4669,8 +4670,10 @@ Public Sub RefreshComponents(Optional bForce As Boolean)
 
     $aOldRefreshComponents = aLib
     
+    HasTest = Components.Exist("gb.test")
+    
   Endif
-
+  
 End
 
 Public Function IsSourceDir(sDir As String) As Boolean
@@ -4696,12 +4699,24 @@ Public Function IsSourcePath(sPath As String, Optional bAllowDir As Boolean) As 
 
 End
 
-Public Function IsFormPath(sPath As String) As Boolean
-
-  If Not IsSourcePath(sPath) Then Return
+Public Function IsFormExt(sPath As String) As Boolean
 
   If File.Ext(sPath) = "class" Then Return
   Return Exist(File.SetExt(sPath, "class"))
+
+End
+
+Public Function IsFormPath(sPath As String) As Boolean
+
+  If Not IsSourcePath(sPath) Then Return
+  Return IsFormExt(sPath)
+
+End
+
+Public Function IsModuleExt(sPath As String) As Boolean
+
+  Dim sExt As String = File.Ext(sPath)
+  If sExt = "module" Or If sExt = "test" Then Return True
 
 End
 
@@ -4710,7 +4725,6 @@ Public Sub IsProjectPath(sPath As String) As Boolean
   Return sPath Begins Project.Dir &/ "/"
   
 End
-
 
 Public Function IsImagePath(sPath As String) As Boolean
 
@@ -5468,10 +5482,8 @@ Public Sub IsExported(sPath As String) As Boolean
 
   Dim hFile As File
   Dim sLine As String
-  Dim sExt As String
 
-  sExt = File.Ext(sPath)
-  If sExt <> "module" And If sExt <> "class" Then sPath = File.SetExt(sPath, "class")
+  If Not IsModuleExt(sPath) Then sPath = File.SetExt(sPath, "class")
   If Not Exist(sPath) Then Return
 
   Try hFile = Open sPath
@@ -6402,7 +6414,7 @@ Public Sub IsModified(sPath As String, Optional bNoClass As Boolean) As Boolean
   
   If HasFlag(sPath, FLAG_MODIFIED) Then Return True
   If Not IsSourcePath(sPath) Then Return
-  If Not IsFormPath(sPath) Then Return
+  If Not IsFormExt(sPath) Then Return
   If bNoClass Then Return
   Return HasFlag(File.SetExt(sPath, "class"), FLAG_MODIFIED)
   
@@ -6443,7 +6455,6 @@ Private Sub RenamePaths(sOld As String, sNew As String)
   Dim hForm As Object
   Dim sCheck As String
   Dim sNewFormPath As String
-  Dim sExt As String
   
   ' Rename DoNotTranslate
   
@@ -6492,8 +6503,7 @@ Private Sub RenamePaths(sOld As String, sNew As String)
   ' Rename breakpoints
   
   If IsSourcePath(sOld) Then
-    sExt = File.Ext(sOld)
-    If sExt = "class" Or If sExt = "module" Then
+    If IsModuleExt(sOld) Or If sOld Ends ".class" Then 
       Design.RenameClass(File.BaseName(sOld), File.BaseName(sNew))
     Endif
   Endif

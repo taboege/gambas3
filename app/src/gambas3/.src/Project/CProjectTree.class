@@ -165,10 +165,10 @@ Private Sub AddFile(sDir As String, sFile As String, Optional bAfter As Boolean,
           '   'sParent = hModule.TreeKey
           '   'If Not hModule.Used Then bIgnore = True
           '   sParent = sDir
-          Else If sExt <> "module" Then
-            'If Not HasModule(sExt) Then
-            '  bIgnore = True
-            'Endif
+          ' Else If sExt <> "module" Then
+          '   'If Not HasModule(sExt) Then
+          '   '  bIgnore = True
+          '   'Endif
           Endif
 
           If Not sParent Then sParent = sDir
@@ -418,6 +418,9 @@ Public Function FindPath(sClass As String) As String
   sPath = Sources[sClass & ".module"]
   If sPath Then Return sPath
 
+  sPath = Sources[sClass & ".test"]
+  If sPath Then Return sPath
+
 End
 
 Public Sub FindKey(sClass As String) As String
@@ -570,7 +573,7 @@ Public Sub GetFileIcon(sPath As String, Optional iSize As Integer, hStat As Stat
       sExt = File.Ext(sPath)
       Select Case sExt
 
-        Case "form", "class", "module", "webpage", "report", "webform", "termform"
+        Case "form", "class", "module", "test", "webpage", "report", "webform", "termform"
           If IsSourcePath(sPath) Then
             sModule = sExt
             sIcon = sExt
@@ -982,6 +985,7 @@ Public Sub ExistClass(sClass As String) As Boolean
 
   If Sources.Exist(sClass & ".class") Then Return True
   If Sources.Exist(sClass & ".module") Then Return True
+  If Sources.Exist(sClass & ".test") Then Return True
 
 End
 

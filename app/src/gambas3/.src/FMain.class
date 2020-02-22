@@ -165,7 +165,7 @@ Public Sub tvwProject_Activate()
     tvwProject[sKey].Expanded = True
     If CanEdit(sKey) Then
       If $bCtrl Then
-        If Project.IsSourcePath(sKey) And If File.Ext(sKey) <> "module" Then
+        If Project.IsSourcePath(sKey) And If Not Project.IsModuleExt(sKey) Then
           sKeyClass = File.SetExt(sKey, "class")
           If Project.IsSourcePath(sKeyClass) Then sKey = sKeyClass
         Endif
@@ -423,7 +423,7 @@ Public Sub mnuPopup_Show()
     mnuDeleteFile.Visible = mnuDeleteFile.Visible And CanDelete(sCurrent) And Not Project.Running
     
     mnuEditFile.Visible = mnuEditFile.Visible And CanEdit(sCurrent)
-    mnuEditClass.Visible = mnuEditFile.Visible And Project.IsFormPath(sCurrent)
+    mnuEditClass.Visible = mnuEditFile.Visible And Project.IsFormExt(sCurrent)
     
     mnuStartup.Visible = mnuEditFile.Visible 
     If mnuStartup.Visible Then
@@ -483,6 +483,7 @@ Public Sub mnuPopup_Show()
       Next
       mnuNewClass.Show
       mnuNewModule.Show
+      mnuNewTest.Visible = Project.HasTest
       
     Endif
   
@@ -553,6 +554,7 @@ Public Sub mnuPopup_Show()
       Next
       mnuNewClass.Hide
       mnuNewModule.Hide
+      mnuNewTest.Hide
       
     Endif
     

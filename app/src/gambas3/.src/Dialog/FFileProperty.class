@@ -36,6 +36,8 @@ Public Sub fprInfo_Data()
         
         Case "module"
           sType = ("Gambas module")
+        Case "test"
+          sType = ("Gambas test module")
         Case "class"
           sType = ("Gambas class")
           
@@ -161,6 +163,7 @@ Public Sub panStat_Arrange()
   gvwStat.Columns.Count = 2
   
   AddStat(("Modules"), Project.GetCount("module"))
+  If Project.HasTest Then AddStat(("Test modules"), Project.GetCount("test"))
   AddStat(("Classes"), Project.GetCount("class"))
   For Each hModule In CModule.All
     If hModule.Used Then AddStat(hModule.NamePlural, Project.GetCount(hModule.Key))

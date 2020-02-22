@@ -18,12 +18,12 @@ Static Public Sub _init()
   
   All = New Collection(gb.IgnoreCase)
   
-  For Each sModule In ["module", "class"]
+  For Each sModule In ["module", "test", "class"]
     Picture["img/16" &/ sModule & ".png"] = Project.MakeModuleIcon(sModule, 16).Picture
     Picture["img/32" &/ sModule & ".png"] = Project.MakeModuleIcon(sModule, 32).Picture
   Next
   
-  Ext = ["module", "class"]
+  Ext = ["module", "test", "class"]
   
   hModule = New CModule("form", ("Form"), ("Forms"), ("Gambas forms"))
   hModule = New CModule("webpage", ("WebPage"), ("WebPages"), ("Gambas web pages"))

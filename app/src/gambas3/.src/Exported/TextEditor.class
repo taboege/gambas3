@@ -377,7 +377,7 @@ Static Public Sub GetModeFromPath(sPath As String) As String
       sMode = "gambas"
     Case "html", "htm", "xml", "kml", "rss"
       sMode = "html"
-    Case "module", "class"
+    Case "module", "test", "class"
       If Project.IsSourcePath(sPath) Then sMode = "gambas"
       If Project.IsHiddenPath(sPath) Then sMode = "gambas"
   End Select

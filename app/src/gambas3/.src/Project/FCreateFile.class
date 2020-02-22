@@ -157,6 +157,12 @@ Private Sub CreateFile() As Boolean
       
       Project.InsertSource(sName, sType, $sDir, sTemp)
   
+    Case "test"
+    
+      sTemp = "' Gambas test module file\n\n"
+      
+      Project.InsertSource(sName, sType, $sDir, sTemp)
+  
     Case "class"
     
       sTemp = "' Gambas class file\n\n"
