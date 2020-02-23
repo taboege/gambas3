@@ -1,0 +1,8 @@
+# Gambas Project File 3.0
+Title=Example project to test with gbt3
+Startup=Main
+Version=0.0.1
+Component=gb.test
+TabSize=4
+Language=en_US
+Packager=1

@@ -3,6 +3,7 @@
 '' Changes the project in Path (given by args) to start with a random method,
 '' runs tests and restores the project afterwards
 
+'Public Sub Main(Optional sPath As String, Optional sTestModule As String, Optional sTestMethod As String)
 Public Sub Main()
 
     Dim Path, cmd, sRand, SingleTestModule, SingleTestMethod, sNewStartupFile, sStartupSequence, sTap, sTestCmd As String
@@ -14,20 +15,33 @@ Public Sub Main()
         .End
     End With
 
-    ' ------------------------------------------------- Tests
-
     Path = Args[Args.Max]
+
+    ' 'overwrite args with optional arguments
+    ' If sPath Then
+    '     Path = sPath
+    ' Endif
+    ' 
+    ' If sTestModule Then
+    '     SingleTestModule = sTestModule
+    ' Endif
+    ' 
+    ' If sTestMethod Then
+    '     SingleTestMethod = sTestMethod
+    ' Endif
+    
+    ' ------------------------------------------------- Tests
 
     If Path = Null Then
         Error.Raise("Error: Path to project is Null.")
     Endif
 
     If Not Exist(Path) Then
-        Error.Raise("Path to project not found")
+        Error.Raise("Error: Path to project not found.")
     Endif
 
     If SingleTestMethod And If SingleTestModule = Null Then
-        Error.Raise("Testmodule not defined")
+        Error.Raise("Error: Testmodule not defined")
     Endif
 
     If SingleTestModule Then
@@ -41,9 +55,7 @@ Public Sub Main()
     ' ------------------------------------------------- New startup file
     sTestCmd = "Unittest.Main(" & sTestCmd & ")"
 
-    'backup original startup
-    'sNewStartupFile = ReplaceStartup(Path) & ".module"
-    sRand = Randstr()
+    sRand = "TEST" & Randstr()
     sNewStartupFile = sRand & ".module"
 
     'create and inject test startup
@@ -58,20 +70,17 @@ Public Sub Main()
 
     'compile
     cmd = "/usr/bin/gbc3 " & Path
-    Shell cmd
+    Shell cmd Wait
 
-    'execute
     cmd = "/usr/bin/gbx3 -s " & sRand & " " & Path
-    Shell cmd To sTap
+    Shell cmd To sTap 
 
-    'test and pledge out TAP
     Print sTap
 
     ' ------------------------------------------------- Restore project
 
     'restore project
     Kill Path &/ ".src" &/ sNewStartupFile
-    ' RestoreStartup(Path, Left(sNewStartupFile, InStr(sNewStartupFile, ".") - 1))
 
     'compile again
     cmd = "/usr/bin/gbc3 " & Path
@@ -86,7 +95,7 @@ Private Function Randstr() As String
     Dim j As Byte
     Dim s As String
 
-    For j = 1 To 20
+    For j = 1 To 5
         If Fix(Rnd(0, 2)) Then
             s &= Chr(Rnd(48, 58))
         Else
