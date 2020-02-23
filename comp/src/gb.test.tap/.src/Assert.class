@@ -108,7 +108,13 @@ Public Sub Skip(Optional Comment As String)
 
     $hCurrent.Directive = Tap.SKIP
     $hCurrent.Comment = Comment
-    Ok(True)
+    Pass()
+
+End
+
+Public Sub BailOut(Optional Comment As String)
+
+    $hCurrent.Printer.BailOut(Comment)
 
 End
 
