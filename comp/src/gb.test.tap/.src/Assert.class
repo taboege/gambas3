@@ -245,7 +245,7 @@ Public Sub StringEquals(Got As String, Expected As String, Optional Description 
         Next
         Note(Subst$(("Strings differ at position &1"), iPos))
         Note(Subst$(("  Got:      &1"), Quote$(Mid$(Got, iPos, 20)) & IIf(Len(Got) > iPos + 20, "...", "")))
-        Note(Subst$(("  Expected: &2"), Quote$(Mid$(Expected, iPos, 20)) & IIf(Len(Expected) > iPos + 20, "...", "")))
+        Note(Subst$(("  Expected: &1"), Quote$(Mid$(Expected, iPos, 20)) & IIf(Len(Expected) > iPos + 20, "...", "")))
     Endif
     Return bRes
 
