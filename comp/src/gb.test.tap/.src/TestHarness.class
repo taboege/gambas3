@@ -58,49 +58,79 @@ Private $aTests As New TestStats[]
 Private $hCurrent As TestStats
 Private $bLastOk As Boolean
 
+Private Sub InitParser(sName As String)
+
+    ' XXX: If a class inherits this, it can override/claim event handlers and our statistics aren't accurate.
+    $hParser = New TapParser As "Parser"
+
+    With $hCurrent = New TestStats
+        .Name = sName
+        .Plan = [1, 0]
+        .Failures = New String[]
+        .Lines = New String[]
+        .Started = Now()
+    End With
+
+    $aTests.Push($hCurrent)
+
+End
+
+Private Sub AddLine(sLine As String)
+
+    $hCurrent.Lines.Add(sLine)
+    $hParser.ParseLine(sLine)
+
+End
+
+Private Sub FinishStats()
+
+    With $hCurrent
+        .Ended = Now()
+        .ExitCode = Last.Value
+        .Run = .Passed + .Failed + .Todo + .Skipped
+        .Delta = .Planned - .Run
+        .Success = .ExitCode = 0 And .Planned > 0 And .Run = .Planned And .Failed = 0
+    End With
+
+End
+
 Public Sub Attach(Producer As Process, Name As String)
 
     $hProducer = Producer
     Object.Attach(Producer, Me, "TapStream")
 
-    ' XXX: If a class inherits this, it can override/claim event handlers and our statistics aren't accurate.
-    $hParser = New TapParser As "Parser"
-
-    $hCurrent = New TestStats
-    $hCurrent.Name = Name
-    $hCurrent.Plan = [1, 0]
-    $hCurrent.Failures = New String[]
-    $hCurrent.Lines = New String[]
-    $hCurrent.Started = Now()
-
-    $aTests.Push($hCurrent)
-
-    ' Catch
-    '     Debug Subst$(("Test harness failure: [&1] &2"), Error.Where, Error.Text)
-    '     Debug Error.Backtrace.Join("\n")
-    '     Error.Raise(Subst$(("Test harness failure: [&1] &2"), Error.Where, Error.Text))
+    InitParser(Name)
 
 End
 
 Public Sub Wait()
 
-    $hProducer.Wait()
+    If $hProducer Then $hProducer.Wait()
 
 End
 
-Public Sub Read(Producer As Process, Name As String)
+Public Sub Read(Producer As Variant, Name As String)
 
-    Me.Attach(Producer, Name)
-    Me.Wait()
+    If Producer Is Process Then
+        Me.Attach(Producer, Name)
+        Me.Wait()
+    Else If Producer Is Stream Then
+        Dim hStream As Stream = Producer
+        Dim sLine As String
+        InitParser(Name)
+        For Each sLine In hStream.Lines
+            AddLine(sLine)
+        Next
+        FinishStats()
+    Else
+        Error.Raise(Subst$(("Can't handle TAP producer of class '&1'"), Object.Class(Producer).Name))
+    Endif
 
 End
 
 Public Sub TapStream_Read()
 
-    Dim sLine As String = Last.ReadLine()
-
-    $hCurrent.Lines.Add(sLine)
-    $hParser.ParseLine(sLine)
+    AddLine(Last.ReadLine())
 
 End
 
@@ -111,21 +141,14 @@ Public Sub TapStream_Error(Message As String)
     ' Inject stderr as diagnostic messages
     For Each sLine In Split(Message, "\n")
         sLine = "# " & sLine
-        $hCurrent.Lines.Add(sLine)
-        $hParser.ParseLine(sLine)
+        AddLine(sLine)
     Next
 
 End
 
 Public Sub TapStream_Kill()
 
-    With $hCurrent
-        .Ended = Now()
-        .ExitCode = Last.Value
-        .Run = .Passed + .Failed + .Todo + .Skipped
-        .Delta = .Planned - .Run
-        .Success = .ExitCode = 0 And .Planned > 0 And .Run = .Planned And .Failed = 0
-    End With
+    FinishStats()
 
 End
 
@@ -208,6 +231,7 @@ End
 
 Private Function Finished_Read() As Boolean
 
-    Return $hProducer.State <> Process.Running
+    If $hProducer Then Return $hProducer.State <> Process.Running
+    Return True
 
 End
