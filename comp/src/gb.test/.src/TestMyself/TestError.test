@@ -1,6 +1,4 @@
-' Gambas class file
-
-Inherits UnitTest
+' Gambas test file
 
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
@@ -15,4 +13,3 @@ Public Sub TestError()
     Assert.ErrorWithCode(26, "Wanted error 26. Ok if ok.")
 
 End
-

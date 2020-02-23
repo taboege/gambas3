@@ -1,20 +1,18 @@
-' Gambas class file
+' Gambas test file
 
 ''' Self test to check setup and teardown
 
-Inherits UnitTest
-
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
-Public Sub SetupContainer()
+Public Sub Setup()
 
-    Print "# Setup Container"
+    Print "# Setup TestModule"
 
 End
 
-Public Sub TeardownContainer()
+Public Sub Teardown()
 
-    Print "# Teardown Container"
+    Print "# Teardown TestModule"
 
 End
 

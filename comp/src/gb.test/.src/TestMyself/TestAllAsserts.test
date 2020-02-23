@@ -1,16 +1,12 @@
-' Gambas class file
+' Gambas test file
 
-Inherits UnitTest
 ''' Tests all Asserts
 
-' Signal, that this is a selftest
+'' Signal, that this is a selftest
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
-Public Sub _new()
-
-  Me.Plan = 12
-
-End
+'' Count of assertions in this TestModule
+Public Plan As Integer = 12
 
 Public Sub TestAssert()
 
@@ -68,7 +64,7 @@ Public Sub TestAssertEqualsObject()
     Assert.EqualsObject(s2, s, "Equal Objects")
 
 End
- 
+
 Public Sub TestAssertEqualsString()
 
     Dim s1, s2 As String
@@ -90,6 +86,7 @@ End
 Public Sub TestAssertError()
 
     Dim r As Float
+
     Try r = 2 / 0
     Assert.Error("Test error")
 
@@ -98,6 +95,7 @@ End
 Public Sub TestAssertErrorWithCode()
 
     Dim r As Float
+
     Try r = 2 / 0
     Assert.ErrorWithCode(26, "Test error with code")
 

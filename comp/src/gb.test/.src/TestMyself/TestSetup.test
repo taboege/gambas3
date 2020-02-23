@@ -1,0 +1,52 @@
+' Gambas test file
+
+'Plan is one more because Test in TeardownEach is counted twice!
+Public Plan As Integer = 8
+
+Public Const ThisIsAnUnitTestSelfTest As Boolean = True
+Private $SetupIsDone As Boolean
+Private $EachSetupIsDone As Boolean
+
+Public Sub Setup()
+
+    $SetupIsDone = True
+    Assert.Note("Setup TestModule")
+
+End
+
+Public Sub Teardown()
+
+    Assert.True($SetupIsDone, "Check if setup was successful.")
+    Assert.Note("Teardown TestModule")
+
+End
+
+Public Sub SetupEach()
+
+    Assert.False($EachSetupIsDone, "Check if each was not setup.")
+    $EachSetupIsDone = True
+    Assert.Note("Setup Each")
+
+End
+
+Public Sub TeardownEach()
+
+    Assert.True($EachSetupIsDone, "Each setup done")
+    Assert.Note("Teardown Each")
+    $EachSetupIsDone = False
+
+End
+
+Public Sub TestFirst()
+
+    Assert.True($SetupIsDone, "Check if setup was successful.")
+    Assert.True($EachSetupIsDone, "Check if setup each was successful.")
+    Assert.EqualsString("ja", "ja", "Fake test")
+
+End
+
+Public Sub NameOfMethodDoesNotStartWithTest()
+
+    Assert.EqualsString("no", "no", "Fake test")
+
+End

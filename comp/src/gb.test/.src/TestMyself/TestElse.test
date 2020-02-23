@@ -1,17 +1,8 @@
-' Gambas class file
-
-Inherits UnitTest
+' Gambas test file
 
 ' Signal, that this is a selftest
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
-
-
-Public Sub _new()
-
-  Me.Plan = 5
-
-End
-
+Public Plan As Integer = 5
 
 ' A Test with no message, should display then method name as message
 
@@ -33,6 +24,6 @@ End
 
 Public Sub TestNote()
 
-  Assert.Note("This\nis\na\nnote")
+    Assert.Note("This\nis\na\nnote")
 
 End
