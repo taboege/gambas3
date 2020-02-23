@@ -98,7 +98,11 @@ End
 
 Public Sub Diagnostic(Comment As String)
 
-    Print("# " & Comment)
+    Dim sLine As String
+
+    For Each sLine In Split(Trim$(Comment), "\n")
+        Print("# " & sLine)
+    Next
 
 End
 

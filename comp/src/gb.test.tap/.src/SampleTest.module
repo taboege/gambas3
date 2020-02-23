@@ -31,6 +31,8 @@ Public Sub Main()
             Exec ["/usr/bin/mountpoint", "/home"] To sCapture
             .Equals(Process.LastValue, 0, "/home is a mountpoint")
         Endif
+
+        .Note("That's it.\nBye.")
     End With
 
 End
