@@ -14,6 +14,10 @@ Public Sub Main()
     'UnitTest.Main("TestFailures", Null, True)
     'UnitTest.Main("TestBailout", Null, True)
 
+    'This will BailOut
+    'UnitTest.Main("TestEmpty", Null, True)
+    
+
     'Test all
     'UnitTest.Main(Null, Null, True)
 

@@ -152,7 +152,12 @@ Public Function AddAllTestCases(TestModule As Class, Optional NameProcedure As S
     asTests = GetTestsFromTestModule(TestModule)
     asTests.Sort
 
-    Assert asTests.Count > 0 '"Failed: No tests in " & TestModule.Name
+    ' Tests must not be empty
+
+    'Assert asTests.Count > 0 Error "Failed: No tests in " & TestModule.Name
+    If asTests.Count = 0 Then
+         Assert.BailOut("Error: No tests in " & TestModule.Name)
+    Endif
 
     For i = 0 To asTests.Count - 1
         If NameProcedure = Null Then
