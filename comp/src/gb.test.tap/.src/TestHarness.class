@@ -1,0 +1,213 @@
+' Gambas class file
+
+''' Base class for a test harness. It collects statistics about the tests, inspired by perl's Test::Harness.
+
+Export
+
+Public Struct TestStats
+    '' Name of the test
+    Name As String
+    '' Exit status of the test process
+    ExitCode As Integer
+    '' Whether the test was successful (all tests passed and at least one test was executed)
+    Success As Boolean
+    '' Number of run tests
+    Run As Integer
+    '' Difference between planned and run tests
+    Delta As Integer
+    '' Whether the test bailed out (aborted gracefully)
+    BailedOut As Boolean
+    '' If BailedOut, this contains the optional attached message
+    BailMessage As String
+    '' When the test started
+    Started As Date
+    '' When the test ended
+    Ended As Date
+
+    '' TAP version in use
+    Version As Integer
+    '' Number of tests planned
+    Planned As Integer
+    '' Test range
+    Plan As Integer[]
+    '' Number of successful tests (not accounting for Todo or Skipped ones)
+    Passed As Integer
+    '' Number of failed tests (not accounting for Todo or Skipped ones)
+    Failed As Integer
+    '' Number of tested marked as to-do
+    Todo As Integer
+    '' Number of skipped tests
+    Skipped As Integer
+    '' Number of Todo tests which passed
+    Bonus As Integer
+
+    '' Descriptions of failed tests
+    Failures As String[]
+
+    '' A copy of the TAP stream
+    Lines As String[]
+End Struct
+
+Property Read Tests As TestStats[]
+Property Read Current As TestStats
+Property Read Finished As Boolean
+
+Private $hProducer As Process
+Private $hParser As TapParser
+Private $aTests As New TestStats[]
+Private $hCurrent As TestStats
+Private $bLastOk As Boolean
+
+Public Sub Attach(Producer As Process, Name As String)
+
+    $hProducer = Producer
+    Object.Attach(Producer, Me, "TapStream")
+
+    ' XXX: If a class inherits this, it can override/claim event handlers and our statistics aren't accurate.
+    $hParser = New TapParser As "Parser"
+
+    $hCurrent = New TestStats
+    $hCurrent.Name = Name
+    $hCurrent.Plan = [1, 0]
+    $hCurrent.Failures = New String[]
+    $hCurrent.Lines = New String[]
+    $hCurrent.Started = Now()
+
+    $aTests.Push($hCurrent)
+
+    ' Catch
+    '     Debug Subst$(("Test harness failure: [&1] &2"), Error.Where, Error.Text)
+    '     Debug Error.Backtrace.Join("\n")
+    '     Error.Raise(Subst$(("Test harness failure: [&1] &2"), Error.Where, Error.Text))
+
+End
+
+Public Sub Wait()
+
+    $hProducer.Wait()
+
+End
+
+Public Sub Read(Producer As Process, Name As String)
+
+    Me.Attach(Producer, Name)
+    Me.Wait()
+
+End
+
+Public Sub TapStream_Read()
+
+    Dim sLine As String = Last.ReadLine()
+
+    $hCurrent.Lines.Add(sLine)
+    $hParser.ParseLine(sLine)
+
+End
+
+Public Sub TapStream_Error(Message As String)
+
+    Dim sLine As String
+
+    ' Inject stderr as diagnostic messages
+    For Each sLine In Split(Message, "\n")
+        sLine = "# " & sLine
+        $hCurrent.Lines.Add(sLine)
+        $hParser.ParseLine(sLine)
+    Next
+
+End
+
+Public Sub TapStream_Kill()
+
+    With $hCurrent
+        .Ended = Now()
+        .ExitCode = Last.Value
+        .Run = .Passed + .Failed + .Todo + .Skipped
+        .Delta = .Planned - .Run
+        .Success = .ExitCode = 0 And .Planned > 0 And .Run = .Planned And .Failed = 0
+    End With
+
+End
+
+Public Sub Parser_Version(Version As Integer)
+
+    $hCurrent.Version = Version
+
+End
+
+Public Sub Parser_Plan(Start As Integer, {End} As Integer)
+
+    $hCurrent.Plan = [Start, {End}]
+    $hCurrent.Planned = 1 + {End} - Start
+
+End
+
+Public Sub Parser_Ok(TestNr As Integer, Description As String)
+
+    Inc $hCurrent.Passed
+    $bLastOk = True
+
+End
+
+Public Sub Parser_NotOk(TestNr As Integer, Description As String)
+
+    Inc $hCurrent.Failed
+    $hCurrent.Failures.Push(Description)
+    $bLastOk = False
+
+End
+
+'' Undoes the last increment. Used to correct the count of passed/failed
+'' tests for Todo and Skip events.
+Private Sub UndoOk()
+
+    If $bLastOk Then
+        Dec $hCurrent.Passed
+    Else
+        Dec $hCurrent.Failed
+        $hCurrent.Failures.Pop()
+    Endif
+
+End
+
+Public Sub Parser_Todo(TestNr As Integer, Comment As String)
+
+    UndoOk()
+    Inc $hCurrent.Todo
+    If $bLastOk Then Inc $hCurrent.Bonus
+
+End
+
+Public Sub Parser_Skip(TestNr As Integer, Comment As String)
+
+    UndoOk()
+    Inc $hCurrent.Skipped
+
+End
+
+Public Sub Parser_BailOut(Comment As String)
+
+    $hCurrent.BailedOut = True
+    $hCurrent.BailMessage = Comment
+
+End
+
+' Diagnostic and Else messages are not handled here.
+
+Private Function Tests_Read() As TestStats[]
+
+    Return $aTests
+
+End
+
+Private Function Current_Read() As TestStats
+
+    Return $hCurrent
+
+End
+
+Private Function Finished_Read() As Boolean
+
+    Return $hProducer.State <> Process.Running
+
+End

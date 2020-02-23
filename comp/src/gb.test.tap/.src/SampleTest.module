@@ -1,0 +1,36 @@
+' Gambas module file
+
+Public Sub Main()
+
+    With (Assert)
+        .Plan(4)
+        .Diagnostic("Starting tests!")
+
+        .Subtest("Comparisons", 4)
+            .Greater(Now(), 0, "running after 1970")
+
+            .Equals(System.Charset, "UTF-8", "system is UTF-8")
+
+            .Diagnostic("Testing TODO directive")
+            .Todo("increase precision")
+            .Equals(Pi, 3.14, "Pi is 3.14")
+
+            .StringEquals(System.Family, "Linux", "system is Linux")
+
+        .Finish()
+
+        .Todo("See a string comparison diagnostic")
+        .StringEquals(User.Home, "/home/tobias", "your home is my home")
+
+        .IsType( Error , gb.Boolean, "Error keyword is a Boolean here")
+
+        If Not Exist("/usr/bin/mountpoint") Then
+            .Skip("mountpoint utility is not installed")
+        Else
+            Dim sCapture As String
+            Exec ["/usr/bin/mountpoint", "/home"] To sCapture
+            .Equals(Process.LastValue, 0, "/home is a mountpoint")
+        Endif
+    End With
+
+End

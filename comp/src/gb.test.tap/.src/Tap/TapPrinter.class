@@ -1,0 +1,157 @@
+' Gambas class file
+
+''' Low-level class for planning and printing test results in Test Anything Protocol ([TAP]) format.
+''' 
+''' [TAP]: http://testanything.org/tap-specification.html
+
+Export
+
+Event Filter
+
+Property {Output} As Stream
+Property Read Planned As Integer
+Property Read Count As Integer
+Property Read Last As Integer
+Property Line As String
+
+Private $hOutput As Stream
+Private $iPlan As Integer
+Private $iTestsRun As Integer
+Private $iLast As Integer
+Private $bFinished As Boolean
+Private $sLine As String
+
+Public Sub _new(Optional Tests As Integer, Optional Comment As String, Optional {Output} As Stream = File.Out)
+
+    $hOutput = {Output}
+    $iPlan = Tap.NO_PLAN
+    $iTestsRun = 0
+    $iLast = 0
+    $bFinished = False
+    If Not IsMissing(Tests) Then Plan(Tests, Comment)
+
+End
+
+Public Sub Plan(Tests As Integer, Optional Comment As String)
+
+    If $iTestsRun Then Error.Raise(Subst$(("Too late to plan. Already ran &1 tests"), $iTestsRun))
+    ' TAP specification lists '1..0 # Skipped: WWW::Mechanize not installed'
+    ' as a valid example.
+    If Tests <= Tap.NO_PLAN Then Error.Raise(("Number of tests must be non-negative"))
+    $iPlan = Tests
+    Print(Subst$("1..&1&2", $iPlan, IIf(Comment, " # " & Comment, "")))
+
+End
+
+Public Sub Finish()
+
+    If $iPlan > Tap.NO_PLAN Then Return ' already printed the "plan" line
+    If $bFinished Then Error.Raise(("Tests already finished"))
+    $iPlan = $iTestsRun
+    Print("1.." & $iPlan)
+    $bFinished = True
+
+End
+
+Public Sub Test(Result As Boolean, Optional TestNr As Integer, Optional Description As String, Optional Directive As Integer, Optional Comment As String)
+
+    Dim sDirective As String
+    Dim sLine As String
+
+    If $bFinished Then Error.Raise(("Tests already finished"))
+
+    ' It is not advised to start a description with a number token because
+    ' it will be interpreted as the (optional) test number. We issue a warning
+    ' about this but fix it anyway by always printing the TestNr before *and*
+    ' prefixing the Description with a dash, as is common.
+    If Description Match "^[0-9]+(\\s|$)" Then
+        Error Subst$(("Warning: Description '&1' should not start with a number"), Description)
+    Endif
+    If Description Like "*#*" Then
+        Error.Raise(Subst$(("Description '&1' may not contain a '#' character"), Description))
+    Endif
+
+    Inc $iTestsRun
+    If Not TestNr Then TestNr = $iTestsRun
+    $iLast = TestNr
+    sLine = Subst$("&1 &2 - &3", IIf(Result, "ok", "not ok"), TestNr, Description)
+
+    If Not IsMissing(Directive) Then
+        ' Matches the values of the Enum Tap.Todo, Tap.Skip
+        sDirective = Choose(Directive, "TODO", "SKIP")
+        If Not sDirective Then Error.Raise(Subst$(("Unsupported directive '&1'"), Directive))
+        sLine &= " # " & sDirective
+        If Comment Then sLine &= " " & Comment
+    Endif
+
+    Print(sLine)
+
+End
+
+Public Sub BailOut(Optional Comment As String)
+
+    If $bFinished Then Error.Raise(("Tests already finished"))
+    Print("Bail out!" & IIf(Comment, " " & Comment, ""))
+    $bFinished = True
+
+End
+
+Public Sub Diagnostic(Comment As String)
+
+    Print("# " & Comment)
+
+End
+
+Public Sub Print({Line} As String)
+
+    Dim bCancel As Boolean
+
+    $sLine = {Line}
+    bCancel = Raise Filter
+    If bCancel Then Return
+    Print #$hOutput, $sLine
+    Flush #$hOutput
+
+End
+
+Private Function Output_Read() As Stream
+
+    Return $hOutput
+
+End
+
+Private Sub Output_Write(Value As Stream)
+
+    $hOutput = Value
+
+End
+
+Private Function Planned_Read() As Integer
+
+    Return $iPlan
+
+End
+
+Private Function Count_Read() As Integer
+
+    Return $iTestsRun
+
+End
+
+Private Function Last_Read() As Integer
+
+    Return $iLast
+
+End
+
+Private Function Line_Read() As String
+
+    Return $sLine
+
+End
+
+Private Sub Line_Write(Value As String)
+
+    $sLine = Value
+
+End
