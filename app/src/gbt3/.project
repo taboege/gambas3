@@ -1,0 +1,9 @@
+# Gambas Project File 3.0
+Startup=Main
+Version=0.0.8
+Component=gb.args
+Arguments=[["-m","Test1","-t","Test1","~/programming/gambas/gambas/comp/src/gb.test"]]
+CurrentArgument=1
+TabSize=4
+Language=en_US
+Packager=1
