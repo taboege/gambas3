@@ -4,50 +4,6 @@
 
 Export
 
-Public Struct TestStats
-    '' Name of the test
-    Name As String
-    '' Exit status of the test process
-    ExitCode As Integer
-    '' Whether the test was successful (all tests passed and at least one test was executed)
-    Success As Boolean
-    '' Number of run tests
-    Run As Integer
-    '' Difference between planned and run tests
-    Delta As Integer
-    '' Whether the test bailed out (aborted gracefully)
-    BailedOut As Boolean
-    '' If BailedOut, this contains the optional attached message
-    BailMessage As String
-    '' When the test started
-    Started As Date
-    '' When the test ended
-    Ended As Date
-
-    '' TAP version in use
-    Version As Integer
-    '' Number of tests planned
-    Planned As Integer
-    '' Test range
-    Plan As Integer[]
-    '' Number of successful tests (not accounting for Todo or Skipped ones)
-    Passed As Integer
-    '' Number of failed tests (not accounting for Todo or Skipped ones)
-    Failed As Integer
-    '' Number of tested marked as to-do
-    Todo As Integer
-    '' Number of skipped tests
-    Skipped As Integer
-    '' Number of Todo tests which passed
-    Bonus As Integer
-
-    '' Descriptions of failed tests
-    Failures As String[]
-
-    '' A copy of the TAP stream
-    Lines As String[]
-End Struct
-
 Property Read Tests As TestStats[]
 Property Read Current As TestStats
 Property Read Finished As Boolean
@@ -66,8 +22,6 @@ Private Sub InitParser(sName As String)
     With $hCurrent = New TestStats
         .Name = sName
         .Plan = [1, 0]
-        .Failures = New String[]
-        .Lines = New String[]
         .Started = Now()
     End With
 
@@ -134,18 +88,6 @@ Public Sub TapStream_Read()
 
 End
 
-Public Sub TapStream_Error(Message As String)
-
-    Dim sLine As String
-
-    ' Inject stderr as diagnostic messages
-    For Each sLine In Split(Message, "\n")
-        sLine = "# " & sLine
-        AddLine(sLine)
-    Next
-
-End
-
 Public Sub TapStream_Kill()
 
     FinishStats()
@@ -175,7 +117,7 @@ End
 Public Sub Parser_NotOk(TestNr As Integer, Description As String)
 
     Inc $hCurrent.Failed
-    $hCurrent.Failures.Push(Description)
+    $hCurrent.Failures.Push(TestNr)
     $bLastOk = False
 
 End
