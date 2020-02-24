@@ -9,21 +9,22 @@ Public Plan As Integer = 5
 Public Sub TestNoMessage()
 
     'There is no message whicht
-    Assert.True(True)
+    Assert.Ok(True)
 
 End
 
 Public Sub TestNoMessageInbetween()
 
-    Assert.True(True, "TestNoMessageInbetween Assert 1 description defined")
-    Assert.True(True)
-    Assert.True(True, "Assert 3 description defined")
-    Assert.True(True)
+    Assert.Ok(True, "TestNoMessageInbetween Assert 1 description defined")
+    Assert.Ok(True)
+    Assert.Ok(True, "Assert 3 description defined")
+    Assert.Ok(True)
 
 End
 
 Public Sub TestNote()
 
     Assert.Note("This\nis\na\nnote")
+    Assert.SkipAll()
 
 End

@@ -45,14 +45,7 @@ Public Sub Run()
         Object.Call($MyTestModule, "SetupEach")
     Endif
 
-    Try Object.Call($MyTestModule, Me.name)
-    If Error Then
-        Inc Track.Counter
-        Track.NOKs.Add(Track.Counter)
-        Print "not ok " & Track.Counter & " " &
-            Track.TestModuleName & ":" & Track.TestName & " Raised error: " & Error.Text
-        Error.Clear
-    Endif
+    Object.Call($MyTestModule, Me.name)
 
     If $MyTestModule.Symbols.Exist("TeardownEach") Then
         Object.Call($MyTestModule, "TeardownEach")
@@ -60,9 +53,8 @@ Public Sub Run()
 
 Catch
 
-    Print "Bail out! " & "Unittest stopped with error \"" & Error.Text & "\" caused by " & Track.TestModuleName & "." & Track.TestName & "."
-    Print "# ------- No success!  -------"
-    Quit
+    Debug "Unittest stopped with error \"" & Error.Text & "\" caused by " & $MyTestModule.Name & "." & Me.Name & "."
+    ' Quit
 
 End Sub
 

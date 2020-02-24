@@ -4,25 +4,25 @@ Public Sub Main()
 
     ' These must succeed:
 
-    UnitTest.Main("TestAllAsserts", Null, True)
-    ' UnitTest.Main("TestSetup", Null, True)
-    ' UnitTest.Main("TestElse", Null, True)
-    ' UnitTest.Main("TestError", Null, True)
-    ' UnitTest.Main("TestSetupTeardown", Null, True)
+    UnitTest.Main("TestAllAsserts", Null, True, True)
+    UnitTest.Main("TestSetup", Null, True, True)
+    UnitTest.Main("TestElse", Null, True)
+    UnitTest.Main("TestError", Null, True)
+    UnitTest.Main("TestSetupTeardown", Null, True)
 
     ' Here every test must fail:
-    'UnitTest.Main("TestFailures", Null, True)
-    'UnitTest.Main("TestBailout", Null, True)
+    UnitTest.Main("TestFailures", Null, True, True)
+    UnitTest.Main("TestBailout", Null, True)
 
     'This will BailOut
-    'UnitTest.Main("TestEmpty", Null, True)
+    UnitTest.Main("TestEmpty", Null, True)
     
 
     'Test all
     'UnitTest.Main(Null, Null, True)
 
     ' Just one test
-    'UnitTest.Main("TestAllAsserts", "TestAssert", True)
+    UnitTest.Main("TestAllAsserts", "TestAssert", True, True)
 
     'Cheese()
 

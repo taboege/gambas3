@@ -16,14 +16,14 @@ End
 
 Public Sub Teardown()
 
-    Assert.True($SetupIsDone, "Check if setup was successful.")
+    Assert.Ok($SetupIsDone, "Check if setup was successful.")
     Assert.Note("Teardown TestModule")
 
 End
 
 Public Sub SetupEach()
 
-    Assert.False($EachSetupIsDone, "Check if each was not setup.")
+    Assert.NotOk($EachSetupIsDone, "Check if each was not setup.")
     $EachSetupIsDone = True
     Assert.Note("Setup Each")
 
@@ -31,7 +31,7 @@ End
 
 Public Sub TeardownEach()
 
-    Assert.True($EachSetupIsDone, "Each setup done")
+    Assert.Ok($EachSetupIsDone, "Each setup done")
     Assert.Note("Teardown Each")
     $EachSetupIsDone = False
 
@@ -39,14 +39,14 @@ End
 
 Public Sub TestFirst()
 
-    Assert.True($SetupIsDone, "Check if setup was successful.")
-    Assert.True($EachSetupIsDone, "Check if setup each was successful.")
-    Assert.EqualsString("ja", "ja", "Fake test")
+    Assert.Ok($SetupIsDone, "Check if setup was successful.")
+    Assert.Ok($EachSetupIsDone, "Check if setup each was successful.")
+    Assert.StringEquals("ja", "ja", "Fake test")
 
 End
 
 Public Sub NameOfMethodDoesNotStartWithTest()
 
-    Assert.EqualsString("no", "no", "Fake test")
+    Assert.StringEquals("no", "no", "Fake test")
 
 End

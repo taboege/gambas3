@@ -2,73 +2,84 @@
 
 Export
 
+Create Static
+
+Private $hHarness As New TestHarness
+Private $bVerbose As Boolean
+
 ''' The static procedure Unittest.Main() starts test(s).
 
 '' Runs all tests in all testcontainers and prints the result to the console.
 '' With UnitTest.Main(NameTestModule) the tests can be restricted to only those of a single test module.
 '' With UnitTest.Main(NameTestModule, NameProcedure) only a single test can be accomplished.
 
-Static Public Sub Main(Optional NameTestModule As String, Optional NameProcedure As String, Optional DoSelfTest As Boolean)
+Public Sub Main(Optional NameTestModule As String, Optional NameProcedure As String, Optional DoSelfTest As Boolean, Optional Verbose As Boolean)
 
-    'Track.Initialize()
+    Assert.Reset() ' only if you run this Main multiple times per process, which you shouldn't
+    $bVerbose = Verbose
     RunTests(NameTestModule, NameProcedure, DoSelfTest)
     PrintSummary()
 
 End
 
-Static Private Sub PrintSummary()
+Private Sub PrintSummary()
 
-    Dim bSuccess As Boolean = True
+    With $hHarness.Current
+        If $bVerbose Then
+            Dim sLine As String
+            Print "Transcript of the TAP stream:"
+            Print
+            For Each sLine In .Lines
+                Print sLine
+            Next
+            Print
+            Print String$(80, "*")
+            Print
+        Endif
 
-    If Track.NOKs.Count > 0 Then Print "# Failed tests: " & PrintNumbers(Track.NOKs)
+        Print .Name;; IIf(.Success, "PASSED", "FAILED");;
+        Print "("; "exit code";; .ExitCode; ",";;
+        Print "runtime";; Format$(DateDiff(.Started, .Ended, gb.Second), "0.00s"); ")"
 
-    'Plan
-    If Track.Plan > 0 Then
-        Print "1.." & Track.Plan
-    Else
-        Print "0..0"
-    Endif
+        If .Run <> .Planned Then
+            Print "Planned";; .Planned;; "tests but ran";; .Run
+        Endif
 
-    If Track.NOKs.Count > 0 Or If Track.Counter = 0 Then
-        bSuccess = False
-    Endif
+        If .Failed > 0 Then
+            Dim iInd As Integer
+            Print "Failed";; .Failed;; "out of";; .Run;; "tests:";;
+            For iInd = 0 To .Failures.Max
+                Print .Failures[iInd];
+                If iInd < .Failures.Max Then Print ",";;
+            Next
+            Print
+        Endif
 
-    If Track.Plan <> Track.Counter Then
-        bSuccess = False
-        Print "# Plan was " & Track.Plan & " but assertions counted was " & Track.Counter
-    Endif
+        If .Bonus Then
+            Print "Passed";; .Bonus;; "additional tests marked as TODO"
+        Endif
 
-    If bSuccess = True Then
-        Print "# ------- Success!  -------"
-    Else
-        Print "# ------- No success!  -------"
-    Endif
+        If .BailedOut Then
+            Print "Bailed out with message";; .BailMessage
+        Endif
 
-    Track.Reset()
+        Print
+        Print String$(80, "*")
+        Print
 
-End
-
-Static Private Function PrintNumbers(Numbers As Long[]) As String
-
-    Dim Number As Long
-    Dim s As New String[]
-
-    For Each Number In Numbers
-        s.Add(Number)
-    Next
-
-    Return s.Join(",")
+    End With
 
 End
 
 '
 '' Run all tests, optional limited by Container or TestCaseName. Track contains .
 
-Static Private Function RunTests(SingleTestModule As String, Optional NameProcedure As String, Optional DoSelfTest As Boolean)
+Private Function RunTests(SingleTestModule As String, Optional NameProcedure As String, Optional DoSelfTest As Boolean)
 
     Dim sTestModule As String
     Dim TestModule As Class
     Dim Suite As New TestSuite
+    Dim hTapStream As Stream, sTap As String
 
     'FIXME: If included as component then TestContainers can only be loaded if they contain the magic word Export
 
@@ -77,11 +88,20 @@ Static Private Function RunTests(SingleTestModule As String, Optional NameProced
         Suite.AddAllTestCases(TestModule, NameProcedure)
     Next
 
-    Suite.Run()
+    ' The TAP stream is produced in this process. We have to get it into the
+    ' harness somehow. Since we don't start a new process, it is going to be
+    ' done by a buffer.
+    hTapStream = Open String For Write
+    Assert.Output = hTapStream
+        Suite.Run()
+    sTap = Close #hTapStream
+    hTapStream = Open String sTap For Read
+    $hHarness.Read(hTapStream, Subst$("&1:&2", SingleTestModule, IIf(NameProcedure, NameProcedure, "*")))
+    Close #hTapStream
 
 End
 
-Static Function GetAllTestTestModules(Optional SingleTestModule As String, Optional DoSelfTest As Boolean) As String[]
+Function GetAllTestTestModules(Optional SingleTestModule As String, Optional DoSelfTest As Boolean) As String[]
 
     Dim TestClass As Class
     Dim TestModuleNames As New String[]
@@ -142,9 +162,8 @@ Done:
     Return TestModuleNames
 
 Catch
-    Print "Bail out! Error in Unittest->GetAllTestModuleNames: " & Error.Text
-    Print "# ------- No success!  -------"
-    Quit
+    Debug "Error in Unittest->GetAllTestModuleNames: " & Error.Text
+    ' Quit
 
 End
 

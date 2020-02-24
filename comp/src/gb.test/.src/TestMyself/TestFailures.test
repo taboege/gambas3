@@ -18,13 +18,13 @@ End
 
 Public Sub TestStringFailure()
 
-    Assert.EqualsString("Lisa", "Paul", "Intentional String failure. Ok if not ok.")
+    Assert.StringEquals("Lisa", "Paul", "Intentional String failure. Ok if not ok.")
 
 End
 
 Public Sub TestLongFailure()
 
-    Assert.EqualsLong(2, 3, "Intentional Long failure. Ok if not ok.")
+    Assert.Equals(2, 3, "Intentional Long failure. Ok if not ok.")
 
 End
 
@@ -32,7 +32,7 @@ Public Sub TestLongTypeMismatchFailure()
 
     Dim s As String = "3.0"
 
-    Assert.EqualsLong(s, 3, "Intentional Long type mismatch failure. Ok if not ok.")
+    Assert.Equals(s, 3, "Intentional Long type mismatch failure. Ok if not ok.")
 
 End
 
@@ -66,7 +66,7 @@ Public Sub TestError()
     Dim a As Long
 
     Try a = 3 / 0
-    Assert.ErrorWithCode(5, "Wanted error 5. Ok if not ok.")
+    Assert.ErrorCode(5, "Wanted error 5. Ok if not ok.")
 
     ' No Error, AssertError has to report a failure
     Assert.Error("No Error but error expected. Ok if not ok.")
@@ -76,7 +76,7 @@ End
 Public Sub TestErrorTwo()
 
     Error.Raise("I shot the sheriff.")
-    Assert.True(True)
+    Assert.Pass()
 
 End
 

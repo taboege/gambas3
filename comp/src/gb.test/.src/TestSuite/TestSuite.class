@@ -26,6 +26,7 @@ Public Sub Run()
 
     Assert $Tests
 
+    Assert.Plan($Tests.Count)
     For Each oTest In $Tests
         CurrentTestModule = oTest.TestModule
         If LastTestModule Then
@@ -41,12 +42,9 @@ Public Sub Run()
             StartTestModule(CurrentTestModule)
         Endif
 
-        With Track
-            .TestModuleName = oTest.TestModule.Name
-            .TestName = oTest.Name
-        End With
-
-        oTest.Run()
+        Assert.Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
+            oTest.Run()
+        Assert.Finish()
         LastTestModule = CurrentTestModule
     Next
 
@@ -56,10 +54,8 @@ Public Sub Run()
     Endif
 
 Catch
-    'Bail out
-    Print "Bail out! " & "Unittest Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & "."
-    Print "# ------- No success!  -------"
-    Quit
+    Debug "Unittest Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & "."
+    ' Quit
 
 End Sub
 
@@ -68,8 +64,6 @@ Private Sub StartTestModule(TestModule As Class)
     If TestModule.Symbols.Exist("Setup") Then
         Object.Call(TestModule, "Setup")
     Endif
-    ' Tracks tests in a TestModule, reset if TestModule changes
-    Track.TestModuleTestsCount = 0
 
 End
 
@@ -79,16 +73,6 @@ Private Sub StopTestModule(TestModule As Class)
 
     If TestModule.Symbols.Exist("TearDown") Then
         Object.Call(TestModule, "TearDown")
-    Endif
-
-    If TestModule.Symbols.Exist("Plan") Then
-        Plan = Eval(TestModule.Name & ".Plan")
-    Endif
-
-    If Plan > 0 Then
-        Track.Plan += Plan
-    Else
-        Track.Plan += Track.TestModuleTestsCount
     Endif
 
 End

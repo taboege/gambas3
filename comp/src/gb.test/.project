@@ -4,6 +4,7 @@ Startup=TestMe
 Version=3.14.90
 VersionFile=1
 Component=gb.util
+Component=gb.test.tap
 Description="A Gambas component for unittesting and test-driven programming."
 Authors="Christof Thalhofer"
 TabSize=4
