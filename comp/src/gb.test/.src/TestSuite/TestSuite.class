@@ -94,7 +94,7 @@ Private Sub StopTestModule(TestModule As Class)
 End
 
 '' Add a object implementing ITest (either a TestCase or TestSuite) to the suite.
-Public Sub AddTest(oTest As ITest)
+Private Sub AddTest(oTest As ITest)
 
     Assert $Tests
     $Tests.Add(oTest)
@@ -102,7 +102,7 @@ Public Sub AddTest(oTest As ITest)
 End Sub
 
 '' Add a TestCase to the suite.
-Public Sub AddTestCase(oTestCase As ITestCase)
+Private Sub AddTestCase(oTestCase As ITestCase)
 
     Assert $Tests
     $Tests.Add(oTestCase, Object.Class(oTestCase).Name)
@@ -110,7 +110,7 @@ Public Sub AddTestCase(oTestCase As ITestCase)
 End Sub
 
 '' Create a new test case and add it to the suite.
-Public Function AddNewTestCase(sName As String, TestModule As Class)
+Private Function AddNewTestCase(sName As String, TestModule As Class)
 
     Dim test As TestCase
 

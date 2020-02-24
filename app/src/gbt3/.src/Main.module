@@ -10,8 +10,8 @@ Public Sub Main()
 
     With Args
         .Begin(Application.Name & " <options> [path to poject]\n\nType " & Application.Name & " -h for help")
-        Try sSingleTestMethod = .Get("m", "module", "Single Testmodule")
-        Try sSingleTestModule = .Get("t", "testmethod", "Method of a single testmodule")
+        Try sSingleTestModule = .Get("m", "testmodule", "Single Testmodule")
+        Try sSingleTestMethod = .Get("t", "testmethod", "Method of a single testmodule")
         .End
     End With
 
