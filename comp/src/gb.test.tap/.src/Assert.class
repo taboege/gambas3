@@ -15,8 +15,11 @@ Public Struct Subtest
     Comment As String
 End Struct
 
+Property Output As Stream
+
 Private $aActiveTests As New Subtest[]
 Private $hCurrent As New Subtest
+Private $hOutput As Stream = File.Out
 
 Public Sub _new()
 
@@ -31,10 +34,7 @@ End
 
 Public Sub Setup(Optional Tests As Integer, Optional Comment As String, Optional {Output} As Stream)
 
-    If IsMissing({Output}) Then
-        {Output} = $hCurrent.Printer.Output
-        If Not {Output} Then {Output} = File.Out
-    Endif
+    If IsMissing({Output}) Then {Output} = $hOutput
     $hCurrent.Printer.Output = {Output}
     Plan(Tests, Comment)
 
@@ -43,10 +43,12 @@ End
 Public Sub Subtest(Description As String, Optional Tests As Integer)
 
     Dim iIndent As Integer = $hCurrent.Indent
+    Dim hOutput As Stream = $hCurrent.Printer.Output
 
     $aActiveTests.Push($hCurrent)
     With $hCurrent = New Subtest
         .Printer = New TapPrinter As "Printer"
+        .Printer.Output = hOutput
         .Description = Description
         .Indent = iIndent + 1
         .Success = True
@@ -133,6 +135,19 @@ End
 Public Sub Print({Line} As String)
 
     $hCurrent.Printer.Print({Line})
+
+End
+
+Private Function Output_Read() As Stream
+
+    Return $hOutput
+
+End
+
+Private Sub Output_Write(Value As Stream)
+
+    $hOutput = Value
+    $hCurrent.Printer.Output = Value
 
 End
 
