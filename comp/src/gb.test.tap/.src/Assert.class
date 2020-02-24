@@ -16,6 +16,7 @@ Public Struct Subtest
 End Struct
 
 Property Output As Stream
+Property Read Finished As Boolean
 
 Private $aActiveTests As Subtest[]
 Private $hCurrent As New Subtest
@@ -72,7 +73,7 @@ Public Sub Finish()
 
     With $hCurrent
         .Printer.Finish()
-        .Success = .Success And .Printer.Planned > 0 And .Printer.Count = .Printer.Planned
+        .Success = .Success And (.Printer.SkippedAll Or (.Printer.Planned > 0 And .Printer.Count = .Printer.Planned))
     End With
     hFinished = $hCurrent
 
@@ -92,6 +93,12 @@ End
 Public Sub Plan(Tests As Integer, Optional Comment As String)
 
     $hCurrent.Printer.Plan(Tests, Comment)
+
+End
+
+Public Sub SkipAll(Optional Comment As String)
+
+    $hCurrent.Printer.SkipAll(Comment)
 
 End
 
@@ -161,6 +168,12 @@ Private Sub Output_Write(Value As Stream)
 
     $hOutput = Value
     $hCurrent.Printer.Output = Value
+
+End
+
+Private Function Finished_Read() As Boolean
+
+    Return $hCurrent.Printer.Finished
 
 End
 

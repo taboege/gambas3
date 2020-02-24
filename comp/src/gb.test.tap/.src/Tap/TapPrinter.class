@@ -13,12 +13,15 @@ Property Read Planned As Integer
 Property Read Count As Integer
 Property Read Last As Integer
 Property Line As String
+Property Read Finished As Boolean
+Property Read SkippedAll As Boolean
 
 Private $hOutput As Stream
 Private $iPlan As Integer
 Private $iTestsRun As Integer
 Private $iLast As Integer
 Private $bFinished As Boolean
+Private $bSkippedAll As Boolean
 Private $sLine As String
 
 Public Sub _new(Optional Tests As Integer, Optional Comment As String, Optional {Output} As Stream = File.Out)
@@ -34,12 +37,20 @@ End
 
 Public Sub Plan(Tests As Integer, Optional Comment As String)
 
+    If $bFinished Or $bSkippedAll Then Error.Raise(("Tests already finished"))
     If $iTestsRun Then Error.Raise(Subst$(("Too late to plan. Already ran &1 tests"), $iTestsRun))
     ' TAP specification lists '1..0 # Skipped: WWW::Mechanize not installed'
     ' as a valid example.
     If Tests <= Tap.NO_PLAN Then Error.Raise(("Number of tests must be non-negative"))
     $iPlan = Tests
     Print(Subst$("1..&1&2", $iPlan, IIf(Comment, " # " & Comment, "")))
+
+End
+
+Public Sub SkipAll(Optional Comment As String)
+
+    Plan(0, "SKIP" & IIf(Comment, " ", "") & Comment)
+    $bSkippedAll = True
 
 End
 
@@ -58,7 +69,7 @@ Public Sub Test(Result As Boolean, Optional TestNr As Integer, Optional Descript
     Dim sDirective As String
     Dim sLine As String
 
-    If $bFinished Then Error.Raise(("Tests already finished"))
+    If $bFinished Or $bSkippedAll Then Error.Raise(("Tests already finished"))
 
     ' It is not advised to start a description with a number token because
     ' it will be interpreted as the (optional) test number. We issue a warning
@@ -90,7 +101,7 @@ End
 
 Public Sub BailOut(Optional Comment As String)
 
-    If $bFinished Then Error.Raise(("Tests already finished"))
+    If $bFinished Or $bSkippedAll Then Error.Raise(("Tests already finished"))
     Print("Bail out!" & IIf(Comment, " " & Comment, ""))
     $bFinished = True
 
@@ -157,5 +168,17 @@ End
 Private Sub Line_Write(Value As String)
 
     $sLine = Value
+
+End
+
+Private Function Finished_Read() As Boolean
+
+    Return $bFinished
+
+End
+
+Private Function SkippedAll_Read() As Boolean
+
+    Return $bSkippedAll
 
 End

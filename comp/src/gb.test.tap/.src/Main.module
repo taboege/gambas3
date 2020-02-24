@@ -21,7 +21,9 @@ Public Sub Main()
         Print String$(80, "*")
         Print
 
-        Print "Test";; .Name;; IIf(.Success, "PASSED", "FAILED");; "("; Format$(DateDiff(.Started, .Ended, gb.Second), "0.00s"); ")"
+        Print "Test";; .Name;; IIf(.Success, "PASSED", "FAILED");;
+        Print "("; "exit code";; .ExitCode; ",";;
+        Print "runtime";; Format$(DateDiff(.Started, .Ended, gb.Second), "0.00s"); ")"
         If .Run <> .Planned Then Print "Planned";; .Planned;; "tests but ran";; .Run
         If .Failed Then
             Dim iInd As Integer

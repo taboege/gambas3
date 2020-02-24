@@ -89,6 +89,12 @@ Public Sub TapStream_Read()
 
 End
 
+Public Sub TapStream_Error(Message As String)
+
+    AddLine(Message)
+
+End
+
 Public Sub TapStream_Kill()
 
     FinishStats()
