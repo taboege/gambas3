@@ -1,55 +1,53 @@
 ' Gambas module file
 
-'' Changes the project in Path (given by args) to start with a random method,
-'' runs tests and restores the project afterwards
+''' Changes the project in Path (given by args) to start with a random method,
+''' runs tests and restores the project afterwards
 
-'Public Sub Main(Optional sPath As String, Optional sTestModule As String, Optional sTestMethod As String)
 Public Sub Main()
 
-    Dim Path, cmd, sRand, SingleTestModule, SingleTestMethod, sNewStartupFile, sStartupSequence, sTap, sTestCmd As String
+    Dim sPath, sCompilerPath, sExecutorPath, sCmd, sTestCmd, sRand As String
+    Dim sSingleTestModule, sSingleTestMethod, sNewStartupFile, sStartupSequence As String
 
     With Args
         .Begin(Application.Name & " <options> [path to poject]\n\nType " & Application.Name & " -h for help")
-        Try SingleTestMethod = .Get("m", "module", "Single Testmodule")
-        Try SingleTestModule = .Get("t", "testmethod", "Method of a single testmodule")
+        Try sSingleTestMethod = .Get("m", "module", "Single Testmodule")
+        Try sSingleTestModule = .Get("t", "testmethod", "Method of a single testmodule")
         .End
     End With
 
-    Path = Args[Args.Max]
+    sPath = Args[Args.Max]
 
-    ' 'overwrite args with optional arguments
-    ' If sPath Then
-    '     Path = sPath
-    ' Endif
-    ' 
-    ' If sTestModule Then
-    '     SingleTestModule = sTestModule
-    ' Endif
-    ' 
-    ' If sTestMethod Then
-    '     SingleTestMethod = sTestMethod
-    ' Endif
-    
+    sCompilerPath = GetPath("gbc3")
+    sExecutorPath = GetPath("gbx3")
+
     ' ------------------------------------------------- Tests
 
-    If Path = Null Then
+    If sCompilerPath = Null Then
+        Error.Raise("Error: Gambas compiler gbg3 not found.")
+    Endif
+
+    If sExecutorPath = Null Then
+        Error.Raise("Error: Gambas gbx3 not found.")
+    Endif
+
+    If sPath = Null Then
         Error.Raise("Error: Path to project is Null.")
     Endif
 
-    If Not Exist(Path) Then
+    If Not Exist(sPath) Then
         Error.Raise("Error: Path to project not found.")
     Endif
 
-    If SingleTestMethod And If SingleTestModule = Null Then
+    If sSingleTestMethod And If sSingleTestModule = Null Then
         Error.Raise("Error: Testmodule not defined")
     Endif
 
-    If SingleTestModule Then
-        sTestCmd = "\"" & SingleTestModule & "" "\""
+    If sSingleTestModule Then
+        sTestCmd = "\"" & sSingleTestModule & "" "\""
     Endif
 
-    If SingleTestMethod Then
-        sTestCmd &= ", \"" & SingleTestMethod & "" "\""
+    If sSingleTestMethod Then
+        sTestCmd &= ", \"" & sSingleTestMethod & "" "\""
     Endif
 
     ' ------------------------------------------------- New startup file
@@ -58,35 +56,45 @@ Public Sub Main()
     sRand = "TEST" & Randstr()
     sNewStartupFile = sRand & ".module"
 
-    'create and inject test startup
+    'create test startup module
     sStartupSequence = "'Gambas module" & gb.Lf & gb.Lf &
         "Public Sub Main()" & gb.Lf & gb.Lf &
         sTestCmd & gb.Lf & gb.Lf &
         "End" & gb.Lf
 
-    File.Save(Path &/ ".src" &/ sNewStartupFile, sStartupSequence)
+    File.Save(sPath &/ ".src" &/ sNewStartupFile, sStartupSequence)
 
     ' ------------------------------------------------- run tests
 
     'compile
-    cmd = "/usr/bin/gbc3 " & Path
-    Shell cmd Wait
+    sCmd = sCompilerPath & " " & sPath
 
-    cmd = "/usr/bin/gbx3 -s " & sRand & " " & Path
-    Shell cmd To sTap 
+    'To sCmd: use sCmd as buffer just that gbc3's "OK" is not printed
+    Shell sCmd Wait To sCmd
 
-    Print sTap
+    'run tests
+    sCmd = sExecutorPath & " -s " & sRand & " " & sPath
+    Shell sCmd Wait For Read As "Tapprinter"
 
     ' ------------------------------------------------- Restore project
 
     'restore project
-    Kill Path &/ ".src" &/ sNewStartupFile
+    Kill sPath &/ ".src" &/ sNewStartupFile
 
     'compile again
-    cmd = "/usr/bin/gbc3 " & Path
+    sCmd = sCompilerPath & " " & sPath
 
 Catch
     Print Error.Text
+
+End
+
+Public Sub Tapprinter_Read()
+
+    Dim sLine As String
+
+    sLine = Read #Last, -256
+    Print sLine;
 
 End
 
@@ -103,5 +111,14 @@ Private Function Randstr() As String
         Endif
     Next
     Return s
+
+End
+
+Private Function GetPath(Prog As String) As String
+
+    'Dim sBuf As StringsBufsBuf
+    Shell "which " & Prog To Prog
+    Prog = Trim(Prog)
+    If Exist(Prog) Then Return Prog
 
 End

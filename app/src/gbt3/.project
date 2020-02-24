@@ -1,10 +1,12 @@
 # Gambas Project File 3.0
+Title=Gambas Project Tester
 Startup=Main
-Version=0.0.13
+Version=0.0.18
 Component=gb.args
 Component=gb.test
+Description="Test a Gambas project from the commandline. The project has to use the component gb.test and contain testmodule(s)."
 Arguments=[["/home/christof/programming/gambas/gambas/app/src/gbt3/testexample"],["/home/christof/programming/gambas/deganius/deglib-gb/libs/deglib-basic"]]
-CurrentArgument=2
+CurrentArgument=1
 TabSize=4
 Language=en_US
 Packager=1
