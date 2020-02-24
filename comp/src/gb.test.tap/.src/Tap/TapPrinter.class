@@ -45,11 +45,11 @@ End
 
 Public Sub Finish()
 
-    If $iPlan > Tap.NO_PLAN Then Return ' already printed the "plan" line
     If $bFinished Then Error.Raise(("Tests already finished"))
+    $bFinished = True
+    If $iPlan > Tap.NO_PLAN Then Return ' already printed the "plan" line
     $iPlan = $iTestsRun
     Print("1.." & $iPlan)
-    $bFinished = True
 
 End
 

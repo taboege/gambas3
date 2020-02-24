@@ -17,13 +17,21 @@ End Struct
 
 Property Output As Stream
 
-Private $aActiveTests As New Subtest[]
+Private $aActiveTests As Subtest[]
 Private $hCurrent As New Subtest
-Private $hOutput As Stream = File.Out
+Private $hOutput As Stream
 
 Public Sub _new()
 
-    With $hCurrent = New Subtest
+   Reset()
+
+End
+
+Public Sub Reset()
+
+    $aActiveTests = New Subtest[]
+    $hOutput = File.Out
+     With $hCurrent = New Subtest
         .Printer = New TapPrinter As "Printer"
         .Indent = 0
         .Success = True
