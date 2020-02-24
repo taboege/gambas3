@@ -199,7 +199,14 @@ End
 
 Public Sub Equals(Got As Variant, Expected As Variant, Optional Description As String) As Boolean
 
-    Return Ok(Got = Expected, Description)
+    Dim bRes As Boolean
+
+    bRes = Ok(Got = Expected, Description)
+    If Not bRes Then
+        Note(Subst$(("  Got:      &1"), Got))
+        Note(Subst$(("  Expected: &1"), Expected))
+    Endif
+    Return bRes
 
 End
 
@@ -211,43 +218,71 @@ End
 
 Public Sub LessEqual(Got As Variant, Bound As Variant, Optional Description As String) As Boolean
 
-    Return Ok(Got <= Bound, Description)
+    Dim bRes As Boolean
+
+    bRes = Ok(Got <= Bound, Description)
+    If Not bRes Then
+        Note(Subst$(("  Got:      &1"), Got))
+        Note(Subst$(("  Expected: <= &1"), Bound))
+    Endif
+    Return bRes
 
 End
 
 Public Sub Less(Got As Variant, Bound As Variant, Optional Description As String) As Boolean
 
-    Return Ok(Got < Bound, Description)
+    Dim bRes As Boolean
+
+    bRes = Ok(Got < Bound, Description)
+    If Not bRes Then
+        Note(Subst$(("  Got:      &1"), Got))
+        Note(Subst$(("  Expected: < &1"), Bound))
+    Endif
+    Return bRes
 
 End
 
 Public Sub GreaterEqual(Got As Variant, Bound As Variant, Optional Description As String) As Boolean
 
-    Return Ok(Got >= Bound, Description)
+    Dim bRes As Boolean
+
+    bRes = Ok(Got >= Bound, Description)
+    If Not bRes Then
+        Note(Subst$(("  Got:      &1"), Got))
+        Note(Subst$(("  Expected: >= &1"), Bound))
+    Endif
+    Return bRes
 
 End
 
 Public Sub Greater(Got As Variant, Bound As Variant, Optional Description As String) As Boolean
 
-    Return Ok(Got > Bound, Description)
+    Dim bRes As Boolean
+
+    bRes = Ok(Got > Bound, Description)
+    If Not bRes Then
+        Note(Subst$(("  Got:      &1"), Got))
+        Note(Subst$(("  Expected: > &1"), Bound))
+    Endif
+    Return bRes
 
 End
 
 Public Sub Approximate(Got As Float, Expected As Float, Precision As Float, Optional Description As String) As Boolean
 
-    Return Ok(Abs(Got - Expected) <= Precision, Description)
+    Return LessEqual(Abs(Got - Expected), Precision, Description)
 
 End
 
 Public Sub RelativeApproximate(Got As Float, Expected As Float, RelPrecision As Float, Optional Description As String) As Boolean
 
-    Return Ok(Abs((Got - Expected) / Expected) <= RelPrecision, Description)
+    Return LessEqual(Abs((Got - Expected) / Expected), RelPrecision, Description)
 
 End
 
 Public Sub IsType(Got As Variant, Type As Integer, Optional Description As String) As Boolean
 
-    Return Ok(TypeOf(Got) = Type, Description)
+    Return Equals(TypeOf(Got), Type, Description)
 
 End
 
@@ -265,13 +300,27 @@ End
 
 Public Sub Like(Got As String, Pattern As String, Optional Description As String) As Boolean
 
-    Return Ok(Got Like Pattern, Description)
+    Dim bRes As Boolean
+
+    bRes = Ok(Got Like Pattern, Description)
+    If Not bRes Then
+        Note(Subst$(("  Got:      &1"), Got))
+        Note(Subst$(("  Expected: &1"), Pattern))
+    Endif
+    Return bRes
 
 End
 
 Public Sub Match(Got As String, Pattern As String, Optional Description As String) As Boolean
 
-    Return Ok(Got Match Pattern, Description)
+    Dim bRes As Boolean
+
+    bRes = Ok(Got Match Pattern, Description)
+    If Not bRes Then
+        Note(Subst$(("  Got:      &1"), Got))
+        Note(Subst$(("  Expected: &1"), Pattern))
+    Endif
+    Return bRes
 
 End
 
