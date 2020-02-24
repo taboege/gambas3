@@ -40,7 +40,8 @@ Private Sub FinishStats()
 
     With $hCurrent
         .Ended = Now()
-        .ExitCode = Last.Value
+        .ExitCode = 0
+        If $hProducer Then .ExitCode = $hProducer.Value
         .Run = .Passed + .Failed + .Todo + .Skipped
         .Delta = .Planned - .Run
         .Success = .ExitCode = 0 And .Planned > 0 And .Run = .Planned And .Failed = 0
