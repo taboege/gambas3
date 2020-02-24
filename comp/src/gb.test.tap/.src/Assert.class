@@ -70,8 +70,12 @@ Public Sub Finish()
 
     Dim hFinished As Subtest
 
-    $hCurrent.Printer.Finish()
+    With $hCurrent
+        .Printer.Finish()
+        .Success = .Success And .Printer.Planned > 0 And .Printer.Count = .Printer.Planned
+    End With
     hFinished = $hCurrent
+
     Try $hCurrent = $aActiveTests.Pop()
     If Not Error Then
         $hCurrent.Printer.Test(hFinished.Success,, hFinished.Description)
@@ -125,6 +129,7 @@ End
 Public Sub BailOut(Optional Comment As String)
 
     $hCurrent.Printer.BailOut(Comment)
+    $hCurrent.Success = False
 
 End
 
