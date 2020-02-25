@@ -1,25 +1,20 @@
-' Gambas class file
-
-Inherits UnitTest
+' Gambas test file
 
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
+Public Plan As Integer = 11
 
-Public Sub _new()
-
-  Me.Plan = 11
-
-End
-
-Public Sub SetupContainer()
+Public Sub Setup()
 
     Assert.Note("------------------ Intentional Failures ------------------")
+
 End
 
-Public Sub TeardownContainer()
+Public Sub Teardown()
+
     Assert.Note("------------------ End Intentional Failures ------------------")
     Assert.Note("11 Tests, 11 Failures, then everything is ok.")
-End
 
+End
 
 Public Sub TestStringFailure()
 
@@ -40,7 +35,6 @@ Public Sub TestLongTypeMismatchFailure()
     Assert.EqualsLong(s, 3, "Intentional Long type mismatch failure. Ok if not ok.")
 
 End
-
 
 Public Sub TestEqualsFailure()
 
@@ -73,7 +67,7 @@ Public Sub TestError()
 
     Try a = 3 / 0
     Assert.ErrorWithCode(5, "Wanted error 5. Ok if not ok.")
-    
+
     ' No Error, AssertError has to report a failure
     Assert.Error("No Error but error expected. Ok if not ok.")
 
@@ -81,10 +75,9 @@ End
 
 Public Sub TestErrorTwo()
 
-    Error.Raise("I shot the sheriff.") 
+    Error.Raise("I shot the sheriff.")
     Assert.True(True)
 
 End
 
 '
-

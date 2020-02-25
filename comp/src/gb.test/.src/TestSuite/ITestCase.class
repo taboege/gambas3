@@ -4,16 +4,16 @@ Inherits ITest
 
 ' This interface is implemented by the TestCase class.  It represents an
 ' individual test case by holding a reference to the name of the test case
-' (ie. the method containing the test code) and to the test container
+' (ie. the method containing the test code) and to the TestModule
 ' that contains the test method to execute.
 
 ' Name of the test case
 Property Read Name As String
 
-' Test container that the test case uses
-Property Read Container As UnitTest
+' TestModule that the test case uses
+Property Read TestModule As Class
 
-Private Function Container_Read() As UnitTest
+Private Function TestModule_Read() As Class
 
 End
 

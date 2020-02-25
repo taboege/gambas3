@@ -2,12 +2,29 @@
 
 Export
 
+'' Bail out = stop immediately
+
+Public Sub BailOut(Optional Reason As String)
+
+    'Bail out
+
+    If Reason <> Null Then
+        Reason = Trim("with reason \"" & Reason & "\"")
+    Endif
+
+    Print "Bail out! Unittest stopped " & Reason
+    Print "0.."
+    Print "# ------- No success!  -------"
+    Quit
+
+End Sub
+
 '' Prints Message preceded by a hash (#) in each line as comment.
 
 Public Sub Note(Message As String)
 
     If Message = Null Then
-        Message = "Got Null in " & Track.ContainerName & ":" & Track.TestName & " ... WHAT???"
+        Message = "Got Null in " & Track.TestModuleName & ":" & Track.TestName & " ... ???"
     Endif
 
     PrintBody(Message)
@@ -114,7 +131,7 @@ Public Sub False(Value As Boolean, Optional Message As String) As Boolean
 
 End
 
-'' Asserts that an error happened. You have to create the error with Try. 
+'' Asserts that an error happened. You have to create the error with Try.
 '' For example: Try 2/0
 
 Public Sub Error(Optional Message As String) As Boolean
@@ -128,7 +145,7 @@ Public Sub Error(Optional Message As String) As Boolean
             Message &= Body
         Endif
         Error.Clear
-        
+
         Return Test(True, Message)
     Else
         Return Test(False, Message)
@@ -191,10 +208,10 @@ Private Sub Test(Evaluated As Boolean, Message As String, Optional Body As Strin
 
     Inc Track.Counter
     Inc Track.MethodTestsCount
-    Inc Track.ContainerTestsCount
+    Inc Track.TestModuleTestsCount
 
     If Message = Null Then
-        Message = Track.ContainerName & ":" & Track.TestName & " Assert " & Track.MethodTestsCount
+        Message = Track.TestModuleName & ":" & Track.TestName & " Assert " & Track.MethodTestsCount
     Endif
 
     If Error Then
@@ -214,9 +231,9 @@ Private Sub Test(Evaluated As Boolean, Message As String, Optional Body As Strin
         Track.NOKs.Add(Track.Counter)
         Print "not ok " & Track.Counter & " - " & Message
         If Body <> Null Then
-            Body = "In " & Track.ContainerName & ":" & Track.TestName & gb.lf & Body
+            Body = "In " & Track.TestModuleName & ":" & Track.TestName & gb.lf & Body
         Else
-            Body = "In " & Track.ContainerName & ":" & Track.TestName & gb.lf
+            Body = "In " & Track.TestModuleName & ":" & Track.TestName & gb.lf
         Endif
     Endif
 
@@ -239,4 +256,3 @@ Private Sub PrintBody(Body As String)
     Next
 
 End
-

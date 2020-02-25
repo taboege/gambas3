@@ -1,13 +1,11 @@
-' Gambas class file
-
-Inherits UnitTest
+' Gambas test file
 
 ' Signal, that this is a selftest
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
 Public Sub TestBailout()
 
-    Assert.True(True, "Ok if ok")
-    Me.BailOut("Bo-Test")
+    Assert.Note("This will stop alle unittesting immediately")
+    Assert.BailOut("Bo-Test")
 
 End

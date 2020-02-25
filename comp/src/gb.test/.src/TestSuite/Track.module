@@ -2,8 +2,8 @@
 
 ''' Keeps track of test counts and result(s)
 
-'' Current Test Container
-Public ContainerName As String
+'' Current Test TestModule
+Public TestModuleName As String
 
 '' Current Test Method
 Public TestName As String
@@ -12,8 +12,8 @@ Public TestName As String
 '' Is printed if no message was given at the assert.
 Public MethodTestsCount As Integer
 
-'' Counts Asserts done inside a TestContainer.
-Public ContainerTestsCount As Integer
+'' Counts Asserts done inside a TestTestModule.
+Public TestModuleTestsCount As Integer
 
 '' Counts all Asserts done
 Public Counter As Long
@@ -26,13 +26,12 @@ Public NOKs As New Long[]
 '' Counts Ok
 Public OKs As New Long[]
 
-
 Public Sub Reset()
 
-    ContainerName = Null
+    TestModuleName = Null
     TestName = Null
     MethodTestsCount = 0
-    ContainerTestsCount = 0
+    TestModuleTestsCount = 0
     Counter = 0
     Plan = 0
     NOKs.Clear

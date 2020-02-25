@@ -4,7 +4,7 @@
 ''' a part-whole hierarchy of objects that implement the ITest interface --
 ''' including TestCase objects and other TestSuite objects.  Executing the Run method for the
 ''' TestSuite will execute all test cases that it contains.  The TestSuite class also provides
-''' methods for add all test cases contained in a test container object into the suite.
+''' methods for add all test cases contained in a TestModule object into the suite.
 
 Inherits ITest
 
@@ -21,38 +21,38 @@ End Sub
 Public Sub Run()
 
     Dim oTest As ITestCase
-    Dim CurrentContainer, LastContainer As UnitTest
+    Dim CurrentTestModule, LastTestModule As Class
     Dim CurrentAction As String
 
     Assert $Tests
 
     For Each oTest In $Tests
-        CurrentContainer = oTest.Container
-        If LastContainer Then
-            If LastContainer <> CurrentContainer Then
-                CurrentAction = LastContainer.Name & ":TearDownContainer"
-                StopContainer(LastContainer)
-                CurrentAction = CurrentContainer.Name & ":SetupContainer"
-                StartContainer(CurrentContainer)
+        CurrentTestModule = oTest.TestModule
+        If LastTestModule Then
+            If LastTestModule <> CurrentTestModule Then
+                CurrentAction = LastTestModule.Name & ":TearDownTestModule"
+                StopTestModule(LastTestModule)
+                CurrentAction = CurrentTestModule.Name & ":SetupTestModule"
+                StartTestModule(CurrentTestModule)
             Endif
         Else
-            'Assert.Note("-------------------- " & CurrentContainer.Name)
-            CurrentAction = CurrentContainer.Name & ":SetupContainer"
-            StartContainer(CurrentContainer)
+            'Assert.Note("-------------------- " & CurrentTestModule.Name)
+            CurrentAction = CurrentTestModule.Name & ":SetupTestModule"
+            StartTestModule(CurrentTestModule)
         Endif
 
         With Track
-            .ContainerName = oTest.Container.Name
+            .TestModuleName = oTest.TestModule.Name
             .TestName = oTest.Name
         End With
 
         oTest.Run()
-        LastContainer = CurrentContainer
+        LastTestModule = CurrentTestModule
     Next
 
-    If LastContainer Then
-        CurrentAction = LastContainer.Name & ":TearDownContainer"
-        StopContainer(LastContainer)
+    If LastTestModule Then
+        CurrentAction = LastTestModule.Name & ":TearDownTestModule"
+        StopTestModule(LastTestModule)
     Endif
 
 Catch
@@ -63,29 +63,38 @@ Catch
 
 End Sub
 
-Private Sub StartContainer(Container As UnitTest)
+Private Sub StartTestModule(TestModule As Class)
 
-    Container.SetupContainer()
-    ' Tracks tests in a container, reset if container changes
-    Track.ContainerTestsCount = 0
+    If TestModule.Symbols.Exist("Setup") Then
+        Object.Call(TestModule, "Setup")
+    Endif
+    ' Tracks tests in a TestModule, reset if TestModule changes
+    Track.TestModuleTestsCount = 0
 
 End
 
-Private Sub StopContainer(Container As UnitTest)
+Private Sub StopTestModule(TestModule As Class)
 
-    With Container
-        .TearDownContainer()
-        If .Plan > 0 Then
-            Track.Plan += .Plan
-        Else
-            Track.Plan += Track.ContainerTestsCount
-        Endif
-    End With
+    Dim Plan As Integer
+
+    If TestModule.Symbols.Exist("TearDown") Then
+        Object.Call(TestModule, "TearDown")
+    Endif
+
+    If TestModule.Symbols.Exist("Plan") Then
+        Plan = Eval(TestModule.Name & ".Plan")
+    Endif
+
+    If Plan > 0 Then
+        Track.Plan += Plan
+    Else
+        Track.Plan += Track.TestModuleTestsCount
+    Endif
 
 End
 
 '' Add a object implementing ITest (either a TestCase or TestSuite) to the suite.
-Public Sub AddTest(oTest As ITest)
+Private Sub AddTest(oTest As ITest)
 
     Assert $Tests
     $Tests.Add(oTest)
@@ -93,7 +102,7 @@ Public Sub AddTest(oTest As ITest)
 End Sub
 
 '' Add a TestCase to the suite.
-Public Sub AddTestCase(oTestCase As ITestCase)
+Private Sub AddTestCase(oTestCase As ITestCase)
 
     Assert $Tests
     $Tests.Add(oTestCase, Object.Class(oTestCase).Name)
@@ -101,43 +110,68 @@ Public Sub AddTestCase(oTestCase As ITestCase)
 End Sub
 
 '' Create a new test case and add it to the suite.
-Public Function AddNewTestCase(sName As String, oTestContainer As UnitTest)
+Private Function AddNewTestCase(sName As String, TestModule As Class)
 
     Dim test As TestCase
 
     Assert sName <> Null
-    Assert oTestContainer
+    Assert TestModule
 
-    test = New TestCase(sName, oTestContainer)
+    test = New TestCase(sName, TestModule)
     Assert $Tests
     $Tests.Add(test)
 
 End
 
-'' Create all test cases that are contained in the specified TestContainer and add them to the suite.
-Public Function AddAllTestCases(oTestContainer As UnitTest, Optional NameProcedure As String)
+Private Function GetTestsFromTestModule(TestModule As Class) As String[]
 
-    Dim sTests As Variant
+    Dim sSymbol As String
+    Dim NoTestSymbols As String[] = ["Setup", "SetupEach", "Teardown", "TeardownEach", "Plan", "ThisIsAnUnitTestSelfTest"]
+    Dim asTests As New String[]
+
+    Assert TestModule
+
+    For Each sSymbol In TestModule.Symbols
+        If Not NoTestSymbols.Exist(sSymbol, gb.IgnoreCase) Then
+            asTests.Add(sSymbol)
+        Endif
+    Next
+
+    Return asTests
+
+End
+
+'' Create all test cases that are contained in the specified TestModule and add them to the suite.
+Public Function AddAllTestCases(TestModule As Class, Optional NameProcedure As String)
+
+    Dim asTests As String[]
     Dim i As Integer
 
-    Assert oTestContainer
+    Assert TestModule
 
-    oTestContainer.CaseNames.Sort
-    sTests = oTestContainer.CaseNames
+    asTests = GetTestsFromTestModule(TestModule)
+    asTests.Sort
 
-    If sTests Then
-        For i = 0 To sTests.Count - 1
-            If NameProcedure = Null Then
-                AddNewTestCase(CStr(sTests[i]), oTestContainer)
-            Else
-                ' just one TestMethod was called, change plan
-                oTestContainer.Plan = 1
-                If sTests[i] = NameProcedure Then
-                    AddNewTestCase(CStr(sTests[i]), oTestContainer)
-                Endif
-            Endif
-        Next
+    ' Tests must not be empty
+
+    'Assert asTests.Count > 0 Error "Failed: No tests in " & TestModule.Name
+    If asTests.Count = 0 Then
+         Assert.BailOut("Error: No tests in " & TestModule.Name)
     Endif
+
+    For i = 0 To asTests.Count - 1
+        If NameProcedure = Null Then
+            AddNewTestCase(CStr(asTests[i]), TestModule)
+        Else
+            ' just one TestMethod was called, change plan, if plan exists in TestModule
+            If TestModule.Symbols.Exist("Plan", gb.IgnoreCase) Then
+                Object.SetProperty(TestModule, "Plan", 1)
+            Endif
+            If asTests[i] = NameProcedure Then
+                AddNewTestCase(CStr(asTests[i]), TestModule)
+            Endif
+        Endif
+    Next
 
 End
 
