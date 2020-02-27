@@ -6,21 +6,13 @@
 ''' TestSuite will execute all test cases that it contains.  The TestSuite class also provides
 ''' methods for add all test cases contained in a TestModule object into the suite.
 
-Inherits ITest
-
-Property Read Tests As ITest[]
-Private $Tests As ITest[]
-
-Public Sub _new()
-
-    $Tests = New ITest[]
-
-End Sub
+Property Read Tests As TestCase[]
+Private $Tests As New TestCase[]
 
 '' Runs all tests contained within the collection and collects the result in the Track parameter.
 Public Sub Run()
 
-    Dim oTest As ITestCase
+    Dim oTest As TestCase
     Dim CurrentTestModule, LastTestModule As Class
     Dim CurrentAction As String
 
@@ -77,16 +69,8 @@ Private Sub StopTestModule(TestModule As Class)
 
 End
 
-'' Add a object implementing ITest (either a TestCase or TestSuite) to the suite.
-Private Sub AddTest(oTest As ITest)
-
-    Assert $Tests
-    $Tests.Add(oTest)
-
-End Sub
-
 '' Add a TestCase to the suite.
-Private Sub AddTestCase(oTestCase As ITestCase)
+Private Sub AddTestCase(oTestCase As TestCase)
 
     Assert $Tests
     $Tests.Add(oTestCase, Object.Class(oTestCase).Name)
@@ -159,7 +143,7 @@ Public Function AddAllTestCases(TestModule As Class, Optional NameProcedure As S
 
 End
 
-Private Function Tests_Read() As ITest[]
+Private Function Tests_Read() As TestCase[]
 
     Return $Tests
 
