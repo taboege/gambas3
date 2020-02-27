@@ -101,7 +101,6 @@ End
 
 Public Sub BailOut(Optional Comment As String)
 
-    If $bFinished Or $bSkippedAll Then Error.Raise(("Tests already finished"))
     Print("Bail out!" & IIf(Comment, " " & Comment, ""))
     $bFinished = True
 

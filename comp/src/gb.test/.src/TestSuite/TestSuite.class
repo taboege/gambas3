@@ -44,7 +44,7 @@ Public Sub Run()
 
         Assert.Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
             oTest.Run()
-        Assert.Finish()
+        If Not Assert.Finished Then Assert.Finish()
         LastTestModule = CurrentTestModule
     Next
 
@@ -54,8 +54,8 @@ Public Sub Run()
     Endif
 
 Catch
-    Debug "Unittest Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & "."
-    ' Quit
+    Assert.BailOut("Unittest Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & ".")
+    Quit 1
 
 End Sub
 

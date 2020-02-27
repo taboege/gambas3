@@ -16,6 +16,7 @@ Public Struct Subtest
 End Struct
 
 Property Output As Stream
+Property Read SubtestLevel As Integer
 Property Read Finished As Boolean
 
 Private $aActiveTests As Subtest[]
@@ -133,8 +134,20 @@ Public Sub Skip(Optional Comment As String)
 
 End
 
+'' Unwinds the subtest stack. BailOut will always bail out of all the
+'' subtests, for example.
+Private Sub Unwind()
+
+    While $hCurrent.Indent > 0
+        Note("Unwinding subtest stack!")
+        Finish()
+    Wend
+
+End
+
 Public Sub BailOut(Optional Comment As String)
 
+    Unwind()
     $hCurrent.Printer.BailOut(Comment)
     $hCurrent.Success = False
 
@@ -168,6 +181,12 @@ Private Sub Output_Write(Value As Stream)
 
     $hOutput = Value
     $hCurrent.Printer.Output = Value
+
+End
+
+Private Function SubtestLevel_Read() As Integer
+
+    Return $hCurrent.Indent
 
 End
 

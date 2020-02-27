@@ -13,12 +13,12 @@ Private $bVerbose As Boolean
 '' With UnitTest.Main(NameTestModule) the tests can be restricted to only those of a single test module.
 '' With UnitTest.Main(NameTestModule, NameProcedure) only a single test can be accomplished.
 
-Public Sub Main(Optional NameTestModule As String, Optional NameProcedure As String, Optional DoSelfTest As Boolean, Optional Verbose As Boolean)
+Public Sub Main(Optional NameTestModule As String, Optional NameProcedure As String, Optional DoSelfTest As Boolean, Optional Verbose As Boolean, Optional RawTap As Boolean)
 
     Assert.Reset() ' only if you run this Main multiple times per process, which you shouldn't
     $bVerbose = Verbose
-    RunTests(NameTestModule, NameProcedure, DoSelfTest)
-    PrintSummary()
+    RunTests(NameTestModule, NameProcedure, DoSelfTest, RawTap)
+    If Not RawTap Then PrintSummary()
 
 End
 
@@ -74,7 +74,7 @@ End
 '
 '' Run all tests, optional limited by Container or TestCaseName. Track contains .
 
-Private Function RunTests(SingleTestModule As String, Optional NameProcedure As String, Optional DoSelfTest As Boolean)
+Private Function RunTests(SingleTestModule As String, Optional NameProcedure As String, Optional DoSelfTest As Boolean, Optional RawTap As Boolean)
 
     Dim sTestModule As String
     Dim TestModule As Class
@@ -88,16 +88,25 @@ Private Function RunTests(SingleTestModule As String, Optional NameProcedure As 
         Suite.AddAllTestCases(TestModule, NameProcedure)
     Next
 
-    ' The TAP stream is produced in this process. We have to get it into the
-    ' harness somehow. Since we don't start a new process, it is going to be
-    ' done by a buffer.
-    hTapStream = Open String For Write
-    Assert.Output = hTapStream
+    ' FIXME: RawTap is hack that allows to see the TAP as it is produced.
+    ' This is for tests which fail with an error and test gb.test's BailOut.
+    ' Such tests are buffered to a string stream but before they can be echoed,
+    ' the process dies.
+    If Not RawTap Then
+        ' The TAP stream is produced in this process. We have to get it into the
+        ' harness somehow. Since we don't start a new process, it is going to be
+        ' done by a buffer.
+        hTapStream = Open String For Write
+        Assert.Output = hTapStream
+            Suite.Run()
+        sTap = Close #hTapStream
+        hTapStream = Open String sTap For Read
+        $hHarness.Read(hTapStream, Subst$("&1:&2", SingleTestModule, IIf(NameProcedure, NameProcedure, "*")))
+        Close #hTapStream
+    Else
         Suite.Run()
-    sTap = Close #hTapStream
-    hTapStream = Open String sTap For Read
-    $hHarness.Read(hTapStream, Subst$("&1:&2", SingleTestModule, IIf(NameProcedure, NameProcedure, "*")))
-    Close #hTapStream
+    Endif
+
 
 End
 
@@ -162,8 +171,8 @@ Done:
     Return TestModuleNames
 
 Catch
-    Debug "Error in Unittest->GetAllTestModuleNames: " & Error.Text
-    ' Quit
+    Assert.BailOut("Error in Unittest->GetAllTestModuleNames: " & Error.Text)
+    Quit 1
 
 End
 
