@@ -280,7 +280,7 @@ Public Sub Task_Kill()
   
 End
 
-Public Sub Add(hPanel As Control, sTitle As String)
+Public Sub Add(hPanel As Control, sTitle As String) As Integer 
 
   Dim I As Integer = tabInfo.Index
   Dim N As Integer = tabInfo.Count
@@ -292,6 +292,7 @@ Public Sub Add(hPanel As Control, sTitle As String)
   HPanel.Expand = True
   hPanel.Show
   tabInfo.Index = I
+  Return tabInfo.Count - 1
 
 End
 
@@ -339,6 +340,8 @@ End
 
 Public Sub tabInfo_Click()
 
+  Dim hParent As FileProperties = Me.Parent
+
   If tabInfo.Index = TAB_IMAGE_PREVIEW Then
     
     If Not $bPreview Then
@@ -377,6 +380,8 @@ Public Sub tabInfo_Click()
     Endif
     
   Endif
+  
+  hParent._RaiseClick()
   
 Catch
 
@@ -445,4 +450,16 @@ Public Sub imvPreview_Arrange()
     If btnZoomFit.Value Then btnZoomFit_Click
   Endif
 
+End
+
+Public Sub GetIndex() As Integer
+  
+  Return tabInfo.Index
+  
+End
+
+Public Sub SetIndex(Value As Integer) As Integer
+  
+  tabInfo.Index = Value
+  
 End
