@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,71,62)
+  MoveScaled(0,0,99,62)
   Arrangement = Arrange.Vertical
   Spacing = True
   Margin = True
@@ -35,6 +35,16 @@
   { fprInfo FileProperties
     MoveScaled(10,16,36,37)
     Expand = True
+  }
+  { panHistory Panel
+    MoveScaled(57,36,48,19)
+    Visible = False
+    Arrangement = Arrange.Fill
+    { edtHistory TextEditor
+      MoveScaled(3,3,38,13)
+      Border = False
+      ReadOnly = True
+    }
   }
   { HBox1 HBox
     MoveScaled(1,57,51,4)

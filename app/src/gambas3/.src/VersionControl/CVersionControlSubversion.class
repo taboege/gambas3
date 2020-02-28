@@ -264,6 +264,12 @@ Public Sub Diff(sPath As String, Optional (bFull) As Boolean) As String
 
 End
 
+Public Sub History(sPath As String, Optional (bFull) As Boolean) As String
+
+  Return VersionControl.Shell("svn log " & Shell$(SvnPath$(sPath)))
+
+End
+
 Private Sub FormatSvnDate(sDate As String) As String
 
   Dim aDate As String[]

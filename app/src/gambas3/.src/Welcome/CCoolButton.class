@@ -54,7 +54,7 @@ Public Sub Panel_Draw()
   Paint.DrawPicture($hPict, 16, ($hPanel.H - $hPict.H) \ 2)
   'If $bInside Then Draw.Foreground = Color.Gradient($hPanel.Foreground, $iHighlight)
   Paint.Background = If(Me.Enabled, $hPanel.Foreground, Color.Merge($hPanel.Foreground, $hPanel.Background))
-  Paint.DrawTextShadow($sText, $hPict.W + 24, 0, $hPanel.W - $hPict.W - 32, $hPanel.H, Align.Normal)
+  'Paint.DrawTextShadow($sText, $hPict.W + 24, 0, $hPanel.W - $hPict.W - 32, $hPanel.H, Align.Normal)
   Paint.DrawText($sText, $hPict.W + 24, 0, $hPanel.W - $hPict.W - 32, $hPanel.H, Align.Normal)
   
   ' If $bArrow Then

@@ -445,6 +445,13 @@ Public Sub Diff(Optional sPath As String, Optional bFull As Boolean) As String
 
 End
 
+Public Sub History(Optional sPath As String, Optional bFull As Boolean) As String
+
+  If Not sPath Then sPath = Project.Dir
+  Return $hVC.History(sPath, bFull)
+
+End
+
 Public Sub CanControlProject() As Boolean
 
   Return False

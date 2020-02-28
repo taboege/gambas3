@@ -222,7 +222,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gambas3 3.14.90\n"
-"PO-Revision-Date: 2020-02-22 14:56 UTC\n"
+"PO-Revision-Date: 2020-02-28 17:32 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -398,7 +398,7 @@ msgstr "énumérable statiquement"
 msgid "Loading information on component &1..."
 msgstr "Chargement des informations sur le composant &1..."
 
-#: CComponent.class:1596 FFileProperty.class:167 FProjectProperty.class:943
+#: CComponent.class:1596 FProjectProperty.class:943
 msgid "Classes"
 msgstr "Classes"
 
@@ -970,7 +970,7 @@ msgstr "ici"
 msgid "IDE extensions"
 msgstr "Extension de l'EDI"
 
-#: CProjectList.class:552 CVersionControlGit.class:397 CWaitingAnimation.class:63 FColorChooser.form:68 FComponentChooser.form:97 FConflict.class:197 FConnectionEditor.class:470 FCrash.form:97 FCreateFile.form:204 FDebugExpr.form:46 FDebugInfo.form:290 FExportData.class:126 FFarmConfig.form:38 FFarmLogin.form:126 FFarmRegister.form:141 FFarmRequest.form:43 FFieldChooser.form:144 FFileProperty.class:146 FFontChooser.form:40 FGotoLine.form:23 FHelpBrowser.form:73 FImageOffsetSelection.form:33 FImageQuality.form:30 FImageResize.form:49 FImageRotate.form:32 FLayout.form:50 FList.form:128 FMain.class:256 FMakeInstall.class:358 FMenu.form:414 FNewConnection.form:318 FNewTable.form:86 FNewTranslation.form:21 FOption.class:818 FPasteSpecial.form:86 FPasteTable.form:105 FProjectChooser.form:73 FProjectProperty.form:1032 FProjectVersion.class:211 FProxy.form:57 FPublish.class:273 FReportBorderChooser.form:48 FReportBoxShadowChooser.form:27 FReportBrushChooser.form:36 FReportCoordChooser.form:26 FReportPaddingChooser.form:75 FSave.form:28 FSaveProjectAs.form:81 FSearch.class:946 FSelectComponent.form:39 FSelectExtraFile.form:43 FSelectIcon.form:89 FSelectLibrary.form:66 FSnippet.form:57 FSoftwareFarm.class:552 FTableChooser.form:68 FText.form:40 FTranslate.class:677 FVersionControl.form:78 FWebFontChooser.form:129 Project.module:565 VersionControl.module:382
+#: CProjectList.class:552 CVersionControlGit.class:411 CWaitingAnimation.class:63 FColorChooser.form:68 FComponentChooser.form:97 FConflict.class:197 FConnectionEditor.class:470 FCrash.form:97 FCreateFile.form:204 FDebugExpr.form:46 FDebugInfo.form:290 FExportData.class:126 FFarmConfig.form:38 FFarmLogin.form:126 FFarmRegister.form:141 FFarmRequest.form:43 FFieldChooser.form:144 FFileProperty.class:151 FFontChooser.form:40 FGotoLine.form:23 FHelpBrowser.form:73 FImageOffsetSelection.form:33 FImageQuality.form:30 FImageResize.form:49 FImageRotate.form:32 FLayout.form:50 FList.form:128 FMain.class:256 FMakeInstall.class:358 FMenu.form:414 FNewConnection.form:318 FNewTable.form:86 FNewTranslation.form:21 FOption.class:818 FPasteSpecial.form:86 FPasteTable.form:105 FProjectChooser.form:73 FProjectProperty.form:1032 FProjectVersion.class:211 FProxy.form:57 FPublish.class:273 FReportBorderChooser.form:48 FReportBoxShadowChooser.form:27 FReportBrushChooser.form:36 FReportCoordChooser.form:26 FReportPaddingChooser.form:75 FSave.form:28 FSaveProjectAs.form:81 FSearch.class:946 FSelectComponent.form:39 FSelectExtraFile.form:43 FSelectIcon.form:89 FSelectLibrary.form:66 FSnippet.form:57 FSoftwareFarm.class:552 FTableChooser.form:68 FText.form:40 FTranslate.class:677 FVersionControl.form:78 FWebFontChooser.form:129 Project.module:565 VersionControl.module:382
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -1102,91 +1102,91 @@ msgstr "l'année dernière"
 msgid "on &1"
 msgstr "en &1"
 
-#: CVersionControlGit.class:290
+#: CVersionControlGit.class:304
 msgid "Unable to push the project."
 msgstr "Impossible d'envoyer le projet."
 
-#: CVersionControlGit.class:304 CVersionControlSubversion.class:294
+#: CVersionControlGit.class:318 CVersionControlSubversion.class:300
 msgid "Local root path"
 msgstr "Répertoire racine local"
 
-#: CVersionControlGit.class:307
+#: CVersionControlGit.class:321
 msgid "Last commit"
 msgstr "Dernière publication"
 
-#: CVersionControlGit.class:308 CVersionControlSubversion.class:296
+#: CVersionControlGit.class:322 CVersionControlSubversion.class:302
 msgid "Last commit author"
 msgstr "Auteur de la dernière publication"
 
-#: CVersionControlGit.class:309 CVersionControlSubversion.class:297
+#: CVersionControlGit.class:323 CVersionControlSubversion.class:303
 msgid "Last commit date"
 msgstr "Date de la dernière publication"
 
-#: CVersionControlGit.class:316
+#: CVersionControlGit.class:330
 msgid "Current branch"
 msgstr "Branche courante"
 
-#: CVersionControlGit.class:317
+#: CVersionControlGit.class:331
 msgid "Origin"
 msgstr "Origine"
 
-#: CVersionControlGit.class:324
+#: CVersionControlGit.class:338
 msgid "The current branch is up to date."
 msgstr "La branche courante est à-jour."
 
-#: CVersionControlGit.class:326
+#: CVersionControlGit.class:340
 msgid "One file to commit in the current branch."
 msgstr "Un fichier à publier dans la branche courante."
 
-#: CVersionControlGit.class:328
+#: CVersionControlGit.class:342
 msgid "&1 files to commit in the current branch."
 msgstr "&1 fichiers à publier dans la branche courante."
 
-#: CVersionControlGit.class:335
+#: CVersionControlGit.class:349
 msgid "None in the current project."
 msgstr "Aucun dans le projet courant."
 
-#: CVersionControlGit.class:337
+#: CVersionControlGit.class:351
 msgid "One in the current project."
 msgstr "Un dans le projet courant"
 
-#: CVersionControlGit.class:339
+#: CVersionControlGit.class:353
 msgid "&1 in the current project."
 msgstr "&1 dans le projet courant."
 
-#: CVersionControlGit.class:343
+#: CVersionControlGit.class:357
 msgid "Status"
 msgstr "État"
 
-#: CVersionControlGit.class:346 CVersionControlSubversion.class:312
+#: CVersionControlGit.class:360 CVersionControlSubversion.class:318
 msgid "Remote repository URL"
 msgstr "URL du référentiel distant"
 
-#: CVersionControlGit.class:397
+#: CVersionControlGit.class:411
 msgid "A new Git repository will be created for this project."
 msgstr "Un nouveau référentiel Git sera créé pour ce projet."
 
-#: CVersionControlGit.class:397 Design.module:508 FColorChooser.form:62 FConnectionEditor.class:707 FCrash.form:91 FCreateFile.form:210 FFarmConfig.form:33 FFarmLogin.form:121 FFieldChooser.form:138 FFontChooser.form:34 FGotoLine.form:17 FImageOffsetSelection.form:27 FImageQuality.form:24 FImageResize.form:103 FImageRotate.form:26 FLayout.form:44 FList.form:122 FMenu.form:409 FNewConnection.form:312 FNewTable.form:80 FNewTranslation.form:15 FPasteSpecial.form:80 FProjectProperty.form:1026 FProxy.form:63 FReportBorderChooser.form:54 FReportBoxShadowChooser.form:33 FReportBrushChooser.form:42 FReportCoordChooser.form:32 FReportPaddingChooser.form:69 FSelectComponent.form:34 FSelectExtraFile.form:37 FSelectIcon.form:84 FSelectLibrary.form:60 FSnippet.form:51 FTableChooser.form:62 FText.form:34 FVersionError.form:69 FWebFontChooser.form:123
+#: CVersionControlGit.class:411 Design.module:508 FColorChooser.form:62 FConnectionEditor.class:707 FCrash.form:91 FCreateFile.form:210 FFarmConfig.form:33 FFarmLogin.form:121 FFieldChooser.form:138 FFontChooser.form:34 FGotoLine.form:17 FImageOffsetSelection.form:27 FImageQuality.form:24 FImageResize.form:103 FImageRotate.form:26 FLayout.form:44 FList.form:122 FMenu.form:409 FNewConnection.form:312 FNewTable.form:80 FNewTranslation.form:15 FPasteSpecial.form:80 FProjectProperty.form:1026 FProxy.form:63 FReportBorderChooser.form:54 FReportBoxShadowChooser.form:33 FReportBrushChooser.form:42 FReportCoordChooser.form:32 FReportPaddingChooser.form:69 FSelectComponent.form:34 FSelectExtraFile.form:37 FSelectIcon.form:84 FSelectLibrary.form:60 FSnippet.form:51 FTableChooser.form:62 FText.form:34 FVersionError.form:69 FWebFontChooser.form:123
 msgid "OK"
 msgstr "OK"
 
-#: CVersionControlGit.class:435
+#: CVersionControlGit.class:449
 msgid "Solve conflict."
 msgstr "Résolution du conflit."
 
-#: CVersionControlSubversion.class:295 FProjectVersion.class:284
+#: CVersionControlSubversion.class:301 FProjectVersion.class:284
 msgid "Revision"
 msgstr "Révision"
 
-#: CVersionControlSubversion.class:313
+#: CVersionControlSubversion.class:319
 msgid "Remote revision"
 msgstr "Révision distante"
 
-#: CVersionControlSubversion.class:314
+#: CVersionControlSubversion.class:320
 msgid "Remote last commit author"
 msgstr "Auteur de la dernière publication distante"
 
-#: CVersionControlSubversion.class:315
+#: CVersionControlSubversion.class:321
 msgid "Remote last commit date"
 msgstr "Date de la dernière publication distante"
 
@@ -1418,7 +1418,7 @@ msgstr "Enregistrer"
 msgid "Solve"
 msgstr "Résoudre"
 
-#: FConflict.form:166 FConflictEditor.form:306 FDebugInfo.form:297 FEditor.form:346 FFileProperty.form:76 FForm.form:438 FImageEditor.form:391 FMain.form:402 FPatch.form:88 FProjectVersion.form:322 FSystemInfo.form:68 FTextEditor.form:342 FTips.form:83 FTranslate.form:411
+#: FConflict.form:166 FConflictEditor.form:306 FDebugInfo.form:297 FEditor.form:346 FFileProperty.form:90 FForm.form:438 FImageEditor.form:391 FMain.form:402 FPatch.form:88 FProjectVersion.form:322 FSystemInfo.form:68 FTextEditor.form:342 FTips.form:83 FTranslate.form:411
 msgid "Close"
 msgstr "Fermer"
 
@@ -1977,7 +1977,7 @@ msgstr "Le titre du projet est le nom complet de l'application."
 msgid "Project is translatable"
 msgstr "Le projet est traduisible"
 
-#: FCreateProject.form:159 FProjectChooser.form:80 ProjectBox.class:303
+#: FCreateProject.form:159 FProjectChooser.form:80 ProjectBox.class:305
 msgid "Open in another window"
 msgstr "Ouvrir dans une nouvelle fenêtre"
 
@@ -2361,67 +2361,55 @@ msgstr "Connexion"
 msgid "Table"
 msgstr "Table"
 
-#: FFileProperty.class:31
+#: FFileProperty.class:34
 msgid "Gambas &1"
 msgstr "&1 Gambas"
 
-#: FFileProperty.class:38
+#: FFileProperty.class:41
 msgid "Gambas module"
 msgstr "Module Gambas"
 
-#: FFileProperty.class:40
+#: FFileProperty.class:43
 msgid "Gambas test module"
 msgstr "Module de test Gambas"
 
-#: FFileProperty.class:42
+#: FFileProperty.class:45
 msgid "Gambas class"
 msgstr "Classe Gambas"
 
-#: FFileProperty.class:82
+#: FFileProperty.class:85
 msgid "&1 properties"
 msgstr "Propriétés de &1"
 
-#: FFileProperty.class:86 FProjectVersion.form:299 FVersionControl.form:35
+#: FFileProperty.class:89 FProjectVersion.form:299 FVersionControl.form:35
 msgid "Changes"
 msgstr "Modifications"
 
-#: FFileProperty.class:94 FProjectProperty.form:991 FTranslate.form:417
-msgid "Statistics"
-msgstr "Statistiques"
+#: FFileProperty.class:90
+msgid "History"
+msgstr "Historique"
 
-#: FFileProperty.class:129
+#: FFileProperty.class:134
 msgid "This file is locked, and will be deleted on the next commit."
 msgstr "Le fichier est verrouillé, et sera supprimé à la prochaine publication."
 
-#: FFileProperty.class:131
+#: FFileProperty.class:136
 msgid "This file is not versioned, and must be added to the repository."
 msgstr "Le fichier n'est pas versionné, et doit être ajouté au référentiel."
 
-#: FFileProperty.class:134
+#: FFileProperty.class:139
 msgid "This file has not been modified since the last commit."
 msgstr "Ce fichier est inchangé depuis la dernière publication."
 
-#: FFileProperty.class:146 FMakeInstall.class:358 FProjectVersion.class:211 FSave.form:21 Project.module:3520 VersionControl.module:382
+#: FFileProperty.class:151 FMakeInstall.class:358 FProjectVersion.class:211 FSave.form:21 Project.module:3520 VersionControl.module:382
 msgid "Continue"
 msgstr "Continuer"
 
-#: FFileProperty.class:146 FProjectVersion.class:211 VersionControl.module:382
+#: FFileProperty.class:151 FProjectVersion.class:211 VersionControl.module:382
 msgid "You are going to cancel your changes!"
 msgstr "Tous les changements vont être annulés !"
 
-#: FFileProperty.class:165 FProjectProperty.class:941
-msgid "Modules"
-msgstr "Modules"
-
-#: FFileProperty.class:166 FProjectProperty.class:942
-msgid "Test modules"
-msgstr "Modules de test"
-
-#: FFileProperty.class:171 FProjectProperty.class:950
-msgid "Lines of code"
-msgstr "Lignes de code"
-
-#: FFileProperty.form:65
+#: FFileProperty.form:79
 msgid "Undo changes"
 msgstr "Annuler les changements"
 
@@ -4394,11 +4382,11 @@ msgstr "Mainteneur du paquet"
 msgid "Default license"
 msgstr "License par défaut"
 
-#: FOption.form:432 VersionControl.module:491
+#: FOption.form:432 VersionControl.module:498
 msgid "No"
 msgstr "Non"
 
-#: FOption.form:432 VersionControl.module:491
+#: FOption.form:432 VersionControl.module:498
 msgid "Yes"
 msgstr "Oui"
 
@@ -4838,6 +4826,18 @@ msgstr "<b>&1</b> ne contient aucune classe exportée."
 msgid "<b>&1</b> is already used as a library."
 msgstr "<b>&1</b> est déjà utilisé comme bibliothèque."
 
+#: FProjectProperty.class:941
+msgid "Modules"
+msgstr "Modules"
+
+#: FProjectProperty.class:942
+msgid "Test modules"
+msgstr "Modules de test"
+
+#: FProjectProperty.class:950
+msgid "Lines of code"
+msgstr "Lignes de code"
+
 #: FProjectProperty.class:953
 msgid "Executable size"
 msgstr "Taille de l'exécutable"
@@ -4997,6 +4997,10 @@ msgstr "Activer les avertissements"
 #: FProjectProperty.form:981
 msgid "Add branch to version number"
 msgstr "Ajouter la branche au numéro de version"
+
+#: FProjectProperty.form:991 FTranslate.form:417
+msgid "Statistics"
+msgstr "Statistiques"
 
 #: FProjectVersion.class:7 VersionControl.module:29
 msgid "This line and the following will be ignored"
@@ -7790,19 +7794,19 @@ msgstr "La commande ne répond pas."
 msgid "Please check your network connection."
 msgstr "Veuillez vérifier votre connexion réseau."
 
-#: VersionControl.module:491
+#: VersionControl.module:498
 msgid "Do you really want to put this project under version control with &1?"
 msgstr "Voulez-vous vraiment mettre ce projet sous contrôle de version avec &1 ?"
 
-#: VersionControl.module:505
+#: VersionControl.module:512
 msgid "The project could not be put under version control."
 msgstr "Impossible de mettre le projet sous contrôle de version."
 
-#: VersionControl.module:590
+#: VersionControl.module:597
 msgid "Unable to switch to branch `&1`."
 msgstr "Impossible de basculer sur la branche `&1`."
 
-#: VersionControl.module:612
+#: VersionControl.module:619
 msgid "With &1"
 msgstr "Avec &1"
 

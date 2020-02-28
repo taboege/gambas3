@@ -219,8 +219,8 @@ Public UseInheritance As Boolean
 
 Private $bFileIsUnknown As Boolean
 
-' If 'gb.test' is checked
-Public HasTest As Boolean
+' If test modules are visible
+Public Const HasTest As Boolean = True
 
 ' If GetFileIcon() has been called on an added file
 'Private $bLastAdded As Boolean
@@ -4670,7 +4670,7 @@ Public Sub RefreshComponents(Optional bForce As Boolean)
 
     $aOldRefreshComponents = aLib
     
-    HasTest = Components.Exist("gb.test")
+    'HasTest = Components.Exist("gb.test")
     
   Endif
   

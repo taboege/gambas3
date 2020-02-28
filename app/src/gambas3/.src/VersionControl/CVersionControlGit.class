@@ -135,6 +135,20 @@ Public Sub Diff(sPath As String, Optional bFull As Boolean) As String
 
 End
 
+Public Sub History(sPath As String, Optional (bFull) As Boolean) As String
+  
+  Dim sCmd As String
+  
+  If IsDir(sPath) Then
+    sCmd = "cd " & Shell(sPath) & " && git log ."
+  Else
+    sCmd = "cd " & Shell(File.Dir(sPath)) & " && git log " & Shell(File.Name(sPath))
+  Endif
+  
+  Return VersionControl.Shell(sCmd)
+
+End
+
 Public Sub Status(Optional sPath As String) As String
 
   Dim sStatus As String
