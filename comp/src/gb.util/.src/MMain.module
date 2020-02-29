@@ -18,8 +18,8 @@
 
 Public Sub Main()
 
-  Print CStr(CDate("1/1/1970"))
-  RFC822Test()
+  Print String.PadLeft("bébé", 11, "×->")
+  Print String.PadRight("bébé", 11, "×->")
   
 End
 

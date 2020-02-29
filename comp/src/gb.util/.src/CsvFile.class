@@ -6,13 +6,13 @@ Property Read Eof As Boolean
 Property Fields As String[]
 Property Read Line As Integer
 
+Static Private $bCreate As Boolean
+
 Private $hFile As File
 Private $aField As String[]
 Private $sSeparator As String
 Private $sEscape As String
 Private $iLine As Integer
-
-Static Private $bCreate As Boolean
 Private $bWrite As Boolean
 
 Static Public Sub Open(Path As String, Optional Separator As String = ",", Optional Escape As String = "\"") As CsvFile
@@ -141,29 +141,33 @@ Private Sub Print(sVal As String, Optional bNoSep As Boolean)
   
 End
 
-Public Sub Write(Row As Variant)
+Public Sub Write({Line} As Variant)
   
   Dim I As Integer
   Dim cLine As Collection
   Dim aLine As String[]
   
   If $iLine = 0 Then
+
+    If Not $aField Or If $aField.Count < 1 Then Error.Raise("The Field property must be set first")
+
     Print($aField[0], True)
     For I = 1 To $aField.Max
       Print($aField[I])
     Next
     Print #$hFile
     Inc $iLine
+    
   Endif
   
-  Try cLine = Row
+  Try cLine = {Line}
   If cLine Then
     Print(cLine[$aField[0]], True)
     For I = 1 To $aField.Max
       Print(cLine[$aField[I]])
     Next
   Else
-    Try aLine = Row
+    Try aLine = {Line}
     If aLine Then
       Print(aLine[0], True)
       For I = 1 To $aField.Max

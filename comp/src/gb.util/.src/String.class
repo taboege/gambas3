@@ -289,3 +289,40 @@ Static Public Sub ToPhonetic({String} As String, Optional Language As String = S
   Return sResult
   
 End
+
+Static Private Sub PadString(sStr As String, iLength As Integer, sPad As String, bRight As Boolean) As String
+  
+  Dim iLen As Integer
+  
+  If iLength < 0 Then Error.Raise("Bad argument")
+  iLength -= String.Len(sStr)
+  
+  If Len(sPad) = 1 Then
+    If bRight Then
+      Return String$(iLength, sPad) & sStr
+    Else
+      Return sStr & String$(iLength, sPad)
+    Endif
+  Else
+    iLen = String.Len(sPad)
+    If bRight Then
+      Return sStr & String$(iLength \ iLen, sPad) & String.Left(sPad, iLength Mod iLen)
+    Else
+      Return String.Right(sPad, iLength Mod iLen) & String$(iLength \ iLen, sPad) & sStr
+    Endif
+  Endif
+  
+End
+
+Static Public Sub PadLeft({String} As String, Length As Integer, Optional Pad As String = " ") As String
+  
+  Return PadString({String}, Length, Pad, False)
+
+End
+
+Static Public Sub PadRight({String} As String, Length As Integer, Optional Pad As String = " ") As String
+
+  Return PadString({String}, Length, Pad, True)
+  
+End
+
