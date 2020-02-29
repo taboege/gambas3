@@ -23,7 +23,7 @@ Private Sub Reload()
   'TextEditor1.Styles[Highlight.Custom].Background = Color.SetAlpha(Color.Red, 224)
   'TextEditor1.Styles[Highlight.Custom + 1].Background = Color.SetAlpha(Color.Green, 224)
   
-  Button5_Click
+  'Button5_Click
   
 End
 

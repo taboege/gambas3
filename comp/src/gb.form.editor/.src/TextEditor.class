@@ -81,12 +81,14 @@ Static Private $bRemoteDisplay As Boolean
 
 Public _Views As TextEditor[]
 
+Private $hVPanel As Panel
 Private $hPanel As Panel
 Private $hView As ScrollArea
 Private $hSideBar As DrawingArea
 Private $hImageSideBar As Image
 Private $hLabelFrame As Panel
 Private $hLabel As Label
+Private $hFind As FFind
 
 Private $hDoc As CDocument
 Private $hRows As _TextEditor_Rows
@@ -222,6 +224,7 @@ Private $bHighlightWordOnly As Boolean
 
 Private $bDiffReadOnly As Boolean
 Private $cDiffLayout As Collection
+
 Public _TopHeight As Integer
 
 Public Sub _new()
@@ -238,7 +241,8 @@ Public Sub _new()
       "CTRL+X": "Cut",
       "SHIFT+DEL": "Cut",
       "CTRL+Y": "Redo",
-      "CTRL+Z": "Undo"]
+      "CTRL+Z": "Undo",
+      "CTRL+F": "Find"]
   Endif
   
   If Not $bRemoteDisplayChecked Then
@@ -249,9 +253,13 @@ Public Sub _new()
     $bRemoteDisplayChecked = True
   Endif
   
-  $hPanel = New Panel(Me) As "ViewPanel"
+  $hVPanel = New Panel(Me)
+  $hVPanel.Arrangement = Arrange.Vertical
+  $hVPanel.Border = Border.Plain
+  
+  $hPanel = New Panel($hVPanel) As "ViewPanel"
   $hPanel.Arrangement = Arrange.Horizontal
-  $hPanel.Border = Border.Plain
+  $hPanel.Expand = True
   
   $hView = New ScrollArea($hPanel) As "View"
   $hView.Border = False
@@ -1635,6 +1643,8 @@ Public Sub View_KeyPress()
         Cut()
       Case "SelectAll"
         SelectAll
+      Case "Find"
+        ShowFind
     End Select
     Goto STOP_EVENT
   Endif
@@ -3000,13 +3010,13 @@ End
 
 Private Function Border_Read() As Boolean
   
-  Return $hPanel.Border <> Border.None
+  Return $hVPanel.Border <> Border.None
   
 End
 
 Private Sub Border_Write(Value As Boolean)
   
-  $hPanel.Border = If(Value, Border.Plain, Border.None)
+  $hVPanel.Border = If(Value, Border.Plain, Border.None)
   
 End
 
@@ -4185,6 +4195,24 @@ End
 '
 ' END_METHOD
 '
+
+Public Sub FindPreviousString(Search As String, Start As Integer) As Integer
+  
+  If IsAscii(Search) Then
+    Do
+      If Start < 0 Then Return -1
+      If InStr($hDoc.Lines[Start], Search, 1, gb.IgnoreCase) Then Return Start
+      Dec Start
+    Loop
+  Else
+    Do
+      If Start < 0 Then Return -1
+      If String.InStr($hDoc.Lines[Start], Search, 1, gb.IgnoreCase) Then Return Start
+      Dec Start
+    Loop
+  Endif
+  
+End
 
 Public Sub FindNextString(Search As String, Start As Integer) As Integer
   
@@ -6097,4 +6125,56 @@ Public Sub FindNextDiff(Y As Integer) As Integer
   
   Return $hDoc.FindNextDiff(Y)
   
+End
+
+Private Sub ShowFind()
+
+  If Not $hFind Then $hFind = New FFind($hVPanel)
+  $hFind.H = Desktop.Scale * 3
+  $hFind.Show
+  $hFind.SetFocus()
+
+End
+
+Public Sub _Search(sText As String, Optional bMoveNext As Boolean) As Boolean
+  
+  Dim HH As Integer
+  Dim Y As Integer
+  Dim X As Integer
+  Dim YY As Integer
+  
+  HighlightString(sText, True)
+  If Not sText Then
+    EnsureVisible
+    Return
+  Endif
+
+  If IsMissing(bMoveNext) Then
+    Y = FindNextString(sText, $Y)
+  Else If bMoveNext Then
+    Y = FindNextString(sText, $Y + 1)
+  Else
+    Y = FindPreviousString(sText, $Y - 1)
+  Endif
+  
+  If Y < 0 Then Return True
+  
+  X = String.InStr($hDoc.Lines[Y], sText) - 1
+  
+  If IsMissing(bMoveNext) Then
+    HH = $hRows.H
+    YY = $hRows._GetRowY(Y) + LinePos(Y, X).Y
+    $hView.EnsureVisible(0, YY, $hView.ClientW, HH)
+  Else
+    Goto(X, Y)
+  Endif
+
+End
+
+Public Sub IsVoid() As Boolean
+  
+  If $hDoc.Count > 1 Then Return
+  If $hDoc.Length Then Return
+  Return True
+    
 End
