@@ -8,7 +8,7 @@
   Margin = True
   { TerminalView1 TerminalView
     MoveScaled(3,3,62,37)
-    Font = Font["Gambas,10"]
+    Font = Font["Gambas,11"]
     Expand = True
     Limit = 0
     Blink = True

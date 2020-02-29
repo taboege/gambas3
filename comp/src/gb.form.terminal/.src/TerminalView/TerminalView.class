@@ -303,7 +303,7 @@ Private Sub UpdateFont()
     sText = String$(8, "mM0_@$#W")
     $CW = CInt(.TextWidth(sText) / Len(sText) + 0.5)
     
-    W = $CW \ 8 + 1
+    W = $CW \ 8
     $CW += W \ 2
     
     $hCacheFont = New Image($CW * 416, $LH * 2, Color.Transparent)
