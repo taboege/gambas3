@@ -11,20 +11,36 @@ End
 Public Sub Form_KeyPress()
 
   Select Case Key.Code
+    
     Case Key.Escape 
+      
       btnClose_Click
       Stop Event
     ' Case Key.PageDown, Key.PageUp
     '   If Key.Normal Then GetEditor().View_KeyPress
+    
     Case Key.Home, Key.End
+      
       If Key.Control And If Not Key.Shift Then GetEditor().View_KeyPress
+    
     Case Key.Enter, Key.Return
+      
       If Key.Shift Then
         btnPrevious_Click
       Else
         btnNext_Click
       Endif
       Stop Event
+    
+    Case Key.F3
+      
+      If Key.Shift Then
+        btnPrevious_Click
+      Else
+        btnNext_Click
+      Endif
+      Stop Event
+  
   End Select
 
 End

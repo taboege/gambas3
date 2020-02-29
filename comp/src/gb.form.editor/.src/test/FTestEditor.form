@@ -31,8 +31,12 @@
       Text = ("Diff")
     }
     { Button6 Button
-      MoveScaled(71,0,16,4)
+      MoveScaled(71,0,12,4)
       Text = ("Bookmark")
+    }
+    { Button7 Button
+      MoveScaled(84,0,10,4)
+      Text = ("Preview")
     }
   }
   { Panel1 VSplit
@@ -48,7 +52,6 @@
       ShowPosition = True
       ShowLimit = True
       ShowCurrent = True
-      ShowLineNumber = True
       ShowModified = True
       ShowBraces = True
       ShowIcon = True

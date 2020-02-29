@@ -5814,8 +5814,11 @@ End
 Private Sub ShowPreview_Write(Value As Boolean)
   
   If $bShowPreview = Value Then Return
+  
   $bShowPreview = Value
+  
   If Value Then
+  
     $hTimerSideBarRefresh = New Timer As "TimerRefreshBar"
     $hTimerSideBarRefresh.Delay = 250
     ' $hTimerSideBarViewer = New Timer As "TimerShowPreviewViewer"
@@ -5841,8 +5844,9 @@ Private Sub ShowPreview_Write(Value As Boolean)
     ScrollBar_Write($iScrollBar)
     
   Else
+  
     If $hSideBar Then
-      $hSideBar.Hide
+      '$hSideBar.Hide
       $hSideBar.Delete
       $hSideBar = Null
       $hTimerSideBarRefresh.Stop
@@ -5853,6 +5857,7 @@ Private Sub ShowPreview_Write(Value As Boolean)
       '$hTimerSideBarViewer = Null
       ScrollBar_Write($iScrollBar)
     Endif
+  
   Endif
   
 End

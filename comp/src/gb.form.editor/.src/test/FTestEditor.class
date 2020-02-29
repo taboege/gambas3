@@ -213,3 +213,10 @@ Public Sub Button5_Click()
   Endif
 
 End
+
+Public Sub Button7_Click()
+
+  TextEditor1.ShowPreview = Not TextEditor1.ShowPreview
+  Dec Me.W
+
+End
