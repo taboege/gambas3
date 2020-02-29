@@ -66,9 +66,8 @@ Public Sub Main() As Integer
     Shell ("echo '" & $sPath & "'|md5sum") To $sMd5
   Else
     Exec ["md5sum", $sPath] To $sMd5
-    'Shell "md5sum " & $sPath To $sMd5
-    
   Endif
+  
   $sMd5 = Scan($sMd5, "* *")[0]
   If $bFast Then $sMd5 &= "-f"
 
