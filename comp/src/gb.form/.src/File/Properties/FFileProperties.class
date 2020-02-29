@@ -285,6 +285,7 @@ Public Sub Add(hPanel As Control, sTitle As String) As Integer
   Dim I As Integer = tabInfo.Index
   Dim N As Integer = tabInfo.Count
   
+  Object.Lock(tabInfo)
   Inc tabInfo.Count
   tabInfo[N].Text = sTitle
   tabInfo.Index = N
@@ -292,6 +293,7 @@ Public Sub Add(hPanel As Control, sTitle As String) As Integer
   HPanel.Expand = True
   hPanel.Show
   tabInfo.Index = I
+  Object.Unlock(tabInfo)
   Return tabInfo.Count - 1
 
 End
