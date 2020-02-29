@@ -306,9 +306,9 @@ Static Private Sub PadString(sStr As String, iLength As Integer, sPad As String,
   Else
     iLen = String.Len(sPad)
     If bRight Then
-      Return sStr & String$(iLength \ iLen, sPad) & String.Left(sPad, iLength Mod iLen)
+      Return sStr & String.Right(sPad, iLength Mod iLen) & String$(iLength \ iLen, sPad)
     Else
-      Return String.Right(sPad, iLength Mod iLen) & String$(iLength \ iLen, sPad) & sStr
+      Return String$(iLength \ iLen, sPad) & String.Left(sPad, iLength Mod iLen) & sStr
     Endif
   Endif
   

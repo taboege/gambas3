@@ -18,8 +18,8 @@
 
 Public Sub Main()
 
-  Print String.PadLeft("bébé", 11, "×->")
-  Print String.PadRight("bébé", 11, "×->")
+  Print String.PadLeft("Gambas", 16, "×->")
+  Print String.PadRight("Gambas", 16, "×->")
   
 End
 
