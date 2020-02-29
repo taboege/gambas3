@@ -12,7 +12,8 @@
     { lblVersioning TextLabel
       MoveScaled(0,0,42,6)
       Visible = False
-      Padding = 8
+      Font = Font["Italic"]
+      Padding = 15
     }
     { edtChange TextEditor
       MoveScaled(4,8,40,18)

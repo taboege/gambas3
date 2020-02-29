@@ -155,6 +155,7 @@ Public Sub btnRevert_Click()
   If Message.Warning(("You are going to cancel your changes!"), ("Continue"), ("Cancel")) = 2 Then Return
 
   Project.RevertFile($sPath)
+  $bVersion = False
   LoadVersionControlInfo
 
 End
