@@ -452,6 +452,13 @@ Public Sub History(Optional sPath As String, Optional bFull As Boolean) As Strin
 
 End
 
+Public Sub HighlightHistory(sText As String)
+  
+  $hVC.HighlightHistory(sText)
+  
+End
+
+
 Public Sub CanControlProject() As Boolean
 
   Return False

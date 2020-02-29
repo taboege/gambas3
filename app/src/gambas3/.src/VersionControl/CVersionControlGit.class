@@ -17,6 +17,7 @@ Private $sRoot As String
 Private $bCanControl As Boolean
 Private $bCanInit As Boolean
 Private $bHasRemote As Boolean
+Private $iPadHistory As Integer
 
 Private Sub Init()
 
@@ -140,9 +141,9 @@ Public Sub History(sPath As String, Optional (bFull) As Boolean) As String
   Dim sCmd As String
   
   If IsDir(sPath) Then
-    sCmd = "cd " & Shell(sPath) & " && git log ."
+    sCmd = "cd " & Shell(sPath) & " && git log --date=rfc2822 ."
   Else
-    sCmd = "cd " & Shell(File.Dir(sPath)) & " && git log " & Shell(File.Name(sPath))
+    sCmd = "cd " & Shell(File.Dir(sPath)) & " && git log --date=rfc2822 " & Shell(File.Name(sPath))
   Endif
   
   Return VersionControl.Shell(sCmd)
@@ -447,5 +448,46 @@ Public Sub SolveConflict(sPath As String, Optional iAccept As Integer) As Boolea
   
   'FVersionControl.Run(True)
   RunShell("git commit -m " & Shell$(("Solve conflict."))) ', Project.Dir)
+  
+End
+
+Private Sub FormatDate(sDate As String) As String
+
+  Dim dDate As Date
+
+  Try dDate = Date.FromRFC822(sDate)
+  If Not dDate Then Return "?"
+  Return Format(dDate, gb.LongDate)
+
+End
+
+Public Sub HighlightHistory(Text As String)
+  
+  Dim iState As Integer
+  Dim iLen As Integer
+  Dim iPos As Integer
+
+  iState = TextHighlighter.State
+  iLen = String.Len(Text)
+
+  TextHighlighter.Limit = False
+  
+  If $iPadHistory = 0 Then
+    $iPadHistory = Max(Max(String.Len(("Date")), String.Len(("Author"))), String.Len("Commit"))
+  Endif
+  
+  If Text Begins "commit " Then 
+    TextHighlighter.TextAfter = String.PadRight("Commit", $iPadHistory) & " : " & Mid$(Text, 8)
+    TextHighlighter.Add(Highlight.DataType, String.Len(TextHighlighter.TextAfter))
+    TextHighlighter.Limit = True
+  Else If Text Begins "Author: " Then
+    TextHighlighter.TextAfter = String.PadRight(("Author"), $iPadHistory) & " : " & Mid$(Text, 9)
+    TextHighlighter.Add(Highlight.Function, String.Len(TextHighlighter.TextAfter))
+  Else If Text Begins "Date: " Then
+    TextHighlighter.TextAfter = String.PadRight(("Date"), $iPadHistory) & " : " & FormatDate(Mid$(Text, 7))
+    TextHighlighter.Add(Highlight.Preprocessor, String.Len(TextHighlighter.TextAfter))
+  Else 
+    TextHighlighter.Add(Highlight.Normal, iLen)
+  Endif
   
 End

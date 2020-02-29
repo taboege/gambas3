@@ -463,3 +463,13 @@ HANDLE_REMOVED:
 
 End
 
+Public Sub FillWithHistory(sPath As String)
+  
+  Inc Application.Busy
+  Me.Clear
+  Me.Text = VersionControl.History(sPath)
+  Me.SetFocus
+  Me.Reset
+  Dec Application.Busy
+  
+End

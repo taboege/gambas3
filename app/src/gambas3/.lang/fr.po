@@ -222,7 +222,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gambas3 3.14.90\n"
-"PO-Revision-Date: 2020-02-28 17:32 UTC\n"
+"PO-Revision-Date: 2020-02-29 13:21 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -970,7 +970,7 @@ msgstr "ici"
 msgid "IDE extensions"
 msgstr "Extension de l'EDI"
 
-#: CProjectList.class:552 CVersionControlGit.class:411 CWaitingAnimation.class:63 FColorChooser.form:68 FComponentChooser.form:97 FConflict.class:197 FConnectionEditor.class:470 FCrash.form:97 FCreateFile.form:204 FDebugExpr.form:46 FDebugInfo.form:290 FExportData.class:126 FFarmConfig.form:38 FFarmLogin.form:126 FFarmRegister.form:141 FFarmRequest.form:43 FFieldChooser.form:144 FFileProperty.class:151 FFontChooser.form:40 FGotoLine.form:23 FHelpBrowser.form:73 FImageOffsetSelection.form:33 FImageQuality.form:30 FImageResize.form:49 FImageRotate.form:32 FLayout.form:50 FList.form:128 FMain.class:256 FMakeInstall.class:358 FMenu.form:414 FNewConnection.form:318 FNewTable.form:86 FNewTranslation.form:21 FOption.class:818 FPasteSpecial.form:86 FPasteTable.form:105 FProjectChooser.form:73 FProjectProperty.form:1032 FProjectVersion.class:211 FProxy.form:57 FPublish.class:273 FReportBorderChooser.form:48 FReportBoxShadowChooser.form:27 FReportBrushChooser.form:36 FReportCoordChooser.form:26 FReportPaddingChooser.form:75 FSave.form:28 FSaveProjectAs.form:81 FSearch.class:946 FSelectComponent.form:39 FSelectExtraFile.form:43 FSelectIcon.form:89 FSelectLibrary.form:66 FSnippet.form:57 FSoftwareFarm.class:552 FTableChooser.form:68 FText.form:40 FTranslate.class:677 FVersionControl.form:78 FWebFontChooser.form:129 Project.module:565 VersionControl.module:382
+#: CProjectList.class:552 CVersionControlGit.class:411 CWaitingAnimation.class:63 FColorChooser.form:68 FComponentChooser.form:97 FConflict.class:197 FConnectionEditor.class:470 FCrash.form:97 FCreateFile.form:204 FDebugExpr.form:46 FDebugInfo.form:290 FExportData.class:126 FFarmConfig.form:38 FFarmLogin.form:126 FFarmRegister.form:141 FFarmRequest.form:43 FFieldChooser.form:144 FFileProperty.class:155 FFontChooser.form:40 FGotoLine.form:23 FHelpBrowser.form:73 FImageOffsetSelection.form:33 FImageQuality.form:30 FImageResize.form:49 FImageRotate.form:32 FLayout.form:50 FList.form:128 FMain.class:256 FMakeInstall.class:358 FMenu.form:414 FNewConnection.form:318 FNewTable.form:86 FNewTranslation.form:21 FOption.class:818 FPasteSpecial.form:86 FPasteTable.form:105 FProjectChooser.form:73 FProjectProperty.form:1032 FProjectVersion.class:211 FProxy.form:57 FPublish.class:273 FReportBorderChooser.form:48 FReportBoxShadowChooser.form:27 FReportBrushChooser.form:36 FReportCoordChooser.form:26 FReportPaddingChooser.form:75 FSave.form:28 FSaveProjectAs.form:81 FSearch.class:946 FSelectComponent.form:39 FSelectExtraFile.form:43 FSelectIcon.form:89 FSelectLibrary.form:66 FSnippet.form:57 FSoftwareFarm.class:552 FTableChooser.form:68 FText.form:40 FTranslate.class:677 FVersionControl.form:89 FWebFontChooser.form:129 Project.module:565 VersionControl.module:382
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -1173,6 +1173,14 @@ msgstr "OK"
 #: CVersionControlGit.class:449
 msgid "Solve conflict."
 msgstr "Résolution du conflit."
+
+#: CVersionControlGit.class:482
+msgid "Author: &1"
+msgstr "Auteur : &1"
+
+#: CVersionControlGit.class:485
+msgid "Date: &1"
+msgstr "Date : &1"
 
 #: CVersionControlSubversion.class:301 FProjectVersion.class:284
 msgid "Revision"
@@ -1418,7 +1426,7 @@ msgstr "Enregistrer"
 msgid "Solve"
 msgstr "Résoudre"
 
-#: FConflict.form:166 FConflictEditor.form:306 FDebugInfo.form:297 FEditor.form:346 FFileProperty.form:90 FForm.form:438 FImageEditor.form:391 FMain.form:402 FPatch.form:88 FProjectVersion.form:322 FSystemInfo.form:68 FTextEditor.form:342 FTips.form:83 FTranslate.form:411
+#: FConflict.form:166 FConflictEditor.form:306 FDebugInfo.form:297 FEditor.form:346 FFileProperty.form:93 FForm.form:438 FImageEditor.form:391 FMain.form:402 FPatch.form:88 FProjectVersion.form:322 FSystemInfo.form:68 FTextEditor.form:342 FTips.form:83 FTranslate.form:411
 msgid "Close"
 msgstr "Fermer"
 
@@ -2149,7 +2157,7 @@ msgstr "La chaîne recherchée est introuvable."
 msgid "Clear console"
 msgstr "Effacer la console"
 
-#: FDebugInfo.form:372 FMain.form:503 FProjectVersion.form:89 FVersionControl.form:16
+#: FDebugInfo.form:372 FMain.form:503 FProjectVersion.form:89 FVersionControl.form:17
 msgid "Commit"
 msgstr "Publier"
 
@@ -2378,38 +2386,38 @@ msgid "Gambas class"
 msgstr "Classe Gambas"
 
 #: FFileProperty.class:85
-msgid "&1 properties"
-msgstr "Propriétés de &1"
+msgid "'&1' properties"
+msgstr "Propriétés de « &1 »"
 
-#: FFileProperty.class:89 FProjectVersion.form:299 FVersionControl.form:35
+#: FFileProperty.class:89 FProjectVersion.form:299 FVersionControl.form:36
 msgid "Changes"
 msgstr "Modifications"
 
-#: FFileProperty.class:90
+#: FFileProperty.class:90 FVersionControl.form:46
 msgid "History"
 msgstr "Historique"
 
-#: FFileProperty.class:134
+#: FFileProperty.class:136
 msgid "This file is locked, and will be deleted on the next commit."
 msgstr "Le fichier est verrouillé, et sera supprimé à la prochaine publication."
 
-#: FFileProperty.class:136
+#: FFileProperty.class:138
 msgid "This file is not versioned, and must be added to the repository."
 msgstr "Le fichier n'est pas versionné, et doit être ajouté au référentiel."
 
-#: FFileProperty.class:139
+#: FFileProperty.class:141
 msgid "This file has not been modified since the last commit."
 msgstr "Ce fichier est inchangé depuis la dernière publication."
 
-#: FFileProperty.class:151 FMakeInstall.class:358 FProjectVersion.class:211 FSave.form:21 Project.module:3520 VersionControl.module:382
+#: FFileProperty.class:155 FMakeInstall.class:358 FProjectVersion.class:211 FSave.form:21 Project.module:3520 VersionControl.module:382
 msgid "Continue"
 msgstr "Continuer"
 
-#: FFileProperty.class:151 FProjectVersion.class:211 VersionControl.module:382
+#: FFileProperty.class:155 FProjectVersion.class:211 VersionControl.module:382
 msgid "You are going to cancel your changes!"
 msgstr "Tous les changements vont être annulés !"
 
-#: FFileProperty.form:79
+#: FFileProperty.form:82
 msgid "Undo changes"
 msgstr "Annuler les changements"
 
@@ -4382,11 +4390,11 @@ msgstr "Mainteneur du paquet"
 msgid "Default license"
 msgstr "License par défaut"
 
-#: FOption.form:432 VersionControl.module:498
+#: FOption.form:432 VersionControl.module:505
 msgid "No"
 msgstr "Non"
 
-#: FOption.form:432 VersionControl.module:498
+#: FOption.form:432 VersionControl.module:505
 msgid "Yes"
 msgstr "Oui"
 
@@ -4670,7 +4678,7 @@ msgstr "Applications"
 msgid "Browser"
 msgstr "Navigateur"
 
-#: FOption.form:1739 FVersionControl.form:45
+#: FOption.form:1739 FVersionControl.form:56
 msgid "Terminal"
 msgstr "Terminal"
 
@@ -5018,7 +5026,7 @@ msgstr "Distant"
 msgid "Please enter a user name."
 msgstr "Veuillez saisir un nom d'utilisateur."
 
-#: FProjectVersion.class:105 FVersionControl.class:29
+#: FProjectVersion.class:105 FVersionControl.class:41
 msgid "Please enter the journal."
 msgstr "Veuillez saisir le journal."
 
@@ -5050,7 +5058,7 @@ msgstr "Authentification"
 msgid "Refresh information"
 msgstr "Rafraîchir les informations"
 
-#: FProjectVersion.form:202 FVersionControl.form:28
+#: FProjectVersion.form:202 FVersionControl.form:29
 msgid "Journal"
 msgstr "Journal"
 
@@ -5806,19 +5814,19 @@ msgstr "Remplacer les traductions existantes"
 msgid "Import a translation file"
 msgstr "Importer un fichier de traduction"
 
-#: FVersionControl.class:71
+#: FVersionControl.class:16
 msgid "Do you want to push the repository?"
 msgstr "Voulez-vous envoyer le référentiel ?"
 
-#: FVersionControl.class:71
+#: FVersionControl.class:16
 msgid "Push"
 msgstr "Envoyer"
 
-#: FVersionControl.class:71
+#: FVersionControl.class:16
 msgid "There is nothing to commit."
 msgstr "Il n'y a rien à publier."
 
-#: FVersionControl.form:61
+#: FVersionControl.form:72
 msgid "Do not push to remote repository"
 msgstr "Ne pas envoyer au référentiel distant"
 
@@ -7794,19 +7802,19 @@ msgstr "La commande ne répond pas."
 msgid "Please check your network connection."
 msgstr "Veuillez vérifier votre connexion réseau."
 
-#: VersionControl.module:498
+#: VersionControl.module:505
 msgid "Do you really want to put this project under version control with &1?"
 msgstr "Voulez-vous vraiment mettre ce projet sous contrôle de version avec &1 ?"
 
-#: VersionControl.module:512
+#: VersionControl.module:519
 msgid "The project could not be put under version control."
 msgstr "Impossible de mettre le projet sous contrôle de version."
 
-#: VersionControl.module:597
+#: VersionControl.module:604
 msgid "Unable to switch to branch `&1`."
 msgstr "Impossible de basculer sur la branche `&1`."
 
-#: VersionControl.module:619
+#: VersionControl.module:626
 msgid "With &1"
 msgstr "Avec &1"
 

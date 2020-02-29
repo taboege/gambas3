@@ -82,7 +82,7 @@ Public Sub Form_Open()
  
   fprInfo.Path = sPath
  
-  Me.Title = Subst(("&1 properties"), File.Name(sPath))
+  Me.Title = Subst(("'&1' properties"), File.Name(sPath))
   
   If VersionControl.Enabled And Not IsDir($sPath) Then
     btnRevert.Show
@@ -117,6 +117,8 @@ Private Sub LoadVersionControlInfo()
   
   If $bVersion Then Return
 
+  Inc Application.Busy
+
   edtChange.Font = Font[Settings["/Editor/Font", Project.DEFAULT_FONT]]
   sDiff = VersionControl.Diff($sPath)
   If Project.IsFormPath($sPath) Then
@@ -141,6 +143,8 @@ Private Sub LoadVersionControlInfo()
     Endif
     lblVersioning.Show
   Endif
+  
+  Dec Application.Busy
   
   $bVersion = True
 
@@ -193,9 +197,14 @@ Public Sub fprInfo_Click()
     
     Case $iTabHistory 
     
-      edtHistory.Clear
-      edtHistory.Text = VersionControl.History($sPath)
+      edtHistory.FillWithHistory($sPath)
     
   End Select
+
+End
+
+Public Sub edtHistory_Highlight(Text As String)
+
+  VersionControl.HighlightHistory(Text)
 
 End
