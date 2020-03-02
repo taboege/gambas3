@@ -52,11 +52,6 @@ static JIT_FUNCTION *_jit_func = NULL;
 
 static bool _debug = FALSE;
 
-void JIT_exit(void)
-{
-	ARRAY_delete(&_jit_func);
-}
-
 void JIT_abort(void)
 {
 	static GB_FUNCTION _func;
@@ -68,6 +63,12 @@ void JIT_abort(void)
 		ERROR_panic("Unable to find JIT._Abort() method");
 	
 	GB_Call(&_func, 0, FALSE);
+	GB_Wait(0);
+}
+
+void JIT_exit(void)
+{
+	ARRAY_delete(&_jit_func);
 }
 
 static int get_state(ARCHIVE *arch)
