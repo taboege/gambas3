@@ -2235,3 +2235,10 @@ Public Sub SelectCurrentWord(X As Integer, Y As Integer)
   GotoMouse(XR - 1, Y, False)
 
 End
+
+Public Sub SelectAll()
+  
+  GotoMouse(0, 0, True)
+  GotoMouse(0, Lines.Count, False)
+  
+End

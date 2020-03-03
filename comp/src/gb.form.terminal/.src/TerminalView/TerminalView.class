@@ -4,7 +4,7 @@ Inherits UserControl
 
 Export
 
-Public Const _Properties As String = "*,Border=True,AutoResize=True,Limit=1000,Blink,ShowScrollBar"
+Public Const _Properties As String = "*,Border=True,AutoResize=True,Limit=1000,Blink,ShowScrollBar,ReadOnly"
 Public Const _DrawWith As String = "-"
 Public Const _Group As String = "View"
 
@@ -64,6 +64,10 @@ Property ScreenWidth As Integer
 Property Read CharWidth As Integer
 '' Return the terminal line height in pixels.
 Property Read LineHeight As Integer
+'' Return or set if the terminal is read-only.
+Property ReadOnly As Boolean
+
+Static Private $cShortcut As Collection
 
 Private $hPanel As Panel
 Private $hView As DrawingArea
@@ -126,6 +130,9 @@ Private $iScrollY As Integer
 Private $iTargetY As Integer
 Private $hTimerScroll As Timer
 Private $bIgnoreNextAnimation As Boolean
+Private $bReadOnly As Boolean
+
+Private Const PADDING As Integer = 2
 
 'Private $bDoubleFont As Boolean = True
 
@@ -133,6 +140,13 @@ Private $bIgnoreNextAnimation As Boolean
 
 Public Sub _new()
   
+  If Not $cShortcut Then
+    $cShortcut = [
+      "CTRL+SHIFT+A": "SelectAll",
+      "CTRL+SHIFT+C": "Copy",
+      "CTRL+SHIFT+V": "Paste"]
+  Endif
+
   Me.Font = Font["monospace"]
   
   $hPanel = New Panel(Me) As "Panel"
@@ -406,12 +420,12 @@ Public Sub Panel_Arrange()
   
   If $bShowScrollBar Then
     If System.RightToLeft Then
-      $hView.Move($hScroll.W, 0, $hPanel.ClientW - $hScroll.W, $hPanel.ClientH)
+      $hView.Move($hScroll.W + PADDING, PADDING, $hPanel.ClientW - $hScroll.W - PADDING * 2, $hPanel.ClientH - PADDING * 2)
     Else
-      $hView.Move(0, 0, $hPanel.ClientW - $hScroll.W, $hPanel.ClientH)
+      $hView.Move(PADDING, PADDING, $hPanel.ClientW - $hScroll.W - PADDING * 2, $hPanel.ClientH - PADDING * 2)
     Endif
   Else
-    $hView.Move(0, 0, $hPanel.ClientW, $hPanel.ClientH)
+    $hView.Move(PADDING, PADDING, $hPanel.ClientW - PADDING * 2, $hPanel.ClientH - PADDING * 2)
   Endif
   
   UpdateScreen
@@ -757,21 +771,24 @@ End
 Public Sub View_KeyPress()
   
   Dim hOutput As Stream
+  Dim sAction As String
   
-  If Key.Control And If Key.Shift Then
-    
-    If Key.Code = Key["C"] Then
-      Copy()
-      Stop Event
-      Return
-    Else If Key.Code = Key["V"] Then
-      Paste()
-      Stop Event
-      Return
-    Endif
-    
+  Try sAction = $cShortcut[String.UCase(Shortcut.FromKey())]
+  If sAction Then 
+    Select Case sAction
+      Case "Copy"
+        Copy()
+      Case "Paste"
+        If $bReadOnly Then Goto STOP_EVENT
+        Paste()
+      Case "SelectAll"
+        SelectAll
+    End Select
+    Goto STOP_EVENT
   Endif
   
+  If $bReadOnly Then Goto STOP_EVENT
+    
   hOutput = GetOutputStream()
   If Not hOutput Then Return
   
@@ -784,6 +801,12 @@ Public Sub View_KeyPress()
     $fStart = 0
     Stop Event
   Endif
+  
+  Return
+  
+STOP_EVENT:
+
+  Stop Event
     
 End
 
@@ -824,25 +847,37 @@ Private Sub Limit_Write(Value As Integer)
   
 End
 
+Private Sub UpdateCursorTimer()
+
+  If $hView.HasFocus And If $bBlink And If Not $bReadOnly Then
+    $bHideCursor = False
+    If Not $hCursorTimer Then $hCursorTimer = New Timer(500) As "CursorTimer"
+  Else
+    If $hCursorTimer Then
+      $hCursorTimer.Stop
+      $hCursorTimer = Null
+    Endif
+    $bHideCursor = $bReadOnly
+  Endif
+  $hView.Refresh
+  
+End
+
 Public Sub View_GotFocus()
   
-  If $bBlink Then $hCursorTimer = New Timer(500) As "CursorTimer"
+  UpdateCursorTimer
   
 End
 
 Public Sub View_LostFocus()
   
-  If $bBlink Then
-    $hCursorTimer.Stop
-    $hCursorTimer = Null
-  Endif
-  
-  $bHideCursor = False
+  UpdateCursorTimer
   
 End
 
 Public Sub _ShowCursor()
   
+  If $bReadOnly Then Return
   $bHideCursor = False
   
 End
@@ -1379,6 +1414,11 @@ Public Sub View_Menu()
     
     hMenu = New Menu(mnuPopup)
     
+    hMenu = New Menu(mnuPopup) As "mnuSelectAll"
+    hMenu.Text = ("Select all")
+    hMenu.Picture = Picture["icon:/small/select-all"]
+    hMenu.Shortcut = "CTRL+SHIFT+A"
+    
     hMenu = New Menu(mnuPopup) As "mnuClear"
     hMenu.Text = ("Clear")
     hMenu.Picture = Picture["icon:/small/clear"]
@@ -1405,5 +1445,31 @@ End
 Public Sub mnuClear_Click()
   
   Clear()
+  
+End
+
+Public Sub mnuSelectAll_Click()
+  
+  SelectAll()
+  
+End
+
+Private Function ReadOnly_Read() As Boolean
+
+  Return $bReadOnly
+
+End
+
+Private Sub ReadOnly_Write(Value As Boolean)
+
+  If $bReadOnly = Value Then Return
+  $bReadOnly = Value
+  UpdateCursorTimer
+
+End
+
+Private Sub SelectAll()
+  
+  $hScreen.SelectAll()
   
 End

@@ -129,3 +129,9 @@ End
 '   Debug W;; H
 ' 
 ' End
+
+Public Sub Button7_Click()
+
+  TerminalView1.ReadOnly = Not TerminalView1.ReadOnly
+
+End
