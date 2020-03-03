@@ -149,6 +149,7 @@ Static Private Sub InitComponentNames()
   $cName["gb.web"] = ("Web applications tools")
   $cName["gb.web.feed"] = ("Web feed parser and generator")
   $cName["gb.web.form"] = ("Web application development")
+  $cName["gb.web.form2"] = ("Web application development using processes as session")
   
   ' For Each $cName
   '   Print "gambas3-"; Replace($cName.Key, ".", "-")

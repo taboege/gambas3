@@ -26,12 +26,9 @@
     Margin = True
     Padding = 4
     Border = Border.Plain
-    { txtDetail TextEditor
-      MoveScaled(0,0,54,31)
-      Border = False
+    { trmDetail TerminalView
+      MoveScaled(6,4,16,16)
       ReadOnly = True
-      Wrap = True
-      ShowCursor = False
     }
   }
   { Spring1 Spring
