@@ -1,4 +1,5 @@
 # Gambas Project File 3.0
+Title=Web application development
 Startup=Webform2
 UseHttpServer=1
 Version=3.14.90
@@ -6,8 +7,8 @@ VersionFile=1
 Component=gb.util
 Component=gb.util.web
 Component=gb.web
-Description="Web application GUI controls"
 Authors="Benoît Minisini"
+Environment="GB_PCODE_VERSION=3.8"
 TabSize=2
 Translate=1
 Language=en_US
