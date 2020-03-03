@@ -405,6 +405,7 @@ Public Sub Main()
   FMain.Show
   
   If sPath Then 
+    If File.IsRelative(sPath) Then sPath = Application.Dir &/ sPath
     If IsDir(sPath) Then
       Project.Open(sPath)
       For Each sPath In aOpenFile
