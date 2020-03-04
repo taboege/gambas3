@@ -1,5 +1,7 @@
 ' Gambas class file
 
+Private $bNoSelectButton As Boolean
+
 Public Sub ReadConfig()
   
   Project.SetSmallFont(Me)
@@ -61,8 +63,12 @@ End
 Public Sub SelectButton(iTab As Integer)
 
   Dim hButton As ToolButton = Me.Children[iTab]
-  If hButton.Value Then Return
-  hButton.Value = True
+  
+  If $bNoSelectButton Then Return
+  
+  $bNoSelectButton = True
+  If Not hButton.Value Then hButton.Value = True
+  $bNoSelectButton = False
   
 End
 

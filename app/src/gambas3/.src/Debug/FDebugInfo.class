@@ -1436,6 +1436,7 @@ End
 
 Public Sub InsertVersionControl(sText As String)
   
+  If FMain.IsDebugVisible() Then FDebugButton.SelectButton(TAB_VERSION_CONTROL)
   trmVersionControl.Print(Replace(sText, "\n", "\r\n"))
   
 End

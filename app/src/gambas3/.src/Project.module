@@ -2985,6 +2985,9 @@ Public Function MakeExecutable(Optional bDoNotIncVersion As Boolean, Optional bS
   Dim bOK As Boolean
   Dim sErr As String
   Dim bSaveDone As Boolean
+  Dim hProcess As Process
+  Dim hTerminal As TerminalView
+  Dim sCommand As String
 
   If CheckStartupClass() Then Return True
 
@@ -3047,7 +3050,13 @@ Public Function MakeExecutable(Optional bDoNotIncVersion As Boolean, Optional bS
     Endif
 
     If RunAfterMakingExec Then
-      Shell Replace(RunAfterMakingExec, "$(FILE)", Shell$(sExecPath)) Wait
+      'Shell Replace(RunAfterMakingExec, "$(FILE)", Shell$(sExecPath)) Wait
+      FDebugInfo.ShowConsole()
+      hTerminal = FOutput.GetTerminal() 
+      sCommand = Replace(RunAfterMakingExec, "$(FILE)", Shell$(sExecPath))
+      hTerminal.Print(sCommand & "\r\n")
+      hProcess = hTerminal.Shell(sCommand)
+      hProcess.Wait
     Endif
 
     UpdateTitle
