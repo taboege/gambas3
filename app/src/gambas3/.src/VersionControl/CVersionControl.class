@@ -48,7 +48,7 @@ Public Sub Commit((sChange) As String, (bDoNotPush) As Boolean) As Boolean
 
 End
 
-Public Sub Update() As Boolean
+Public Sub Update() As Integer
   
 End
 

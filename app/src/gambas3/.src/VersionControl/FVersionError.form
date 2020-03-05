@@ -2,7 +2,6 @@
 
 { Form Form
   MoveScaled(0,0,67,59)
-  Resizable = False
   Arrangement = Arrange.Vertical
   Spacing = True
   Margin = True
@@ -19,20 +18,14 @@
       Expand = True
     }
   }
-  { panDetail Panel
-    MoveScaled(1,11,61,34)
-    Background = Color.TextBackground
-    Arrangement = Arrange.Fill
-    Margin = True
-    Padding = 4
-    Border = Border.Plain
-    { trmDetail TerminalView
-      MoveScaled(6,4,16,16)
-      ReadOnly = True
-    }
+  { trmDetail TerminalView
+    MoveScaled(10,15,45,29)
+    Visible = False
+    Expand = True
+    ReadOnly = True
   }
-  { Spring1 Spring
-    MoveScaled(30,47,2,6)
+  { Panel2 Panel
+    MoveScaled(31,49,4,1)
   }
   { HBox1 HBox
     MoveScaled(0,54,57,4)
