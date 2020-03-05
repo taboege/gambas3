@@ -449,6 +449,8 @@ Public Sub View_Draw()
   
   Dim bInvertColor As Boolean
   
+  If $sBuffer Then OutputTimer_Timer
+  
   ApplyLimit
   
   bInvertColor = Color[Style.BackgroundOf($hView)].Value > Color[Style.ForegroundOf($hView)].Value 
@@ -767,7 +769,6 @@ Private Sub GetOutputStream() As Stream
   
 End
 
-
 Public Sub View_KeyPress()
   
   Dim hOutput As Stream
@@ -1050,8 +1051,11 @@ End
 Public Sub Print(Text As String)
   
   UpdateScreen
-  $hFilter.OutputTo(Me, $hScreen, File.Out, Text)
-  EnsureVisible
+  $sBuffer &= Text
+  
+  OutputTimer_Timer
+  '$hFilter.OutputTo(Me, $hScreen, File.Out, Text)
+  'EnsureVisible
   
 End
 
@@ -1059,17 +1063,28 @@ Public Sub OutputTimer_Timer()
   
   Dim hOutput As Stream
   Dim sBuffer As String
+  Dim bEnsureVisible As Boolean
   
   $fStart = Timer
   
   $hOutputTimer.Stop
   
+  If Not Me.Visible Then Return
+  
   hOutput = GetOutputStream()
   sBuffer = $sBuffer
   $sBuffer = ""
-  If hOutput Then $hFilter.OutputTo(Me, $hScreen, hOutput, sBuffer)
   
-  EnsureVisible
+  If (($iTargetY + $hView.H) \ $LH) >= $hScreen.Count Then 
+    bEnsureVisible = True
+  Endif
+  
+  $hFilter.OutputTo(Me, $hScreen, hOutput, sBuffer)
+  
+  If bEnsureVisible Then 
+    $bIgnoreNextAnimation = True
+    EnsureVisible
+  Endif
   
 End
 

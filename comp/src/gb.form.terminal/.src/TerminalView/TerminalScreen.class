@@ -12,6 +12,7 @@ Property Read Height As Integer
 Property Read Geometry As Rect
 Property Read X As Integer
 Property Read Y As Integer
+Property Read Count As Integer
 
 Property Read HasMode As Boolean
 
@@ -2241,4 +2242,10 @@ Public Sub SelectAll()
   GotoMouse(0, 0, True)
   GotoMouse(0, Lines.Count, False)
   
+End
+
+Private Function Count_Read() As Integer
+
+  Return Lines.Count
+
 End

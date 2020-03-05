@@ -5,9 +5,8 @@
   Background = &HFFFFFF&
   Icon = Picture["terminalview.png"]
   Arrangement = Arrange.Vertical
-  Margin = True
   { TerminalView1 TerminalView
-    MoveScaled(3,3,62,37)
+    MoveScaled(4,3,62,37)
     Font = Font["Gambas,11"]
     Expand = True
     Border = False
