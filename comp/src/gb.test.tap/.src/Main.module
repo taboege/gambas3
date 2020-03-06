@@ -1,0 +1,40 @@
+' Gambas module file
+
+Public Sub Main()
+
+    Dim hProc As Process
+    Dim hHarness As New TestHarness
+
+    hProc = Exec ["gbx3", "-s", "SampleTest", Application.Path] For Read
+    hHarness.Read(hProc, "SampleTest")
+
+    With hHarness.Current
+        Dim sLine As String
+        Print "Transcript of the TAP stream:"
+        Print
+        Print String$(80, "*")
+        Print
+        For Each sLine In .Lines
+            Print sLine
+        Next
+        Print
+        Print String$(80, "*")
+        Print
+
+        Print "Test";; .Name;; IIf(.Success, "PASSED", "FAILED");;
+        Print "("; "exit code";; .ExitCode; ",";;
+        Print "runtime";; Format$(DateDiff(.Started, .Ended, gb.Second), "0.00s"); ")"
+        If .Run <> .Planned Then Print "Planned";; .Planned;; "tests but ran";; .Run
+        If .Failed Then
+            Dim iInd As Integer
+            Print "Failed";; .Failed;; "out of";; .Run;; "tests:";;
+            For iInd = 0 To .Failures.Max
+                Print .Failures[iInd]
+                If iInd < .Failures.Max Then Print ",";;
+            Next
+        Endif
+        If .BailedOut Then Print "Bailed out with message";; .BailMessage
+        If .Bonus Then Print "Passed";; .Bonus;; "additional tests marked as TODO"
+    End With
+
+End

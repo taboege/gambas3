@@ -6,26 +6,19 @@
 ''' TestSuite will execute all test cases that it contains.  The TestSuite class also provides
 ''' methods for add all test cases contained in a TestModule object into the suite.
 
-Inherits ITest
-
-Property Read Tests As ITest[]
-Private $Tests As ITest[]
-
-Public Sub _new()
-
-    $Tests = New ITest[]
-
-End Sub
+Property Read Tests As TestCase[]
+Private $Tests As New TestCase[]
 
 '' Runs all tests contained within the collection and collects the result in the Track parameter.
 Public Sub Run()
 
-    Dim oTest As ITestCase
+    Dim oTest As TestCase
     Dim CurrentTestModule, LastTestModule As Class
     Dim CurrentAction As String
 
     Assert $Tests
 
+    Assert.Plan($Tests.Count)
     For Each oTest In $Tests
         CurrentTestModule = oTest.TestModule
         If LastTestModule Then
@@ -41,12 +34,9 @@ Public Sub Run()
             StartTestModule(CurrentTestModule)
         Endif
 
-        With Track
-            .TestModuleName = oTest.TestModule.Name
-            .TestName = oTest.Name
-        End With
-
-        oTest.Run()
+        Assert.Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
+            oTest.Run()
+        If Not Assert.Finished Then Assert.Finish()
         LastTestModule = CurrentTestModule
     Next
 
@@ -56,10 +46,8 @@ Public Sub Run()
     Endif
 
 Catch
-    'Bail out
-    Print "Bail out! " & "Unittest Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & "."
-    Print "# ------- No success!  -------"
-    Quit
+    Assert.BailOut("Unittest Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & ".")
+    Quit 1
 
 End Sub
 
@@ -68,8 +56,6 @@ Private Sub StartTestModule(TestModule As Class)
     If TestModule.Symbols.Exist("Setup") Then
         Object.Call(TestModule, "Setup")
     Endif
-    ' Tracks tests in a TestModule, reset if TestModule changes
-    Track.TestModuleTestsCount = 0
 
 End
 
@@ -81,28 +67,10 @@ Private Sub StopTestModule(TestModule As Class)
         Object.Call(TestModule, "TearDown")
     Endif
 
-    If TestModule.Symbols.Exist("Plan") Then
-        Plan = Eval(TestModule.Name & ".Plan")
-    Endif
-
-    If Plan > 0 Then
-        Track.Plan += Plan
-    Else
-        Track.Plan += Track.TestModuleTestsCount
-    Endif
-
 End
 
-'' Add a object implementing ITest (either a TestCase or TestSuite) to the suite.
-Private Sub AddTest(oTest As ITest)
-
-    Assert $Tests
-    $Tests.Add(oTest)
-
-End Sub
-
 '' Add a TestCase to the suite.
-Private Sub AddTestCase(oTestCase As ITestCase)
+Private Sub AddTestCase(oTestCase As TestCase)
 
     Assert $Tests
     $Tests.Add(oTestCase, Object.Class(oTestCase).Name)
@@ -175,7 +143,7 @@ Public Function AddAllTestCases(TestModule As Class, Optional NameProcedure As S
 
 End
 
-Private Function Tests_Read() As ITest[]
+Private Function Tests_Read() As TestCase[]
 
     Return $Tests
 

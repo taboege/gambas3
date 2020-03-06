@@ -10,6 +10,6 @@ Public Sub TestError()
     Assert.Error("Wanted error. Ok if ok.")
 
     Try a = 3 / 0 ' Throws Error.Code 26
-    Assert.ErrorWithCode(26, "Wanted error 26. Ok if ok.")
+    Assert.ErrorCode(26, "Wanted error 26. Ok if ok.")
 
 End

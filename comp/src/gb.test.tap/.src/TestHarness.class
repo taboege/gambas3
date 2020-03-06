@@ -1,0 +1,186 @@
+' Gambas class file
+
+''' Base class for a test harness. It collects statistics about the tests, inspired by perl's Test::Harness.
+
+Export
+
+Property Read Tests As TestStats[]
+Property Read Current As TestStats
+Property Read Finished As Boolean
+
+Private $hProducer As Process
+Private $hParser As TapParser
+Private $aTests As New TestStats[]
+Private $hCurrent As TestStats
+Private $bLastOk As Boolean
+
+Private Sub InitParser(sName As String)
+
+    ' XXX: If a class inherits this, it can override/claim event handlers and our statistics aren't accurate.
+    $hParser = New TapParser As "Parser"
+
+    With $hCurrent = New TestStats
+        .Name = sName
+        .Plan = [1, 0]
+        .Started = Now()
+    End With
+
+    $aTests.Push($hCurrent)
+
+End
+
+Private Sub AddLine(sLine As String)
+
+    $hCurrent.Lines.Add(sLine)
+    $hParser.ParseLine(sLine)
+
+End
+
+Private Sub FinishStats()
+
+    With $hCurrent
+        .Ended = Now()
+        .ExitCode = 0
+        If $hProducer Then .ExitCode = $hProducer.Value
+        .Run = .Passed + .Failed + .Todo + .Skipped
+        .Delta = .Planned - .Run
+        .Success = .ExitCode = 0 And .Planned > 0 And .Run = .Planned And .Failed = 0
+    End With
+
+End
+
+Public Sub Attach(Producer As Process, Name As String)
+
+    $hProducer = Producer
+    Object.Attach(Producer, Me, "TapStream")
+
+    InitParser(Name)
+
+End
+
+Public Sub Wait()
+
+    If $hProducer Then $hProducer.Wait()
+
+End
+
+Public Sub Read(Producer As Variant, Name As String)
+
+    If Producer Is Process Then
+        Me.Attach(Producer, Name)
+        Me.Wait()
+    Else If Producer Is Stream Then
+        Dim hStream As Stream = Producer
+        Dim sLine As String
+        InitParser(Name)
+        For Each sLine In hStream.Lines
+            AddLine(sLine)
+        Next
+        FinishStats()
+    Else
+        Error.Raise(Subst$(("Can't handle TAP producer of class '&1'"), Object.Class(Producer).Name))
+    Endif
+
+End
+
+Public Sub TapStream_Read()
+
+    AddLine(Last.ReadLine())
+
+End
+
+Public Sub TapStream_Error(Message As String)
+
+    AddLine(Message)
+
+End
+
+Public Sub TapStream_Kill()
+
+    FinishStats()
+
+End
+
+Public Sub Parser_Version(Version As Integer)
+
+    $hCurrent.Version = Version
+
+End
+
+Public Sub Parser_Plan(Start As Integer, {End} As Integer)
+
+    $hCurrent.Plan = [Start, {End}]
+    $hCurrent.Planned = 1 + {End} - Start
+
+End
+
+Public Sub Parser_Ok(TestNr As Integer, Description As String)
+
+    Inc $hCurrent.Passed
+    $bLastOk = True
+
+End
+
+Public Sub Parser_NotOk(TestNr As Integer, Description As String)
+
+    Inc $hCurrent.Failed
+    $hCurrent.Failures.Push(TestNr)
+    $bLastOk = False
+
+End
+
+'' Undoes the last increment. Used to correct the count of passed/failed
+'' tests for Todo and Skip events.
+Private Sub UndoOk()
+
+    If $bLastOk Then
+        Dec $hCurrent.Passed
+    Else
+        Dec $hCurrent.Failed
+        $hCurrent.Failures.Pop()
+    Endif
+
+End
+
+Public Sub Parser_Todo(TestNr As Integer, Comment As String)
+
+    UndoOk()
+    Inc $hCurrent.Todo
+    If $bLastOk Then Inc $hCurrent.Bonus
+
+End
+
+Public Sub Parser_Skip(TestNr As Integer, Comment As String)
+
+    UndoOk()
+    Inc $hCurrent.Skipped
+
+End
+
+Public Sub Parser_BailOut(Comment As String)
+
+    $hCurrent.BailedOut = True
+    $hCurrent.BailMessage = Comment
+
+End
+
+' Diagnostic and Else messages are not handled here.
+
+Private Function Tests_Read() As TestStats[]
+
+    Return $aTests
+
+End
+
+Private Function Current_Read() As TestStats
+
+    Return $hCurrent
+
+End
+
+Private Function Finished_Read() As Boolean
+
+    If $hProducer Then Return $hProducer.State <> Process.Running
+    Return True
+
+End

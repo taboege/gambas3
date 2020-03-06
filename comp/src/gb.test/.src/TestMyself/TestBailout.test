@@ -7,5 +7,6 @@ Public Sub TestBailout()
 
     Assert.Note("This will stop alle unittesting immediately")
     Assert.BailOut("Bo-Test")
+    ' Quit
 
 End

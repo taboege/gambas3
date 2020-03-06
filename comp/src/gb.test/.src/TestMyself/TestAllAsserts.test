@@ -6,11 +6,11 @@
 Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
 '' Count of assertions in this TestModule
-Public Plan As Integer = 12
+Public Plan As Integer = 14
 
 Public Sub TestAssert()
 
-    Assert.True(True, "Testing True")
+    Assert.Ok(True, "Testing True")
 
 End
 
@@ -26,7 +26,7 @@ Public Sub TestAssertEqualsFloat()
     Dim f As Float
 
     f = 0.55555555555555
-    Assert.EqualsFloat(f, 0.55555555555555, 0, "Check with equal floats")
+    Assert.Approximate(f, 0.55555555555555, 0, "Check with equal floats")
 
 End
 
@@ -36,7 +36,7 @@ Public Sub TestAssertEqualsLong()
 
     l = 555555555555555555
 
-    Assert.EqualsLong(555555555555555555, l, "Check with two long")
+    Assert.Equals(555555555555555555, l, "Check with two long")
 
 End
 
@@ -50,7 +50,7 @@ Public Sub TestAssertEqualsDate()
     sdate = CString(d)
     d2 = CDate(sdate)
 
-    Assert.EqualsDate(d, d2, "Check with equal dates")
+    Assert.Equals(d, d2, "Check with equal dates")
 
 End
 
@@ -61,7 +61,7 @@ Public Sub TestAssertEqualsObject()
 
     s2 = s
 
-    Assert.EqualsObject(s2, s, "Equal Objects")
+    Assert.Equals(s2, s, "Equal Objects")
 
 End
 
@@ -72,7 +72,7 @@ Public Sub TestAssertEqualsString()
     s1 = "blaahhh"
     s2 = "blaahhh"
 
-    Assert.EqualsString(s1, s2, "Equal Strings")
+    Assert.StringEquals(s1, s2, "Equal Strings")
 
 End
 
@@ -92,18 +92,33 @@ Public Sub TestAssertError()
 
 End
 
-Public Sub TestAssertErrorWithCode()
+Public Sub TestAssertErrorCode()
 
     Dim r As Float
 
     Try r = 2 / 0
-    Assert.ErrorWithCode(26, "Test error with code")
+    Assert.ErrorCode(26, "Test error with code")
+
+End
+
+Public Sub TestTodoErrorCode()
+
+    Dim r As Float
+
+    Try r = 2 / 1
+    Assert.Todo("See automatic diagnostics 1/2")
+    Assert.ErrorCode(26, "Division by zero?")
+
+    Try r = 2 / 0
+    Assert.Todo("See automatic diagnostics 2/2")
+    Assert.ErrorCode(25, "Division by zero?")
 
 End
 
 Public Sub TestNote()
 
-    Assert.Note("The next note is Null and it should complain about it:")
+    Assert.Note("The next note is Null and that's alright:")
     Assert.Note(Null)
+    Assert.SkipAll("This doesn't actually assert anything")
 
 End
