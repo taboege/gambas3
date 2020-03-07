@@ -69,14 +69,22 @@
         #MoveScaled(20,1,27,4)
         Enabled = False
       }
-      { WebButton3 WebButton
+      { WebButton5 WebButton
         #MoveScaled(48,1,16,4)
+        Text = ("Show me")
+      }
+      { WebButton3 WebButton
+        #MoveScaled(65,1,16,4)
         Text = ("Progress") & "..."
       }
     }
     { WebImage1 WebImage
       #MoveScaled(1,8,78.75,6)
       Image = "favicon.png"
+    }
+    { lblTime WebLabel
+      #MoveScaled(1,15,78.75,4)
+      Font = "4em"
     }
     Index = 2
     Text = ("Tab 3")
@@ -99,6 +107,6 @@
   }
   { WebTimer1 WebTimer
     #MoveScaled(62,75)
-    Delay = 5000
+    Enabled = True
   }
 }

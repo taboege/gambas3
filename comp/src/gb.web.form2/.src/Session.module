@@ -13,7 +13,6 @@ Property CookiePath As String
 Property Read Keys As String[]
 Property Read Size As Long
 Property Read Path As String
-Property Read Dir As String
 
 Property User As String
 
@@ -22,6 +21,8 @@ Private $sCookie As String
 Private $fTimeout As Float = 300
 Private $sUser As String
 Private $sDir As String
+Private $cData As New Collection
+Private $sPrefix As String
 
 Public Sub _init()
   
@@ -42,6 +43,12 @@ Private Sub MakeSessionId() As String
     sId &= Hex$(Int(Rnd(65536)), 4)
   Next
   
+  If $sPrefix Then
+    sId = $sPrefix & ":" & sId
+  Else
+    sId = CGI["REMOTE_ADDR"] & ":" & sId
+  Endif
+
   Return sId
   
 End
@@ -78,18 +85,25 @@ Public Sub Abandon()
   
   Response.RemoveCookie("GBSESSIONID", $sCookie, "", GetCookiePath())
   $sCookie = ""
+  $cData.Clear
 
 End
 
-Public Sub _get((Key) As String) As Variant
+Public Sub _get(Key As String) As Variant
+  
+  Return $cData[Key]
   
 End
 
-Public Sub Exist((Key) As String) As Boolean
+Public Sub Exist(Key As String) As Boolean
+  
+  Return $cData.Exist(Key)
   
 End
 
-Public Sub _put((Value) As Variant, (Key) As String)
+Public Sub _put(Value As Variant, Key As String)
+
+  $cData[Key] = Value
 
 End
 
@@ -132,9 +146,13 @@ End
 
 Private Function Prefix_Read() As String
 
+  Return $sPrefix
+
 End
 
-Private Sub Prefix_Write((Value) As String)
+Private Sub Prefix_Write(Value As String)
+
+  $sPrefix = Value
 
 End
 
@@ -188,6 +206,8 @@ End
 
 Private Function Path_Read() As String
 
+  Return $sDir
+
 End
 
 Private Sub Type_Write((Value) As String)
@@ -203,11 +223,5 @@ End
 Private Sub User_Write(Value As String)
 
   $sUser = Value
-
-End
-
-Private Function Dir_Read() As String
-
-  Return $sDir
 
 End

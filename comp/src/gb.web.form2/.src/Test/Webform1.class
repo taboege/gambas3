@@ -41,7 +41,7 @@ End
 
 Public Sub WebTimer1_Timer()
 
-  WebLabel1.Text = Format(Now, "hh:nn:ss")
+  lblTime.Text = Format(Now, "hh:nn:ss")
 
 End
 
@@ -123,5 +123,11 @@ End
 Public Sub WebButton4_Click()
 
   ReloadTable
+
+End
+
+Public Sub WebButton5_Click()
+
+  Message(WebTextBox1.Text)
 
 End

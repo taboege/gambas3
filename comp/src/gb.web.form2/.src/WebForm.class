@@ -92,7 +92,7 @@ Static Public Sub PrintLog(sLog As String)
 
   If Not LOG_ENABLED Then Return
   'If Not $bDebug Then Return
-  hFile = Open Session.Dir &/ "error.log" For Append
+  hFile = Open Session.Path &/ "error.log" For Append
   For Each sLog In Split(sLog, "\n")
     Print #hFile, Format(Application.Id, "######"); " | "; sLog
   Next
@@ -118,7 +118,7 @@ Static Public Sub Main()
   Dim hLock As File
   Dim iPid As Integer
   
-  sTemp = Session.Dir
+  sTemp = Session.Path
   
   ' Beware that a CGI script receives the Request query in its first argument as soon as there is no "=" character in it!
   
@@ -214,6 +214,8 @@ Static Public Sub Main()
   PrintLog("NEW REQUEST: " & Application.Request)
 
   sCookie = Request.Cookies["GBSESSIONID"]
+  PrintLog("COOKIE = " & If(sCookie, sCookie, "<none>"))
+  
   If sCookie Then
     PrintLog(sTemp &/ sCookie & " = " & Str(Exist(sTemp &/ sCookie, True)))
     If Not Exist(sTemp &/ sCookie, True) Then 
@@ -243,10 +245,10 @@ Static Public Sub Main()
     Try hLock = Lock sTemp &/ sCookie & ".lock" Wait 10
 
     If Not Exist(Application.Path &/ Args[0]) Then
-      PrintLog("EXEC gbx3 " & Application.Path)
+      PrintLog("================ EXEC gbx3 " & Application.Path)
       hProcess = Exec ["gbx3", Application.Path, "--", Application.Handle, sCookie] Wait
     Else
-      PrintLog("EXEC " & Application.Path &/ Args[0])
+      PrintLog("================ EXEC " & Application.Path &/ Args[0])
       hProcess = Exec [Application.Path &/ Args[0], Application.Handle, sCookie] Wait
     Endif
     
@@ -323,7 +325,7 @@ Static Private Sub BeginResponse()
   
   $hTimeout.Stop
   
-  sTemp = Session.Dir
+  sTemp = Session.Path
   sRead = sTemp &/ Session.Id & ".in"
   sWrite = sTemp &/ Session.Id & ".out"
   
@@ -437,8 +439,8 @@ Static Private Sub Exit()
   Dim sTemp As String
   Dim sCookie As String
   
-  PrintLog("Exit")
-  sTemp = Session.Dir
+  PrintLog("================ QUIT " & Application.Path &/ Args[0])
+  sTemp = Session.Path
   sCookie = Session.Id
   Try Kill sTemp &/ sCookie
   Try Kill sTemp &/ sCookie & ".in"
@@ -480,9 +482,6 @@ Static Private Sub HandleRequest()
   If sPath = "~logout" Then
     
     Session.Abandon
-    Response.Redirect(Application.Root)
-    EndResponse()
-    Exit()
     
   Else If sPath = "x" Then
 
@@ -506,6 +505,12 @@ Static Private Sub HandleRequest()
     
     _Current.Render()
     
+  Endif
+  
+  If Not Session.Id Then
+    Response.Redirect(Application.Root)
+    EndResponse()
+    Exit()
   Endif
 
 End
