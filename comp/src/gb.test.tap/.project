@@ -1,6 +1,8 @@
 # Gambas Project File 3.0
+Title=TAP producer and consumer
 Startup=Main
 Version=3.14.90
+VersionFile=1
 Description="TAP producer and consumer: https://testanything.org"
 Authors="(C) 2018-2020 Tobias Boege <tobias@gambas-buch.de>"
 TabSize=4
