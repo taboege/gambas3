@@ -20,16 +20,16 @@
     Index = 1
     Text = ("Changes")
     { edtDiff TextEditor
-      MoveScaled(12,13,16,16)
+      MoveScaled(12,23,16,16)
       Border = False
       Highlight = "Diff"
       ReadOnly = True
       Wrap = True
     }
     { txtDiffNothing TextLabel
-      MoveScaled(4,3,37,7)
+      MoveScaled(4,3,43,13)
       Visible = False
-      Font = Font["Italic"]
+      Font = Font["Italic,+4"]
       Padding = 16
       Text = ("There is nothing to commit.")
       Alignment = Align.TopLeft

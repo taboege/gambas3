@@ -71,6 +71,10 @@ Public Sub Form_Open()
   edtJournal.Text = RTrim(Project.Config["/FCommit/LastCommit"]) & "\n\n" & VersionControl.GetDefaultJournal()
   edtJournal.Goto(0, 0)
   
+  LoadDiff
+  
+  tabVersionControl[0].Visible = edtDiff.Visible
+  
   tabVersionControl_Click
   
   chkDoNotPush.Visible = VersionControl.DoNotPush And VersionControl.HasRemote()
@@ -86,29 +90,33 @@ Public Sub Form_Close()
   
 End
 
-
-Public Sub tabVersionControl_Click()
+Private Sub LoadDiff()
 
   Dim sDiff As String
   
+  If edtDiff.IsVoid() Then
+    Inc Application.Busy
+    sDiff = VersionControl.Diff()
+    If sDiff Then
+      edtDiff.Text = sDiff
+    Else
+      edtDiff.Text = "-"
+      edtDiff.Hide
+      txtDiffNothing.Show
+    Endif
+    Dec Application.Busy
+  Endif
+
+End
+
+Public Sub tabVersionControl_Click()
+
   Select Case tabVersionControl.Index
     
     Case 0
       edtJournal.SetFocus
       
     Case 1
-      If edtDiff.IsVoid() Then
-        Inc Application.Busy
-        sDiff = VersionControl.Diff()
-        If sDiff Then
-          edtDiff.Text = sDiff
-        Else
-          edtDiff.Text = "-"
-          edtDiff.Hide
-          txtDiffNothing.Show
-        Endif
-        Dec Application.Busy
-      Endif
       
     Case 2
       If edtHistory.IsVoid() Then
