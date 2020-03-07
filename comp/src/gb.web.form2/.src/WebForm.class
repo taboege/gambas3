@@ -13,35 +13,46 @@ Public Const _DefaultEvent As String = "Open"
 
 Static Property Debug As Boolean Use $bDebug
 
+'' Return or set the current form, i.e. the main form of the application that fills the web page.
+''
+'' If the current form changes, the web page is automatically reloaded.
+Static Property Current As WebForm
+
 '' This event is raised when the form is opened.
 Event Open
+
 '' This event is raised each time an event is handled by the form.
 Event Event
+
 '' This event is raised when the form is closed.
 Event Close
 
 '' This title is used as HTML page title if the form is the main form.
 Property Title As String
+
 '' Return or set if the form is resizable when used as a dialog.
 Property Resizable As Boolean
+
 '' Return or set the minimum width of the form.
 ''
 '' This property can take any valid CSS size. If not set, the control will have no minimum width.
 Property Width, W As String
+
 '' Return or set the minimum height of the form.
 ''
 '' This property can take any valid CSS size. If not set, the control will have no minimum height.
 Property Height, H As String
+
 '' Return if the form is a popup.
 Property Read Popup As Boolean
+
 '' Return the control that owns the popup.
 Property Read PopupParent As WebControl
+
 '' Return or set if the form is persistent.
 ''
 '' Closing a non-persistent form automatically destroys it.
 Property Persistent As Boolean
-'' Return or set the current form, i.e. the main form of the application that fills the HTML page.
-Property Current As WebForm
 
 Static Public _DisableRefresh As Integer
 Static Public _HasRefresh As Boolean
@@ -211,7 +222,7 @@ Static Public Sub Main()
     
   Endif
     
-  PrintLog("NEW REQUEST: " & Application.Request)
+  PrintLog("================ NEW REQUEST: " & Application.Request)
 
   sCookie = Request.Cookies["GBSESSIONID"]
   PrintLog("COOKIE = " & If(sCookie, sCookie, "<none>"))
@@ -245,10 +256,10 @@ Static Public Sub Main()
     Try hLock = Lock sTemp &/ sCookie & ".lock" Wait 10
 
     If Not Exist(Application.Path &/ Args[0]) Then
-      PrintLog("================ EXEC gbx3 " & Application.Path)
+      PrintLog("---------------- EXEC gbx3 " & Application.Path)
       hProcess = Exec ["gbx3", Application.Path, "--", Application.Handle, sCookie] Wait
     Else
-      PrintLog("================ EXEC " & Application.Path &/ Args[0])
+      PrintLog("---------------- EXEC " & Application.Path &/ Args[0])
       hProcess = Exec [Application.Path &/ Args[0], Application.Handle, sCookie] Wait
     Endif
     
@@ -439,7 +450,7 @@ Static Private Sub Exit()
   Dim sTemp As String
   Dim sCookie As String
   
-  PrintLog("================ QUIT " & Application.Path &/ Args[0])
+  PrintLog("---------------- QUIT " & Application.Path &/ Args[0])
   sTemp = Session.Path
   sCookie = Session.Id
   Try Kill sTemp &/ sCookie
@@ -1176,14 +1187,40 @@ Private Function PopupParent_Read() As WebControl
 
 End
 
-Private Function Current_Read() As WebForm
+Static Private Function Current_Read() As WebForm
 
   Return _Current
 
 End
 
-Private Sub Current_Write(Value As WebForm)
+Static Private Sub Current_Write(Value As WebForm)
 
+  If _Current = Value Then Return
   _Current = Value
+  _Current.Reload
 
+End
+
+'' Reload the form.
+''
+'' It the form is not a main form, then it is refreshed.
+
+Public Sub Reload()
+  
+  If Me = _Current Then
+    _AddJavascript("location.reload(true)")
+  Else
+    Me.Refresh
+  Endif
+  
+End
+
+'' Change the current main form.
+''
+'' It is equivalent to set the [../current] property.
+
+Static Public Sub Goto(Form As WebForm)
+  
+  Current_Write(Form)
+  
 End
