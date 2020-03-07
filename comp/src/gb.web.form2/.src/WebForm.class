@@ -40,16 +40,17 @@ Property Read PopupParent As WebControl
 ''
 '' Closing a non-persistent form automatically destroys it.
 Property Persistent As Boolean
+'' Return or set the current form, i.e. the main form of the application that fills the HTML page.
+Property Current As WebForm
 
 Static Public _DisableRefresh As Integer
 Static Public _HasRefresh As Boolean
 Static Public _InMessage As Integer
-Static Public _Current As WebForm
+Static Private _Current As WebForm
 
 Private Const LOG_ENABLED As Boolean = True
 
 Static Private $iRequestProcess As Integer
-Static Private $sCookie As String
 Static Private $bSendCookie As Boolean
 Static Private $hTimeout As Timer
 Static Private $hRead As File
@@ -85,42 +86,21 @@ Static Public Sub _init()
   
 End
 
-Static Private Sub MakeSessionId() As String
-  
-  Dim iInd As Integer
-  Dim sId As String
-  
-  For iInd = 1 To 6
-    sId &= Hex$(Int(Rnd(65536)), 4)
-  Next
-  
-  Return sId
-  
-End
-
-Static Private Sub GetCookiePath() As String
-
-  Dim sPath As String
-  
-  sPath = CGI["SCRIPT_NAME"]
-  If sPath = "/." Then sPath = "/"
-  Return sPath
-
-End
-
 Static Public Sub PrintLog(sLog As String)
 
   Dim hFile As File
 
   If Not LOG_ENABLED Then Return
   'If Not $bDebug Then Return
-  hFile = Open File.Dir(File.Dir(Temp())) &/ "session/error.log" For Append
+  hFile = Open Session.Dir &/ "error.log" For Append
   For Each sLog In Split(sLog, "\n")
     Print #hFile, Format(Application.Id, "######"); " | "; sLog
   Next
   Close #hFile
 
 End
+
+
 
 Static Public Sub Main()
 
@@ -138,8 +118,7 @@ Static Public Sub Main()
   Dim hLock As File
   Dim iPid As Integer
   
-  sTemp = File.Dir(File.Dir(Temp$())) &/ "session"
-  Try Mkdir sTemp
+  sTemp = Session.Dir
   
   ' Beware that a CGI script receives the Request query in its first argument as soon as there is no "=" character in it!
   
@@ -150,7 +129,7 @@ Static Public Sub Main()
     If Args[2] <> "TEST" Then Application.Daemon = True
   
     $bSendCookie = True
-    $sCookie = Args[2]
+    Session.Id = Args[2]
 
     PrintLog("Catch SIGUSR1 signal")
     Signal[Signal.SIGUSR1].Catch()
@@ -160,12 +139,12 @@ Static Public Sub Main()
     
     PrintLog("Start request timeout")
     $hTimeout = New Timer As "Timeout"
-    $hTimeout.Delay = 20000
+    $hTimeout.Delay = Session.Timeout * 1000
     $hTimeout.Start
     
     PrintLog("Create session file")
-    Try Kill sTemp &/ $sCookie
-    Link "/proc" &/ CStr(Application.Id) To sTemp &/ $sCookie
+    Try Kill sTemp &/ Session.Id
+    Link "/proc" &/ CStr(Application.Id) To sTemp &/ Session.Id
 
     PrintLog("Waiting for SIGUSR1")
     Return
@@ -239,7 +218,8 @@ Static Public Sub Main()
     PrintLog(sTemp &/ sCookie & " = " & Str(Exist(sTemp &/ sCookie, True)))
     If Not Exist(sTemp &/ sCookie, True) Then 
       PrintLog("UNKNOWN SESSION")
-      Response.RemoveCookie("GBSESSIONID", sCookie, "", GetCookiePath())
+      'Response.RemoveCookie("GBSESSIONID", sCookie, "", GetCookiePath())
+      Session.Abandon
       If Request.Path = "/x" Then
         Response.ContentType = "text/javascript;charset=utf-8"
         Response.Begin
@@ -257,7 +237,9 @@ Static Public Sub Main()
     
   If Not sCookie Then 
     
-    sCookie = MakeSessionId()
+    'If Dir(sTemp, "*.in").Count > 
+    
+    sCookie = Session.Create()
     Try hLock = Lock sTemp &/ sCookie & ".lock" Wait 10
 
     If Not Exist(Application.Path &/ Args[0]) Then
@@ -290,9 +272,9 @@ Static Public Sub Main()
     Return
   Endif
   
-  $sCookie = sCookie
-  sRead = sTemp &/ $sCookie & ".out"
-  sWrite = sTemp &/ $sCookie & ".in"
+  Session.Id = sCookie
+  sRead = sTemp &/ sCookie & ".out"
+  sWrite = sTemp &/ sCookie & ".in"
   
   PrintLog("OPEN READ " & sRead)
   $hRead = Open Pipe sRead For Read
@@ -341,9 +323,9 @@ Static Private Sub BeginResponse()
   
   $hTimeout.Stop
   
-  sTemp = File.Dir(File.Dir(Temp$())) &/ "session"
-  sRead = sTemp &/ $sCookie & ".in"
-  sWrite = sTemp &/ $sCookie & ".out"
+  sTemp = Session.Dir
+  sRead = sTemp &/ Session.Id & ".in"
+  sWrite = sTemp &/ Session.Id & ".out"
   
   PrintLog("Open read " & sRead)
   $hRead = Open Pipe sRead For Read
@@ -453,13 +435,15 @@ End
 Static Private Sub Exit()
 
   Dim sTemp As String
+  Dim sCookie As String
   
   PrintLog("Exit")
-  sTemp = File.Dir(File.Dir(Temp$())) &/ "session"
-  Try Kill sTemp &/ $sCookie
-  Try Kill sTemp &/ $sCookie & ".in"
-  Try Kill sTemp &/ $sCookie & ".out"
-  Try Kill sTemp &/ $sCookie & ".lock"
+  sTemp = Session.Dir
+  sCookie = Session.Id
+  Try Kill sTemp &/ sCookie
+  Try Kill sTemp &/ sCookie & ".in"
+  Try Kill sTemp &/ sCookie & ".out"
+  Try Kill sTemp &/ sCookie & ".lock"
   Signal[Signal.SIGUSR1].Reset()
   Quit
   
@@ -485,13 +469,6 @@ Static Public Sub _AddJavascriptBefore(sStr As String)
   
 End
 
-Static Private Sub Logout()
-  
-  PrintLog("Logout")
-  Response.RemoveCookie("GBSESSIONID", $sCookie, "", GetCookiePath())
-  
-End
-
 Static Private Sub HandleRequest()
 
   Dim sPath As String
@@ -502,7 +479,7 @@ Static Private Sub HandleRequest()
 
   If sPath = "~logout" Then
     
-    Logout()
+    Session.Abandon
     Response.Redirect(Application.Root)
     EndResponse()
     Exit()
@@ -523,7 +500,7 @@ Static Private Sub HandleRequest()
   Else
   
     If $bSendCookie Then
-      Response.SetCookie("GBSESSIONID", $sCookie, "", GetCookiePath(),, True)
+      Session._SendCookie()
       $bSendCookie = False
     Endif
     
@@ -941,7 +918,7 @@ Public Sub Close(Optional ReturnValue As Variant)
     
   Else
     
-    Logout()
+    Session.Abandon()
     _AddJavascript("window.location.reload(true)")
     
   Endif
@@ -978,7 +955,7 @@ Private Sub DoShow()
   Endif
   
   WebControl._NextName = "$" & Me.Name
-  hWindow = New WebWindow(WebForm._Current._GetWindowContainer())
+  hWindow = New WebWindow(_Current._GetWindowContainer())
   _Window = hWindow.Id
   
   hWindow.Child = Me
@@ -1073,7 +1050,7 @@ Public Sub ShowPopup(Control As WebControl, Optional Alignment As Integer = Alig
     hWindow.Show()
   Endif
   
-  If Not hWindow Then hWindow = New WebWindow(WebForm._Current._GetWindowContainer())
+  If Not hWindow Then hWindow = New WebWindow(_Current._GetWindowContainer())
   hWindow.Child = Me
   hWindow.Resizable = $bResizable
   hWindow.PopupAlignment = Alignment
@@ -1194,17 +1171,14 @@ Private Function PopupParent_Read() As WebControl
 
 End
 
-' Public Sub _RefreshReply() As Boolean
-'   
-'   If Super._RefreshReply() Then Return
-'   'If $hWindowContainer Then $hWindowContainer._RefreshReply()
-'   
-' End
-' 
-' Public Sub _CancelChildrenRefresh()
-' 
-'   Super._CancelChildrenRefresh()
-'   'If $hWindowContainer Then $hWindowContainer._CancelRefresh()
-'   
-' End
-' 
+Private Function Current_Read() As WebForm
+
+  Return _Current
+
+End
+
+Private Sub Current_Write(Value As WebForm)
+
+  _Current = Value
+
+End

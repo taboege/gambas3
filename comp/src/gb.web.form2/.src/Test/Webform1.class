@@ -6,6 +6,13 @@ Private $aFile As String[]
 Private $aStat As Stat[]
 Private $sDir As String
 
+Static Public Sub _init()
+  
+  Session.Timeout = 20
+  
+End
+
+
 Public Sub _new()
   
   WebTable1.AddColumn("Name")
