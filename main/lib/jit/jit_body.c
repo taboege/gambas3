@@ -1280,6 +1280,11 @@ static void push_subr(char mode, ushort code)
 		narg = code & 0x3F;
 		type = get_type(-narg);
 	}
+	else if (op == (C_NEG >> 8))
+	{
+		narg = 1;
+		type = get_type(-1);
+	}
 	else if (op < CODE_FIRST_SUBR)
 	{
 		int index = RESERVED_get_from_opcode(code);
