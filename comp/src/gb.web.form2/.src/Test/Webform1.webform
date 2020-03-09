@@ -25,7 +25,7 @@
       { WebLabel1 WebLabel
         #MoveScaled(20,1,30,4)
         Expand = True
-        Font = "bold,2em"
+        Font = "bold,1.5em"
         Border = True
       }
       { WebButton2 WebButton
