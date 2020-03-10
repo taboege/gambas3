@@ -324,8 +324,7 @@ static char* aux_get_target_from_action(const_LinkAction *act)
 
 		case actionURI:
 #if POPPLER_VERSION_0_86
-			str = ((LinkURI*)act)->getURI();
-			gstr = str;
+			gstr = GooString(((LinkURI*)act)->getURI());
 			tmp = &gstr;
 #else
 			tmp = ((LinkURI*)act)->getURI(); 
@@ -335,7 +334,7 @@ static char* aux_get_target_from_action(const_LinkAction *act)
 		case actionNamed:
 #if POPPLER_VERSION_0_86
 			str = ((LinkNamed*)act)->getName(); 
-			gstr = str;
+			gstr = GooString(str);
 			tmp = &gstr;
 #else
 			tmp = ((LinkNamed*)act)->getName(); 
@@ -345,7 +344,7 @@ static char* aux_get_target_from_action(const_LinkAction *act)
 		case actionMovie:
 #if POPPLER_VERSION_0_86
 			str = ((LinkMovie*)act)->getAnnotTitle();
-			gstr = str;
+			gstr = GooString(str);
 			tmp = &gstr;
 #else
 			tmp = ((LinkMovie*)act)->getAnnotTitle();
