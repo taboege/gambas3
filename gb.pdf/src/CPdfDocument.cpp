@@ -310,8 +310,7 @@ static char* aux_get_target_from_action(const_LinkAction *act)
 	char *uni = NULL;	
 	const_GooString *tmp = NULL;
 #if POPPLER_VERSION_0_86
-	const std::string str;
-	const GooString gstr;
+	GooString gstr;
 #endif
 
 	switch (act->getKind())
@@ -333,8 +332,7 @@ static char* aux_get_target_from_action(const_LinkAction *act)
 			
 		case actionNamed:
 #if POPPLER_VERSION_0_86
-			str = ((LinkNamed*)act)->getName(); 
-			gstr = GooString(str);
+			gstr = GooString(((LinkNamed*)act)->getName());
 			tmp = &gstr;
 #else
 			tmp = ((LinkNamed*)act)->getName(); 
@@ -343,8 +341,7 @@ static char* aux_get_target_from_action(const_LinkAction *act)
 
 		case actionMovie:
 #if POPPLER_VERSION_0_86
-			str = ((LinkMovie*)act)->getAnnotTitle();
-			gstr = GooString(str);
+			gstr = GooString(((LinkMovie*)act)->getAnnotTitle());
 			tmp = &gstr;
 #else
 			tmp = ((LinkMovie*)act)->getAnnotTitle();
