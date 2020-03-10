@@ -49,27 +49,54 @@ Private Sub Count_Write(Value As Integer)
   Dim iOldSize As Integer
   Dim I As Integer
   Dim hContainer As WebContainer
-  Dim sName As String
+  'Dim sName As String
+  
+  If Value = $aTab.Count Then Return
   
   If Value < 1 Or If Value > 256 Then Error.Raise("Bad argument")
   
   iOldSize = $aTab.Count
-  $aTab.Resize(Value)
-  $aText.Resize(Value)
   
-  hContainer = Me._Container
-  Me._Container = Null
+  If Value > iOldSize Then
   
-  For I = iOldSize To $aTab.Max
-    sName = Me.Name & "." & CStr(I)
-    WebControl._NextName = sName
-    $aTab[I] = New WebContainer(Me)
-    Object.Attach($aTab[I], Object.Parent(Me), sName)
-    $aText[I] = "Tab #" & CStr(I)
-  Next
-  
-  Me._Container = hContainer
+    hContainer = Me._Container
+    Me._Container = Null
+    
+    $aTab.Resize(Value)
+    $aText.Resize(Value)
+    
+    For I = iOldSize To $aTab.Max
+      'sName = Me.Name & "." & CStr(I)
+      'WebControl._NextName = sName
+      $aTab[I] = New WebContainer(Me)
+      'Object.Attach($aTab[I], Object.Parent(Me), sName)
+      $aText[I] = "Tab #" & CStr(I)
+    Next
+    
+    Me._Container = hContainer
+    
+  Else
+    
+    While $aTab.Count > Value
+      Remove($aTab.Max)
+    Wend
+    
+  Endif
 
+End
+
+Public Sub Remove(Index As Integer)
+  
+  If Index < 0 Or If Index > $aTab.Max Then Error.Raise("Bad argument")
+  
+  $aTab[Index].Delete
+  $aText.Remove(Index)
+  $aTab.Remove(Index)
+  
+  If $iIndex > $aTab.Max Then $iIndex = $aTab.Max
+  SetCurrent($iIndex)
+  Me.Refresh
+  
 End
 
 Private Function Text_Read() As String
@@ -91,17 +118,23 @@ Private Function Index_Read() As Integer
 
 End
 
-Private Sub Index_Write(Value As Integer)
+Private Sub SetCurrent(iIndex As Integer)
 
   Dim I As Integer
   
-  If Value < 0 Or If Value >= $aTab.Count Then Error.Raise("Bad argument")
-  $iIndex = Value
-  Me._SetContainer($aTab[Value])
+  $iIndex = iIndex
+  Me._SetContainer($aTab[iIndex])
   For I = 0 To $aTab.Max
-    $aTab[I].Visible = I = $iIndex
+    $aTab[I].Visible = I = iIndex
   Next
+
+End
+
+Private Sub Index_Write(Value As Integer)
+
+  If Value < 0 Or If Value >= $aTab.Count Then Error.Raise("Bad argument")
   
+  SetCurrent(Value)
   Raise Click
 
 End

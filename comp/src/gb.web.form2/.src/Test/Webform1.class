@@ -41,7 +41,7 @@ End
 
 Public Sub WebTimer1_Timer()
 
-  lblTime.Text = Format(Now, "hh:nn:ss")
+  Try lblTime.Text = Format(Now, "hh:nn:ss")
 
 End
 
@@ -129,5 +129,11 @@ End
 Public Sub WebButton5_Click()
 
   Message(WebTextBox1.Text)
+
+End
+
+Public Sub WebButton6_Click()
+
+  WebTabPanel1.Remove(1)
 
 End

@@ -1,13 +1,13 @@
 # Gambas Form File 3.0
 
 { WebForm WebForm
-  #MoveScaled(0,0,83,91)
+  #MoveScaled(0,0,90,91)
   Height = "100%"
   Arrangement = Arrange.Vertical
   Margin = True
   Spacing = True
   { WebTabPanel1 WebTabPanel
-    #MoveScaled(1,1,81,72)
+    #MoveScaled(1,1,88,72)
     Expand = True
     Arrangement = Arrange.Vertical
     Margin = True
@@ -16,7 +16,7 @@
     Index = 0
     Text = ("Tab 1")
     { WebHBox1 WebHBox
-      #MoveScaled(1,1,78.75,6)
+      #MoveScaled(1,1,85.75,6)
       Spacing = True
       { WebButton1 WebButton
         #MoveScaled(1,1,18,4)
@@ -28,13 +28,17 @@
         Font = "bold,1.5em"
         Border = True
       }
+      { WebButton6 WebButton
+        #MoveScaled(51,1,16,4)
+        Text = ("Remove tab 2")
+      }
       { WebButton2 WebButton
-        #MoveScaled(51,1,11,4)
+        #MoveScaled(68,1,11,4)
         Text = ("Logout")
       }
     }
     { WebHBox3 WebHBox
-      #MoveScaled(1,8,78.75,6)
+      #MoveScaled(1,8,85.75,6)
       Spacing = True
       { WebComboBox1 WebComboBox
         #MoveScaled(1,1,30,4)
@@ -51,7 +55,7 @@
       }
     }
     { WebTable1 WebTable
-      #MoveScaled(1,15,78.75,40)
+      #MoveScaled(1,15,85.75,40)
       Expand = True
       Mode = Select.Multiple
       Sortable = True
@@ -59,7 +63,7 @@
     Index = 1
     Text = ("Tab 2")
     { WebHBox2 WebHBox
-      #MoveScaled(1,1,78.75,6)
+      #MoveScaled(1,1,85.75,6)
       Spacing = True
       { WebCheckBox1 WebCheckBox
         #MoveScaled(1,1,18,4)
@@ -79,11 +83,11 @@
       }
     }
     { WebImage1 WebImage
-      #MoveScaled(1,8,78.75,6)
+      #MoveScaled(1,8,85.75,6)
       Image = "favicon.png"
     }
     { lblTime WebLabel
-      #MoveScaled(1,15,78.75,4)
+      #MoveScaled(1,15,85.75,4)
       Font = "4em"
     }
     Index = 2
