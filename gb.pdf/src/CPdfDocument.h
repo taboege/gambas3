@@ -37,13 +37,7 @@
 #endif
 #include <stdint.h>
 
-#if POPPLER_VERSION_0_86
-	#define const_LinkAction const LinkAction
-	#define const_LinkDest std::unique_ptr<LinkDest>
-	#define const_GooList const std::vector<OutlineItem*>
-	#define GooList std::vector<OutlineItem*>
-	#define const_GooString const GooString
-#elif POPPLER_VERSION_0_76
+#if POPPLER_VERSION_0_76
 	#define const_LinkAction const LinkAction
 	#define const_LinkDest const LinkDest
 	#define const_GooList const std::vector<OutlineItem*>
