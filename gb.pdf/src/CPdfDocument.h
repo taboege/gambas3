@@ -37,22 +37,28 @@
 #endif
 #include <stdint.h>
 
-#if POPPLER_VERSION_0_76
-#define const_LinkAction const LinkAction
-#define const_LinkDest const LinkDest
-#define const_GooList const std::vector<OutlineItem*>
-#define GooList std::vector<OutlineItem*>
-#define const_GooString const GooString
+#if POPPLER_VERSION_0_86
+	#define const_LinkAction const LinkAction
+	#define const_LinkDest std::unique_ptr<LinkDest>
+	#define const_GooList const std::vector<OutlineItem*>
+	#define GooList std::vector<OutlineItem*>
+	#define const_GooString const GooString
+#elif POPPLER_VERSION_0_76
+	#define const_LinkAction const LinkAction
+	#define const_LinkDest const LinkDest
+	#define const_GooList const std::vector<OutlineItem*>
+	#define GooList std::vector<OutlineItem*>
+	#define const_GooString const GooString
 #elif POPPLER_VERSION_0_64
-#define const_LinkAction const LinkAction
-#define const_LinkDest const LinkDest
-#define const_GooList const GooList
-#define const_GooString const GooString
+	#define const_LinkAction const LinkAction
+	#define const_LinkDest const LinkDest
+	#define const_GooList const GooList
+	#define const_GooString const GooString
 #else
-#define const_LinkAction LinkAction
-#define const_LinkDest LinkDest
-#define const_GooList GooList
-#define const_GooString GooString
+	#define const_LinkAction LinkAction
+	#define const_LinkDest LinkDest
+	#define const_GooList GooList
+	#define const_GooString GooString
 #endif
 
 #ifndef __CPDFDOCUMENT_C

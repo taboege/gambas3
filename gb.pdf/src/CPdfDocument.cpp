@@ -304,9 +304,12 @@ static double aux_get_zoom_from_action(const_LinkAction *act)
 
 static char* aux_get_target_from_action(const_LinkAction *act)
 {
-	char *vl=NULL;
-	char *uni=NULL;	
-	const_GooString *tmp=NULL;
+	char *vl = NULL;
+	char *uni = NULL;	
+	const_GooString *tmp = NULL;
+#if POPPLER_VERSION_0_86
+	const_GooString str;
+#endif
 
 	switch (act->getKind())
 	{
@@ -317,13 +320,31 @@ static char* aux_get_target_from_action(const_LinkAction *act)
 			tmp=((LinkLaunch*)act)->getFileName(); break;
 
 		case actionURI:
-			tmp=((LinkURI*)act)->getURI(); break;
+#if POPPLER_VERSION_0_86
+			str = ((LinkURI*)act)->getURI();
+			tmp = &str;
+#else
+			tmp = ((LinkURI*)act)->getURI(); 
+#endif
+			break;
 			
 		case actionNamed:
-			tmp=((LinkNamed*)act)->getName(); break;
+#if POPPLER_VERSION_0_86
+			str = ((LinkNamed*)act)->getName(); 
+			tmp = &str;
+#else
+			tmp = ((LinkNamed*)act)->getName(); 
+#endif
+			break;
 
 		case actionMovie:
-			tmp=((LinkMovie*)act)->getAnnotTitle(); break;
+#if POPPLER_VERSION_0_86
+			str = ((LinkMovie*)act)->getAnnotTitle();
+			tmp = &str;
+#else
+			tmp = ((LinkMovie*)act)->getAnnotTitle();
+#endif
+			break;
 
 		default:
 			break;
