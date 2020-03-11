@@ -58,7 +58,6 @@ Public Sub Init()
 
 End
 
-
 Public Sub Exit()
 
   $hTimerShowConsole = Null

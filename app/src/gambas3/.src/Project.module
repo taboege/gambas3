@@ -76,6 +76,7 @@ Public Prefix As Boolean
 Public PackageName As String
 Public PackageVersion As Integer
 Public PackageSignature As Boolean
+Public PackageNameWithMajor As Boolean
 Public Maintainer As String
 Public Address As String
 Public Vendor As String
@@ -3195,6 +3196,7 @@ Public Sub ReadProject(Optional bConvert As Boolean)
   PackageVersion = 1
   RuntimeVersion = ""
   PackageSignature = False
+  PackageNameWithMajor = False
   SourcePath = ""
   Type = TYPE_NORMAL
   CreateShortcut = False
@@ -3441,6 +3443,9 @@ Public Sub ReadProject(Optional bConvert As Boolean)
       Case "packagesignature"
         PackageSignature = CInt(sVal)
 
+      Case "packagenamewithmajor"
+        PackageNameWithMajor = CInt(sVal) <> 0
+
       Case "maintainer"
         Maintainer = sVal
 
@@ -3678,6 +3683,7 @@ Public Sub WriteProject(Optional bComponentDoNotChange As Boolean, Optional bMak
   If PackageName Then Print #hFic, "PackageName="; PackageName
   If PackageVersion > 1 Then Print #hFic, "PackageVersion="; PackageVersion
   If PackageSignature Then Print #hFic, "PackageSignature=1"
+  If PackageNameWithMajor Then Print #hFic, "PackageNameWithMajor=1"
   If CreateEachDirectory Then Print #hFic, "CreateEachDirectory=1"
   If MimeTypes.Count Then Print #hFic, "MimeTypes="; MimeTypes.Join(",", Chr$(34))
   If ExtraDesktop Then Print #hFic, "ExtraDesktop=" & Quote(ExtraDesktop)

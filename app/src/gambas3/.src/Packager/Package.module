@@ -224,7 +224,7 @@ Private Sub InitMake(sSys As String)
   Endif
 
   '$sPrefix = GetPackagePrefix(Project.Vendor, Project.Prefix)
-  $sUnsafePackageName = GetPackageFullName($sVendor, $sVendorPrefix, Project.Prefix, False)
+  $sUnsafePackageName = GetPackageFullName($sVendor, $sVendorPrefix, Project.Prefix, Project.PackageNameWithMajor, False)
 
   $sHome = System.User.Home
 
@@ -2732,11 +2732,12 @@ Public Sub GetPackagePrefix(iProjectType As Integer, sVendor As String, sVendorP
   
 End
 
-Public Sub GetPackageFullName(sVendor As String, sVendorPrefix As String, bPrefix As Boolean, bWithVersion As Boolean) As String
+Public Sub GetPackageFullName(sVendor As String, sVendorPrefix As String, bPrefix As Boolean, bWithMajor As Boolean, bWithVersion As Boolean) As String
   
   Dim sText As String
   
   sText = GetPackagePrefix(Project.Type, sVendor, sVendorPrefix, bPrefix) & GetPackageName(Project.Name)
+  If bWithMajor Then sText &= CStr(Project.MajorVersion)
   If bWithVersion Then sText &= "-" & Project.FormatVersion()
   Return sText
   

@@ -98,6 +98,8 @@ Public Sub Form_Open()
   Else
     chkPrefix.Value = Settings["/Packager/UsePrefix", False]
   Endif
+  
+  chkPackageNameWithMajor.Value = Project.PackageNameWithMajor
 
   txtPackageVersion.Value = Max(1, Project.PackageVersion)
 
@@ -170,7 +172,7 @@ End
 
 Private Sub UpdatePackageName()
   
-  txtPackage.Text = Package.GetPackageFullName(txtVendor.Text, txtVendorPrefix.Text, chkPrefix.Value, True)
+  txtPackage.Text = Package.GetPackageFullName(txtVendor.Text, txtVendorPrefix.Text, chkPrefix.Value, chkPackageNameWithMajor.Value, True)
   
 End
 
@@ -351,6 +353,7 @@ Public Sub wizInstall_BeforeChange()
       Project.PackageName = txtPackage.Text
       Project.PackageVersion = txtPackageVersion.Value
       Project.PackageSignature = chkSignature.Value
+      Project.PackageNameWithMajor = chkPackageNameWithMajor.Value
 
     Case 1
       
@@ -918,6 +921,7 @@ Public Sub cmbDep_Click()
 
   $aDep = Split(Project.ExtraDependencies[$sDepSystem], "\n")
   tvwDep.Rows.Count = $aDep.Count
+  tvwDep.Refresh
   'txtGroup.Clear
   'lstDep.List = Split(Project.ExtraDependencies[$sDepSystem], ",")
 
@@ -1085,10 +1089,11 @@ End
 
 Public Sub cmbFile_Click()
 
-   $sFileSystem = GetSystemFromName(cmbFile.Text)
+  $sFileSystem = GetSystemFromName(cmbFile.Text)
 
   $aFile = Split(Project.ExtraFiles[$sFileSystem], "\n")
   tvwFile.Rows.Count = $aFile.Count
+  tvwFile.Refresh
  
 End
 
@@ -1324,5 +1329,11 @@ Public Sub chkVersionMin_Click()
     spnVersionMin.Value = spnVersionMin.MaxValue
   Endif
   dwgVersionMin.Refresh
+
+End
+
+Public Sub chkPackageNameWithMajor_Click()
+
+  UpdatePackageName
 
 End
