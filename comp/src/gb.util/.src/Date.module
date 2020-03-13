@@ -159,12 +159,8 @@ Public Sub IsWeekEnd({Date} As Date) As Boolean
   
 End
 
-
-
 Public Sub ToISO8601({Date} As Date, Optional Timezone As String) As String
 
-  Dim dDate As Date
-  Dim dTime As Date
   Dim iYear As Integer
   Dim sResult As String
   Dim sMicroseconds As String
