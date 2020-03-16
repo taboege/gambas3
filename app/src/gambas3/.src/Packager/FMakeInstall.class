@@ -990,7 +990,7 @@ Public Sub tvwDep_Save(Row As Integer, Column As Integer, Value As String)
     sCar = String.Mid$(Value, iInd, 1)
     If Len(sCar) = 1 Then
       If Column = 0 And If IsLetter(sCar) Then Continue
-      If IsDigit(sCar) Or If InStr("-.", sCar) Then Continue
+      If IsDigit(sCar) Or If InStr("-._", sCar) Then Continue
     Endif
     Balloon.Warning(("Incorrect characters"), tvwDep, tvwDep.Editor.ScreenX - tvwDep.ScreenX + tvwDep.Editor.W / 2, tvwDep.Editor.ScreenY - tvwDep.ScreenY + tvwDep.Editor.H / 2)
     Stop Event
