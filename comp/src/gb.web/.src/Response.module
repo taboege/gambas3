@@ -279,7 +279,14 @@ Public Sub SendFile(Path As String, Optional ContentType As String)
 
   $bDone = True
 
-  If Left(Path) <> "/" Then Path = ".." &/ Path
+  If Left(Path) <> "/" Then
+    If Path Begins "./gb." Then
+    Else If Path Begins "./" Then
+      Path = "." & Path
+    Else
+      Path = ".." &/ Path
+    Endif
+  Endif
 
   If Not Exist(Path) Then
     Print "Status: 404 Not Found"
