@@ -5,7 +5,7 @@
 Export
 Inherits WebControl
 
-Public Const _Properties As String = "*,Border=True,Text,Image{WebImage},Immediate"
+Public Const _Properties As String = "*,Border=True,Text,Image{WebImage},Immediate,ShowArrow"
 'Public Const _DrawWith As String '= "Button"
 Public Const _DefaultEvent As String = "Click"
 Public Const _DefaultSize As String = "16,4"
@@ -15,6 +15,7 @@ Public Const _DefaultSize As String = "16,4"
 '' ### See also
 '' [../immediate]
 Event Click
+Event Menu
 
 '' Return or set the button text.
 Property Text As String
@@ -29,9 +30,13 @@ Property Image As String
 '' - ...
 Property Immediate As Boolean
 
+'' Return or set if the button displays an arrow
+Property ShowArrow As Boolean
+
 Private $sText As String
 Private $sImage As String
 Private $bImmediate As Boolean
+Private $bShowArrow As Boolean
 
 Private Function Text_Read() As String
 
@@ -63,11 +68,23 @@ Private Sub Image_Write(Value As String)
 
 End
 
+Public Sub _RenderStyleSheet()
+  
+  Me._StartStyleSheet
+  
+  Super._RenderStyleSheet()
+  
+  If $bShowArrow Then Me._AddStyleSheet("padding-right:0;")
+    
+  Me._EndStyleSheet
+  
+End
+
 Public Sub _BeforeRender()
   
   Dim vSave As Variant
   
-  Print "<button"; Me._GetClassId(); 
+  Print "<div"; Me._GetClassId(); 
   If $bImmediate Then
     Print " onclick=\"";
     vSave = WebForm._BeginJavascript()
@@ -77,8 +94,9 @@ Public Sub _BeforeRender()
   Else
     Print Me._GetEventJS("onclick", "click");
   Endif
+  
   Me._RenderStyleSheet()
-  If Not Me.Enabled Then Print " disabled";
+  'If Not Me.Enabled Then Print " disabled";
   Print ">";
   
 End
@@ -103,13 +121,22 @@ Public Sub _Render()
     Print ">";
   Endif
   If $sText Then Print "<span>"; Html($sText); "</span>";
+  If $bShowArrow Then
+    Print "<div class=\"gw-button-arrow\"";
+    If Object.CanRaise(Me, "Menu") Then
+      Print " onmousedown=\"gw.raise("; JS(Me.Name); ",'menu');return true;\"";
+    Else
+      'Print " onclick=\"gw.textbox.clear("; JS(Me.Name); ")\">";
+    Endif
+    Print "></div>"
+  Endif
   
 End
 
 Public Sub _AfterRender()
   
   Raise Render
-  Print "</button>"
+  Print "</div>"
   
 End
 
@@ -131,5 +158,19 @@ Private Sub Immediate_Write(Value As Boolean)
 
   If $bImmediate = Value Then Return
   $bImmediate = Value
+
+End
+
+Private Function ShowArrow_Read() As Boolean
+
+  Return $bShowArrow
+  
+End
+
+Private Sub ShowArrow_Write(Value As Boolean)
+
+  If $bShowArrow = Value Then Return
+  $bShowArrow = Value
+  Me.Refresh
 
 End

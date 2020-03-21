@@ -7,9 +7,10 @@ Create Static
 Inherits WebContainer
 
 Class Debug
+Class _DefaultStock
 
 Public Const _IsForm As Boolean = True
-Public Const _HiddenControls As String = "WebControl,WebForm,Timer"
+Public Const _HiddenControls As String = "WebControl,WebForm,Timer,WebMenu"
 Public Const _Properties As String = "*,Title,Resizable,Persistent"
 Public Const _DefaultEvent As String = "Open"
 
@@ -59,6 +60,8 @@ Property Persistent As Boolean
 Static Public _DisableRefresh As Integer
 Static Public _HasRefresh As Boolean
 Static Public _InMessage As Integer
+Static Public _CurrentPopup As WebForm
+
 Static Private _Current As WebForm
 
 Private Const LOG_ENABLED As Boolean = True
@@ -69,6 +72,7 @@ Static Private $hTimeout As Timer
 Static Private $hRead As File
 Static Private $hWrite As File
 Static Private $bDoNotRespond As Boolean
+Static Private $iEventLoopLevel As Integer
 
 Static Private $aJavascript As New String[]
 Static Private $aJavascriptBefore As New String[]
@@ -88,8 +92,10 @@ Private $sY As String
 Private $sWidth As String
 Private $sHeight As String
 
-Private $iEventLoopLevel As Integer
 Private $vEventLoopReturn As Variant
+
+Private $hMenuBar As WebMenuBar
+Private $hContents As WebContainer
 
 'Private $bOpened As Boolean
 
@@ -113,7 +119,29 @@ Static Public Sub PrintLog(sLog As String)
 
 End
 
+Static Private Sub RenderIcon(sPath As String) As Boolean
 
+  Dim iPos As Integer
+  Dim sIcon As String
+  Dim sSize As String
+  
+  iPos = InStr(sPath, ":")
+  If iPos = 0 Then Return True
+  
+  sSize = Left(sPath, iPos - 1)
+  sIcon = Mid$(sPath, iPos + 1)
+  
+  Component.Load("gb.form.stock")
+  
+  If sSize = "huge" Then
+    sPath = "./gb.form.stock/gambas/128/" &/ sIcon & ".png"
+  Else
+    sPath = "./gb.form.stock/gambas/32/" &/ sIcon & ".png"
+  Endif
+  
+  Response.SendFile(sPath)
+  
+End
 
 Static Public Sub Main()
 
@@ -174,7 +202,7 @@ Static Public Sub Main()
       
       aLib = Split(Left(sPath, -4), ":")
       If aLib.Count >= 3 Then sFile = aLib[1] & ".css"
-      RenderStyleSheet(sFile)
+      If RenderStyleSheet(sFile) Then Goto NOT_FOUND
       Return
       
     Else If sPath Begins "lib:" And sPath Ends ".js" Then
@@ -196,6 +224,11 @@ Static Public Sub Main()
     '   If DownloadFile(Mid$(sPath, 10)) Then Goto NOT_FOUND
     '   Goto END_REQUEST
       
+    Else If sPath Begins "icon:" Then
+      
+      If RenderIcon(Mid$(sPath, 6)) Then Goto NOT_FOUND
+      Return
+    
     Else If sPath = "~dump" Then
       
       Response.ContentType = "text/plain;charset=utf-8"
@@ -209,7 +242,7 @@ Static Public Sub Main()
       Return
         
     ' Else If sPath = "~logout" Then
-    '   
+    ' 
     Else If Exist("../.public/" &/ sPath) Then
       
       Response.SendFile("../.public/" &/ sPath)
@@ -270,7 +303,7 @@ Static Public Sub Main()
         hProcess = Exec ["gbx3", Application.Path, "--", Application.Handle, sCookie] Wait
       Endif
     Else
-      PrintLog("---------------- EXEC " & Application.Path &/ Args[0] & " " & Application.Habdle & " " & sCookie)
+      PrintLog("---------------- EXEC " & Application.Path &/ Args[0] & " " & Application.Handle & " " & sCookie)
       hProcess = Exec [Application.Path &/ Args[0], Application.Handle, sCookie] Wait
     Endif
     
@@ -328,6 +361,14 @@ Static Public Sub Main()
   
   PrintLog("WAITING FOR SIGUSR2")
   ' Now we wait SIGUSR1 from session process
+  Return
+  
+NOT_FOUND:
+
+  Response.Status = "404 NotFound"
+  Response.Begin
+  Response.End
+  Return
   
 Catch
   
@@ -537,22 +578,21 @@ Static Private Sub HandleRequest()
 
 End
 
-Static Private Sub RenderStyleSheet(Optional sFile As String)
+Static Private Sub RenderStyleSheet(Optional sFile As String) As Boolean
+  
+  Dim sReplace As String
   
   If Not sFile Then sFile = "style.css"
   
-  If Not Exist(sFile) Then 
-    Response.Status = "404 NotFound"
-    Response.Begin
-    Response.End
-    Return
-  Endif
+  If Not Exist(sFile) Then Return True
   
   Response.Buffered = True
   Response.ContentType = "text/css;charset=utf-8"
   Response.Begin
   
-  Print Replace(File.Load(sFile), "//", Application.Root);
+  sReplace = Application.Root
+  If sReplace Then sReplace &= "/"
+  Print Replace(File.Load(sFile), "//", sReplace);
   
   If Exist("../.public" &/ sFile) Then Print File.Load("../.public/" &/ sFile);
   
@@ -610,6 +650,14 @@ End
 
 Public Sub _new()
 
+  $hMenuBar = New WebMenuBar(Me)
+  $hMenuBar.Hide
+  
+  $hContents = New WebContainer(Me)
+  $hContents.Arrangement = Arrange.Vertical
+  $hContents.Class = "gw-form-contents"
+  $hContents.Expand = True
+  
   If Not Me.Parent Then  
     WebControl._NextName = "$$"
     $hWindowContainer = New WebContainer(Me)
@@ -617,6 +665,8 @@ Public Sub _new()
     $hWindowContainer._Naked = True
     $hWindowContainer.Class = "gw-window-container"
   Endif
+  
+  Me._SetContainer($hContents)
   
 End
 
@@ -639,7 +689,7 @@ Public Sub _BeforeRender()
   
   Print "<div class=\"gw-form";
   If Me.Class Then Print " "; Me.Class;
-  Print "\" id=\""; Me.Name; "\"";
+  Print "\" id=\""; Me.Name; "\""
   Me._RenderStyleSheet()
   Print ">"
   
@@ -667,7 +717,7 @@ Public Sub Render()
   Next
   Print "</div>"
   
-  Print "<div id=\"gw-modal\" onmousedown=\"gw.window.onDownModal();\"></div>"
+  Print "<div id=\"gw-modal\" onclick=\"gw.window.onDownModal();\" onmouseover=\"gw.window.onDownModal(true);\"></div>"
   Print "<div id=\"gw-lock\">"
     "<div id=\"gw-lock-animation\">"
     "<div id=\"gw-lock-1\" class=\"gw-lock-circle\"></div>"
@@ -903,8 +953,8 @@ End
 
 Private Sub ExitEventLoop(vReturnValue As Variant)
   
-  PrintLog("ExitEventLoop")
   Dec $iEventLoopLevel
+  PrintLog("ExitEventLoop -> " & $iEventLoopLevel)
   $vEventLoopReturn = vReturnValue
   $bDoNotRespond = True  
   
@@ -919,9 +969,9 @@ End
 
 '' Close the form.
 ''
-'' If the form was a dialog, you can specify a return value with the optional ~ReturnValue~ argument.
+'' If the form was a dialog or a popup, you can specify a return value with the optional ~ReturnValue~ argument.
 '' 
-'' That return value will be passed as an argument to the [../control/.dialog] event of the control that owns the dialog.
+'' This is the value that will be returned by the [../showmodal] or [../showpopup] method.
 
 Public Sub Close(Optional ReturnValue As Variant)
   
@@ -1008,6 +1058,7 @@ Private Sub RunEventLoop()
   
   Inc $iEventLoopLevel
   iLevel = $iEventLoopLevel
+  PrintLog("RunEventLoop -> " & $iEventLoopLevel)
 
   Raise Open
 
@@ -1018,13 +1069,13 @@ Private Sub RunEventLoop()
     SendResponse
     EndResponse
   
-    PrintLog("Entering event loop (" & Object.Count(Me) & ")")
+    PrintLog("Entering event loop " & CStr($iEventLoopLevel) & " (" & Object.Count(Me) & ")")
     $bDoNotRespond = False
     While $iEventLoopLevel = iLevel
       Wait Next
     Wend
     $bDoNotRespond = False
-    PrintLog("Exiting event loop (" & Object.Count(Me) & ")")
+    PrintLog("Exiting event loop " & CStr($iEventLoopLevel) & " (" & Object.Count(Me) & ")")
     
   Endif
 
@@ -1062,13 +1113,12 @@ End
 '' Show the form as a popup.
 ''
 '' - ~Control~ is the owner of the popup. It is normally the control the popup is attached to.
-'' - ~Alignment~ defines the position of the popup on the screen:
-''   - [Align.Left](../../align/left) : the popup is aligned to the left of its owner (this is the default).
-''   - [Align.Right](../../align/eight) : the popup is aligned to the right of its owner.
 
-Public Sub ShowPopup(Control As WebControl, Optional Alignment As Integer = Align.Left)
+Public Sub ShowPopup(Control As WebControl) As Variant
   
   Dim hWindow As WebWindow
+  Dim vReturn As Variant
+  Dim hPrevious As WebForm
   
   If Me.Parent Then Error.Raise("Form is embedded")
   If _Window Then 
@@ -1080,14 +1130,24 @@ Public Sub ShowPopup(Control As WebControl, Optional Alignment As Integer = Alig
   If Not hWindow Then hWindow = New WebWindow(_Current._GetWindowContainer())
   hWindow.Child = Me
   hWindow.Resizable = $bResizable
-  hWindow.PopupAlignment = Alignment
   hWindow.PopupControl = Control.Name
+  hWindow.PopupTransient = Control.Parent Is WebMenu
   hWindow.Modal = True
   
   _Window = hWindow.Id
   
+  
+  hPrevious = _CurrentPopup
+  _CurrentPopup = Me
+  
   RunEventLoop
   
+  _CurrentPopup = hPrevious
+  
+  vReturn = $vEventLoopReturn
+  $vEventLoopReturn = Null
+  Return vReturn
+
 End
 
 '' Move and/or resize the form.
@@ -1236,3 +1296,8 @@ Static Public Sub Goto(Form As WebForm)
   
 End
  
+Public Sub _GetMenuBar() As WebMenuBar
+  
+  Return $hMenuBar
+  
+End

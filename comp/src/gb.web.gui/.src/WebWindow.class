@@ -17,7 +17,7 @@ Property Modal As Boolean
 Property Maximized As Boolean
 
 Property PopupControl As String
-Property PopupAlignment As Integer
+Property PopupTransient As Boolean
 Property ParentControl As String
 
 Private $sX As String
@@ -28,7 +28,7 @@ Private $iFormId As Integer
 Private $bResizable As Boolean
 Private $bModal As Boolean
 Private $sPopupControl As String
-Private $iPopupAlignment As Integer
+Private $bPopupTransient As Boolean
 Private $sParentControl As String
 Private $sMinWidth As String
 Private $sMinHeight As String
@@ -109,8 +109,8 @@ Public Sub _Render()
   Print "</div>"
   
   If IsPopup() Then
-  
-    sOpen = "gw.window.popup(" & JS(Me.Name) & "," & JS($bResizable) & "," & JS($sPopupControl) & "," & If($iPopupAlignment = Align.Right, "'right'", "'left'")
+
+    sOpen = "gw.window.popup(" & JS(Me.Name) & "," & JS($bResizable) & "," & JS($sPopupControl) & "," & JS($bPopupTransient)
     If $sMinWidth Then sOpen &= "," & JS($sMinWidth) & "," & JS($sMinHeight) 
     sOpen &= ")"
     
@@ -306,19 +306,6 @@ Private Sub PopupControl_Write(Value As String)
 
 End
 
-Private Function PopupAlignment_Read() As Integer
-
-  Return $iPopupAlignment
-
-End
-
-Private Sub PopupAlignment_Write(Value As Integer)
-
-  $iPopupAlignment = Value
-  Me.Refresh
-
-End
-
 Public Sub Close()
   
   'If Not Me.Child.Persistent Then
@@ -364,5 +351,17 @@ Private Sub Maximized_Write(Value As Boolean)
   If $bMaximized = Value Then Return
   $bMaximized = Value
   If Me._CanRefresh() Then WebForm._AddJavascript("gw.window.maximize(" & JS(Me.Name) & ")")
+
+End
+
+Private Function PopupTransient_Read() As Boolean
+
+  Return $bPopupTransient
+
+End
+
+Private Sub PopupTransient_Write(Value As Boolean)
+
+  $bPopupTransient = Value
 
 End

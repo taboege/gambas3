@@ -4,8 +4,63 @@
   #MoveScaled(0,0,90,91)
   Height = "100%"
   Arrangement = Arrange.Vertical
-  Margin = True
-  Spacing = True
+  { WebMenu1 WebMenu
+    Text = ("WebMenu1")
+    { WebMenu3 WebMenu
+      Text = ("Open")
+      Image = "icon:/small/open"
+    }
+    { WebMenu11 WebMenu
+      Text = ("Open recent")
+      Image = "icon:/small/open-recent"
+      { WebMenu12 WebMenu
+        Text = ("WebMenu12")
+      }
+      { WebMenu13 WebMenu
+        Text = ("WebMenu13")
+        { WebMenu15 WebMenu
+          Text = ("WebMenu15")
+          Image = "icon:/small/undo"
+        }
+        { WebMenu16 WebMenu
+          Text = ("WebMenu16")
+          Image = "icon:/small/trash"
+        }
+        { WebMenu17 WebMenu
+          Text = ("WebMenu17")
+          Image = "icon:/small/play"
+        }
+      }
+      { WebMenu14 WebMenu
+        Text = ("WebMenu14")
+      }
+    }
+    { WebMenu7 WebMenu
+    }
+    { WebMenu8 WebMenu
+      Text = ("Save")
+      Image = "icon:/small/save"
+    }
+    { WebMenu9 WebMenu
+      Text = ("Save as") & "..."
+      Image = "icon:/small/save-as"
+    }
+    { WebMenu10 WebMenu
+    }
+    { WebMenu4 WebMenu
+      Text = ("Close")
+      Image = "icon:/small/quit"
+    }
+  }
+  { WebMenu2 WebMenu
+    Text = ("WebMenu2")
+    { WebMenu5 WebMenu
+      Text = ("WebMenu5")
+    }
+    { WebMenu6 WebMenu
+      Text = ("WebMenu6")
+    }
+  }
   { WebTabPanel1 WebTabPanel
     #MoveScaled(1,1,88,72)
     Expand = True
@@ -21,6 +76,7 @@
       { WebButton1 WebButton
         #MoveScaled(1,1,18,4)
         Text = ("OK")
+        Image = "icon:/small/apply"
       }
       { WebLabel1 WebLabel
         #MoveScaled(20,1,30,4)
@@ -52,6 +108,7 @@
       { WebButton4 WebButton
         #MoveScaled(57,1,16,4)
         Text = ("Reload")
+        ShowArrow = True
       }
     }
     { WebTable1 WebTable
@@ -93,17 +150,17 @@
     Index = 2
     Text = ("Tab 3")
     { WebVBox1 WebVBox
-      #MoveScaled(1,1,78.75,14)
+      #MoveScaled(1,1,85.75,14)
       { WebRadioButton1 WebRadioButton
-        #MoveScaled(1,1,76.75,4)
+        #MoveScaled(1,1,83.75,4)
         Text = ("Alpha")
       }
       { WebRadioButton2 WebRadioButton
-        #MoveScaled(1,5,76.75,4)
+        #MoveScaled(1,5,83.75,4)
         Text = ("Beta")
       }
       { WebRadioButton3 WebRadioButton
-        #MoveScaled(1,9,76.75,4)
+        #MoveScaled(1,9,83.75,4)
         Text = ("Gamma")
       }
     }
@@ -111,6 +168,5 @@
   }
   { WebTimer1 WebTimer
     #MoveScaled(62,75)
-    Enabled = True
   }
 }

@@ -48,10 +48,23 @@ P:first-child,UL:first-child,OL:first-child {
 }
 
 .gw-button {
+  display: flex;
+  position: relative;
+  flex-flow: row;
+  align-items: center;
+  justify-content: center;
   padding: 0;
   font: inherit;
   padding: 0.125em 0.5em;
   min-height: 2em;
+  border: solid 1px gray;
+  cursor: default;
+  background-color: #F0F0F0;
+  user-select: none;
+}
+
+.gw-button:active {
+  background-color: #E0E0E0;
 }
 
 .gw-button.gw-noborder {
@@ -68,17 +81,17 @@ P:first-child,UL:first-child,OL:first-child {
   margin-right: 0.5em;
 }
 
-.gw-button > DIV {
-  vertical-align: middle;
-  position: relative;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  flex-flow: row;
-}
-
-.gw-button > DIV > SPAN {
+.gw-button-arrow {
   display: inline-block;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAI0lEQVQYlWNgoAZoYGBg+I8DN+BT1MCABhrwSSIrwilJHgAAbCcP9dwIQGIAAAAASUVORK5CYII=');
+  background-position: left;
+  background-repeat: no-repeat;
+  height: 100%;
+  width: 1rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  border: none;
+  overflow: hidden;
 }
 
 .gw-tab-header {
@@ -330,11 +343,10 @@ P:first-child,UL:first-child,OL:first-child {
   };
 }*/
 
-.gw-window-contents {
+.gw-form-contents {
   display: flex;
   flex-flow: column;
   flex-grow: 1;
-  padding: 0.5em;
 }
 
 .gw-popup > .gw-window-contents {
@@ -432,97 +444,82 @@ P:first-child,UL:first-child,OL:first-child {
 }
 
 .gw-menubar {
-  overflow: visible !important;
+  display: flex;
+  user-select: none;
 }
 
-.gw-menu-title {
-  display: inline-table;
-  padding: 0.5em;
-  padding-top: 0.25em;
-  cursor: default;
-  border-top: solid 1px transparent;
-  border-left: solid 1px transparent;
-  border-right: solid 1px transparent;
-  /*margin-top: 0.25em;
-  margin-bottom: 0.25em;*/
-}
-
-.gw-menu:hover > .gw-menu-title {
-  border-top: solid 1px #C0C0C0;
-  border-left: solid 1px #C0C0C0;
-  border-right: solid 1px #C0C0C0;
-  box-shadow: 0 0 0.25em #C0C0C0;
-  background: white;
-  z-index: 1002;
-}
-
-.gw-submenu {
-  display: none;
-  position: absolute;
-  border: solid 1px #C0C0C0;
-  background: white;
-  box-shadow: 0 0.125em 0.25em #C0C0C0;
-  margin-top: -0.25em;
-  z-index: 1003;
-}
-
-.gw-menuitem > .gw-menu > .gw-submenu {
-  margin-top: 0;
-  top: 0;
-  left: 100%;
-}
-
-.gw-menu:hover > .gw-submenu {
-  display: table;
-}
-
-.gw-menu-tape {
-  display: none;
+.gw-menubar > DIV {
   position: relative;
-  background: white;
-  z-index: 1004;
-  height: 4px;
-  margin-top: -4px;
-  margin-left: 1px;
-  margin-right: 1px;
-  top: -2px;
+  display: inline-block;
+  padding: 0.25em 0.5em;
+  cursor: default;
 }
 
-.gw-menu:hover > .gw-menu-tape {
-  display: block;
+.gw-menubar > DIV:not(.gw-disabled):hover {
+  background-color: #A7CAE0;
 }
 
-.gw-submenu > div:hover {
-  background: #E0E0E0;
+.gw-menubar > DIV:not(.gw-disabled):active {
+  background-color: #2980B9;
+  color: white;
+}
+
+.gw-menubar > DIV:not(.gw-disabled).gw-active {
+  background-color: #2980B9;
+  color: white;
+}
+
+.gw-menubar > DIV.gw-disabled {
+  opacity: 0.5;
 }
 
 .gw-menuitem {
+  position: relative;
   display: flex;
-  flex-flow: column;
+  flex-flow: row;
+  align-items: center;
+  cursor: default;
+  user-select: none;
+  height: 2em;
+  padding: 0 2em 0 0.5em;
 }
 
-.gw-menuitem > div {
-  display: table-cell !important;
-  vertical-align: middle;
+.gw-menuitem:hover {
+  background-color: #2980B9;
+  color: white;
+}
+
+.gw-menuitem.gw-active {
+  background-color: #2980B9;
+  color: white;
 }
 
 .gw-menuitem-text {
   flex-grow: 1;
-  padding: 0.125em 0.25em;
   white-space: nowrap;
 }
 
 .gw-menuitem-icon {
-  padding: 0.125em 0.25em;
-}
-
-.gw-menuitem-icon > IMG {
-  vertical-align: middle;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.5em;
 }
 
 .gw-menuitem-shortcut {
   text-align: right;
-  padding: 0.125em 1em;
+  padding: 0.25em 1em;
+}
+
+.gw-menuitem-arrow {
+  position: absolute;
+  background-image: url('//gw-arrow-right.png');
+  background-size: 1em;
+  background-repeat: no-repeat;
+  background-position: center;
+  top: 0;
+  right: 0.5em;
+  width: 1em;
+  height: 100%;
 }
 
 .gw-separator {
@@ -847,6 +844,8 @@ TABLE.gw-calendar > TBODY > TR > TD.gw-date-current {
 }
 
 .gw-form {
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
 }
 
@@ -912,3 +911,6 @@ TABLE.gw-calendar > TBODY > TR > TD.gw-date-current {
   z-index: -1;
 }
 
+.gw-menu-shadow {
+  box-shadow: 0 0 0.5em gray;
+}

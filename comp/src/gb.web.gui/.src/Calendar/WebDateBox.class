@@ -56,11 +56,10 @@ Public Sub _UpdateProperty(sProp As String, vValue As Variant)
       WebForm.PrintLog("Open calendar popup (0)")
     Endif
     FCalendar.Value = Date_Read()
-    FCalendar.ShowPopup(Me, Align.Right)
+    FCalendar.ShowPopup(Me)
   Endif
   
 End
-
 
 Public Sub Clear()
   

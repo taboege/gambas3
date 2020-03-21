@@ -616,6 +616,8 @@ gw = {
       
       $(id).gw_resizable = resizable;
       $(id).gw_modal = modal;
+      $(id).gw_popup = undefined;
+      $(id).gw_transient = undefined;
       
       if (modal && $(id).gw_focus == undefined)
         $(id).gw_focus = gw.saveFocus();
@@ -641,7 +643,7 @@ gw = {
       gw.window.refresh();
     },
     
-    popup: function(id, resizable, control, alignment, minw, minh)
+    popup: function(id, resizable, control, transient, minw, minh)
     {
       var pos;
       
@@ -663,12 +665,16 @@ gw = {
         
         /*$(id).style.left = pos.left + 'px';
         $(id).style.top = pos.bottom + 'px';*/
-        $(id).style.transform = 'translate(' + pos.left + 'px,' + pos.bottom + 'px)';
+        if (transient)
+          $(id).style.transform = 'translate(' + (pos.left|0) + 'px,' + (pos.top|0) + 'px)';
+        else
+          $(id).style.transform = 'translate(' + (pos.left|0) + 'px,' + (pos.bottom|0) + 'px)';
       }
       
       $(id).gw_resizable = resizable;
       $(id).gw_modal = true;
       $(id).gw_popup = true;
+      $(id).gw_popup_transient = transient;
       
       if ($(id).gw_focus == undefined)
         $(id).gw_focus = gw.saveFocus();
@@ -865,12 +871,16 @@ gw = {
       }
     },
     
-    onDownModal: function()
+    onDownModal: function(transient)
     {
       var win = gw.windows[gw.windows.length - 1];
       
       if ($(win).gw_popup)
+      {
+        if (transient && !$(win).gw_popup_transient)
+          return;
         gw.update(win, '#close');
+      }
     },
     
     onMove: function(e) 

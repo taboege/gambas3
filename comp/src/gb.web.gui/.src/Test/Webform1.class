@@ -9,6 +9,7 @@ Private $sDir As String
 Static Public Sub _init()
   
   Session.Timeout = 20
+  WebForm.Debug = True
   
 End
 
@@ -122,6 +123,7 @@ End
 
 Public Sub WebButton4_Click()
 
+  Message("Click")
   ReloadTable
 
 End
@@ -135,5 +137,23 @@ End
 Public Sub WebButton6_Click()
 
   WebTabPanel1.Remove(1)
+
+End
+
+Public Sub WebButton4_Menu()
+
+  WebMenu1.Popup(WebButton4)
+
+End
+
+Public Sub WebMenu3_Click()
+
+  Message("Open !")
+
+End
+
+Public Sub WebMenu16_Click()
+
+  Message(Last.Name)
 
 End

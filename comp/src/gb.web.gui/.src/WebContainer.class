@@ -324,3 +324,9 @@ Private Sub Indent_Write(Value As Boolean)
   UpdateContainer()
 
 End
+
+Public Sub HasChildren() As Boolean
+  
+  Return $aChildren.Count > 0
+  
+End
