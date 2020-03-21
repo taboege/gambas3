@@ -5366,18 +5366,6 @@ Catch
 
 End
 
-Public Sub GetPicture(sPict As String) As Picture
-
-  If Not sPict Then Return
-
-  If sPict Begins "icon:/" Then
-    Return Picture[sPict]
-  Else
-    Return Picture.Load(Project.Dir &/ sPict)
-  Endif
-
-End
-
 Public Sub HasTranslation(sLang As String) As Boolean
 
   Return Exist(Project.Dir &/ ".lang" &/ sLang & ".po")
@@ -5457,12 +5445,6 @@ Public Sub RefreshBreakpointPicture()
   ' If iSize < Stock.GetSize("small") Then hImage = hImage.Stretch(iSize, iSize)
   ' Try Editor.BookmarkPicture = hImage.Picture
   ' 
-End
-
-Public Sub IsStockAllowed() As Boolean
-
-  Return Components.Exist("gb.form")
-
 End
 
 Public Sub DrawTitle(hForm As Object, Optional bNoReadOnly As Boolean)

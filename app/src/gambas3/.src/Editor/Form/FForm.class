@@ -699,7 +699,7 @@ Public Function GetChildren(sName As String) As CControl[]
   If IsNull(hCtrl) Then Return
   If Not hCtrl.IsContainer() Then Return
 
-  If hCtrl.Kind = "Form" Then
+  If hCtrl.Kind = $hFamily.Name Then
 
     For Each hCChild In AllMenus
       aList.Add(hCChild)
@@ -725,7 +725,7 @@ Public Function GetChildren(sName As String) As CControl[]
 
     Next
 
-  Else If hCtrl.Kind = "Menu" Then
+  Else If hCtrl.Kind = $hFamily.MenuClass Then
 
     For Each hMenu In hCtrl.Control.Children
       aList.Add(Control[hMenu.Tag])
@@ -801,7 +801,7 @@ Private Sub SaveOne(hCtrl As CControl)
 
     If Not $bDoNotArrange Then ArrangeContainerByDefault(hCtrl)
 
-    If hCtrl.Kind = "Form" Then
+    If hCtrl.Kind = $hFamily.Name Then
 
       For Each hMenuCtrl In AllMenus
         SaveOne(hMenuCtrl)
@@ -845,7 +845,7 @@ Private Sub SaveOne(hCtrl As CControl)
       'AddLine("Index = " & CStr(hTab.Index))
       AddLine("Index = 0")
 
-    Else If hCtrl.Kind = "Menu" Then
+    Else If hCtrl.Kind = $hFamily.MenuClass Then
 
       For Each hMenu In hCtrl.Control.Children
         SaveOne(Control[hMenu.Tag])
@@ -1258,7 +1258,7 @@ End
 
 Public Sub Control_Menu()
 
-  CreateMenu
+  CreatePopupMenu
   mnuForm.Popup
   
   ' Must simulate the MouseUp event that is captured by the popup!
@@ -1341,7 +1341,7 @@ Public Function CreateControl(sClass As String, hParent As CControl, Optional sN
   Control[sName] = hCtrl
   'If bSetText Then Try hCtrl.SetProperty("Text", sName)
 
-  If sClass = "Menu" Then
+  If sClass = $hFamily.MenuClass Then
     If hParent = RootControl Then
       AllMenus.Add(hCtrl)
     Endif
@@ -2297,7 +2297,7 @@ Public Sub MenuControl_Click()
 
 End
 
-Private Sub CreateMenu()
+Private Sub CreatePopupMenu()
 
   Dim hCtrl As CControl
   Dim hMenu As Menu
@@ -2312,7 +2312,7 @@ Private Sub CreateMenu()
 
   For Each hCtrl In Control
     If hCtrl = RootControl Then Continue
-    If hCtrl.Kind = "Menu" Then Continue
+    If hCtrl.Kind = $hFamily.MenuClass Then Continue
     cCtrl.Add(hCtrl.Name)
   Next
 
@@ -2996,7 +2996,7 @@ Public Sub UpdateTitle()
 
     lblTitle.Text = hCtrl.GetProperty("Text")
 
-    Try hPict = Project.GetPicture(sPict)
+    Try hPict = $hFamily.GetPicture(sPict)
     If hPict Then
       If hPict.Width <> 16 Or hPict.Height <> 16 Then hPict = hPict.Image.Stretch(16, 16).Picture
     Else
@@ -4176,6 +4176,8 @@ Public Sub ArrangeContainerByDefault(hCtrl As CControl, Optional bReal As Boolea
   Dim hTab As Object
   Dim iTab As Integer
 
+  If hCtrl.Kind = $hFamily.MenuClass Then Return
+  
   Try sArr = Project.Documentation.Classes[hCtrl.Kind].Symbols["_DefaultArrangement"].Value
 
   If Not Error Then

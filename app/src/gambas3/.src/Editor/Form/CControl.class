@@ -310,7 +310,10 @@ End
 
 Public Sub SetDesign()
   
-  If Not IsContainer() Then Control.Design = True
+  If Not IsContainer() Then 
+    Try Control.Design = True
+    If Error Then Stop
+  Endif
   
 End
 
@@ -348,7 +351,7 @@ Public Sub _new(sName As String, sClass As String, hParent As CControl, hForm As
   
   If hClass.Form Then
   
-    If hFamily.Name = "Form" Then
+    If hFamily.HasMenuEditor Then
       hCtrl = New Form(hForm.Container)
     Else
       If hClass.MultiContainer Then
@@ -363,10 +366,10 @@ Public Sub _new(sName As String, sClass As String, hParent As CControl, hForm As
     'hCtrl.Background = CFamily.Get(hForm.Family).Background
     'hCtrl.Tracking = True
     
-  Else If Kind = "Menu" Then
+  Else If Kind = hFamily.MenuClass Then
   
-    If Parent.Kind <> "Menu" Then
-      hCtrl = New Menu(hForm.Control[hForm.Name].Control)
+    If Parent.Kind <> hFamily.MenuClass Then
+      hCtrl = New Menu(hForm.RootControl.Control)
     Else
       hCtrl = New Menu(Parent.Control)
     Endif
@@ -402,7 +405,7 @@ Public Sub _new(sName As String, sClass As String, hParent As CControl, hForm As
   Control = hCtrl
   Control.Tag = sName
 
-  If Kind = "Menu" Then
+  If Kind = hFamily.MenuClass Then
     Object.Attach(hCtrl, hForm, "MenuControl")
   Else
     Try Object.Attach(hCtrl, hForm, "Control")
@@ -1049,7 +1052,7 @@ Public Sub Select(hForm As FForm, Optional bMaster As Boolean)
   Dim hPanel As Panel
 
   If IsNull(Parent) Then Return
-  If Kind = "Menu" Then Return
+  If Kind = hForm.GetFamily().MenuClass Then Return
 
   If hForm.Selection.Count = 0 Then EnsureVisible
 
@@ -2070,7 +2073,7 @@ Public Sub AddAction(cActionSet As Collection)
   Else
     sPicture = GetPropertyString("Picture")
   Endif
-  If Not sPicture And If Kind <> "Menu" Then
+  If Not sPicture And If Kind <> $hFamily.MenuClass Then
     sPicture = "$" & Kind
     If cAction["Picture"] Then sPicture = ""
   Endif
@@ -2078,7 +2081,7 @@ Public Sub AddAction(cActionSet As Collection)
   If sPicture Then cAction["Picture"] = sPicture
 
   SetAction(cAction, "Shortcut")
-  If Kind = "Menu" Then cAction["Menu"] = True
+  If Kind = $hFamily.MenuClass Then cAction["Menu"] = True
   
 End
 
