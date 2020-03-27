@@ -36,6 +36,7 @@ Private $iLineJoin As Integer
 Private $iFillRule As Integer
 
 Private $iNoUpdateBalance As Integer
+Private $bChangingTab As Boolean
 
 'Static Public Value As String  '"radialgradient(0.5,0.5,1,0.5,0.5,[&hFFFFFF,&h000000,&h00FF00],[0,0.5,1])" '"lineargradient(0,0.5,1,0.5,[&hFFFFFF,&h000000,&h00FF00],[0,0.5,1])"
 
@@ -919,7 +920,11 @@ Public Sub GetClipboard() As Image
 
   Dim hImage As Image
   
-  If tabBrush.Index <> 2 Then tabBrush.Index = 2
+  If Not $bChangingTab Then
+    $bChangingTab = True
+    If tabBrush.Index <> 2 Then tabBrush.Index = 2
+    $bChangingTab = False
+  Endif
   
   Try hImage = $aClipboard[gvwClipboard.Row].Image
   If Not hImage Then Return
