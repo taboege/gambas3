@@ -1,6 +1,6 @@
 # Gambas Project File 3.0
 Title=More controls for graphical components
-Startup=FFont
+Startup=FTestFileView
 Version=3.14.90
 VersionFile=1
 Component=gb.image
@@ -15,9 +15,10 @@ Type=Component
 Maintainer=Benoit Minisini
 Vendor=gb
 Address=benoit@minisini.fr
+Url=www.endoftheinternet.com
 License=General Public Licence
 Prefix=1
-PackageName=gambas3-gb-form-3.8.0
+PackageName=gambas3-gb-form-3.14.90
 CreateEachDirectory=1
 Packager=1
 Systems=autotools
