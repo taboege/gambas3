@@ -1373,7 +1373,10 @@ static void push_subr(char mode, ushort code)
 	else if (op == (C_CAT >> 8))
 	{
 		if (narg == 1)
+		{
 			narg = 2;
+			code = C_CAT | 2; // TODO: implement optimization of '&=' operator
+		}
 	}
 	
 	if (narg > 0)
