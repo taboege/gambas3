@@ -1370,6 +1370,11 @@ static void push_subr(char mode, ushort code)
 		STR_add(&expr, "FP=(void *)%p;PC = &pc[%d];", _func, _pc);
 		type = narg == 0 ? T_INTEGER : T_BOOLEAN;
 	}
+	else if (op == (C_CAT >> 8))
+	{
+		if (narg == 1)
+			narg = 2;
+	}
 	
 	if (narg > 0)
 	{
