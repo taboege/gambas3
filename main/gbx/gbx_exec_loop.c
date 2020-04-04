@@ -3972,20 +3972,20 @@ void EXEC_quit(ushort code)
 {
 	switch(code & 3)
 	{
-		case 0:
+		case 0: // QUIT
 			EXEC_do_quit();
 			break;
 
-		case 1:
+		case 1: // STOP
 			if (EXEC_debug && CP) // && CP->component == COMPONENT_main)
 				DEBUG.Breakpoint(0);
 			break;
 
-		case 2:
+		case 2: // STOP EVENT
 			GAMBAS_StopEvent = TRUE;
 			break;
 
-		case 3:
+		case 3: // QUIT <return value>
 			VALUE_conv(&SP[-1], T_BYTE);
 			SP--;
 			EXEC_quit_value = (uchar)SP->_integer.value;

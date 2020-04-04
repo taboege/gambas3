@@ -477,6 +477,13 @@ static void trans_operation(short op, short nparam, PATTERN previous)
 			else
 				CODE_op(info->code, info->subcode, nparam, TRUE);
 			break;
+			
+		case OP_AMP:
+			if (nparam == 1)
+				CODE_op(info->code, 1, 2, TRUE);
+			else
+				CODE_op(info->code, info->subcode, nparam, FALSE);
+			break;
 
 		default:
 			CODE_op(info->code, info->subcode, nparam, (info->flag != RSF_OPN));
@@ -1115,7 +1122,10 @@ bool TRANS_affectation(bool dup)
 		{
 			push_type(_last_type);
 			push_type(type);
-			trans_operation(op, 2, NULL_PATTERN);
+			/*if (op == RS_AMP && COMPILE_version >= 0x03150000)
+				trans_operation(op, 1, NULL_PATTERN);
+			else*/
+				trans_operation(op, 2, NULL_PATTERN);
 			pop_type();
 		}
 	}
@@ -1137,6 +1147,9 @@ bool TRANS_affectation(bool dup)
 	if (!PATTERN_is_newline(*JOB->current))
 		THROW(E_SYNTAX);
 
+	if (COMPILE_version >= 0x03150000 && op == RS_AMP)
+		CODE_check_fast_cat();
+	
 	JOB->current = after;
 
 	if (COMPILE_version >= 0x03070000)
