@@ -738,7 +738,7 @@ static int open_database(DB_DESC *desc, DB_DATABASE *db)
 	char *name;
 	char *host;
 	char *socket;
-	my_bool reconnect = TRUE;
+	char reconnect = TRUE;
 	unsigned int timeout;
 	char *env;
 	#if HAVE_MYSQL_SSL_MODE_DISABLED
