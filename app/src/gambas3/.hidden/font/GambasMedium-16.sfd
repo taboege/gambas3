@@ -50,7 +50,7 @@ NameList: Adobe Glyph List
 DisplaySize: 16
 AntiAlias: 1
 FitToEm: 1
-WinInfo: 10773 57 16
+WinInfo: 57 57 16
 OnlyBitmaps: 1
 BeginPrivate: 0
 EndPrivate
@@ -23827,7 +23827,7 @@ Flags: W
 LayerCount: 2
 EndChar
 EndChars
-BitmapFont: 16 2994 13 3 1 xos4
+BitmapFont: 16 2995 13 3 1 xos4
 BDFChar: 0 0 9 1 7 0 10
 WW7VNJcLB&JcMeN
 BDFChar: 1 32 9 8 8 -2 -2
@@ -23894,8 +23894,8 @@ BDFChar: 31 62 9 2 6 1 9
 J3Y4g#S8+DJ,fQL
 BDFChar: 32 63 9 1 6 0 10
 G_?2&#S8+$!$EBa
-BDFChar: 33 64 9 1 7 0 10
-3(048WiE)!S3T7<
+BDFChar: 33 64 9 1 6 0 10
+3(/FiUnjfVJ3Z3s
 BDFChar: 34 65 9 1 6 0 10
 G_Ca'K`$LVKS5!Y
 BDFChar: 35 66 9 1 6 0 10

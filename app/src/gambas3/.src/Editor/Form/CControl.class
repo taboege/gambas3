@@ -335,6 +335,11 @@ Private Sub InitControl()
 
 End
 
+Static Public Sub GetVirtualSize() As Integer
+  
+  Return 2 + (32 + Desktop.Scale - 1) \ Desktop.Scale '(40 + Desktop.Scale - 1) Div Desktop.Scale  
+  
+End
 
 Public Sub _new(sName As String, sClass As String, hParent As CControl, hForm As FForm, hFamily As CFamily)
 
@@ -383,7 +388,7 @@ Public Sub _new(sName As String, sClass As String, hParent As CControl, hForm As
       'PRINT sName; " is virtual"
       hCtrl = CreateControl(sName, sClass, Parent.Control)
       'hCtrl.Resize(5 * Desktop.Scale, 5 * Desktop.Scale)
-      iDim = 2 + (32 + Desktop.Scale - 1) \ Desktop.Scale '(40 + Desktop.Scale - 1) Div Desktop.Scale
+      iDim = GetVirtualSize()
       hCtrl.MoveScaled(0, 0, iDim, iDim)
       hCtrl.Ignore = True
       '$cValue["Ignore"] = True

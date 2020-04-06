@@ -159,7 +159,7 @@ Public Sub DrawControl(hCCtrl As CControl) As Boolean
     Case "WebImage"
       Return CFamily.PaintImage(hCCtrl, ".public")
       
-    Case "WebButton"
+    Case "WebButton", "WebFileButton"
       PaintButton(hCCtrl)
       Return
     

@@ -115,6 +115,8 @@ Public Sub SetPosition(hFindResult As CFindResult, bJustCheck As Boolean) As Boo
   iLine = aPos[0]
   iPos = aPos[1]
   
+  If iLine >= Me.Count Then Return True
+  
   sLine = Me[iLine].Text
   iColumn = String.Len(Left$(sLine, iPos))
     
