@@ -380,6 +380,8 @@ const void *const GAMBAS_JitApi[] =
 	(void *)CSTRUCT_create_static,
 	(void *)CARRAY_create_static,
 	(void *)CARRAY_get_array_class,
+	(void *)JIT_add_string_local,
+	(void *)JIT_add_string_global,
 	NULL
 };
 

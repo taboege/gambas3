@@ -407,3 +407,67 @@ void JIT_load_class_without_init(CLASS *class)
 	}
 	END_TRY
 }
+
+void JIT_add_string_local(GB_STRING *str, GB_STRING val)
+{
+	int len;
+	char *add;
+	int len_add;
+	
+	add = val.value.addr + val.value.start;
+	len_add = val.value.len;
+  len = str->value.len;
+	
+	if (len_add == 0)
+		return;
+
+	if (len && STRING_from_ptr(str->value.addr)->ref == 1 && str->value.start == 0)
+	{
+		str->value.addr = STRING_add(str->value.addr, add, len_add);
+	}
+	else
+	{
+		char *str_new = STRING_new(NULL, len + len_add);
+		if (len) memcpy(str_new, str->value.addr + str->value.start, len);
+		memcpy(&str_new[len], add, len_add);
+		if (str->type == T_STRING) 
+			STRING_unref(&str->value.addr);
+		else
+			str->type = T_STRING;
+		str->value.addr = str_new;
+	}
+
+	str->value.len += len_add;
+
+	if (val.type == T_STRING) STRING_unref(&val.value.addr);
+}
+
+void JIT_add_string_global(char **pstr, GB_STRING val)
+{
+	char *str;
+	int len;
+	char *add;
+	int len_add;
+	
+	add = val.value.addr + val.value.start;
+	len_add = val.value.len;
+	
+	if (len_add == 0)
+		return;
+
+	str = *pstr;
+	len = STRING_length(str);
+	
+	if (len && STRING_from_ptr(str)->ref == 1)
+		*pstr = STRING_add(str, add, len_add);
+	else
+	{
+		char *str_new = STRING_new(NULL, len + len_add);
+		if (len) memcpy(str_new, str, len);
+		memcpy(&str_new[len], add, len_add);
+		STRING_unref(pstr);
+		*pstr = str_new;
+	}
+	
+	if (val.type == T_STRING) STRING_unref(&val.value.addr);
+}

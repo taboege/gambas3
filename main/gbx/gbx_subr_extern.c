@@ -219,7 +219,7 @@ void SUBR_varptr(ushort code)
 					break;
 
 				default:
-					THROW(E_TYPE, "Number, date, or pointer", TYPE_get_name(val->type));
+					THROW(E_UTYPE);
 			}
 		}
 		else if ((op & 0xF800) == C_PUSH_DYNAMIC)
