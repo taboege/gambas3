@@ -7,11 +7,11 @@ Create Static
 Private $hHarness As New TestHarness
 Private $bVerbose As Boolean
 
-''' The static procedure Unittest.Main() starts test(s).
+''' The static procedure Test.Main() starts test(s).
 
 '' Runs all tests in all testcontainers and prints the result to the console.
-'' With UnitTest.Main(NameTestModule) the tests can be restricted to only those of a single test module.
-'' With UnitTest.Main(NameTestModule, NameProcedure) only a single test can be accomplished.
+'' With Test.Main(NameTestModule) the tests can be restricted to only those of a single test module.
+'' With Test.Main(NameTestModule, NameProcedure) only a single test can be accomplished.
 
 Public Sub Main(Optional NameTestModule As String, Optional NameProcedure As String, Optional Verbose As Boolean = True, Optional RawTap As Boolean = True)
 
@@ -21,6 +21,8 @@ Public Sub Main(Optional NameTestModule As String, Optional NameProcedure As Str
     If Not RawTap Then PrintSummary()
 
 End
+
+
 
 Private Sub PrintSummary()
 
@@ -132,7 +134,7 @@ Function GetAllTestTestModules(Optional SingleTestModule As String) As String[]
 
         'Atention: Class.Stat(sName).Name does not work if included as component
         'Then this creates the error:
-        'Bail out! Error in Unittest->GetAllTestModuleNames: Unknown symbol 'Stat' in class 'Class'
+        'Bail out! Error in Test->GetAllTestModuleNames: Unknown symbol 'Stat' in class 'Class'
 
         If TestModuleNames.Exist(sName) Then Continue
         If SingleTestModule = Null Then
@@ -149,7 +151,7 @@ Function GetAllTestTestModules(Optional SingleTestModule As String) As String[]
     Return TestModuleNames
 
 Catch
-    Assert.BailOut("Error in Unittest->GetAllTestModuleNames: " & Error.Text)
+    Assert.BailOut("Error in Test->GetAllTestModuleNames: " & Error.Text)
     Quit 1
 
 End

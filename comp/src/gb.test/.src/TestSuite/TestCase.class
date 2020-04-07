@@ -54,7 +54,7 @@ Public Sub Run()
 
 Catch
 
-    Assert.BailOut("Unittest stopped with error \"" & Error.Text & "\" caused by " & $MyTestModule.Name & "." & Me.Name & ".")
+    Assert.BailOut("Test stopped with error \"" & Error.Text & "\" caused by " & $MyTestModule.Name & "." & Me.Name & ".")
     Quit 1
 
 End Sub

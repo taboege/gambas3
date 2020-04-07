@@ -47,7 +47,7 @@ Public Sub Run()
     Endif
 
 Catch
-    Assert.BailOut("Unittest Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & ".")
+    Assert.BailOut("Test Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & ".")
     Quit 1
 
 End Sub
