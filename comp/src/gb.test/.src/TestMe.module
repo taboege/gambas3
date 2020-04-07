@@ -5,12 +5,15 @@ Public Sub Main()
     ' These must succeed:
     
     'Test
+    'Test.Main()
+    Test.Main("TestInternals")
+    'Test.Main("TestAllAsserts.TestAssert,TestAllAsserts.TestAssertEmpty,TestElse")
 
-    Test.Main("TestAllAsserts", Null)
-    Test.Main("TestSetup", Null)
-    Test.Main("TestElse", Null)
-    Test.Main("TestError", Null)
-    Test.Main("TestSetupTeardown", Null)
+    ' Test.Main("TestAllAsserts", Null)
+    ' Test.Main("TestSetup", Null)
+    ' Test.Main("TestElse", Null)
+    ' Test.Main("TestError", Null)
+    ' Test.Main("TestSetupTeardown", Null)
 
     ' Here every test must fail:
     ' Test.Main("TestFailures", Null)
@@ -23,12 +26,14 @@ Public Sub Main()
     'Test.Main(Null, Null)
 
     ' Just one test
-    Test.Main("TestAllAsserts", "TestAssert")
+    'Test.Main("TestAllAsserts", "TestAssert")
 
-    'Cheese()
+    Cheese()
 
 End
 
 Private Sub (Cheese)()
+
+    'TestCommand.ParseCommands("TestAllAsserts.TestAssert,TestAllAsserts.TestAssertEmpty,TestElse")
 
 End

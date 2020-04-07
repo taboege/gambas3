@@ -1,0 +1,66 @@
+' Gambas class file
+
+''' Helper class to split string Tests in Test.Main(Tests) into names of testmodules and testmethods
+
+Create Static
+
+Public ModuleName As String
+Public Methods As New String[]
+
+Public Function ParseCommands(Tests As String) As TestCommand[]
+
+    Dim asAll As String[]
+    Dim sCommand, sModulename, sMethodname As String
+    Dim Command As TestCommand
+    Dim Commands As TestCommand[]
+    Dim i As Integer
+
+    If Tests <> Null Then
+        Commands = New TestCommand[]
+
+        asAll = Split(Tests, ",", Null, True)
+        asAll.Sort
+        
+        For Each sCommand In asAll
+           
+            Command = New TestCommand
+            With Command
+                If InStr(sCommand, ".") > 0 Then
+                                sModulename = Trim(Left(sCommand, InStr(sCommand, ".") - 1))
+            sMethodname = Trim(Right(sCommand, Len(sCommand) - InStr(sCommand, ".")))
+                    .ModuleName = sModulename
+                    .Methods.Add(sMethodname)
+                Else
+                    .ModuleName = Trim(sCommand)
+                Endif
+            End With
+
+            'If InStr(Command, ".") > 0 Then
+            If Not Commands.Exist(Command) Then
+                Commands.Add(Command)
+            Else
+                i = 0
+                For Each Commands
+                    If Commands[i].ModuleName = sModulename Then
+                        Commands[i].Methods.Add(sMethodname)
+                    Endif
+                    Inc i
+                Next
+            Endif
+        Next
+        
+        For Each Command In Commands
+            Command.Methods = Command.Methods.Sort()
+        Next
+        
+        Return Commands.Sort()
+    Endif
+
+End
+
+Public Function _compare(TC As TestCommand) As Integer
+    Dim ret As Integer
+    ret = Comp(ModuleName, TC.ModuleName, gb.Binary)
+    Return ret
+    
+End

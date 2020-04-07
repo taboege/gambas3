@@ -1,0 +1,38 @@
+' Gambas test file
+
+' Gambas test module file
+
+'' P
+
+Public Sub ParseTestCommands()
+
+    
+    Dim sCommand As String
+    Dim Commands As TestCommand[]
+    Dim Got As String
+    
+    'Three TestModules
+    sCommand = "Bing, Bong, Bung"
+    Commands = TestCommand.ParseCommands(sCommand)
+    Got = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
+    
+    Assert.Equals(Got, "BingBongBung", "ParseCommands: Three TestModules")
+    
+    'Test testmodules sort
+    sCommand = "Bing,Bung,Bong"
+    Commands = TestCommand.ParseCommands(sCommand)
+    Got = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
+    
+    Assert.Equals(Got, "BingBongBung", "ParseCommands: Test testmodules sort")
+
+    'Three testmodules, one with methods
+    sCommand = "Bing, Bong.A, Bung, Bong.B, Bong.C"
+    Commands = TestCommand.ParseCommands(sCommand)
+    Got = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
+    Assert.Equals(Got, "BingBongBung", "ParseCommands: Three testmodules, one with methods")
+    
+    'Methods name sort
+    Got = Commands[1].Methods.Join()
+    Assert.Equals(Got, "A,B,C", "ParseCommands: Methods name sort")
+
+End
