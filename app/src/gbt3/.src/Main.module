@@ -3,15 +3,20 @@
 ''' Changes the project in Path (given by args) to start with a random method,
 ''' runs tests and restores the project afterwards
 
+Private $hHarness As New TestHarness
+Private $bVerbose As Boolean
+
 Public Sub Main()
 
-    Dim sPath, sCompilerPath, sExecutorPath, sCmd, sTestCmd, sRand As String
+    Dim sPath, sCompilerPath, sExecutorPath, sBuf, sTestCmd, sRand As String
     Dim sSingleTestModule, sSingleTestMethod, sNewStartupFile, sStartupSequence As String
+    Dim hTestee As Process
 
     With Args
         .Begin(Application.Name & " <options> [path to poject]\n\nType " & Application.Name & " -h for help")
         Try sSingleTestModule = .Get("m", "testmodule", "Single Testmodule")
         Try sSingleTestMethod = .Get("t", "testmethod", "Method of a single testmodule")
+        Try $bVerbose = .Has("v", "verbose", "Echo the TAP stream")
         .End
     End With
 
@@ -21,14 +26,6 @@ Public Sub Main()
     sExecutorPath = GetPath("gbx3")
 
     ' ------------------------------------------------- Tests
-
-    If sCompilerPath = Null Then
-        Error.Raise("Error: Gambas compiler gbg3 not found.")
-    Endif
-
-    If sExecutorPath = Null Then
-        Error.Raise("Error: Gambas gbx3 not found.")
-    Endif
 
     If sPath = Null Then
         Error.Raise("Error: Path to project is Null.")
@@ -53,8 +50,10 @@ Public Sub Main()
     ' ------------------------------------------------- New startup file
     sTestCmd = "Unittest.Main(" & sTestCmd & ")"
 
-    sRand = "TEST" & Randstr()
-    sNewStartupFile = sRand & ".module"
+    Do
+        sRand = "TEST" & Randstr()
+        sNewStartupFile = sPath &/ ".src" &/ sRand & ".module"
+    Loop While Exist(sNewStartupFile)
 
     'create test startup module
     sStartupSequence = "'Gambas module" & gb.Lf & gb.Lf &
@@ -62,39 +61,91 @@ Public Sub Main()
         sTestCmd & gb.Lf & gb.Lf &
         "End" & gb.Lf
 
-    File.Save(sPath &/ ".src" &/ sNewStartupFile, sStartupSequence)
+    File.Save(sNewStartupFile, sStartupSequence)
 
     ' ------------------------------------------------- run tests
 
-    'compile
-    sCmd = sCompilerPath & " " & sPath
-
-    'To sCmd: use sCmd as buffer just that gbc3's "OK" is not printed
-    Shell sCmd Wait To sCmd
+    'To sBuf: use sBuf as buffer just that gbc3's "OK" is not printed
+    Exec [sCompilerPath, sPath] Wait To sBuf
 
     'run tests
-    sCmd = sExecutorPath & " -s " & sRand & " " & sPath
-    Shell sCmd Wait For Read As "Tapprinter"
+    hTestee = Exec [sExecutorPath, "-s", sRand, sPath] For Read
+    $hHarness.Read(hTestee, File.Name(sPath))
+    PrintSummary()
 
     ' ------------------------------------------------- Restore project
 
     'restore project
-    Kill sPath &/ ".src" &/ sNewStartupFile
+    Kill sNewStartupFile
 
     'compile again
-    sCmd = sCompilerPath & " " & sPath
+    Exec [sCompilerPath, sPath] Wait To sBuf
 
 Catch
     Print Error.Text
 
 End
 
-Public Sub Tapprinter_Read()
+Private Sub PrintSummary()
 
-    Dim sLine As String
+    With $hHarness.Current
+        If $bVerbose Then
+            Dim sLine As String
+            Print "Transcript of the TAP stream:"
+            Print
+            For Each sLine In .Lines
+                Print sLine
+            Next
+            Print
+            Print String$(80, "*")
+            Print
+        Endif
 
-    sLine = Read #Last, -256
-    Print sLine;
+        Print .Name;;
+        If .BailedOut Then
+            Print "bailed out";
+            If .BailMessage Then Print " with message";; .BailMessage
+        Else
+            Print IIf(.Success, "PASSED", "FAILED")
+        Endif
+        Print "Ran";; .Run;; Plural(.Run, "test");;
+        Print "("; "exit code";; .ExitCode; ",";;
+        Print "runtime";; Format$(DateDiff(.Started, .Ended, gb.Second), "0.00s"); ")"
+
+        If Not .BailedOut Then
+            If .Run <> .Planned Then
+                Print "Planned";; .Planned;; Plural(.Planned, "test");; "but ran";; .Run
+            Endif
+
+            If .Failed > 0 Then
+                Dim iInd As Integer
+                Print "Failed";; .Failed;; "out of";; .Run;; Plural(.Run, "test");; ":";;
+                For iInd = 0 To .Failures.Max
+                    Print .Failures[iInd];
+                    If iInd < .Failures.Max Then Print ",";;
+                Next
+                Print
+            Endif
+
+            If .Bonus Then
+                Print "Passed";; .Bonus;; "additional";; Plural(.Bonus, "test");; "marked as TODO"
+            Endif
+        Endif
+
+        If $bVerbose Then
+            Print
+            Print String$(80, "*")
+            Print
+        Endif
+
+    End With
+
+End
+
+'' **Regular English** plural: just appends an "s" to _Word_ if _Count_ is not 1.
+Private Function Plural(Count As Integer, Word As String) As String
+
+    Return Word & IIf(Count = 1, "", "s")
 
 End
 
@@ -116,9 +167,11 @@ End
 
 Private Function GetPath(Prog As String) As String
 
-    'Dim sBuf As StringsBufsBuf
-    Shell "which " & Prog To Prog
-    Prog = Trim(Prog)
-    If Exist(Prog) Then Return Prog
+    Dim sPath As String
+
+    Exec ["which", Prog] To sPath
+    sPath = Trim(sPath)
+    If Not Exist(sPath) Then Error.Raise(Subst$(("Program '&1' not found."), Prog))
+    Return sPath
 
 End
