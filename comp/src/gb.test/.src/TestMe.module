@@ -12,10 +12,10 @@ Public Sub Main()
 
     ' Here every test must fail:
     UnitTest.Main("TestFailures", Null, True, True, True)
-    UnitTest.Main("TestBailout", Null, True, True, True)
+    ' UnitTest.Main("TestBailout", Null, True, True, True)
 
     'This will BailOut
-    UnitTest.Main("TestEmpty", Null, True)
+    ' UnitTest.Main("TestEmpty", Null, True)
     
 
     'Test all

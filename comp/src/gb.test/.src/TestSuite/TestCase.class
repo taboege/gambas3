@@ -43,7 +43,10 @@ Public Sub Run()
         Object.Call($MyTestModule, "SetupEach")
     Endif
 
-    Object.Call($MyTestModule, Me.name)
+    Try Object.Call($MyTestModule, Me.name)
+    If Error Then
+        Assert.Fail(Subst$("&1:&2 crashed with error '&3'", $MyTestModule.Name, Me.Name, Error.Text))
+    Endif
 
     If $MyTestModule.Symbols.Exist("TeardownEach") Then
         Object.Call($MyTestModule, "TeardownEach")

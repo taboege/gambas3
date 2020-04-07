@@ -34,6 +34,7 @@ Public Sub Run()
             StartTestModule(CurrentTestModule)
         Endif
 
+        Assert.Note(Subst$(("Entering subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
         Assert.Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
             oTest.Run()
         If Not Assert.Finished Then Assert.Finish()

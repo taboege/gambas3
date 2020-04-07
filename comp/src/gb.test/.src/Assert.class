@@ -351,16 +351,12 @@ Public Sub StringEquals(Got As String, Expected As String, Optional Description 
     bRes = Equals(Got, Expected, Description)
     If Not bRes Then
         If Len(Got) <> Len(Expected) Then
-            Note(("Strings are of different length."))
-            Note(Subst$(("  Got:      &1"), Len(Got)))
-            Note(Subst$(("  Expected: &1"), Len(Expected)))
+            Note(Subst$(("Strings are of different lengths &1 and &2, respectively."), Len(Got), Len(Expected)))
         Endif
         For iPos = 1 To Min(Len(Got), Len(Expected))
             If Mid$(Got, iPos, 1) <> Mid$(Expected, iPos, 1) Then Break
         Next
-        Note(Subst$(("Strings differ at position &1"), iPos))
-        Note(Subst$(("  Got:      &1"), Quote$(Mid$(Got, iPos, 20)) & IIf(Len(Got) > iPos + 20, "...", "")))
-        Note(Subst$(("  Expected: &1"), Quote$(Mid$(Expected, iPos, 20)) & IIf(Len(Expected) > iPos + 20, "...", "")))
+        Note(Subst$(("Strings differ at position &1."), iPos))
     Endif
     Return bRes
 
