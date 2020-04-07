@@ -95,7 +95,7 @@ End
 Private Function GetTestsFromTestModule(TestModule As Class) As String[]
 
     Dim sSymbol As String
-    Dim NoTestSymbols As String[] = ["Setup", "SetupEach", "Teardown", "TeardownEach", "Plan", "ThisIsAnUnitTestSelfTest"]
+    Dim NoTestSymbols As String[] = ["Setup", "SetupEach", "Teardown", "TeardownEach", "Plan"]
     Dim asTests As New String[]
 
     Assert TestModule

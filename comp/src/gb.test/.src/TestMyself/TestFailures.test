@@ -1,6 +1,5 @@
 ' Gambas test file
 
-Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 Public Plan As Integer = 11
 
 Public Sub Setup()

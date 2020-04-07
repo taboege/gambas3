@@ -13,11 +13,11 @@ Private $bVerbose As Boolean
 '' With UnitTest.Main(NameTestModule) the tests can be restricted to only those of a single test module.
 '' With UnitTest.Main(NameTestModule, NameProcedure) only a single test can be accomplished.
 
-Public Sub Main(Optional NameTestModule As String, Optional NameProcedure As String, Optional DoSelfTest As Boolean, Optional Verbose As Boolean, Optional RawTap As Boolean)
+Public Sub Main(Optional NameTestModule As String, Optional NameProcedure As String, Optional Verbose As Boolean = True, Optional RawTap As Boolean = True)
 
     Assert.Reset() ' only if you run this Main multiple times per process, which you shouldn't
     $bVerbose = Verbose
-    RunTests(NameTestModule, NameProcedure, DoSelfTest, RawTap)
+    RunTests(NameTestModule, NameProcedure, RawTap)
     If Not RawTap Then PrintSummary()
 
 End
@@ -74,7 +74,7 @@ End
 '
 '' Run all tests, optional limited by Container or TestCaseName. Track contains .
 
-Private Function RunTests(SingleTestModule As String, Optional NameProcedure As String, Optional DoSelfTest As Boolean, Optional RawTap As Boolean)
+Private Function RunTests(SingleTestModule As String, Optional NameProcedure As String, Optional RawTap As Boolean)
 
     Dim sTestModule As String
     Dim TestModule As Class
@@ -83,7 +83,7 @@ Private Function RunTests(SingleTestModule As String, Optional NameProcedure As 
 
     'FIXME: If included as component then TestContainers can only be loaded if they contain the magic word Export
 
-    For Each sTestModule In GetAllTestTestModules(SingleTestModule, DoSelfTest)
+    For Each sTestModule In GetAllTestTestModules(SingleTestModule)
         TestModule = Class.Load(sTestModule)
         Suite.AddAllTestCases(TestModule, NameProcedure)
     Next
@@ -110,7 +110,7 @@ Private Function RunTests(SingleTestModule As String, Optional NameProcedure As 
 
 End
 
-Function GetAllTestTestModules(Optional SingleTestModule As String, Optional DoSelfTest As Boolean) As String[]
+Function GetAllTestTestModules(Optional SingleTestModule As String) As String[]
 
     Dim TestClass As Class
     Dim TestModuleNames As New String[]
@@ -125,15 +125,8 @@ Function GetAllTestTestModules(Optional SingleTestModule As String, Optional DoS
 
     sNames.Sort
     For Each sName In sNames
-        GoSub AddClass
-    Next
-
-    Goto Done
-
-AddClass:
-
-    TestClass = Class.Load(sName)
-    If TestClass Then
+        TestClass = Class.Load(sName)
+        If Not TestClass Then Error.Raise(Subst$(("Could not load test module '&1'"), sName))
 
         'sName = Class.Stat(sName).Name
 
@@ -141,31 +134,16 @@ AddClass:
         'Then this creates the error:
         'Bail out! Error in Unittest->GetAllTestModuleNames: Unknown symbol 'Stat' in class 'Class'
 
-        If Not TestModuleNames.Exist(sName) Then
-            If testclass.Symbols.Exist("ThisIsAnUnitTestSelfTest")
-                If DoSelfTest = True Then
-                    GoSub AddTestModule
-                Endif
-            Else
-                GoSub AddTestModule
+        If TestModuleNames.Exist(sName) Then Continue
+        If SingleTestModule = Null Then
+            TestModuleNames.Add(sName)
+        Else
+            If Lower(sName) = Lower(SingleTestModule) Then
+                TestModuleNames.Add(sName)
             Endif
         Endif
-    Endif
-    Return
+    Next
 
-AddTestModule:
-
-    If SingleTestModule = Null Then
-        TestModuleNames.Add(sName)
-    Else
-        If Lower(sName) = Lower(SingleTestModule) Then
-            TestModuleNames.Add(sName)
-        Endif
-    Endif
-
-    Return
-
-Done:
     TestModuleNames.Sort
     ' Print "# These TestContainer will be executed:\n#\n# " & TestModuleNames.Join("\n# ") & "\n"
     Return TestModuleNames

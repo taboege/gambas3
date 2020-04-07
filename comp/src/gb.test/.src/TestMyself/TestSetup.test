@@ -3,7 +3,6 @@
 'Plan is one more because Test in TeardownEach is counted twice!
 Public Plan As Integer = 8
 
-Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 Private $SetupIsDone As Boolean
 Private $EachSetupIsDone As Boolean
 

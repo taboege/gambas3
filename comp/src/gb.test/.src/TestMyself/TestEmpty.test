@@ -1,5 +1,3 @@
 ' Gambas test file
 
 ''' Unittesting will BailOut if a Testmodule is empty
-
-Public Const ThisIsAnUnitTestSelfTest As Boolean = True

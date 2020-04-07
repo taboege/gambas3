@@ -1,7 +1,5 @@
 ' Gambas test file
 
-' Signal, that this is a selftest
-Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 Public Plan As Integer = 5
 
 ' A Test with no message, should display then method name as message

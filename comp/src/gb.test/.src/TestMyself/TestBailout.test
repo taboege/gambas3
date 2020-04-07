@@ -1,8 +1,5 @@
 ' Gambas test file
 
-' Signal, that this is a selftest
-Public Const ThisIsAnUnitTestSelfTest As Boolean = True
-
 Public Sub TestBailout()
 
     Assert.Note("This will stop alle unittesting immediately")

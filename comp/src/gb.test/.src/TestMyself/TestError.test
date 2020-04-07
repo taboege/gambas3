@@ -1,7 +1,5 @@
 ' Gambas test file
 
-Public Const ThisIsAnUnitTestSelfTest As Boolean = True
-
 Public Sub TestError()
 
     Dim a As Long

@@ -2,8 +2,6 @@
 
 ''' Self test to check setup and teardown
 
-Public Const ThisIsAnUnitTestSelfTest As Boolean = True
-
 Public Sub Setup()
 
     Assert.Note("Setup TestModule")
