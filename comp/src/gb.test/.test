@@ -4,5 +4,6 @@ TestElse
 TestEmpty
 TestError
 TestFailures
+TestInternals
 TestSetup
 TestSetupTeardown

@@ -13,12 +13,12 @@ Private $bVerbose As Boolean
 '' With Test.Main(NameTestModule) the tests can be restricted to only those of a single test module.
 '' With Test.Main(NameTestModule, NameProcedure) only a single test can be accomplished.
 
-Public Sub Main(Optional NameTestModule As String, Optional NameProcedure As String, Optional Verbose As Boolean = True, Optional RawTap As Boolean = True)
+Public Sub Main(Optional Tests As String, Optional Sparse As Boolean, Optional NoSummary As Boolean)
 
     Assert.Reset() ' only if you run this Main multiple times per process, which you shouldn't
-    $bVerbose = Verbose
-    RunTests(NameTestModule, NameProcedure, RawTap)
-    If Not RawTap Then PrintSummary()
+    $bVerbose = Not Sparse
+    RunTests(Tests, Sparse)
+    If Not NoSummary Then PrintSummary()
 
 End
 
@@ -76,16 +76,16 @@ End
 '
 '' Run all tests, optional limited by Container or TestCaseName. Track contains .
 
-Private Function RunTests(SingleTestModule As String, Optional NameProcedure As String, Optional RawTap As Boolean)
+Private Function RunTests(Tests As String, Optional Sparse As Boolean)
 
     Dim sTestModule As String
     Dim TestModule As Class
     Dim Suite As New TestSuite
     Dim hTapStream As Stream, sTap As String
 
-    'FIXME: If included as component then TestContainers can only be loaded if they contain the magic word Export
+    Dim NameProcedure, SingleTestModule As String
 
-    For Each sTestModule In GetAllTestTestModules(SingleTestModule)
+    For Each sTestModule In GetAllTestModules(Tests)
         TestModule = Class.Load(sTestModule)
         Suite.AddAllTestCases(TestModule, NameProcedure)
     Next
@@ -94,7 +94,7 @@ Private Function RunTests(SingleTestModule As String, Optional NameProcedure As 
     ' This is for tests which fail with an error and test gb.test's BailOut.
     ' Such tests are buffered to a string stream but before they can be echoed,
     ' the process dies.
-    If Not RawTap Then
+    If Sparse = False Then
         ' The TAP stream is produced in this process. We have to get it into the
         ' harness somehow. Since we don't start a new process, it is going to be
         ' done by a buffer.
@@ -112,7 +112,7 @@ Private Function RunTests(SingleTestModule As String, Optional NameProcedure As 
 
 End
 
-Function GetAllTestTestModules(Optional SingleTestModule As String) As String[]
+Function GetAllTestModules(Optional SingleTestModule As String) As String[]
 
     Dim TestClass As Class
     Dim TestModuleNames As New String[]
@@ -156,15 +156,3 @@ Catch
 
 End
 
-' Private Function CaseNames_Read() As String[]
-'
-'     Return $CaseNames
-'
-' End
-'
-' '' Returns the classname of the TestContainer
-' Private Function Name_Read() As String
-'
-'     Return Object.Class(Me).Name
-'
-' End
