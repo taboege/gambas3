@@ -64,8 +64,8 @@ Private Sub StopTestModule(TestModule As Class)
 
     Dim Plan As Integer
 
-    If TestModule.Symbols.Exist("TearDown") Then
-        Object.Call(TestModule, "TearDown")
+    If TestModule.Symbols.Exist("Teardown") Then
+        Object.Call(TestModule, "Teardown")
     Endif
 
 End

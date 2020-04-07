@@ -376,7 +376,7 @@ Public Sub ErrorCode(Code As Integer, Optional Description As String) As Boolean
         bRes = Fail(Description)
         Note(("No error happened"))
     Else
-        bRes = Equals(Error.Code, Code)
+        bRes = Equals(Error.Code, Code, Description)
         If Not bRes Then
             Note(Subst$(("Error was: &1 (code: &2) at &3"), Error.Text, Error.Code, Error.Where))
         Endif

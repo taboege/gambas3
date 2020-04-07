@@ -6,25 +6,25 @@ Public Const ThisIsAnUnitTestSelfTest As Boolean = True
 
 Public Sub Setup()
 
-    Print "# Setup TestModule"
+    Assert.Note("Setup TestModule")
 
 End
 
 Public Sub Teardown()
 
-    Print "# Teardown TestModule"
+    Assert.Note("Teardown TestModule")
 
 End
 
 Public Sub SetupEach()
 
-    Print "# Setup Each"
+    Assert.Note("Setup Each")
 
 End
 
 Public Sub TeardownEach()
 
-    Print "# Teardown Each"
+    Assert.Note("Teardown Each")
 
 End
 
