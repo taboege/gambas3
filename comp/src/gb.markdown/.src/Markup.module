@@ -481,7 +481,7 @@ Private Sub ConvertMarkup(aLine As String[], Optional bDoNotSetLine As Boolean) 
     
     If Left(sLine) = "#" Then
       I = InStr(sLine, " ")
-      If I <= 7 Then
+      If I > 0 And If I <= 7 Then
         Dec I
         If Left(sLine, I) = String$(I, "#") Then
           sLine = Mid$(sLine, I + 2)
@@ -627,6 +627,7 @@ Private Sub ConvertLine(sLine As String) As String
   Dim iLen As Integer
   Dim sCommand As String
   Dim aCommand As String[]
+  Dim iPos As Integer
   
   iLen = String.Len(sLine)
   
@@ -988,7 +989,14 @@ ENTER_LINK:
   
   If sLink Then
     
-    If $hLink.Query Then sLink &= "?" & $hLink.Query
+    If $hLink.Query Then 
+      iPos = RInStr(sLink, "#")
+      If iPos Then
+        sLink = Left(sLink, iPos - 1) & "?" & $hLink.Query & Mid$(sLink, iPos)
+      Else
+        sLink &= "?" & $hLink.Query
+      Endif
+    Endif
     
     bBlank = $hLink.Blank
     'If sLink Begins "http://" Or If sLink Begins "https://" Then bBlank = True
