@@ -133,13 +133,6 @@ Public Sub _Render()
   
 End
 
-Public Sub _AfterRender()
-  
-  Raise Render
-  Print "</div>"
-  
-End
-
 '' Click on the button.
 
 Public Sub Click()

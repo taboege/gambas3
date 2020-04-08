@@ -8,7 +8,7 @@ Private $sDir As String
 
 Static Public Sub _init()
   
-  Session.Timeout = 20
+  Session.Timeout = 60
   WebForm.Debug = True
   
 End
@@ -155,5 +155,38 @@ End
 Public Sub WebMenu16_Click()
 
   Message(Last.Name)
+
+End
+
+Public Sub WebFileButton1_Click()
+
+  'WebForm.Print(WebFileButton1.Path)
+  WebFileButton1.Upload()
+
+End
+
+Public Sub WebFileButton1_Progress()
+  
+  WebProgressBar1.Value = WebFileButton1.Progress
+  
+End
+
+Public Sub WebFileButton1_Finish()
+  
+  Message("Finish: " & WebFileButton1.Path)
+  
+End
+
+
+Public Sub WebFileButton1_Abort(Reason As String)
+
+  Message.Error("Unable to upload file.<br><br>" & Html(Reason))
+  WebProgressBar1.Value = 0
+
+End
+
+Public Sub WebButton7_Click()
+
+  WebFileButton1.Abort()
 
 End
