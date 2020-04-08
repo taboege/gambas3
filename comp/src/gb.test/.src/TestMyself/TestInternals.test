@@ -6,33 +6,56 @@
 
 Public Sub ParseTestCommands()
 
-    
     Dim sCommand As String
     Dim Commands As TestCommand[]
-    Dim Got As String
+    Dim sGot As String
+    Dim iGot As Integer
     
     'Three TestModules
     sCommand = "Bing, Bong, Bung"
     Commands = TestCommand.ParseCommands(sCommand)
-    Got = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
+    sGot = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
     
-    Assert.Equals(Got, "BingBongBung", "ParseCommands: Three TestModules")
+    Assert.Equals(sGot, "BingBongBung", "ParseCommands: Three testmodules")
     
     'Test testmodules sort
     sCommand = "Bing,Bung,Bong"
     Commands = TestCommand.ParseCommands(sCommand)
-    Got = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
+    sGot = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
     
-    Assert.Equals(Got, "BingBongBung", "ParseCommands: Test testmodules sort")
+    Assert.Equals(sGot, "BingBongBung", "ParseCommands: Testmodules have to be sorted")
 
-    'Three testmodules, one with methods
-    sCommand = "Bing, Bong.A, Bung, Bong.B, Bong.C"
+    'Three testmodules, one with three methods
+    sCommand = "Bong.B, Bing, Bong.A, Bung,  Bong.C"
     Commands = TestCommand.ParseCommands(sCommand)
-    Got = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
-    Assert.Equals(Got, "BingBongBung", "ParseCommands: Three testmodules, one with methods")
+    sGot = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
+    Assert.Equals(sGot, "BingBongBung", "ParseCommands: Three testmodules, one with three methods")
     
     'Methods name sort
-    Got = Commands[1].Methods.Join()
-    Assert.Equals(Got, "A,B,C", "ParseCommands: Methods name sort")
+    sGot = Commands[1].Methods.Join()
+    Assert.Equals(sGot, "A,B,C", "ParseCommands: Methods name sort")
+
+    'Three testmodules, one with methods, but Bong also wanted all, the more greedy one has to get it
+    sCommand = "Bong, Bing, Bong.A, Bung, Bong.B, Bong.C"
+    Commands = TestCommand.ParseCommands(sCommand)
+    'Methods name sort
+    iGot = Commands[1].Methods.Count
+    Assert.Equals(iGot, 0, "ParseCommands: Greedy testmodule Bong")
+
+    'Programmer was a little tipsy but got it all except Bung which only wants testmethod U
+    sCommand = "Bong, Bong.A, Bing, Bing, Bing, Bing, Bing, Bing, Bong.A, Bung.U, Bong.B, Bong.C, Bing, Bing, Bing, Bong, Bong"
+    Commands = TestCommand.ParseCommands(sCommand)
+    'Methods name sort
+    iGot = Commands[0].Methods.Count
+    Assert.Equals(iGot, 0, "ParseCommands: Tipsy programmer 1")
+
+    iGot = Commands[1].Methods.Count
+    Assert.Equals(iGot, 0, "ParseCommands: Tipsy programmer 2")
+
+    iGot = Commands[2].Methods.Count
+    Assert.Equals(iGot, 1, "ParseCommands: Tipsy programmer 3")
+
+    sGot = Commands[2].Methods[0]
+    Assert.Equals(sGot, "U", "ParseCommands: Tipsy programmer 4")
 
 End

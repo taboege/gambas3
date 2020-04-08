@@ -36,6 +36,7 @@ Public Sub Run()
 
         Assert.Note(Subst$(("Entering subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
         Assert.Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
+            Debug oTest.Name
             oTest.Run()
         If Not Assert.Finished Then Assert.Finish()
         LastTestModule = CurrentTestModule
@@ -111,35 +112,45 @@ Private Function GetTestsFromTestModule(TestModule As Class) As String[]
 End
 
 '' Create all test cases that are contained in the specified TestModule and add them to the suite.
-Public Function AddAllTestCases(TestModule As Class, Optional NameProcedure As String)
+Public Function AddAllTestCases(TestModule As Class, Commands As TestCommand[])
 
     Dim asTests As String[]
-    Dim i As Integer
+    Dim i, Plan, MethodCounts As Integer
+    Dim Command As TestCommand
+    Dim NameProcedure As String
 
     Assert TestModule
 
     asTests = GetTestsFromTestModule(TestModule)
     asTests.Sort
 
-    ' Tests must not be empty
+    Command = TestCommand.Find(Commands, TestModule.Name)
+    'If there was no Command then Command is Null
+    Try MethodCounts = Command.Methods.Count
 
     'Assert asTests.Count > 0 Error "Failed: No tests in " & TestModule.Name
     If asTests.Count = 0 Then
-         Assert.BailOut("Error: No tests in " & TestModule.Name)
+         Assert.Todo("No tests in " & TestModule.Name)
     Endif
 
     For i = 0 To asTests.Count - 1
-        If NameProcedure = Null Then
-            AddNewTestCase(CStr(asTests[i]), TestModule)
+
+        NameProcedure = CStr(asTests[i])
+        If MethodCounts = 0 Then
+            'add every testmethod 
+            AddNewTestCase(NameProcedure, TestModule)
         Else
-            ' just one TestMethod was called, change plan, if plan exists in TestModule
+            ' just certain TestMethods will be added, increase plan, if plan exists in TestModule
             If TestModule.Symbols.Exist("Plan", gb.IgnoreCase) Then
-                Object.SetProperty(TestModule, "Plan", 1)
+                Plan = Object.GetProperty(TestModule, "Plan")
+                Inc Plan
+                Object.SetProperty(TestModule, "Plan", Plan)
             Endif
-            If asTests[i] = NameProcedure Then
-                AddNewTestCase(CStr(asTests[i]), TestModule)
+            If Command.Methods.Exist(NameProcedure) Then
+                AddNewTestCase(NameProcedure, TestModule)
             Endif
         Endif
+
     Next
 
 End

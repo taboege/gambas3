@@ -23,7 +23,6 @@ Public Sub Main(Optional Tests As String, Optional Sparse As Boolean, Optional N
 End
 
 
-
 Private Sub PrintSummary()
 
     With $hHarness.Current
@@ -78,19 +77,22 @@ End
 
 Private Function RunTests(Tests As String, Optional Sparse As Boolean)
 
+    Dim aTestCommands As TestCommand[]
     Dim sTestModule As String
     Dim TestModule As Class
     Dim Suite As New TestSuite
     Dim hTapStream As Stream, sTap As String
 
+    aTestCommands = TestCommand.ParseCommands(Tests)
+
     Dim NameProcedure, SingleTestModule As String
 
-    For Each sTestModule In GetAllTestModules(Tests)
+    For Each sTestModule In GetAllTestModules(aTestCommands)
         TestModule = Class.Load(sTestModule)
-        Suite.AddAllTestCases(TestModule, NameProcedure)
+        Suite.AddAllTestCases(TestModule, aTestCommands)
     Next
 
-    ' FIXME: RawTap is hack that allows to see the TAP as it is produced.
+    ' FIXME: This as hack that allows to see the TAP as it is produced. Sparse = true switches that off
     ' This is for tests which fail with an error and test gb.test's BailOut.
     ' Such tests are buffered to a string stream but before they can be echoed,
     ' the process dies.
@@ -112,12 +114,15 @@ Private Function RunTests(Tests As String, Optional Sparse As Boolean)
 
 End
 
-Function GetAllTestModules(Optional SingleTestModule As String) As String[]
+'' 
+
+Function GetAllTestModules(Commands As TestCommand[]) As String[]
 
     Dim TestClass As Class
     Dim TestModuleNames As New String[]
     Dim sNames As New String[]
     Dim sName As String
+    Dim Command As TestCommand
 
     If Exist(".../.test")
         sNames = Split(File.Load(".../.test"), gb.Lf, Null, True)
@@ -137,12 +142,19 @@ Function GetAllTestModules(Optional SingleTestModule As String) As String[]
         'Bail out! Error in Test->GetAllTestModuleNames: Unknown symbol 'Stat' in class 'Class'
 
         If TestModuleNames.Exist(sName) Then Continue
-        If SingleTestModule = Null Then
+        If Commands.Count = 0 Then
+            'Add every Testmodule
             TestModuleNames.Add(sName)
         Else
-            If Lower(sName) = Lower(SingleTestModule) Then
-                TestModuleNames.Add(sName)
-            Endif
+            ' Add only testmodules whose names exist in Commands
+            For Each Command In Commands
+                If Lower(Command.ModuleName) = Lower(sName) Then
+                    TestModuleNames.Add(sName)
+                Endif
+            Next
+            ' If Lower(sName) = Lower(SingleTestModule) Then
+            '     TestModuleNames.Add(sName)
+            ' Endif
         Endif
     Next
 
@@ -151,7 +163,7 @@ Function GetAllTestModules(Optional SingleTestModule As String) As String[]
     Return TestModuleNames
 
 Catch
-    Assert.BailOut("Error in Test->GetAllTestModuleNames: " & Error.Text)
+    Assert.BailOut("Error in " & Error.Where & ": " & Error.Text)
     Quit 1
 
 End

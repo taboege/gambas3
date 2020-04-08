@@ -5,11 +5,12 @@ Public Sub Main()
     ' These must succeed:
     
     'Test
-    'Test.Main()
-    Test.Main("TestInternals")
+    Test.Main()
+    'Test.Main("TestInternals, TestAllAsserts.TestAssert")
+    ' 
     'Test.Main("TestAllAsserts.TestAssert,TestAllAsserts.TestAssertEmpty,TestElse")
 
-    ' Test.Main("TestAllAsserts", Null)
+    'Test.Main("TestAllAsserts", True)
     ' Test.Main("TestSetup", Null)
     ' Test.Main("TestElse", Null)
     ' Test.Main("TestError", Null)
