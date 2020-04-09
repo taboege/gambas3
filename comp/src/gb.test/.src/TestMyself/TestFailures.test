@@ -1,5 +1,7 @@
 ' Gambas test file
 
+''' Every test in this class failes, but is reverted to be reported as good
+
 Public Plan As Integer = 11
 
 Public Sub Setup()
@@ -17,12 +19,14 @@ End
 
 Public Sub TestStringFailure()
 
+    Assert.ReverseNext()
     Assert.StringEquals("Lisa", "Paul", "Intentional String failure. Ok if not ok.")
 
 End
 
 Public Sub TestLongFailure()
 
+    Assert.ReverseNext()
     Assert.Equals(2, 3, "Intentional Long failure. Ok if not ok.")
 
 End
@@ -30,7 +34,8 @@ End
 Public Sub TestLongTypeMismatchFailure()
 
     Dim s As String = "3.0"
-
+    
+    Assert.ReverseNext()
     Assert.Equals(s, 3, "Intentional Long type mismatch failure. Ok if not ok.")
 
 End
@@ -40,23 +45,19 @@ Public Sub TestEqualsFailure()
     Dim oOne, oTwo As Object
 
     Assert.Note("Equals failures")
+    Assert.ReverseNext()
     Assert.Equals(2, 3)
+    
+    Assert.ReverseNext()
     Assert.Equals("3", 2.0)
+    
+    Assert.ReverseNext()
     Assert.Equals("2", 2.1)
-    oOne = New ITest
-    oTwo = New ITest
+    
+    oOne = New Test
+    oTwo = New Test
+    Assert.ReverseNext()
     Assert.Equals(oOne, oTwo)
-
-End
-
-Public Sub TestDoACrash()
-
-    Dim a As Long
-
-    'Me.AddTrace("This will be a crash, then its ok")
-
-    'This is a crash
-    a = 3 / 0
 
 End
 
@@ -65,18 +66,15 @@ Public Sub TestError()
     Dim a As Long
 
     Try a = 3 / 0
+    Assert.ReverseNext()
     Assert.ErrorCode(5, "Wanted error 5. Ok if not ok.")
 
     ' No Error, AssertError has to report a failure
+    Assert.ReverseNext()
     Assert.Error("No Error but error expected. Ok if not ok.")
 
 End
 
-Public Sub TestErrorTwo()
 
-    Error.Raise("I shot the sheriff.")
-    Assert.Pass()
-
-End
 
 '

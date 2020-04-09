@@ -36,7 +36,7 @@ Public Sub Run()
 
         Assert.Note(Subst$(("Entering subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
         Assert.Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
-            Debug oTest.Name
+            'Debug oTest.Name
             oTest.Run()
         If Not Assert.Finished Then Assert.Finish()
         LastTestModule = CurrentTestModule
