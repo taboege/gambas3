@@ -813,7 +813,6 @@ TABLE.gw-calendar > TBODY > TR > TD.gw-date-current {
   position: relative;
   border: solid 1px #C0C0C0;
   min-height: 0.5em;
-  border-radius: 0.25em;
 }
 
 .gw-progressbar.gw-noborder {
@@ -825,7 +824,6 @@ TABLE.gw-calendar > TBODY > TR > TD.gw-date-current {
   height: 100%;
   background: #C0C0C0;
   border: solid 1px white;
-  border-radius: 0.25em;
   z-index: -1;
 }
 
@@ -853,7 +851,7 @@ TABLE.gw-calendar > TBODY > TR > TD.gw-date-current {
   border: none;
 }
 
-.gw-table-row-selected {
+.gw-selected {
   background-color: #2980B9 !important;
   color: white !important;
 }
@@ -924,3 +922,19 @@ TABLE.gw-calendar > TBODY > TR > TD.gw-date-current {
   left: -2000px;
 }
 
+.gw-listbox {
+  display: flex;
+  flex-direction: column;
+  border: solid 1px #C0C0C0;
+  user-select: none;
+  cursor: pointer;
+  overflow: auto;
+}
+
+.gw-listbox.gw-noborder {
+  border: none;
+}
+
+.gw-listbox > DIV {
+  padding: 0.25em 0.5em;
+}

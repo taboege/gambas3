@@ -145,7 +145,6 @@ End
 
 Static Private Sub Upload(sKey As String) As Boolean
   
-  Dim sErr As String
   Dim sPath As String
   Dim sTarget As String
   
@@ -192,8 +191,6 @@ Static Public Sub Main()
   Dim sRead As String
   Dim sWrite As String
   Dim sTemp As String
-  Dim sKey As String
-  Dim cEnv As Collection
   Dim sPath As String
   Dim aLib As String[]
   Dim sFile As String

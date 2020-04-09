@@ -120,7 +120,7 @@ Public Sub _new(Optional Parent As WebContainer)
   _NoRefresh = 1
   
   Inc $iCount
-  WebForm.PrintLog("==== " & $iCount & " controls")
+  'WebForm.PrintLog("==== " & $iCount & " controls")
   
   Inc $iLastId
   $iId = $iLastId
@@ -864,7 +864,7 @@ Public Sub Delete()
   $cFromId[$iId] = Null
   _Invalid = True
   Dec $iCount
-  WebForm.PrintLog("==== " & $iCount & " controls")
+  'WebForm.PrintLog("==== " & $iCount & " controls")
   'Debug $sName;; $iId;; System.Backtrace.Join(" ")
   
 End

@@ -4,6 +4,7 @@ Export
 Inherits WebControl
 
 Public Const _Properties As String = "*,Border=True,Mode{Select.*}=None,ShowCheck=True,ShowHeader=True,Sortable"
+Public Const _Group As String = "View"
 Public Const _DrawWith As String = "GridView"
 Public Const _DefaultSize As String = "24,24"
 Public Const _DefaultEvent As String = "Data"
@@ -34,7 +35,7 @@ Property SortOrder As Integer
 Private $hColumns As _WebTableColumns
 Private $iCount As Integer
 Private $iMode As Integer
-Private $hSelection As WebTableSelection
+Private $hSelection As CSelection
 Private $iStep As Integer = 100
 Private $iDisplay As Integer = 100
 
@@ -138,7 +139,7 @@ Private Sub PrintBody(iStart As Integer, iEnd As Integer)
       
       If $bNoCheck Then
         Print " id=\""; Me.Name & ":" & CStr(iRow); "\""
-        If IsSelected(iRow) Then Print " class=\"gw-table-row-selected\";"
+        If IsSelected(iRow) Then Print " class=\"gw-selected\";"
       'Print Me._GetUpdateJS("onclick", "$" & CStr(iRow));
         Print " onmousedown=\"gw.table.select("; JS(Me.Name); ","; iRow; 
       Else
@@ -244,11 +245,10 @@ Private Sub SetSelection()
   If $iMode = Select.None Then
     $hSelection = Null
   Else
-    If Not $hSelection Then $hSelection = New WebTableSelection As "TableSelection"
+    If Not $hSelection Then $hSelection = New CSelection As "Selection"
   Endif
   
 End
-
 
 Public Sub SelectAll()
   

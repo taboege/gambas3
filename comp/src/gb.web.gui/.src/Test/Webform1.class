@@ -190,3 +190,17 @@ Public Sub WebButton7_Click()
   WebFileButton1.Abort()
 
 End
+
+Public Sub WebListBox1_Activate()
+
+  Message(WebListBox1.Text)
+
+End
+
+Public Sub WebListBox1_Select()
+
+  Dim aSel As String[] = WebListBox1.Selection
+
+  WebTextArea1.Text = aSel.Join()
+
+End

@@ -1093,9 +1093,9 @@ gw = {
       {
         tr = $(id + ':' + i);
         if (checked)
-          tr.addClass('gw-table-row-selected');
+          tr.addClass('gw-selected');
         else
-          tr.removeClass('gw-table-row-selected');
+          tr.removeClass('gw-selected');
       }
         
       gw.update(id, '!' + start + ':' + (end - start + 1), checked);
@@ -1105,7 +1105,7 @@ gw = {
     {
       var elt = $(id + ':' + row);
       var last = $(id).gw_current;
-      var selected = !elt.hasClass('gw-table-row-selected');
+      var selected = !elt.hasClass('gw-selected');
       
       if (event)
       {
@@ -1117,8 +1117,8 @@ gw = {
       else
       {
         if (last != undefined)
-          $(id + ':' + last) && $(id + ':' + last).removeClass('gw-table-row-selected');
-        elt.addClass('gw-table-row-selected');
+          $(id + ':' + last) && $(id + ':' + last).removeClass('gw-selected');
+        elt.addClass('gw-selected');
         gw.update(id, '$' + row, null);
       }
       
@@ -1282,7 +1282,7 @@ gw = {
       child = $(child);
       gw.table.scroll(id, child.offsetLeft - (sw.clientWidth - child.offsetWidth) / 2, child.offsetTop - (sw.clientHeight - child.offsetHeight) / 2);
     }
-},
+  },
   
   file: 
   {
@@ -1474,7 +1474,62 @@ gw = {
     {
       $(id).lastElementChild.innerHTML = text;
     }
-  }
+  },
   
+  listbox:
+  {
+    selectRange: function(id, start, end, checked)
+    {
+      var items = $(id).children;
+      var i;
+      var elt;
+      
+      if (end < start)
+      {
+        i = start;
+        start = end;
+        end = i;
+      }
+      
+      for (i = start; i <= end; i++)
+      {
+        elt = items[i];
+        if (checked)
+          elt.addClass('gw-selected');
+        else
+          elt.removeClass('gw-selected');
+      }
+        
+      gw.update(id, checked ? '+' : '-',  [start, end - start + 1]);
+    },
+  
+    select: function(id, row, event)
+    {
+      var items = $(id).children;
+      var elt = items[row];
+      var last = $(id).gw_current;
+      var selected = !elt.hasClass('gw-selected');
+      
+      if (event)
+      {
+        if (event.shiftKey && last)
+          gw.listbox.selectRange(id, last, row, selected);
+        else
+          gw.listbox.selectRange(id, row, row, selected);
+      }
+      else
+      {
+        if (last != undefined)
+          items[last] && items[last].removeClass('gw-selected');
+        elt.addClass('gw-selected');
+        gw.update(id, '$', row);
+      }
+      
+      $(id).gw_current = row;
+      
+      /*$(id).addClass('gw-unselectable');
+      setTimeout(function() { $(id).removeClass('gw-unselectable'); }, 0);*/
+    }
+  }
 }
 

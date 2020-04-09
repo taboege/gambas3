@@ -23,7 +23,7 @@ End
 
 Public Sub Form_Open()
 
-  $aOrder = ["Form", "View", "Report", "WebForm", "TermForm", "Dialog", "Chooser", "Container", "Data", "Network", "Special"]
+  $aOrder = ["Form", "WebForm", "TermForm", "View", "Report", "Dialog", "Chooser", "Container", "Data", "Network", "Special"]
 
   ReadConfig
   SetTool
