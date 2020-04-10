@@ -28,7 +28,7 @@ Private Sub PrintSummary()
     With $hHarness.Current
         If $bVerbose Then
             Dim sLine As String
-            Print "Transcript of the TAP stream:"
+            Print "# Transcript of the TAP stream:"
             Print
             For Each sLine In .Lines
                 Print sLine

@@ -8,3 +8,4 @@ TestFailures
 TestInternals
 TestSetup
 TestSetupTeardown
+TestSummary

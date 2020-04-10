@@ -26,8 +26,7 @@ Static Public Function Find(Commands As TestCommand[], TestModuleName As String)
 End
 
 '' Parses a string with comma separated tests and creates an array of TestCommands.
-
-Public Function ParseCommands(Tests As String) As TestCommand[]
+Static Public Function ParseCommands(Tests As String) As TestCommand[]
 
     Dim asAll As String[]
     Dim sCommand, sModulename, sMethodname As String

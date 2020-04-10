@@ -9,6 +9,7 @@ Public Sub Main()
     
     Tests = "TestAllAsserts"
     
+    Tests = "TestSummary"
     
     'This must not succeed
     'Tests = "TestCrashes"
