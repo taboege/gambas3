@@ -22,10 +22,10 @@ Public Sub Main(Optional Tests As String, Optional Sparse As Boolean, Optional N
 
 End
 
-
 Private Sub PrintSummary()
 
     With $hHarness.Current
+
         If $bVerbose Then
             Dim sLine As String
             Print "# Transcript of the TAP stream:"
@@ -65,7 +65,7 @@ Private Sub PrintSummary()
         Endif
 
         Print
-        Print String$(80, "*")
+        Print "# " & String$(80, "*")
         Print
 
     End With
@@ -85,6 +85,7 @@ Private Function RunTests(Tests As String, Optional Sparse As Boolean)
 
     aTestCommands = TestCommand.ParseCommands(Tests)
 
+    'FIXME: SingleTestModule, NameProcedure do not exist any more, they are replaced by aTestCommands
     Dim NameProcedure, SingleTestModule As String
 
     For Each sTestModule In GetAllTestModules(aTestCommands)
@@ -96,25 +97,27 @@ Private Function RunTests(Tests As String, Optional Sparse As Boolean)
     ' This is for tests which fail with an error and test gb.test's BailOut.
     ' Such tests are buffered to a string stream but before they can be echoed,
     ' the process dies.
+
     If Sparse = False Then
         ' The TAP stream is produced in this process. We have to get it into the
         ' harness somehow. Since we don't start a new process, it is going to be
         ' done by a buffer.
         hTapStream = Open String For Write
         Assert.Output = hTapStream
-            Suite.Run()
+        Suite.Run()
         sTap = Close #hTapStream
         hTapStream = Open String sTap For Read
+        
+        'FIXME: SingleTestModule, NameProcedure do not exist any more
         $hHarness.Read(hTapStream, Subst$("&1:&2", SingleTestModule, IIf(NameProcedure, NameProcedure, "*")))
         Close #hTapStream
     Else
         Suite.Run()
     Endif
 
-
 End
 
-'' 
+''
 
 Function GetAllTestModules(Commands As TestCommand[]) As String[]
 
@@ -167,4 +170,3 @@ Catch
     Quit 1
 
 End
-
