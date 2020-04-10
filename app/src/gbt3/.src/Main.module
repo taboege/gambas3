@@ -4,19 +4,19 @@
 ''' runs tests and restores the project afterwards
 
 Private $hHarness As New TestHarness
-Private $bVerbose As Boolean
+Private $bSparse As Boolean
 
 Public Sub Main()
 
     Dim sPath, sCompilerPath, sExecutorPath, sBuf, sTestCmd, sRand As String
-    Dim sSingleTestModule, sSingleTestMethod, sNewStartupFile, sStartupSequence As String
+    Dim sTests, sNewStartupFile, sStartupSequence As String
     Dim hTestee As Process
 
     With Args
         .Begin(Application.Name & " <options> [path to poject]\n\nType " & Application.Name & " -h for help")
-        Try sSingleTestModule = .Get("m", "testmodule", "Single Testmodule")
-        Try sSingleTestMethod = .Get("t", "testmethod", "Method of a single testmodule")
-        Try $bVerbose = .Has("v", "verbose", "Echo the TAP stream")
+        Try sTests = .Get("t", "tests", "Optional comma separated string of selected tests")
+        Try $bSparse = .Has("s", "sparse", "Do not echo the TAP stream")
+        'Try $bSparse = .Has("v", "verbose", "Echo the TAP stream")
         .End
     End With
 
@@ -35,20 +35,19 @@ Public Sub Main()
         Error.Raise("Error: Path to project not found.")
     Endif
 
-    If sSingleTestMethod And If sSingleTestModule = Null Then
-        Error.Raise("Error: Testmodule not defined")
+    'Chossen Tests
+    If sTests Then
+        sTestCmd = "\"" & sTests & "" "\""
+    Else
+        sTestCmd = "Null"
     Endif
 
-    If sSingleTestModule Then
-        sTestCmd = "\"" & sSingleTestModule & "" "\""
-    Endif
-
-    If sSingleTestMethod Then
-        sTestCmd &= ", \"" & sSingleTestMethod & "" "\""
+    If $bSparse Then
+        sTestCmd &= ", True"
     Endif
 
     ' ------------------------------------------------- New startup file
-    sTestCmd = "Unittest.Main(" & sTestCmd & ")"
+    sTestCmd = "Test.Main(" & sTestCmd & ")"
 
     Do
         sRand = "TEST" & Randstr()
@@ -71,6 +70,7 @@ Public Sub Main()
     'run tests
     hTestee = Exec [sExecutorPath, "-s", sRand, sPath] For Read
     $hHarness.Read(hTestee, File.Name(sPath))
+
     PrintSummary()
 
     ' ------------------------------------------------- Restore project
@@ -88,10 +88,30 @@ End
 
 Private Sub PrintSummary()
 
+    'FIXME: As gb.test is able to print a summary, that should be used only
+
+    '#deletelater: Wir haben duplicated code, denn im Moment kommen 
+    'zwei Summaries raus, die so aussehen:
+    '
+    ' ********************************************************************************
+    '
+    ' :* FAILED (exit code 0, runtime 0,00s)
+    ' Failed 1 out of 3 tests: 1
+    '
+    ' ********************************************************************************
+    '
+    '
+    ' ********************************************************************************
+    '
+    ' deglib-basic FAILED
+    ' Ran 3 tests (exit code 0, runtime 0,00s)
+    ' Failed 1 out of 3 tests : 1
+    '
+    ' ********************************************************************************
+
     With $hHarness.Current
-        If $bVerbose Then
+        If Not $bSparse Then
             Dim sLine As String
-            Print "Transcript of the TAP stream:"
             Print
             For Each sLine In .Lines
                 Print sLine
@@ -132,7 +152,7 @@ Private Sub PrintSummary()
             Endif
         Endif
 
-        If $bVerbose Then
+        If Not $bSparse Then
             Print
             Print String$(80, "*")
             Print
