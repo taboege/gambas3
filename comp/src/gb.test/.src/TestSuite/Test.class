@@ -7,27 +7,28 @@ Create Static
 Private $hHarness As New TestHarness
 Private $bVerbose As Boolean
 
-''' The static procedure Unittest.Main() starts test(s).
+''' The static procedure Test.Main() starts test(s).
 
 '' Runs all tests in all testcontainers and prints the result to the console.
-'' With UnitTest.Main(NameTestModule) the tests can be restricted to only those of a single test module.
-'' With UnitTest.Main(NameTestModule, NameProcedure) only a single test can be accomplished.
+'' With Test.Main(NameTestModule) the tests can be restricted to only those of a single test module.
+'' With Test.Main(NameTestModule, NameProcedure) only a single test can be accomplished.
 
-Public Sub Main(Optional NameTestModule As String, Optional NameProcedure As String, Optional Verbose As Boolean = True, Optional RawTap As Boolean = True)
+Public Sub Main(Optional Tests As String, Optional Sparse As Boolean, Optional NoSummary As Boolean)
 
     Assert.Reset() ' only if you run this Main multiple times per process, which you shouldn't
-    $bVerbose = Verbose
-    RunTests(NameTestModule, NameProcedure, RawTap)
-    If Not RawTap Then PrintSummary()
+    $bVerbose = Not Sparse
+    RunTests(Tests, Sparse)
+    If Not NoSummary Then PrintSummary()
 
 End
 
 Private Sub PrintSummary()
 
     With $hHarness.Current
+
         If $bVerbose Then
             Dim sLine As String
-            Print "Transcript of the TAP stream:"
+            Print "# Transcript of the TAP stream:"
             Print
             For Each sLine In .Lines
                 Print sLine
@@ -64,7 +65,7 @@ Private Sub PrintSummary()
         Endif
 
         Print
-        Print String$(80, "*")
+        Print "# " & String$(80, "*")
         Print
 
     End With
@@ -74,48 +75,57 @@ End
 '
 '' Run all tests, optional limited by Container or TestCaseName. Track contains .
 
-Private Function RunTests(SingleTestModule As String, Optional NameProcedure As String, Optional RawTap As Boolean)
+Private Function RunTests(Tests As String, Optional Sparse As Boolean)
 
+    Dim aTestCommands As TestCommand[]
     Dim sTestModule As String
     Dim TestModule As Class
     Dim Suite As New TestSuite
     Dim hTapStream As Stream, sTap As String
 
-    'FIXME: If included as component then TestContainers can only be loaded if they contain the magic word Export
+    aTestCommands = TestCommand.ParseCommands(Tests)
 
-    For Each sTestModule In GetAllTestTestModules(SingleTestModule)
+    'FIXME: SingleTestModule, NameProcedure do not exist any more, they are replaced by aTestCommands
+    Dim NameProcedure, SingleTestModule As String
+
+    For Each sTestModule In GetAllTestModules(aTestCommands)
         TestModule = Class.Load(sTestModule)
-        Suite.AddAllTestCases(TestModule, NameProcedure)
+        Suite.AddAllTestCases(TestModule, aTestCommands)
     Next
 
-    ' FIXME: RawTap is hack that allows to see the TAP as it is produced.
+    ' FIXME: This as hack that allows to see the TAP as it is produced. Sparse = true switches that off
     ' This is for tests which fail with an error and test gb.test's BailOut.
     ' Such tests are buffered to a string stream but before they can be echoed,
     ' the process dies.
-    If Not RawTap Then
+
+    If Sparse = False Then
         ' The TAP stream is produced in this process. We have to get it into the
         ' harness somehow. Since we don't start a new process, it is going to be
         ' done by a buffer.
         hTapStream = Open String For Write
         Assert.Output = hTapStream
-            Suite.Run()
+        Suite.Run()
         sTap = Close #hTapStream
         hTapStream = Open String sTap For Read
+        
+        'FIXME: SingleTestModule, NameProcedure do not exist any more
         $hHarness.Read(hTapStream, Subst$("&1:&2", SingleTestModule, IIf(NameProcedure, NameProcedure, "*")))
         Close #hTapStream
     Else
         Suite.Run()
     Endif
 
-
 End
 
-Function GetAllTestTestModules(Optional SingleTestModule As String) As String[]
+''
+
+Function GetAllTestModules(Commands As TestCommand[]) As String[]
 
     Dim TestClass As Class
     Dim TestModuleNames As New String[]
     Dim sNames As New String[]
     Dim sName As String
+    Dim Command As TestCommand
 
     If Exist(".../.test")
         sNames = Split(File.Load(".../.test"), gb.Lf, Null, True)
@@ -132,15 +142,22 @@ Function GetAllTestTestModules(Optional SingleTestModule As String) As String[]
 
         'Atention: Class.Stat(sName).Name does not work if included as component
         'Then this creates the error:
-        'Bail out! Error in Unittest->GetAllTestModuleNames: Unknown symbol 'Stat' in class 'Class'
+        'Bail out! Error in Test->GetAllTestModuleNames: Unknown symbol 'Stat' in class 'Class'
 
         If TestModuleNames.Exist(sName) Then Continue
-        If SingleTestModule = Null Then
+        If Commands.Count = 0 Then
+            'Add every Testmodule
             TestModuleNames.Add(sName)
         Else
-            If Lower(sName) = Lower(SingleTestModule) Then
-                TestModuleNames.Add(sName)
-            Endif
+            ' Add only testmodules whose names exist in Commands
+            For Each Command In Commands
+                If Lower(Command.ModuleName) = Lower(sName) Then
+                    TestModuleNames.Add(sName)
+                Endif
+            Next
+            ' If Lower(sName) = Lower(SingleTestModule) Then
+            '     TestModuleNames.Add(sName)
+            ' Endif
         Endif
     Next
 
@@ -149,20 +166,7 @@ Function GetAllTestTestModules(Optional SingleTestModule As String) As String[]
     Return TestModuleNames
 
 Catch
-    Assert.BailOut("Error in Unittest->GetAllTestModuleNames: " & Error.Text)
+    Assert.BailOut("Error in " & Error.Where & ": " & Error.Text)
     Quit 1
 
 End
-
-' Private Function CaseNames_Read() As String[]
-'
-'     Return $CaseNames
-'
-' End
-'
-' '' Returns the classname of the TestContainer
-' Private Function Name_Read() As String
-'
-'     Return Object.Class(Me).Name
-'
-' End

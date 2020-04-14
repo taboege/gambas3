@@ -23,6 +23,8 @@ Private $aActiveTests As Subtest[]
 Private $hCurrent As New Subtest
 Private $hOutput As Stream
 
+Private $IsNextReverse As Boolean
+
 Public Sub _new()
 
    Reset()
@@ -39,6 +41,12 @@ Public Sub Reset()
         .Success = True
         .Directive = Tap.NONE
     End With
+
+End
+
+Public Sub ReverseNext()
+
+  $IsNextReverse = True
 
 End
 
@@ -104,6 +112,15 @@ Public Sub SkipAll(Optional Comment As String)
 End
 
 Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
+
+    If $IsNextReverse = True Then
+        If Result = True Then
+            Result = False
+        Else
+            Result = True
+        Endif
+        $IsNextReverse = False
+    Endif
 
     With $hCurrent
         If .Directive <> Tap.NONE Then

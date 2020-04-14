@@ -1,8 +1,11 @@
 TestAllAsserts
 TestBailout
+TestCrashes
 TestElse
 TestEmpty
 TestError
 TestFailures
+TestInternals
 TestSetup
 TestSetupTeardown
+TestSummary

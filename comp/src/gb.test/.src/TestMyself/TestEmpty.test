@@ -1,3 +1,3 @@
 ' Gambas test file
 
-''' Unittesting will BailOut if a Testmodule is empty
+''' Testing will BailOut if a testmodule is empty

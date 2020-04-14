@@ -2,31 +2,33 @@
 
 Public Sub Main()
 
+    Dim Tests As String
+
     ' These must succeed:
+    Tests = "TestAllAsserts, TestElse, TestError, TestSetupTeardown, TestInternals, TestFailures"
+    
+    Tests = "TestAllAsserts"
+    
+    Tests = "TestSummary"
+    
+    'This must not succeed
+    'Tests = "TestCrashes"
+    
+    'This must bailout
+    'Tests = "TestBailout"
+    
+    'FIXME:
+    'This failes, but should not
+    'Tests = "TestSetup"
 
-    UnitTest.Main("TestAllAsserts", Null)
-    UnitTest.Main("TestSetup", Null)
-    UnitTest.Main("TestElse", Null)
-    UnitTest.Main("TestError", Null)
-    UnitTest.Main("TestSetupTeardown", Null)
+    Test.Main(Tests)
 
-    ' Here every test must fail:
-    UnitTest.Main("TestFailures", Null)
-    UnitTest.Main("TestBailout", Null)
-
-    'This will BailOut
-    UnitTest.Main("TestEmpty", Null)
-
-    'Test all
-    'UnitTest.Main(Null, Null)
-
-    ' Just one test
-    UnitTest.Main("TestAllAsserts", "TestAssert")
-
-    'Cheese()
+    Cheese()
 
 End
 
 Private Sub (Cheese)()
+
+    'TestCommand.ParseCommands("TestAllAsserts.TestAssert,TestAllAsserts.TestAssertEmpty,TestElse")
 
 End

@@ -1,0 +1,30 @@
+' Gambas test file
+
+' Gambas test module file
+
+Public Sub DoSomeAsserts()
+
+  Assert.Pass("Bla 1")
+  Assert.Pass("Bla 2")
+  Assert.Pass("Bla 3")
+
+End
+
+Public Sub DoSomeSkips()
+
+  Assert.Skip("Skip1")
+  Assert.Skip("Skip2")
+
+End
+
+Public Sub DoSomeTodo()
+
+  Assert.Todo("Todo1")
+
+End
+
+Public Sub DoOneFailure()
+
+  Assert.Ok(False, "Intentional failure")
+
+End
