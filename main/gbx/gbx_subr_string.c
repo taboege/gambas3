@@ -55,43 +55,53 @@ void SUBR_cat(ushort code)
 		if (NPARAM == 1)
 		{
 			PARAM--;
-			len = PARAM[0]._string.len ;
+			
 			VALUE_conv_string(&PARAM[1]);
 			len2 = PARAM[1]._string.len;
 			
-			str = PARAM[0]._string.addr;
-			if (len && PARAM[0]._string.start == 0 && len == STRING_length(str) && STRING_from_ptr(str)->ref == 2)
+			if (PARAM[0].type == T_STRING)
 			{
-				STRING_from_ptr(str)->ref--;
-				str = STRING_add(str, PARAM[1]._string.addr + PARAM[1]._string.start, len2);
+				len = PARAM[0]._string.len ;
 				
-				if (PCODE_is(PC[1], C_POP_LOCAL))
+				str = PARAM[0]._string.addr;
+				if (len && PARAM[0]._string.start == 0 && len == STRING_length(str) && STRING_from_ptr(str)->ref == 2)
 				{
-					VALUE *bp = &BP[(signed char)PC[1]];
-					bp->_string.addr = str;
-					bp->_string.len += len2;
+					STRING_from_ptr(str)->ref--;
+					str = STRING_add(str, PARAM[1]._string.addr + PARAM[1]._string.start, len2);
+					
+					if (PCODE_is(PC[1], C_POP_LOCAL))
+					{
+						VALUE *bp = &BP[(signed char)PC[1]];
+						bp->_string.addr = str;
+						bp->_string.len += len2;
+					}
+					else if (PCODE_is(PC[1], C_POP_PARAM))
+					{
+						VALUE *pp = &PP[(signed char)PC[1]];
+						pp->_string.addr = str;
+						pp->_string.len += len2;
+					}
+					else if (PCODE_is(PC[1], C_POP_STATIC))
+					{
+						CLASS_VAR *var = &CP->load->stat[PC[1] & 0x7FF];
+						*(char **)((char *)CP->stat + var->pos) = str;
+					}
+					else if (PCODE_is(PC[1], C_POP_DYNAMIC))
+					{
+						CLASS_VAR *var = &CP->load->dyn[PC[1] & 0x7FF];
+						*(char **)(OP + var->pos) = str;
+					}
+					
+					RELEASE_STRING(&PARAM[1]);
+					SP -= 2;
+					PC++;
+					return;
 				}
-				else if (PCODE_is(PC[1], C_POP_PARAM))
-				{
-					VALUE *pp = &PP[(signed char)PC[1]];
-					pp->_string.addr = str;
-					pp->_string.len += len2;
-				}
-				else if (PCODE_is(PC[1], C_POP_STATIC))
-				{
-					CLASS_VAR *var = &CP->load->stat[PC[1] & 0x7FF];
-					*(char **)((char *)CP->stat + var->pos) = str;
-				}
-				else if (PCODE_is(PC[1], C_POP_DYNAMIC))
-				{
-					CLASS_VAR *var = &CP->load->dyn[PC[1] & 0x7FF];
-					*(char **)(OP + var->pos) = str;
-				}
-				
-				RELEASE_STRING(&PARAM[1]);
-				SP -= 2;
-				PC++;
-				return;
+			}
+			else
+			{
+				VALUE_conv_string(&PARAM[0]);
+				len = PARAM[0]._string.len ;
 			}
 		}
 		else
