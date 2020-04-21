@@ -227,7 +227,11 @@ Private Sub GrepFile(sPath As String, Optional bUseReplaceString As Boolean)
     sFind = Mid$(sFind, iPos + 1)
 
     If WordsOnly Then
-      If String.Left(sFind) <> String.Left(Search) Then iFilePos += String.Len(String.Left(sFind))
+      If IgnoreCase Then
+        If String.LCase(sFind) Not Begins String.LCase(Search) Then iFilePos += String.Len(String.Left(sFind))
+      Else
+        If sFind Not Begins Search Then iFilePos += String.Len(String.Left(sFind))
+      Endif
       sFind = Search
     Endif
     

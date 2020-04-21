@@ -344,7 +344,11 @@ Private Sub GrepFile(hFile As Object, Optional sPath As String, Optional bUseRep
     sFind = Mid$(sFind, iPos + 1)
 
     If WordsOnly Then
-      If String.Left(sFind) <> String.Left(SearchString) Then hResult.Pos += String.Len(String.Left(sFind))
+      If IgnoreCase Then
+        If String.LCase(sFind) Not Begins String.LCase(SearchString) Then hResult.Pos += String.Len(String.Left(sFind))
+      Else
+        If sFind Not Begins SearchString Then hResult.Pos += String.Len(String.Left(sFind))
+      Endif
       sFind = SearchString
     Endif
     
