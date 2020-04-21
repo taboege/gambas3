@@ -396,32 +396,32 @@ End
 
 Public Sub Load(Path As String, Optional AddNewLine As Boolean)
   
-  Inc Application.Busy
+  'Inc Application.Busy
   Goto(0, 0)
   $hDoc.Load(Path, AddNewLine)
   Init
   If $bShowPreview Then $hTimerSideBarRefresh.Trigger
-  Dec Application.Busy
+  'Dec Application.Busy
 
-Catch
-  
-  Dec Application.Busy
-  Error.Propagate
+' Catch
+'   
+'   Dec Application.Busy
+'   Error.Propagate
   
 End
 
 Public Sub Save(Path As String)
   
-  Inc Application.Busy
+  'Inc Application.Busy
   $hDoc.HighlightFrom($Y)
   $hDoc.Save(Path)
   $hTimerChange = Null
-  Dec Application.Busy
+  'Dec Application.Busy
   
-Catch
-  
-  Dec Application.Busy
-  Error.Propagate
+' Catch
+'   
+'   'Dec Application.Busy
+'   Error.Propagate
   
 End
 
