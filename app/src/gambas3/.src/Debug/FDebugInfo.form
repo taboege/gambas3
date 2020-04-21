@@ -184,7 +184,7 @@
     Index = 5
     Text = ("Search result")
     { panSearch HBox
-      MoveScaled(1,0,83,4)
+      MoveScaled(1,0,97,4)
       { btnCancelSearch ToolButton
         MoveScaled(0,0,10,4)
         Visible = False
@@ -193,36 +193,41 @@
         Text = ("Cancel")
         Picture = Picture["icon:/small/halt"]
       }
+      { spnSearch Spinner
+        MoveScaled(6,0,4,4)
+        Visible = False
+        Padding = 4
+      }
       { btnCloseSearch ToolButton
         MoveScaled(11,0,10,4)
         AutoResize = True
         Text = ("Close")
         Picture = Picture["icon:/small/close"]
       }
-      { btnRefreshSearch ToolButton
-        MoveScaled(22,0,18,4)
-        AutoResize = True
-        Text = ("Search again")
-        Picture = Picture["icon:/small/refresh"]
-      }
       { btnShowSearch ToolButton
-        MoveScaled(41,0,19,4)
+        MoveScaled(21,0,21,4)
         AutoResize = True
         Text = ("Show search window")
         Picture = Picture["icon:/small/find"]
+      }
+      { btnRefreshSearch ToolButton
+        MoveScaled(43,0,18,4)
+        AutoResize = True
+        Text = ("Search again")
+        Picture = Picture["icon:/small/refresh"]
       }
       { Panel1 Panel
         MoveScaled(62,0,2,4)
         Expand = True
       }
       { lblBrowse Label
-        MoveScaled(66,0,11,4)
+        MoveScaled(77,0,11,4)
         Font = Font["Italic"]
         Padding = 4
         AutoResize = True
       }
       { panButtonSearch Panel
-        MoveScaled(78,0,4,4)
+        MoveScaled(90,0,4,4)
       }
     }
     { Separator5 Separator

@@ -31,7 +31,6 @@ Private $bFirstShowDebug As Boolean
 
 Static Private $sCompressMessage As String
 
-
 Public Sub _new()
   
   'Me.ResizeScaled(86, 97)
@@ -1943,7 +1942,7 @@ Public Sub Form_KeyPress()
       If FSignature.VisibleFrom(hEditor.GetEditor()) Then Return
     Endif
     
-    If FSearch.InBrowse Then
+    If FSearch.IsSearching() Then
       FSearch.Cancel
       Return
     Endif

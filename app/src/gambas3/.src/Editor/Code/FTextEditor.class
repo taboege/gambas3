@@ -265,14 +265,11 @@ Public Sub Modify(Optional bReset As Boolean)
 
   If Project.ReadOnly Then Return
   
-  $bModify = True
   Inc Project.TimeStamp
   Inc Age
-  FSearch.OnFileChange(Me.Path)
   
-  If bReset Then
-    $bModify = False
-  Endif
+  $bModify = Not bReset
+  If $bModify Then FSearch.OnFileChange(Me.Path)
 
   DrawTitle
   
@@ -871,8 +868,12 @@ Public Sub GetPosition() As Integer
 
 End
 
-Public Sub SetPosition(hResult As CFindResult, Optional bJustCheck As Boolean) As Boolean
+Public Sub SetPosition(hResult As CSearchResult, Optional bJustCheck As Boolean) As Boolean
   
+  If bJustCheck Then
+    hResult.Location = GetProcAt(hResult.Line)
+  Endif
+
   Return $hEditor.SetPosition(hResult, bJustCheck)
   
 End

@@ -42,20 +42,6 @@ Public Sub _new()
     .AddColumn(("Function"))
   End With
   
-  ' With gvwFind
-  '   .Columns.Count = 5
-  '   .Columns[0].Width = DS * 16
-  '   .Columns[0].Text = ("File")
-  '   .Columns[1].Width = DS * 16
-  '   .Columns[1].Text = ("Location")
-  '   .Columns[2].Width = DS * 6
-  '   .Columns[2].Text = ("Line")
-  '   .Columns[3].Width = DS * 6
-  '   .Columns[3].Text = ("Col.")
-  '   .Columns[4].Width = 32
-  '   .Columns[4].Text = ("Text")
-  ' End With
-  
   With gvwFind
     .AddColumn(("File"))
     .AddColumn(("Location"))
@@ -625,6 +611,20 @@ Public Sub SetSearchListInfo(Optional sText As String)
   gvwFind.Visible = sText
   lblNotFound.Visible = Not sText
   'lblBrowse.Show
+  
+End
+
+Public Sub StartSearch()
+  
+  spnSearch.Start
+  spnSearch.Show
+  
+End
+
+Public Sub StopSearch()
+  
+  spnSearch.Stop
+  spnSearch.Hide
   
 End
 
