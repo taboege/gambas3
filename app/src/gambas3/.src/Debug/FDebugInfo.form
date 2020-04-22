@@ -271,7 +271,7 @@
         MoveScaled(20,0,15,4)
         AutoResize = True
         Text = ("Synchronize")
-        Picture = Picture["icon:/small/refresh"]
+        Picture = Picture["icon:/small/download"]
       }
       { btnVcRevert ToolButton
         MoveScaled(34,0,20,4)
