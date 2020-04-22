@@ -232,6 +232,7 @@ Private Sub Parent_Write(Value As WebContainer)
 
   Dim hParent As WebContainer
   Dim sParent As String
+  Dim hForm As WebForm
   
   hParent = Parent_Read()
   
@@ -239,8 +240,9 @@ Private Sub Parent_Write(Value As WebContainer)
 
   If Me Is WebMenu Then
     If Value Not Is WebForm And If Value Not Is WebMenu Then Error.Raise("Incorrect parent")
-    If Value Is WebForm Then
-      Value = Me.Form._GetMenuBar()
+    Try hForm = Value
+    If Not Error Then
+      Value = hForm._GetMenuBar()
       Value.Show
     Endif
   Endif
