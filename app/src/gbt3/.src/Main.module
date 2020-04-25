@@ -16,7 +16,6 @@ Public Sub Main()
         .Begin(Application.Name & " <options> [path to poject]\n\nType " & Application.Name & " -h for help")
         Try sTests = .Get("t", "tests", "Optional comma separated string of selected tests")
         Try $bSparse = .Has("s", "sparse", "Do not echo the TAP stream")
-        'Try $bSparse = .Has("v", "verbose", "Echo the TAP stream")
         .End
     End With
 
@@ -40,10 +39,6 @@ Public Sub Main()
         sTestCmd = "\"" & sTests & "" "\""
     Else
         sTestCmd = "Null"
-    Endif
-
-    If $bSparse Then
-        sTestCmd &= ", True"
     Endif
 
     ' ------------------------------------------------- New startup file
@@ -140,9 +135,9 @@ Private Sub PrintSummary()
             If .Failed > 0 Then
                 Dim iInd As Integer
                 Print "Failed";; .Failed;; "out of";; .Run;; Plural(.Run, "test");; ":";;
-                For iInd = 0 To .Failures.Max
-                    Print .Failures[iInd];
-                    If iInd < .Failures.Max Then Print ",";;
+                For iInd = 0 To .Subtests.Max
+                    Print .Subtests[iInd].Description;
+                    If iInd < .Subtests.Max Then Print ",";;
                 Next
                 Print
             Endif

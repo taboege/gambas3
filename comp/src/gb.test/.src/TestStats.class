@@ -38,8 +38,8 @@ Public Skipped As Integer
 '' Number of Todo tests which passed
 Public Bonus As Integer
 
-'' IDs of failed tests
-Public Failures As New Integer[]
+'' Object representation of every assertion
+Public Subtests As New TestAssertion[]
 
 '' A copy of the TAP stream
 Public Lines As New String[]

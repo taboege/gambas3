@@ -4,84 +4,53 @@ Export
 
 Create Static
 
-Private $hHarness As New TestHarness
-Private $bVerbose As Boolean
-
 ''' The static procedure Test.Main() starts test(s).
 
 '' Runs all tests in all testcontainers and prints the result to the console.
 '' With Test.Main(NameTestModule) the tests can be restricted to only those of a single test module.
 '' With Test.Main(NameTestModule, NameProcedure) only a single test can be accomplished.
 
-Public Sub Main(Optional Tests As String, Optional Sparse As Boolean, Optional NoSummary As Boolean)
+Public Sub Main(Optional Tests As String)
 
     Assert.Reset() ' only if you run this Main multiple times per process, which you shouldn't
-    $bVerbose = Not Sparse
-    RunTests(Tests, Sparse)
-    If Not NoSummary Then PrintSummary()
+    RunTests(Tests)
+    PrintSummary()
 
 End
 
 Private Sub PrintSummary()
 
-    With $hHarness.Current
-
-        If $bVerbose Then
-            Dim sLine As String
-            Print "# Transcript of the TAP stream:"
-            Print
-            For Each sLine In .Lines
-                Print sLine
-            Next
-            Print
-            Print String$(80, "*")
-            Print
-        Endif
-
-        Print .Name;; IIf(.Success, "PASSED", "FAILED");;
-        Print "("; "exit code";; .ExitCode; ",";;
-        Print "runtime";; Format$(DateDiff(.Started, .Ended, gb.Second), "0.00s"); ")"
-
-        If .Run <> .Planned Then
-            Print "Planned";; .Planned;; "tests but ran";; .Run
-        Endif
-
-        If .Failed > 0 Then
-            Dim iInd As Integer
-            Print "Failed";; .Failed;; "out of";; .Run;; "tests:";;
-            For iInd = 0 To .Failures.Max
-                Print .Failures[iInd];
-                If iInd < .Failures.Max Then Print ",";;
-            Next
-            Print
-        Endif
-
-        If .Bonus Then
-            Print "Passed";; .Bonus;; "additional tests marked as TODO"
-        Endif
-
-        If .BailedOut Then
-            Print "Bailed out with message";; .BailMessage
-        Endif
-
-        Print
-        Print "# " & String$(80, "*")
-        Print
-
+    With Assert.Session
+        Assert.Note(Subst$(("Test run '&1' &2"), .Summary.Description, IIf(.Summary.Success, "PASSED", "FAILED")))
+        If .TestsRun <> .Plan Then Assert.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
+        If Not .Summary.Success Then ShowFailures(.Summary.Subtests, "")
     End With
+
+End
+
+Private Sub ShowFailures(Tests As TestAssertion[], Prefix As String)
+
+    Dim hTest As TestAssertion
+    Dim sName As String
+
+    For Each hTest In Tests
+        sName = Prefix &/ hTest.Description
+        ' Only show the deepest subtests that caused failures.
+        If Not hTest.Success And If Not hTest.Subtests.Count Then Assert.Note(Subst$(("FAILED &1"), sName))
+        ShowFailures(hTest.Subtests, sName)
+    Next
 
 End
 
 '
 '' Run all tests, optional limited by Container or TestCaseName. Track contains .
 
-Private Function RunTests(Tests As String, Optional Sparse As Boolean)
+Private Function RunTests(Tests As String)
 
     Dim aTestCommands As TestCommand[]
     Dim sTestModule As String
     Dim TestModule As Class
     Dim Suite As New TestSuite
-    Dim hTapStream As Stream, sTap As String
 
     aTestCommands = TestCommand.ParseCommands(Tests)
 
@@ -93,27 +62,9 @@ Private Function RunTests(Tests As String, Optional Sparse As Boolean)
         Suite.AddAllTestCases(TestModule, aTestCommands)
     Next
 
-    ' FIXME: This as hack that allows to see the TAP as it is produced. Sparse = true switches that off
-    ' This is for tests which fail with an error and test gb.test's BailOut.
-    ' Such tests are buffered to a string stream but before they can be echoed,
-    ' the process dies.
-
-    If Sparse = False Then
-        ' The TAP stream is produced in this process. We have to get it into the
-        ' harness somehow. Since we don't start a new process, it is going to be
-        ' done by a buffer.
-        hTapStream = Open String For Write
-        Assert.Output = hTapStream
-        Suite.Run()
-        sTap = Close #hTapStream
-        hTapStream = Open String sTap For Read
-        
-        'FIXME: SingleTestModule, NameProcedure do not exist any more
-        $hHarness.Read(hTapStream, Subst$("&1:&2", SingleTestModule, IIf(NameProcedure, NameProcedure, "*")))
-        Close #hTapStream
-    Else
-        Suite.Run()
-    Endif
+    Assert.Session.Summary.Description = Tests
+    Suite.Run()
+    If Not Assert.Finished Then Assert.Finish()
 
 End
 

@@ -5,212 +5,103 @@
 Export
 Create Static
 
-Public Struct Subtest
-    Printer As TapPrinter
-    Description As String
-    Indent As Integer
-    Success As Boolean
-    ' Directive to apply to the next "ok" line
-    Directive As Integer
-    Comment As String
-End Struct
-
+Property Read Printer As TapPrinter
 Property Output As Stream
-Property Read SubtestLevel As Integer
+Property Read Session As TapContext
 Property Read Finished As Boolean
 
-Private $aActiveTests As Subtest[]
-Private $hCurrent As New Subtest
-Private $hOutput As Stream
-
+Private $hPrinter As TapPrinter
 Private $IsNextReverse As Boolean
+Private $hNext As New TestAssertion
 
 Public Sub _new()
-
    Reset()
-
 End
 
 Public Sub Reset()
-
-    $aActiveTests = New Subtest[]
-    $hOutput = File.Out
-     With $hCurrent = New Subtest
-        .Printer = New TapPrinter As "Printer"
-        .Indent = 0
-        .Success = True
-        .Directive = Tap.NONE
-    End With
-
+    $hPrinter = New TapPrinter As "Printer"
 End
 
 Public Sub ReverseNext()
-
   $IsNextReverse = True
-
 End
 
-Public Sub Setup(Optional Tests As Integer, Optional Comment As String, Optional {Output} As Stream)
-
-    If IsMissing({Output}) Then {Output} = $hOutput
-    $hCurrent.Printer.Output = {Output}
-    Plan(Tests, Comment)
-
-End
-
-Public Sub Subtest(Description As String, Optional Tests As Integer)
-
-    Dim iIndent As Integer = $hCurrent.Indent
-    Dim hOutput As Stream = $hCurrent.Printer.Output
-
-    $aActiveTests.Push($hCurrent)
-    With $hCurrent = New Subtest
-        .Printer = New TapPrinter As "Printer"
-        .Printer.Output = hOutput
-        .Description = Description
-        .Indent = iIndent + 1
-        .Success = True
-        .Directive = Tap.NONE
-    End With
-    If Tests Then Plan(Tests)
-
-End
-
-Public Sub Finish()
-
-    Dim hFinished As Subtest
-
-    With $hCurrent
-        .Printer.Finish()
-        .Success = .Success And (.Printer.SkippedAll Or (.Printer.Planned > 0 And .Printer.Count = .Printer.Planned))
-    End With
-    hFinished = $hCurrent
-
-    Try $hCurrent = $aActiveTests.Pop()
-    If Not Error Then
-        $hCurrent.Printer.Test(hFinished.Success,, hFinished.Description)
-    Endif
-
-End
-
-Public Sub Printer_Filter()
-
-    Last.Line = String$($hCurrent.Indent, "\t") & Last.Line
-
+Public Sub Subtest(Description As String, Optional Tests As Integer, Optional Comment As String)
+    $hPrinter.Subtest(Description, Tests, Comment)
 End
 
 Public Sub Plan(Tests As Integer, Optional Comment As String)
-
-    $hCurrent.Printer.Plan(Tests, Comment)
-
+    $hPrinter.Plan(Tests, Comment)
 End
 
 Public Sub SkipAll(Optional Comment As String)
+    $hPrinter.SkipAll(Comment)
+End
 
-    $hCurrent.Printer.SkipAll(Comment)
-
+Public Sub Finish()
+    $hPrinter.Finish()
 End
 
 Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
 
-    If $IsNextReverse = True Then
-        If Result = True Then
-            Result = False
-        Else
-            Result = True
-        Endif
-        $IsNextReverse = False
-    Endif
+    Dim bRes As Boolean
 
-    With $hCurrent
-        If .Directive <> Tap.NONE Then
-            .Printer.Test(Result,, Description, .Directive, .Comment)
-        Else
-            .Printer.Test(Result,, Description)
-            .Success = .Success And Result
-        Endif
-        .Directive = Tap.NONE
-        .Comment = Null
-    End With
-    Return Result
+    If $IsNextReverse Then Result = Not Result
+    $IsNextReverse = False
+
+    $hNext.Ok = Result
+    $hNext.Description = Description
+    bRes = $hPrinter.Assert($hNext).Ok
+    $hNext = New TestAssertion
+    Return bRes
 
 End
 
 Public Sub Todo(Optional Comment As String)
-
-    $hCurrent.Directive = Tap.TODO
-    $hCurrent.Comment = Comment
-
+    $hNext.Directive = Tap.TODO
+    $hNext.Comment = Comment
 End
 
 Public Sub Skip(Optional Comment As String)
-
-    $hCurrent.Directive = Tap.SKIP
-    $hCurrent.Comment = Comment
+    $hNext.Directive = Tap.SKIP
+    $hNext.Comment = Comment
     Pass()
-
-End
-
-'' Unwinds the subtest stack. BailOut will always bail out of all the
-'' subtests, for example.
-Private Sub Unwind()
-
-    While $hCurrent.Indent > 0
-        Note("Unwinding subtest stack!")
-        Finish()
-    Wend
-
 End
 
 Public Sub BailOut(Optional Comment As String)
-
-    Unwind()
-    $hCurrent.Printer.BailOut(Comment)
-    $hCurrent.Success = False
-
+    $hPrinter.BailOut(Comment)
 End
 
 Public Sub Diagnostic(Comment As String)
-
-    $hCurrent.Printer.Diagnostic(Comment)
-
+    $hPrinter.Diagnostic(Comment)
 End
 
 Public Sub Note(Comment As String)
-
-    Diagnostic(Comment)
-
+    $hPrinter.Note(Comment)
 End
 
 Public Sub Print({Line} As String)
+    $hPrinter.Print({Line})
+End
 
-    $hCurrent.Printer.Print({Line})
-
+Private Function Printer_Read() As TapPrinter
+    Return $hPrinter
 End
 
 Private Function Output_Read() As Stream
-
-    Return $hOutput
-
+    Return $hPrinter.Output
 End
 
 Private Sub Output_Write(Value As Stream)
-
-    $hOutput = Value
-    $hCurrent.Printer.Output = Value
-
+    $hPrinter.Output = Value
 End
 
-Private Function SubtestLevel_Read() As Integer
-
-    Return $hCurrent.Indent
-
+Private Function Session_Read() As TapContext
+    Return $hPrinter.Session
 End
 
 Private Function Finished_Read() As Boolean
-
-    Return $hCurrent.Printer.Finished
-
+    Return $hPrinter.Session.Finished
 End
 
 ' -------------------- High-level test functions --------------------

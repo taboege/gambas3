@@ -12,7 +12,6 @@ Private $hProducer As Process
 Private $hParser As TapParser
 Private $aTests As New TestStats[]
 Private $hCurrent As TestStats
-Private $bLastOk As Boolean
 
 Private Sub InitParser(sName As String)
 
@@ -114,46 +113,40 @@ Public Sub Parser_Plan(Start As Integer, {End} As Integer)
 
 End
 
-Public Sub Parser_Ok(TestNr As Integer, Description As String)
+' FIXME: It is an error if the test IDs are not sequential, according to prove.
+' TODO: Subtests as produced by TapPrinter are not supported yet.
 
-    Inc $hCurrent.Passed
-    $bLastOk = True
+Public Sub Parser_Assert(Ok As Boolean, Id As Long, Description As String, Directive As Integer, Comment As String)
 
-End
+    Dim hTest As New TestAssertion
 
-Public Sub Parser_NotOk(TestNr As Integer, Description As String)
+    With hTest
+        .Ok = Ok
+        .Id = Id
+        .Description = Description
+        .Directive = Directive
+        .Comment = Comment
+    End With
+    $hCurrent.Subtests.Push(hTest)
 
-    Inc $hCurrent.Failed
-    $hCurrent.Failures.Push(TestNr)
-    $bLastOk = False
+    With $hCurrent
+        Select Case Directive
+            Case Tap.NONE
+                If hTest.Success Then
+                    Inc .Passed
+                Else
+                    Inc .Failed
+                Endif
 
-End
+            Case Tap.TODO
+                Inc .Todo
+                If hTest.Success Then Inc .Bonus
 
-'' Undoes the last increment. Used to correct the count of passed/failed
-'' tests for Todo and Skip events.
-Private Sub UndoOk()
+            Case Tap.SKIP
+                Inc .Skipped
 
-    If $bLastOk Then
-        Dec $hCurrent.Passed
-    Else
-        Dec $hCurrent.Failed
-        $hCurrent.Failures.Pop()
-    Endif
-
-End
-
-Public Sub Parser_Todo(TestNr As Integer, Comment As String)
-
-    UndoOk()
-    Inc $hCurrent.Todo
-    If $bLastOk Then Inc $hCurrent.Bonus
-
-End
-
-Public Sub Parser_Skip(TestNr As Integer, Comment As String)
-
-    UndoOk()
-    Inc $hCurrent.Skipped
+        End Select
+    End With
 
 End
 
