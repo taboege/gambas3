@@ -10,12 +10,7 @@ Export
 Event Version(Version As Integer)
 
 Event Plan(Start As Integer, {End} As Integer)
-
-Event Ok(TestNr As Integer, Description As String)
-Event NotOk(TestNr As Integer, Description As String)
-Event Todo(TestNr As Integer, Comment As String)
-Event Skip(TestNr As Integer, Comment As String)
-
+Event Assert(Ok As Boolean, Id As Long, Description As String, Directive As Integer, Comment As String)
 Event BailOut(Comment As String)
 Event Diagnostic(Comment As String)
 Event Else({Line} As String)
@@ -37,7 +32,7 @@ Public Sub ParseLine({Line} As String)
     Dim iVersion As Integer
 
     Dim bResult As Boolean
-    Dim iTestNr As Integer
+    Dim iId As Long
     Dim sDescription As String
     Dim iDirective As Integer
     Dim sComment As String
@@ -54,28 +49,16 @@ Public Sub ParseLine({Line} As String)
     Endif
     If $iLine = 0 Then Raise Version(12)
 
+    ' TODO: This cannot parse SkipAll tests.
     If sLine Match "^\\d+..\\d+" Then
         With Scan(sLine, "*..*")
-            If Not IsInteger(.[0]) Or If Not IsInteger(.[1]) Then Error.Raise(Subst$(("Couldn't extract test plan from '&1'"), sLine))
-            Raise Plan(CInt(.[0]), CInt(.[1]))
+            If Not IsLong(.[0]) Or If Not IsLong(.[1]) Then Error.Raise(Subst$(("Couldn't extract test plan from '&1'"), sLine))
+            Raise Plan(CLong(.[0]), CLong(.[1]))
         End With
 
     Else If sLine Begins "ok" Or If sLine Begins "not ok" Then
-        bResult = ParseTest(sLine, ByRef iTestNr, ByRef sDescription, ByRef iDirective, ByRef sComment)
-        ' A single line may raise two events: Ok or NotOk, depending on the result
-        ' and Todo or Skip or none of the two depending on the directive.
-        ' Use the TestNr argument to link the two when counting tests for statistics.
-        If bResult Then
-            Raise Ok(iTestNr, sDescription)
-        Else
-            Raise NotOk(iTestNr, sDescription)
-        Endif
-
-        If iDirective = Tap.TODO Then
-            Raise Todo(iTestNr, sComment)
-        Else If iDirective = Tap.SKIP Then
-            Raise Skip(iTestNr, sComment)
-        Endif
+        bResult = ParseTest(sLine, ByRef iId, ByRef sDescription, ByRef iDirective, ByRef sComment)
+        Raise Assert(bResult, iId, sDescription, iDirective, sComment)
 
     Else If sLine Begins "Bail out!" Then
         Raise BailOut(Trim$(Mid$(sLine, 10)))
@@ -91,14 +74,14 @@ Public Sub ParseLine({Line} As String)
 
 End
 
-Private Function ParseTest(sLine As String, ByRef TestNr As Integer, ByRef Description As String, ByRef Directive As Integer, ByRef Comment As String) As Boolean
+Private Function ParseTest(sLine As String, ByRef Id As Long, ByRef Description As String, ByRef Directive As Integer, ByRef Comment As String) As Boolean
 
     Dim bResult As Boolean
     Dim aWords As String[]
     Dim sWord As String
 
     ' Tidy up caller's local variables
-    TestNr = 0
+    Id = 0
     Description = ""
     Directive = Tap.NONE
     Comment = ""
@@ -120,12 +103,12 @@ Private Function ParseTest(sLine As String, ByRef TestNr As Integer, ByRef Descr
     sLine = Replace$(sLine, "#", " #")
     aWords = Split(sLine, " ", "", True).Reverse()
 
-    ' TestNr
+    ' Test ID
     Try sWord = aWords.Pop()
-    Try TestNr = CInt(sWord)
+    Try Id = CLong(sWord)
     If Error Then
         aWords.Push(sWord)
-        TestNr = $iTestsRun
+        Id = $iTestsRun
     Endif
 
     ' Description

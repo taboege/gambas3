@@ -8,101 +8,150 @@ Export
 
 Event Filter
 
-Property {Output} As Stream
-Property Read Planned As Integer
-Property Read Count As Integer
-Property Read Last As Integer
-Property Line As String
-Property Read Finished As Boolean
-Property Read SkippedAll As Boolean
+Property {Output} As Stream Use $hOutput
+Property Read Session As TapContext
 
-Private $hOutput As Stream
-Private $iPlan As Integer
-Private $iTestsRun As Integer
-Private $iLast As Integer
-Private $bFinished As Boolean
-Private $bSkippedAll As Boolean
-Private $sLine As String
+Property Line As String Use $sLine
+
+Private $aSubtests As New TapContext[]
+Private $hCurrent As New TapContext
 
 Public Sub _new(Optional Tests As Integer, Optional Comment As String, Optional {Output} As Stream = File.Out)
 
     $hOutput = {Output}
-    $iPlan = Tap.NO_PLAN
-    $iTestsRun = 0
-    $iLast = 0
-    $bFinished = False
+    With $hCurrent
+        .Plan = Tap.NO_PLAN
+        .TestsRun = 0
+        .LastId = 0
+        .Finished = False
+    End With
     If Not IsMissing(Tests) Then Plan(Tests, Comment)
+
+End
+
+Public Sub Subtest(Description As String, Optional Tests As Integer, Optional Comment As String)
+
+    $aSubtests.Push($hCurrent)
+    With $hCurrent = New TapContext
+        .Summary.Description = Description
+        .Summary.Comment = Comment
+        .Plan = Tap.NO_PLAN
+        .TestsRun = 0
+        .LastId = 0
+        .Finished = False
+    End With
+    If Tests Then Plan(Tests)
 
 End
 
 Public Sub Plan(Tests As Integer, Optional Comment As String)
 
-    If $bFinished Or $bSkippedAll Then Error.Raise(("Tests already finished"))
-    If $iTestsRun Then Error.Raise(Subst$(("Too late to plan. Already ran &1 tests"), $iTestsRun))
-    ' TAP specification lists '1..0 # Skipped: WWW::Mechanize not installed'
-    ' as a valid example.
-    If Tests <= Tap.NO_PLAN Then Error.Raise(("Number of tests must be non-negative"))
-    $iPlan = Tests
-    Print(Subst$("1..&1&2", $iPlan, IIf(Comment, " # " & Comment, "")))
+    With $hCurrent
+        If .Finished Or .SkipAll Then Error.Raise(("Tests already finished"))
+        If .TestsRun Then Error.Raise(Subst$(("Too late to plan. Already ran &1 tests"), .TestsRun))
+        ' TAP specification lists '1..0 # Skipped: WWW::Mechanize not installed'
+        ' as a valid example.
+        If Tests <= Tap.NO_PLAN Then Error.Raise(("Number of tests must be non-negative"))
+        .Plan = Tests
+    End With
+    Print(Subst$("1..&1&2", Tests, IIf(Comment, " # " & Comment, "")))
 
 End
 
 Public Sub SkipAll(Optional Comment As String)
 
     Plan(0, "SKIP" & IIf(Comment, " ", "") & Comment)
-    $bSkippedAll = True
+    $hCurrent.SkipAll = True
 
 End
 
 Public Sub Finish()
 
-    If $bFinished Then Error.Raise(("Tests already finished"))
-    $bFinished = True
-    If $iPlan > Tap.NO_PLAN Then Return ' already printed the "plan" line
-    $iPlan = $iTestsRun
-    Print("1.." & $iPlan)
+    Dim hFinished As TapContext
+
+    With $hCurrent
+        Dim hTest As TestAssertion
+
+        If .Finished Then Error.Raise(("Tests already finished"))
+
+        ' Print a plan line after the fact
+        If .Plan = Tap.NO_PLAN Then
+            .Plan = .TestsRun
+            Print("1.." & .Plan)
+        Endif
+
+        ' Sum up this subtest
+        .Finished = True
+        .Summary.Ok = (.Plan > 0 Or .SkipAll) And (.TestsRun = .Plan)
+        For Each hTest In .Summary.Subtests
+            .Summary.Ok = .Summary.Ok And hTest.Success
+        Next
+    End With
+
+    ' Go one level up if possible. Unless we are the top-level test,
+    ' we add one assertion for this finishing subtest.
+    hFinished = $hCurrent
+    Try $hCurrent = $aSubtests.Pop()
+    If Not Error Then
+        Assert(hFinished.Summary)
+    Endif
 
 End
 
-Public Sub Test(Result As Boolean, Optional TestNr As Integer, Optional Description As String, Optional Directive As Integer, Optional Comment As String)
+Public Sub Assert(Assertion As TestAssertion) As TestAssertion
 
     Dim sDirective As String
     Dim sLine As String
 
-    If $bFinished Or $bSkippedAll Then Error.Raise(("Tests already finished"))
+    With Assertion
+        If $hCurrent.Finished Or $hCurrent.SkipAll Then Error.Raise(("Tests already finished"))
 
-    ' It is not advised to start a description with a number token because
-    ' it will be interpreted as the (optional) test number. We issue a warning
-    ' about this but fix it anyway by always printing the TestNr before *and*
-    ' prefixing the Description with a dash, as is common.
-    If Description Match "^[0-9]+(\\s|$)" Then
-        Error Subst$(("Warning: Description '&1' should not start with a number"), Description)
-    Endif
-    If Description Like "*#*" Then
-        Error.Raise(Subst$(("Description '&1' may not contain a '#' character"), Description))
-    Endif
+        ' It is not advised to start a description with a number token because
+        ' it will be interpreted as the (optional) test ID. We issue a warning
+        ' about this but fix it anyway by always printing the ID before *and*
+        ' prefixing the Description with a dash, as is common.
+        If .Description Match "^[0-9]+(\\s|$)" Then
+            Error Subst$(("Warning: Description '&1' should not start with a number"), .Description)
+        Endif
+        If .Description Like "*#*" Then
+            Error.Raise(Subst$(("Description '&1' may not contain a '#' character"), .Description))
+        Endif
 
-    Inc $iTestsRun
-    If Not TestNr Then TestNr = $iTestsRun
-    $iLast = TestNr
-    sLine = Subst$("&1 &2 - &3", IIf(Result, "ok", "not ok"), TestNr, Description)
+        Inc $hCurrent.TestsRun
+        If Not .Id Then .Id = $hCurrent.TestsRun
+        $hCurrent.LastId = .Id
+        sLine = Subst$("&1 &2 - &3", IIf(.Ok, "ok", "not ok"), .Id, .Description)
 
-    If Not IsMissing(Directive) Then
-        ' Matches the values of the Enum Tap.Todo, Tap.Skip
-        sDirective = Choose(Directive, "TODO", "SKIP")
-        If Not sDirective Then Error.Raise(Subst$(("Unsupported directive '&1'"), Directive))
-        sLine &= " # " & sDirective
-        If Comment Then sLine &= " " & Comment
-    Endif
+        If .Directive <> Tap.NONE Then
+            ' Matches the values of the Enum Tap.TODO, Tap.SKIP
+            sDirective = Choose(.Directive, "TODO", "SKIP")
+            If Not sDirective Then Error.Raise(Subst$(("Unsupported directive '&1'"), .Directive))
+            sLine &= " # " & sDirective
+            If .Comment Then sLine &= " " & .Comment
+        Endif
+    End With
 
     Print(sLine)
+    $hCurrent.Summary.Subtests.Push(Assertion)
+    Return Assertion
+
+End
+
+'' Unwinds the subtest stack. BailOut will always bail out of all the subtests.
+Private Sub Unwind()
+
+    While $aSubtests.Count > 0
+        Note("Unwinding subtest stack!")
+        Finish()
+    Wend
 
 End
 
 Public Sub BailOut(Optional Comment As String)
 
+    Unwind()
     Print("Bail out!" & IIf(Comment, " " & Comment, ""))
-    $bFinished = True
+    $hCurrent.Finished = True
 
 End
 
@@ -116,6 +165,12 @@ Public Sub Diagnostic(Comment As String)
 
 End
 
+Public Sub Note(Comment As String)
+
+    Diagnostic(Comment)
+
+End
+
 Public Sub Print({Line} As String)
 
     Dim bCancel As Boolean
@@ -123,61 +178,14 @@ Public Sub Print({Line} As String)
     $sLine = {Line}
     bCancel = Raise Filter
     If bCancel Then Return
-    Print #$hOutput, $sLine
+    Print #$hOutput, String$($aSubtests.Count, "\t"); $sLine
     Flush #$hOutput
 
 End
 
-Private Function Output_Read() As Stream
+Private Function Session_Read() As TapContext
 
-    Return $hOutput
-
-End
-
-Private Sub Output_Write(Value As Stream)
-
-    $hOutput = Value
-
-End
-
-Private Function Planned_Read() As Integer
-
-    Return $iPlan
-
-End
-
-Private Function Count_Read() As Integer
-
-    Return $iTestsRun
-
-End
-
-Private Function Last_Read() As Integer
-
-    Return $iLast
-
-End
-
-Private Function Line_Read() As String
-
-    Return $sLine
-
-End
-
-Private Sub Line_Write(Value As String)
-
-    $sLine = Value
-
-End
-
-Private Function Finished_Read() As Boolean
-
-    Return $bFinished
-
-End
-
-Private Function SkippedAll_Read() As Boolean
-
-    Return $bSkippedAll
+    If $aSubtests.Count Then Return $aSubtests[0]
+    Return $hCurrent
 
 End
