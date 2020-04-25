@@ -11,7 +11,7 @@ Property Read Session As TapContext
 Property Read Finished As Boolean
 
 Private $hPrinter As TapPrinter
-Private $IsNextReverse As Boolean
+Private $bIntendedFailure As Boolean
 Private $hNext As New TestAssertion
 
 Public Sub _new()
@@ -22,8 +22,8 @@ Public Sub Reset()
     $hPrinter = New TapPrinter As "Printer"
 End
 
-Public Sub ReverseNext()
-  $IsNextReverse = True
+Public Sub IntendedFailure()
+  $bIntendedFailure = True
 End
 
 Public Sub Subtest(Description As String, Optional Tests As Integer, Optional Comment As String)
@@ -46,8 +46,8 @@ Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
 
-    If $IsNextReverse Then Result = Not Result
-    $IsNextReverse = False
+    If $bIntendedFailure Then Result = Not Result
+    $bIntendedFailure = False
 
     $hNext.Ok = Result
     $hNext.Description = Description

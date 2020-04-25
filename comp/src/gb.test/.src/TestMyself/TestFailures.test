@@ -19,14 +19,14 @@ End
 
 Public Sub TestStringFailure()
 
-    Assert.ReverseNext()
+    Assert.IntendedFailure()
     Assert.StringEquals("Lisa", "Paul", "Intentional String failure. Ok if not ok.")
 
 End
 
 Public Sub TestLongFailure()
 
-    Assert.ReverseNext()
+    Assert.IntendedFailure()
     Assert.Equals(2, 3, "Intentional Long failure. Ok if not ok.")
 
 End
@@ -35,7 +35,7 @@ Public Sub TestLongTypeMismatchFailure()
 
     Dim s As String = "3.0"
     
-    Assert.ReverseNext()
+    Assert.IntendedFailure()
     Assert.Equals(s, 3, "Intentional Long type mismatch failure. Ok if not ok.")
 
 End
@@ -45,18 +45,18 @@ Public Sub TestEqualsFailure()
     Dim oOne, oTwo As Object
 
     Assert.Note("Equals failures")
-    Assert.ReverseNext()
+    Assert.IntendedFailure()
     Assert.Equals(2, 3)
     
-    Assert.ReverseNext()
+    Assert.IntendedFailure()
     Assert.Equals("3", 2.0)
     
-    Assert.ReverseNext()
+    Assert.IntendedFailure()
     Assert.Equals("2", 2.1)
     
     oOne = New Test
     oTwo = New Test
-    Assert.ReverseNext()
+    Assert.IntendedFailure()
     Assert.Equals(oOne, oTwo)
 
 End
@@ -66,11 +66,11 @@ Public Sub TestError()
     Dim a As Long
 
     Try a = 3 / 0
-    Assert.ReverseNext()
+    Assert.IntendedFailure()
     Assert.ErrorCode(5, "Wanted error 5. Ok if not ok.")
 
     ' No Error, AssertError has to report a failure
-    Assert.ReverseNext()
+    Assert.IntendedFailure()
     Assert.Error("No Error but error expected. Ok if not ok.")
 
 End
