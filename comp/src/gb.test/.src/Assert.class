@@ -21,7 +21,6 @@ End
 Public Sub Reset()
     $hPrinter = New TapPrinter As "Printer"
 End
-
 Public Sub IntendedFailure()
   $bIntendedFailure = True
 End
@@ -71,11 +70,11 @@ End
 Public Sub BailOut(Optional Comment As String)
     $hPrinter.BailOut(Comment)
 End
-
+'' Synonym for Note
 Public Sub Diagnostic(Comment As String)
     $hPrinter.Diagnostic(Comment)
 End
-
+'' Synonym for Diagnostic
 Public Sub Note(Comment As String)
     $hPrinter.Note(Comment)
 End
