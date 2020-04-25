@@ -34,7 +34,7 @@ Public Sub Main()
         Error.Raise("Error: Path to project not found.")
     Endif
 
-    'Chossen Tests
+    'Choosen Tests
     If sTests Then
         sTestCmd = "\"" & sTests & "" "\""
     Else
@@ -67,6 +67,7 @@ Public Sub Main()
     $hHarness.Read(hTestee, File.Name(sPath))
 
     PrintSummary()
+    ReturnExitCode()
 
     ' ------------------------------------------------- Restore project
 
@@ -78,6 +79,12 @@ Public Sub Main()
 
 Catch
     Print Error.Text
+
+End
+
+Private Sub ReturnExitCode()
+
+  'FIXME: has to be done
 
 End
 

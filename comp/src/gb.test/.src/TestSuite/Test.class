@@ -20,8 +20,14 @@ End
 
 Private Sub PrintSummary()
 
-    With Assert.Session
-        Assert.Note(Subst$(("Test run '&1' &2"), .Summary.Description, IIf(.Summary.Success, "PASSED", "FAILED")))
+    'needed for debugging, to doubleclick on it
+    Dim Session As TapContext
+
+    Session = Assert.Session
+    With Session
+        'Proposal: Typo, PASSED/FAILED is the important, so start with it
+        'Assert.Note(Subst$(("Test run '&1' &2"), .Summary.Description, IIf(.Summary.Success, "PASSED", "FAILED")))
+        Assert.Note(Subst$(("&2 - ran: '&1' "), .Summary.Description, IIf(.Summary.Success, "PASSED", "FAILED")))
         If .TestsRun <> .Plan Then Assert.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
         If Not .Summary.Success Then ShowFailures(.Summary.Subtests, "")
     End With
@@ -42,7 +48,6 @@ Private Sub ShowFailures(Tests As TestAssertion[], Prefix As String)
 
 End
 
-'
 '' Run all tests, optional limited by Container or TestCaseName. Track contains .
 
 Private Function RunTests(Tests As String)
@@ -54,9 +59,6 @@ Private Function RunTests(Tests As String)
 
     aTestCommands = TestCommand.ParseCommands(Tests)
 
-    'FIXME: SingleTestModule, NameProcedure do not exist any more, they are replaced by aTestCommands
-    Dim NameProcedure, SingleTestModule As String
-
     For Each sTestModule In GetAllTestModules(aTestCommands)
         TestModule = Class.Load(sTestModule)
         Suite.AddAllTestCases(TestModule, aTestCommands)
@@ -67,8 +69,6 @@ Private Function RunTests(Tests As String)
     If Not Assert.Finished Then Assert.Finish()
 
 End
-
-''
 
 Function GetAllTestModules(Commands As TestCommand[]) As String[]
 
@@ -85,35 +85,26 @@ Function GetAllTestModules(Commands As TestCommand[]) As String[]
     Assert sNames
 
     sNames.Sort
+
     For Each sName In sNames
         TestClass = Class.Load(sName)
         If Not TestClass Then Error.Raise(Subst$(("Could not load test module '&1'"), sName))
-
-        'sName = Class.Stat(sName).Name
-
-        'Atention: Class.Stat(sName).Name does not work if included as component
-        'Then this creates the error:
-        'Bail out! Error in Test->GetAllTestModuleNames: Unknown symbol 'Stat' in class 'Class'
-
         If TestModuleNames.Exist(sName) Then Continue
         If Commands.Count = 0 Then
             'Add every Testmodule
             TestModuleNames.Add(sName)
         Else
-            ' Add only testmodules whose names exist in Commands
+            'Add only testmodules whose names exist in Commands
             For Each Command In Commands
                 If Lower(Command.ModuleName) = Lower(sName) Then
                     TestModuleNames.Add(sName)
                 Endif
             Next
-            ' If Lower(sName) = Lower(SingleTestModule) Then
-            '     TestModuleNames.Add(sName)
-            ' Endif
         Endif
     Next
 
     TestModuleNames.Sort
-    ' Print "# These TestContainer will be executed:\n#\n# " & TestModuleNames.Join("\n# ") & "\n"
+
     Return TestModuleNames
 
 Catch
