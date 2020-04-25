@@ -1,15 +1,14 @@
 ## To Do
 
 - Test.Main has to complain if testmodule doesn't exist
-- Test.Main options
-    > Test.Main needs a couple of options
-    * [ ] Sparse to switch off TAP output of subtests
-    * [ ] NoSummary to switch off summary
-    * [ ] Silent to switch off TAP output to console
+- Free Assert from non-asserts
+    > There are things in Assert which are no assertions, like Print, Finish, Note and so on. These should be methods of Test. For example: Test.Plan, Test.Note, Test.Finish ...
+- Assert documentation
 - Ensure TAP created according to  spec
+- Parser parse subtests
+- Skip all
 - Install gbt3 at Gambas installation
 - gbt3 has to return exit status at the end
-- Assert documentation
 
 ## Work
 
