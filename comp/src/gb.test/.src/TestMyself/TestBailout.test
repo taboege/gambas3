@@ -4,6 +4,5 @@ Public Sub TestBailout()
 
     Assert.Note("This will stop all testing immediately")
     Assert.BailOut("Bo-Test")
-    ' Quit
 
 End

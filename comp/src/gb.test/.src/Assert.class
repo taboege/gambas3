@@ -69,6 +69,7 @@ End
 
 Public Sub BailOut(Optional Comment As String)
     $hPrinter.BailOut(Comment)
+    Quit 1
 End
 '' Synonym for Note
 Public Sub Diagnostic(Comment As String)
