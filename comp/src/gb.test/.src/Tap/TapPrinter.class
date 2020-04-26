@@ -178,7 +178,9 @@ Public Sub Print({Line} As String)
     $sLine = {Line}
     bCancel = Raise Filter
     If bCancel Then Return
-    Print #$hOutput, String$($aSubtests.Count, "\t"); $sLine
+    '    Print #$hOutput, String$($aSubtests.Count, "\t"); $sLine
+    
+    Print #$hOutput, String$($aSubtests.Count, "  "); $sLine
     Flush #$hOutput
 
 End

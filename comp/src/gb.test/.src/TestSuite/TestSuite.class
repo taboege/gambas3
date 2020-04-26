@@ -34,7 +34,9 @@ Public Sub Run()
             StartTestModule(CurrentTestModule)
         Endif
 
-        Assert.Note(Subst$(("Entering subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
+       'Assert.Note(Subst$(("Subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
+        Assert.Print(gb.lf) ' better readability for humans
+        Assert.Print(Subst$(("Subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
         Assert.Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
             'Debug oTest.Name
             oTest.Run()

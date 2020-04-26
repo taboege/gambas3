@@ -25,8 +25,7 @@ Private Sub PrintSummary()
 
     Session = Assert.Session
     With Session
-        'Proposal: Typo, PASSED/FAILED is the important, so start with it
-        'Assert.Note(Subst$(("Test run '&1' &2"), .Summary.Description, IIf(.Summary.Success, "PASSED", "FAILED")))
+        Assert.Print(gb.Lf) ' better readability for humans
         Assert.Note(Subst$(("&2 - ran: '&1' "), .Summary.Description, IIf(.Summary.Success, "PASSED", "FAILED")))
         If .TestsRun <> .Plan Then Assert.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
         If Not .Summary.Success Then ShowFailures(.Summary.Subtests, "")
