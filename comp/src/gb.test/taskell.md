@@ -1,8 +1,12 @@
 ## To Do
 
+- TestAssertion: Skip and Todo
+    > TestAssertion must contain variables to store Skip and Todo for summary. See TestSummary
+- Summary as a TAP comment
+    > Description in .hidden/summary-example-txt
+- Skip all
 - Free Assert from non-assertions
     > There are things in Assert which are no assertions, like Print, Finish, Note and so on. These should be methods of Test. For example: Test.Plan, Test.Note, Test.Finish ...
-- Skip all
 - Ensure TAP created according to  spec
 - Parser parse subtests
 - Plan
@@ -18,8 +22,8 @@
 
 ## Work
 
-- Summary as a TAP comment
-    > Description in .hidden/summary-example-txt
+- Todo Directive
+    > Todo directive does not exist. See TestSummary
 
 ## Done
 
