@@ -222,7 +222,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gambas3 3.14.90\n"
-"PO-Revision-Date: 2020-03-10 23:58 UTC\n"
+"PO-Revision-Date: 2020-04-21 02:45 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -254,143 +254,143 @@ msgstr "Signet précédent"
 msgid "Next bookmark"
 msgstr "Signet suivant"
 
-#: CClassInfo.class:603
+#: CClassInfo.class:608
 msgid "Static properties"
 msgstr "Propriétés statiques"
 
-#: CClassInfo.class:604
+#: CClassInfo.class:609
 msgid "Static variables"
 msgstr "Variables statiques"
 
-#: CClassInfo.class:605
+#: CClassInfo.class:610
 msgid "Static methods"
 msgstr "Méthodes statiques"
 
-#: CClassInfo.class:606 MTheme.module:6
+#: CClassInfo.class:611 MTheme.module:6
 msgid "Constants"
 msgstr "Constantes"
 
-#: CClassInfo.class:623 FMain.form:569 FProperty.form:28
+#: CClassInfo.class:628 FMain.form:569 FProperty.form:28
 msgid "Properties"
 msgstr "Propriétés"
 
-#: CClassInfo.class:624
+#: CClassInfo.class:629
 msgid "Variables"
 msgstr "Variables"
 
-#: CClassInfo.class:625
+#: CClassInfo.class:630
 msgid "Methods"
 msgstr "Méthodes"
 
-#: CClassInfo.class:626
+#: CClassInfo.class:631
 msgid "Events"
 msgstr "Evènements"
 
-#: CClassInfo.class:648
+#: CClassInfo.class:653
 msgid "This class reimplements &1"
 msgstr "Cette class réimplémente &1"
 
-#: CClassInfo.class:650
+#: CClassInfo.class:655
 msgid "This class inherits &1"
 msgstr "Cette class hérite de &1"
 
-#: CClassInfo.class:656
+#: CClassInfo.class:661
 msgid "in &1"
 msgstr "dans &1"
 
-#: CClassInfo.class:664
+#: CClassInfo.class:669
 msgid "This class can be used like an object by creating an hidden instance on demand."
 msgstr "Cette classe peut être utilisée comme un objet en créant une instance cachée à la demande."
 
-#: CClassInfo.class:669
+#: CClassInfo.class:674
 msgid "This class is &1."
 msgstr "Cette classe est &1."
 
-#: CClassInfo.class:669
+#: CClassInfo.class:674
 msgid "creatable"
 msgstr "instanciable"
 
-#: CClassInfo.class:674
+#: CClassInfo.class:679
 msgid "This class is static."
 msgstr "Cette classe est statique."
 
-#: CClassInfo.class:676
+#: CClassInfo.class:681
 msgid "This class is not creatable."
 msgstr "Cette classe n'est pas instanciable."
 
-#: CClassInfo.class:682
+#: CClassInfo.class:687
 msgid "This class can be used as a &1."
 msgstr "Cette classe peut être utilisée comme &1."
 
-#: CClassInfo.class:682
+#: CClassInfo.class:687
 msgid "function"
 msgstr "fonction"
 
-#: CClassInfo.class:687
+#: CClassInfo.class:692
 msgid "This class acts like a &1 / &2 array."
 msgstr "Cette classe se comporte comme un tableau accessible en &1 / &2."
 
-#: CClassInfo.class:687
+#: CClassInfo.class:692
 msgid "read"
 msgstr "lecture"
 
-#: CClassInfo.class:687
+#: CClassInfo.class:692
 msgid "write"
 msgstr "écriture"
 
-#: CClassInfo.class:689
+#: CClassInfo.class:694
 msgid "This class acts like a &1 array."
 msgstr "Cette classe se comporte comme un tableau accessible en &1."
 
-#: CClassInfo.class:689
+#: CClassInfo.class:694
 msgid "write-only"
 msgstr "écriture seule"
 
-#: CClassInfo.class:692 Project.module:1657
+#: CClassInfo.class:697 Project.module:1658
 msgid "read-only"
 msgstr "lecture seule"
 
-#: CClassInfo.class:697
+#: CClassInfo.class:702
 msgid "This class is &1 with the FOR EACH keyword."
 msgstr "Cette classe est &1 à l'aide du mot-clef FOR EACH."
 
-#: CClassInfo.class:697
+#: CClassInfo.class:702
 msgid "enumerable"
 msgstr "énumérable"
 
-#: CClassInfo.class:848
+#: CClassInfo.class:853
 msgid "This class reimplements"
 msgstr "Cette classe réimplémente"
 
-#: CClassInfo.class:850
+#: CClassInfo.class:855
 msgid "This class inherits"
 msgstr "Cette classe hérite de"
 
-#: CClassInfo.class:865
+#: CClassInfo.class:870
 msgid "This class is virtual."
 msgstr "Cette class est virtuelle."
 
-#: CClassInfo.class:867
+#: CClassInfo.class:872
 msgid "This class can be used like an object by creating a hidden instance on demand."
 msgstr "Cette classe peut s'utiliser comme un objet, auquel cas une instance cachée sera créée automatiquement."
 
-#: CClassInfo.class:892
+#: CClassInfo.class:897
 msgid "static function"
 msgstr "fonction statique"
 
-#: CClassInfo.class:899
+#: CClassInfo.class:904
 msgid "This class acts like a &1 / &2 static array."
 msgstr "Cette classe se comporte comme un tableau statique en &1 / &2."
 
-#: CClassInfo.class:901
+#: CClassInfo.class:906
 msgid "This class acts like a &1 static array."
 msgstr "Cette classe se comporte comme un tableau statique en &1."
 
-#: CClassInfo.class:913
+#: CClassInfo.class:918
 msgid "This class is &1 with the &2 keyword."
 msgstr "Cette classe est &1 à l'aide du mot-clef &2."
 
-#: CClassInfo.class:913
+#: CClassInfo.class:918
 msgid "statically enumerable"
 msgstr "énumérable statiquement"
 
@@ -978,7 +978,7 @@ msgstr "ici"
 msgid "IDE extensions"
 msgstr "Extension de l'EDI"
 
-#: CProjectList.class:552 CVersionControlGit.class:398 CWaitingAnimation.class:63 FColorChooser.form:68 FComponentChooser.form:97 FConflict.class:197 FConnectionEditor.class:470 FCrash.form:97 FCreateFile.form:204 FDebugExpr.form:46 FDebugInfo.form:290 FExportData.class:126 FFarmConfig.form:38 FFarmLogin.form:126 FFarmRegister.form:141 FFarmRequest.form:43 FFieldChooser.form:144 FFileProperty.class:155 FFontChooser.form:40 FGotoLine.form:23 FHelpBrowser.form:73 FImageOffsetSelection.form:33 FImageQuality.form:30 FImageResize.form:49 FImageRotate.form:32 FLayout.form:50 FList.form:128 FMain.class:259 FMakeInstall.class:358 FMenu.form:414 FNewConnection.form:318 FNewTable.form:86 FNewTranslation.form:21 FOption.class:818 FPasteSpecial.form:86 FPasteTable.form:105 FProjectChooser.form:73 FProjectProperty.form:1032 FProjectVersion.class:211 FProxy.form:57 FPublish.class:273 FReportBorderChooser.form:48 FReportBoxShadowChooser.form:27 FReportBrushChooser.form:36 FReportCoordChooser.form:26 FReportPaddingChooser.form:75 FSave.form:28 FSaveProjectAs.form:81 FSearch.class:946 FSelectComponent.form:39 FSelectExtraFile.form:43 FSelectIcon.form:89 FSelectLibrary.form:66 FSnippet.form:57 FSoftwareFarm.class:552 FTableChooser.form:68 FText.form:40 FTranslate.class:677 FVersionControl.form:98 FWebFontChooser.form:129 Project.module:566 VersionControl.module:398
+#: CProjectList.class:552 CVersionControlGit.class:398 CWaitingAnimation.class:63 FColorChooser.form:68 FComponentChooser.form:97 FConflict.class:197 FConnectionEditor.class:470 FCrash.form:97 FCreateFile.form:204 FDebugExpr.form:46 FDebugInfo.form:291 FExportData.class:126 FFarmConfig.form:38 FFarmLogin.form:126 FFarmRegister.form:141 FFarmRequest.form:43 FFieldChooser.form:144 FFileProperty.class:155 FFontChooser.form:40 FGotoLine.form:23 FHelpBrowser.form:73 FImageOffsetSelection.form:33 FImageQuality.form:30 FImageResize.form:49 FImageRotate.form:32 FLayout.form:50 FList.form:128 FMain.class:259 FMakeInstall.class:361 FMenu.form:414 FNewConnection.form:318 FNewTable.form:86 FNewTranslation.form:21 FOption.class:818 FPasteSpecial.form:86 FPasteTable.form:105 FProjectChooser.form:73 FProjectProperty.form:1032 FProjectVersion.class:211 FProxy.form:57 FPublish.class:273 FReportBorderChooser.form:48 FReportBoxShadowChooser.form:27 FReportBrushChooser.form:36 FReportCoordChooser.form:26 FReportPaddingChooser.form:75 FSave.form:28 FSaveProjectAs.form:81 FSearch.class:938 FSelectComponent.form:39 FSelectExtraFile.form:43 FSelectIcon.form:89 FSelectLibrary.form:66 FSnippet.form:57 FSoftwareFarm.class:552 FTableChooser.form:68 FText.form:40 FTranslate.class:677 FVersionControl.form:98 FWebFontChooser.form:129 Project.module:567 VersionControl.module:398
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -1002,7 +1002,7 @@ msgstr "Le logiciel a été désinstallé avec succès."
 msgid "Files"
 msgstr "Fichiers"
 
-#: CProjectTree.class:357 FHelpShortcut.form:22 FMain.form:427 FSearch.class:111 FSelectIcon.form:31
+#: CProjectTree.class:357 FHelpShortcut.form:22 FMain.form:427 FSearch.class:124 FSelectIcon.form:31
 msgid "Project"
 msgstr "Projet"
 
@@ -1058,7 +1058,7 @@ msgstr "Impossible de décompresser l'archive source."
 msgid "Abort"
 msgstr "Abandonner"
 
-#: CSoftware.class:361 FMain.class:2713 FMenu.class:76
+#: CSoftware.class:361 FMain.class:2713 FMenu.class:88
 msgid "Ignore"
 msgstr "Ignorer"
 
@@ -1210,19 +1210,19 @@ msgstr "La police Gambas est publiée sous licence « SIL Open Font License »."
 msgid "This program is published under the GNU General Public License."
 msgstr "Ce programme est publié sous la « Licence Publique Générale GNU »."
 
-#: Design.module:220 Project.module:2216
+#: Design.module:220 Project.module:2217
 msgid "first"
 msgstr "premier"
 
-#: Design.module:222 Project.module:2218
+#: Design.module:222 Project.module:2219
 msgid "second"
 msgstr "deuxième"
 
-#: Design.module:224 Project.module:2220
+#: Design.module:224 Project.module:2221
 msgid "third"
 msgstr "troisième"
 
-#: Design.module:318 Project.module:2279
+#: Design.module:318 Project.module:2280
 msgid "in &1:&2."
 msgstr "dans &1:&2."
 
@@ -1306,7 +1306,7 @@ msgstr "Ce composant est requis par :<p>&1"
 msgid "Keep"
 msgstr "Conserver"
 
-#: FComponentChooser.class:589 FDebugInfo.form:210
+#: FComponentChooser.class:589 FDebugInfo.form:211
 msgid "Remove all"
 msgstr "Tout supprimer"
 
@@ -1330,7 +1330,7 @@ msgstr "Choisissez un composant"
 msgid "Show deprecated components"
 msgstr "Afficher les composants dépréciés"
 
-#: FComponentChooser.form:103 FConflictEditor.form:293 FConnectionEditor.form:120 FEditor.form:366 FForm.form:445 FHelpBrowser.form:79 FImageEditor.form:377 FMain.form:377 FTextEditor.form:362 FTranslate.form:93 Project.module:857
+#: FComponentChooser.form:103 FConflictEditor.form:293 FConnectionEditor.form:120 FEditor.form:366 FForm.form:445 FHelpBrowser.form:79 FImageEditor.form:377 FMain.form:377 FTextEditor.form:362 FTranslate.form:93 Project.module:858
 msgid "Reload"
 msgstr "Recharger"
 
@@ -1362,7 +1362,7 @@ msgstr "Impossible de charger le fichier :"
 msgid "Text"
 msgstr "Texte"
 
-#: FConflict.class:141 FMain.form:941 FReportBrushChooser.form:49 Project.module:235
+#: FConflict.class:141 FMain.form:941 FReportBrushChooser.form:49 Project.module:236
 msgid "Image"
 msgstr "Image"
 
@@ -1422,7 +1422,7 @@ msgstr "Désindenter"
 msgid "Open"
 msgstr "Ouvrir"
 
-#: FConflict.form:149 FConflictEditor.form:299 FConnectionEditor.form:112 FEditor.form:372 FForm.form:451 FImageEditor.form:384 FMain.form:386 FMenu.class:76 FOption.form:805 FSaveProjectAs.form:87 FTextEditor.form:368 FTranslate.form:234
+#: FConflict.form:149 FConflictEditor.form:299 FConnectionEditor.form:112 FEditor.form:372 FForm.form:451 FImageEditor.form:384 FMain.form:386 FMenu.class:88 FOption.form:805 FSaveProjectAs.form:87 FTextEditor.form:368 FTranslate.form:234
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -1430,11 +1430,11 @@ msgstr "Enregistrer"
 msgid "Solve"
 msgstr "Résoudre"
 
-#: FConflict.form:166 FConflictEditor.form:306 FDebugInfo.form:297 FEditor.form:346 FFileProperty.form:94 FForm.form:438 FImageEditor.form:391 FMain.form:402 FPatch.form:88 FProjectVersion.form:322 FSystemInfo.form:68 FTextEditor.form:342 FTips.form:83 FTranslate.form:411
+#: FConflict.form:166 FConflictEditor.form:306 FDebugInfo.form:304 FEditor.form:346 FFileProperty.form:94 FForm.form:438 FImageEditor.form:391 FMain.form:402 FPatch.form:88 FProjectVersion.form:322 FSystemInfo.form:68 FTextEditor.form:342 FTips.form:83 FTranslate.form:411
 msgid "Close"
 msgstr "Fermer"
 
-#: FConflictEditor.class:956 FEditor.class:2720 FTextEditor.class:1139
+#: FConflictEditor.class:956 FEditor.class:2717 FTextEditor.class:1140
 msgid "(Declarations)"
 msgstr "(Déclarations)"
 
@@ -1749,7 +1749,7 @@ msgstr "Nouvelle table"
 msgid "Delete table"
 msgstr "Supprimer la table"
 
-#: FConnectionEditor.form:134 FDebugInfo.form:186 FMain.form:1180 FMakeInstall.form:762 FOption.form:1547 FProjectProperty.form:605 FPublish.form:268 FSoftwareFarm.form:422
+#: FConnectionEditor.form:134 FDebugInfo.form:187 FMain.form:1180 FMakeInstall.form:762 FOption.form:1547 FProjectProperty.form:605 FPublish.form:268 FSoftwareFarm.form:422
 msgid "Remove"
 msgstr "Supprimer"
 
@@ -1853,7 +1853,7 @@ msgstr "Déselectionner tout"
 msgid "Gambas 3 project conversion"
 msgstr "Conversion en projet Gambas 3"
 
-#: FCrash.class:73 FTranslate.class:244 Project.module:4542
+#: FCrash.class:73 FTranslate.class:244 Project.module:4548
 msgid "The '&1' command has failed."
 msgstr "La commande '&1' a échoué."
 
@@ -1893,7 +1893,7 @@ msgstr "Impossible d'ajouter le fichier."
 msgid "New file"
 msgstr "Nouveau fichier"
 
-#: FCreateFile.form:72 FImportTable.form:58 FMakePatch.form:65 FProjectProperty.form:815 FSearch.form:98
+#: FCreateFile.form:72 FImportTable.form:58 FMakePatch.form:65 FProjectProperty.form:815 FSearch.form:99
 msgid "Options"
 msgstr "Options"
 
@@ -1997,31 +1997,31 @@ msgstr "Référentiel"
 msgid "The project repository is directly sent to the 'svn checkout' command."
 msgstr "Le référentiel du projet est directement envoyé à la commande 'svn checkout'."
 
-#: FDebugButton.form:20 FDebugInfo.form:88
+#: FDebugButton.form:20 FDebugInfo.form:89
 msgid "Debugging"
 msgstr "Débogage"
 
-#: FDebugButton.form:29 FDebugInfo.form:169 FMain.form:742 FOption.form:933
+#: FDebugButton.form:29 FDebugInfo.form:170 FMain.form:742 FOption.form:933
 msgid "Console"
 msgstr "Console"
 
-#: FDebugButton.form:38 FDebugInfo.form:177 MTheme.module:6
+#: FDebugButton.form:38 FDebugInfo.form:178 MTheme.module:6
 msgid "Breakpoints"
 msgstr "Points d'arrêt"
 
-#: FDebugButton.form:47 FDebugInfo.form:239
+#: FDebugButton.form:47 FDebugInfo.form:240
 msgid "Warnings"
 msgstr "Avertissements"
 
-#: FDebugButton.form:56 FDebugInfo.form:258
+#: FDebugButton.form:56 FDebugInfo.form:259
 msgid "Tasks"
 msgstr "Tâches"
 
-#: FDebugButton.form:65 FDebugInfo.form:280
+#: FDebugButton.form:65 FDebugInfo.form:281
 msgid "Search result"
 msgstr "Résultat de la recherche"
 
-#: FDebugButton.form:74 FDebugInfo.form:358 FMain.form:498 FProjectProperty.form:970 FVersionControl.class:64
+#: FDebugButton.form:74 FDebugInfo.form:365 FMain.form:498 FProjectProperty.form:970 FVersionControl.class:64
 msgid "Version control"
 msgstr "Contrôle de version"
 
@@ -2089,89 +2089,93 @@ msgstr "Surveiller des expressions"
 msgid "Do you want to clear the expression list ?"
 msgstr "Voulez-vous effacer la liste des expressions ?"
 
-#: FDebugInfo.class:1088
+#: FDebugInfo.class:1102
 msgid "File not loaded"
 msgstr "Fichier non chargé"
 
-#: FDebugInfo.class:1227
+#: FDebugInfo.class:1241
 msgid "Current object"
 msgstr "Objet courant"
 
-#: FDebugInfo.class:1273
+#: FDebugInfo.class:1287
 msgid "Local variables"
 msgstr "Variables locales"
 
-#: FDebugInfo.form:68 FMain.form:577
+#: FDebugInfo.form:69 FMain.form:577
 msgid "Debug"
 msgstr "Débogage"
 
-#: FDebugInfo.form:118
+#: FDebugInfo.form:119
 msgid "Remove current expression"
 msgstr "Supprimer l'expression sélectionnée"
 
-#: FDebugInfo.form:124
+#: FDebugInfo.form:125
 msgid "Add expression"
 msgstr "Ajouter une expression"
 
-#: FDebugInfo.form:184
+#: FDebugInfo.form:185
 msgid "Remove breakpoint"
 msgstr "Supprimer le point d'arrêt"
 
-#: FDebugInfo.form:192
+#: FDebugInfo.form:193
 msgid "Disable breakpoint"
 msgstr "Désactiver le point d'arrêt"
 
-#: FDebugInfo.form:194
+#: FDebugInfo.form:195
 msgid "Disable"
 msgstr "Désactiver"
 
-#: FDebugInfo.form:200
+#: FDebugInfo.form:201
 msgid "Enable breakpoint"
 msgstr "Activer le point d'arrêt"
 
-#: FDebugInfo.form:202
+#: FDebugInfo.form:203
 msgid "Enable"
 msgstr "Activer"
 
-#: FDebugInfo.form:208
+#: FDebugInfo.form:209
 msgid "Remove all breakpoints"
 msgstr "Supprimer tous les points d'arrêts"
 
-#: FDebugInfo.form:288
+#: FDebugInfo.form:289
 msgid "Cancel current search"
 msgstr "Annuler la recherche en cours"
-
-#: FDebugInfo.form:304
-msgid "Search again"
-msgstr "Rechercher de nouveau"
 
 #: FDebugInfo.form:311
 msgid "Show search window"
 msgstr "Afficher la fenêtre de recherche"
 
-#: FDebugInfo.form:354 FSearch.class:546 FTranslate.class:639
+#: FDebugInfo.form:318
+msgid "Search again"
+msgstr "Rechercher de nouveau"
+
+#: FDebugInfo.form:361 FSearch.class:517 FTranslate.class:639
 msgid "Search string cannot be found."
 msgstr "La chaîne recherchée est introuvable."
 
-#: FDebugInfo.form:365 FOutput.form:78
+#: FDebugInfo.form:372 FOutput.form:78
 msgid "Clear console"
 msgstr "Effacer la console"
 
-#: FDebugInfo.form:372 FMain.form:503 FProjectVersion.form:89 FVersionControl.form:91
+#: FDebugInfo.form:379 FMain.form:503 FProjectVersion.form:89 FVersionControl.form:91
 msgid "Commit"
 msgstr "Publier"
 
-#: FDebugInfo.form:379 FMain.form:509 FReportBorderChooser.form:60 FReportPaddingChooser.form:64
+#: FDebugInfo.form:386 FMain.form:509 FReportBorderChooser.form:60 FReportPaddingChooser.form:64
 msgid "Synchronize"
 msgstr "Synchroniser"
 
-#: FDebugInfo.form:386 FMain.form:522
+#: FDebugInfo.form:393 FMain.form:522
 msgid "Revert all changes"
 msgstr "Annuler tous les changements"
 
-#: FDebugInfo.form:393 FMain.form:528
+#: FDebugInfo.form:400 FMain.form:528
 msgid "Add everything to repository"
 msgstr "Tout ajouter au référentiel"
+
+#: FEditor.class:3362
+msgid "Declarations"
+msgstr "Déclarations"
 
 #: FEditor.form:195 FTextEditor.form:214
 msgid "Format code"
@@ -2409,7 +2413,7 @@ msgstr "Le fichier n'est pas versionné, et doit être ajouté au référentiel.
 msgid "This file has not been modified since the last commit."
 msgstr "Ce fichier est inchangé depuis la dernière publication."
 
-#: FFileProperty.class:155 FMakeInstall.class:358 FProjectVersion.class:211 FSave.form:21 Project.module:3530 VersionControl.module:398
+#: FFileProperty.class:155 FMakeInstall.class:361 FProjectVersion.class:211 FSave.form:21 Project.module:3535 VersionControl.module:398
 msgid "Continue"
 msgstr "Continuer"
 
@@ -2541,11 +2545,11 @@ msgstr "Déplacer l'onglet"
 msgid "First"
 msgstr "Début"
 
-#: FForm.form:373 FSearch.form:189 FTips.form:71
+#: FForm.form:373 FSearch.form:190 FTips.form:71
 msgid "Previous"
 msgstr "Précédent"
 
-#: FForm.form:380 FSearch.form:183 FTips.form:77
+#: FForm.form:380 FSearch.form:184 FTips.form:77
 msgid "Next"
 msgstr "Suivant"
 
@@ -2825,31 +2829,31 @@ msgstr "px"
 msgid "Duplicate"
 msgstr "Dupliquer"
 
-#: FImageProperty.class:788
+#: FImageProperty.class:789
 msgid "System clipboard"
 msgstr "Presse-papier système"
 
-#: FImageProperty.class:1251
+#: FImageProperty.class:1256
 msgid "Arrow"
 msgstr "Flèche"
 
-#: FImageProperty.class:1253
+#: FImageProperty.class:1258
 msgid "Arrow #2"
 msgstr "Flèche n°2"
 
-#: FImageProperty.class:1254
+#: FImageProperty.class:1259
 msgid "Triangle"
 msgstr "Triangle"
 
-#: FImageProperty.class:1255
+#: FImageProperty.class:1260
 msgid "Square triangle"
 msgstr "Triangle rectangle"
 
-#: FImageProperty.class:1256
+#: FImageProperty.class:1261
 msgid "Pentagon"
 msgstr "Pentagone"
 
-#: FImageProperty.class:1257
+#: FImageProperty.class:1262
 msgid "Hexagon"
 msgstr "Hexagone"
 
@@ -3111,7 +3115,7 @@ msgstr "Importer des fichiers"
 msgid "Create symbolic links"
 msgstr "Créer des liens symboliques"
 
-#: FImportTable.class:58 FSearch.form:171 FTranslate.class:1371
+#: FImportTable.class:58 FSearch.form:172 FTranslate.class:1371
 msgid "All files"
 msgstr "Tous les fichiers"
 
@@ -3307,7 +3311,7 @@ msgstr "Choisissez un fichier"
 msgid "This file is located inside the project."
 msgstr "Le fichier est situé à l'intérieur du projet."
 
-#: FMain.class:2713 Project.module:857
+#: FMain.class:2713 Project.module:858
 msgid "The file has been modified.\n\nAll your changes will be lost."
 msgstr "Le fichier a été modifié.\n\nToutes les modifications seront perdues."
 
@@ -3504,7 +3508,7 @@ msgstr "Outils"
 msgid "Find"
 msgstr "Rechercher"
 
-#: FMain.form:800 FSearch.form:74
+#: FMain.form:800 FSearch.form:75
 msgid "Replace"
 msgstr "Remplacer"
 
@@ -3680,7 +3684,7 @@ msgstr "Feuille de propriétés"
 msgid "Toolbox"
 msgstr "Boîte à outils"
 
-#: FMain.form:1432 FSearch.form:60
+#: FMain.form:1432 FSearch.form:61
 msgid "Search"
 msgstr "Rechercher"
 
@@ -3768,115 +3772,115 @@ msgstr "Conserver les informations de débogage dans l'exécutable"
 msgid "Create a shortcut on the desktop"
 msgstr "Créer un raccourci sur le bureau"
 
-#: FMakeInstall.class:135
+#: FMakeInstall.class:137
 msgid "Package"
 msgstr "Paquet"
 
-#: FMakeInstall.class:136
+#: FMakeInstall.class:138
 msgid "Min. version"
 msgstr "Version min."
 
-#: FMakeInstall.class:137
+#: FMakeInstall.class:139
 msgid "Max. version"
 msgstr "Version max."
 
-#: FMakeInstall.class:143
+#: FMakeInstall.class:145
 msgid "File or directory"
 msgstr "Fichier ou répertoire"
 
-#: FMakeInstall.class:277
+#: FMakeInstall.class:279
 msgid "Creating packages..."
 msgstr "Creation des paquets..."
 
-#: FMakeInstall.class:280 Package.module:311
+#: FMakeInstall.class:282 Package.module:311
 msgid "The packages have been successfully created."
 msgstr "Les paquets ont été créés avec succès."
 
-#: FMakeInstall.class:331
+#: FMakeInstall.class:333
 msgid "Please enter your name."
 msgstr "Veuillez saisir votre nom."
 
-#: FMakeInstall.class:336
+#: FMakeInstall.class:338
 msgid "Please enter your e-mail address."
 msgstr "Veuillez saisir votre adresse e-mail."
 
-#: FMakeInstall.class:343
+#: FMakeInstall.class:345
 msgid "Please enter the vendor name."
 msgstr "Veuillez saisir le nom du fournisseur."
 
-#: FMakeInstall.class:358
+#: FMakeInstall.class:361
 msgid "There is no CHANGELOG entry for this release."
 msgstr "Il n'y aucune information de changement pour cette version."
 
-#: FMakeInstall.class:365
+#: FMakeInstall.class:368
 msgid "Please enter the first CHANGELOG entry."
 msgstr "Veuillez saisir la première entrée du CHANGELOG."
 
-#: FMakeInstall.class:376
+#: FMakeInstall.class:379
 msgid "Please choose at least one target distribution."
 msgstr "Veuillez sélectionner au moins une distribution cible."
 
-#: FMakeInstall.class:414
+#: FMakeInstall.class:417
 msgid "Please choose the package group for each target distribution."
 msgstr "Veuillez sélectionner un groupe de paquet pour chaque distribution cible."
 
-#: FMakeInstall.class:416
+#: FMakeInstall.class:419
 msgid "Please choose a package group."
 msgstr "Veuillez sélectionner un groupe de paquet."
 
-#: FMakeInstall.class:426
+#: FMakeInstall.class:429
 msgid "Please choose the menu location for each target distribution."
 msgstr "Veuillez sélectionner un emplacement de menu pour chaque distribution cible."
 
-#: FMakeInstall.class:428
+#: FMakeInstall.class:431
 msgid "Please choose a menu location."
 msgstr "Veuillez sélectionner un emplacement de menu."
 
-#: FMakeInstall.class:455
+#: FMakeInstall.class:458
 msgid "Cannot found extra file: &1"
 msgstr "Impossible de trouver le fichier supplémentaire : &1"
 
-#: FMakeInstall.class:461
+#: FMakeInstall.class:464
 msgid "Please choose a target directory for each extra file."
 msgstr "Veuillez choisir un répertoire de destination pour chaque fichier supplémentaire."
 
-#: FMakeInstall.class:469
+#: FMakeInstall.class:472
 msgid "Debian packaging system cannot handle spaces in file names."
 msgstr "Le système de gestion de paquets de Debian ne peut gérer les noms de fichiers contenant un caractère d'espacement."
 
-#: FMakeInstall.class:475
+#: FMakeInstall.class:478
 msgid "Debian packaging system cannot handle spaces in directories."
 msgstr "Le système de gestion de paquets de Debian ne peut gérer les noms de répertoires contenant un caractère d'espacement."
 
-#: FMakeInstall.class:491
+#: FMakeInstall.class:494
 msgid "The package cannot be stored inside the project directory."
 msgstr "Le paquet ne peut être créé à l'intérieur du répertoire du projet."
 
-#: FMakeInstall.class:539
+#: FMakeInstall.class:542
 msgid "Initial release"
 msgstr "Version initiale"
 
-#: FMakeInstall.class:799
+#: FMakeInstall.class:802
 msgid "Menus"
 msgstr "Menus"
 
-#: FMakeInstall.class:867
+#: FMakeInstall.class:870
 msgid "Groups"
 msgstr "Groupes"
 
-#: FMakeInstall.class:992
+#: FMakeInstall.class:995
 msgid "Incorrect characters"
 msgstr "Caractères incorrects"
 
-#: FMakeInstall.class:1065
+#: FMakeInstall.class:1068
 msgid "Do you really want to remove all extra dependencies?"
 msgstr "Voulez-vous vraiment retirer toutes les dépendances supplémentaires ?"
 
-#: FMakeInstall.class:1165
+#: FMakeInstall.class:1168
 msgid "Do you really want to remove all extra files?"
 msgstr "Voulez-vous vraiment retirer tous les fichiers supplémentaires ?"
 
-#: FMakeInstall.class:1213
+#: FMakeInstall.class:1216
 msgid "Select the destination directory"
 msgstr "Sélectionnez le répertoire destination"
 
@@ -4069,7 +4073,7 @@ msgstr "Selectionnez l'archive source"
 msgid "*.gz;*.bz2;*.xz"
 msgstr ""
 
-#: FMakePatch.form:97 Project.module:4581
+#: FMakePatch.form:97 Project.module:4587
 msgid "Source packages"
 msgstr "Paquets sources"
 
@@ -4090,27 +4094,27 @@ msgstr ""
 msgid "Patch/Diff files"
 msgstr "Fichiers Patch/Diff"
 
-#: FMenu.class:76
+#: FMenu.class:88
 msgid "Menus have been modified!"
 msgstr "Les menus ont été modifiés !"
 
-#: FMenu.class:314
+#: FMenu.class:326
 msgid "Please enter a menu name."
 msgstr "Veuillez entrer un nom de menu."
 
-#: FMenu.class:320
+#: FMenu.class:332
 msgid "Bad menu name !"
 msgstr "Nom de menu incorrect !"
 
-#: FMenu.class:326
+#: FMenu.class:338
 msgid "Bad group name !"
 msgstr "Nom de groupe incorrect !"
 
-#: FMenu.class:626
+#: FMenu.class:638
 msgid "This menu is too deep !"
 msgstr "Ce menu est trop profond !"
 
-#: FMenu.class:1065 Project.module:5475
+#: FMenu.class:1077 Project.module:5463
 msgid "modified"
 msgstr "modifié"
 
@@ -4186,7 +4190,7 @@ msgstr "Emplacement"
 msgid "No password"
 msgstr "Pas de mot de passe"
 
-#: FNewConnection.form:189 Project.module:232
+#: FNewConnection.form:189 Project.module:233
 msgid "Database"
 msgstr "Bases de données"
 
@@ -4502,7 +4506,7 @@ msgstr "Taille des titres"
 msgid "Debugger size"
 msgstr "Taille du débogueur"
 
-#: FOption.form:949 Project.module:239
+#: FOption.form:949 Project.module:240
 msgid "Printing"
 msgstr "Impression"
 
@@ -5306,79 +5310,87 @@ msgstr "Nouveau nom du projet"
 msgid "Take screenshot"
 msgstr "Capture d'écran"
 
-#: FSearch.class:548
+#: FSearch.class:519
 msgid "Search string replaced once."
 msgstr "La chaîne de caractères recherchée à été remplacée une fois."
 
-#: FSearch.class:550
+#: FSearch.class:521
 msgid "Search string replaced &1 times."
 msgstr "La chaîne de caractères a été remplacée &1 fois."
 
-#: FSearch.class:647
+#: FSearch.class:626
 msgid "One match"
 msgstr "Une correspondance"
 
-#: FSearch.class:649
+#: FSearch.class:628
 msgid "&1 matches"
 msgstr "&1 correspondances"
 
-#: FSearch.class:946
+#: FSearch.class:634
+msgid "One replacement"
+msgstr "Un remplacement"
+
+#: FSearch.class:636
+msgid "&1 replacements"
+msgstr "&1 remplacements"
+
+#: FSearch.class:938
 msgid "Do you really want to replace every string?"
 msgstr "Voulez-vous vraiment remplacer l'ensemble des chaînes ?"
 
-#: FSearch.form:41
+#: FSearch.form:42
 msgid "Search & Replace"
 msgstr "Rechercher & Remplacer"
 
-#: FSearch.form:104
+#: FSearch.form:105
 msgid "Case sensitive"
 msgstr "Tenir compte de la casse"
 
-#: FSearch.form:109
+#: FSearch.form:110
 msgid "Words only"
 msgstr "Mots seulements"
 
-#: FSearch.form:114
+#: FSearch.form:115
 msgid "Regular expression"
 msgstr "Expression rationnelle"
 
-#: FSearch.form:119
+#: FSearch.form:120
 msgid "Ignore strings"
 msgstr "Ignorer les chaînes"
 
-#: FSearch.form:124
+#: FSearch.form:125
 msgid "Ignore comments"
 msgstr "Ignorer les commentaires"
 
-#: FSearch.form:139
+#: FSearch.form:140
 msgid "Search in"
 msgstr "Rechercher dans"
 
-#: FSearch.form:146
-msgid "Current procedure"
-msgstr "Procédure courante"
+#: FSearch.form:147
+msgid "Current function"
+msgstr "Fonction courante"
 
-#: FSearch.form:152
+#: FSearch.form:153
 msgid "Current file"
 msgstr "Fichier courant"
 
-#: FSearch.form:159
+#: FSearch.form:160
 msgid "Source files"
 msgstr "Fichiers sources"
 
-#: FSearch.form:165
+#: FSearch.form:166
 msgid "Data files"
 msgstr "Fichiers de données"
 
-#: FSearch.form:196
+#: FSearch.form:197
 msgid "Browse"
 msgstr "Parcourir"
 
-#: FSearch.form:208
+#: FSearch.form:209
 msgid "Replace all"
 msgstr "Tout remplacer"
 
-#: FSearch.form:219
+#: FSearch.form:220
 msgid "Highlight search"
 msgstr "Surligner la recherche"
 
@@ -5386,11 +5398,11 @@ msgstr "Surligner la recherche"
 msgid "Select an extra file"
 msgstr "Choisissez un fichier supplémentaire"
 
-#: FSelectIcon.class:35
+#: FSelectIcon.class:37
 msgid "Image files"
 msgstr "Fichiers images"
 
-#: FSelectIcon.class:36
+#: FSelectIcon.class:38
 msgid "SVG image files"
 msgstr "Fichiers images SVG"
 
@@ -5434,7 +5446,7 @@ msgstr "Nouveau fragment de code"
 msgid "Trigger string"
 msgstr "Chaîne de déclenchement"
 
-#: FSoftwareFarm.class:42 Project.module:234
+#: FSoftwareFarm.class:42 Project.module:235
 msgid "Games"
 msgstr "Jeux"
 
@@ -5454,7 +5466,7 @@ msgstr "Graphique"
 msgid "Audio"
 msgstr "Son"
 
-#: FSoftwareFarm.class:48 Project.module:241
+#: FSoftwareFarm.class:48 Project.module:242
 msgid "Video"
 msgstr "Vidéo"
 
@@ -5622,11 +5634,11 @@ msgstr "Utiliser une police non proportionnelle"
 msgid "Console output #&1"
 msgstr "Sortie de console n°&1"
 
-#: FTextEditor.class:969
+#: FTextEditor.class:970
 msgid "Unable to compress file."
 msgstr "Impossible de compresser le fichier."
 
-#: FTextEditor.class:1887
+#: FTextEditor.class:1888
 msgid "Compressed at &1"
 msgstr "Compressé à &1"
 
@@ -5846,7 +5858,7 @@ msgstr "Nouveau projet..."
 msgid "Recent projects"
 msgstr "Projets récents"
 
-#: FWelcome.class:72 Project.module:6278
+#: FWelcome.class:72 Project.module:6266
 msgid "Installed software"
 msgstr "Logiciels installés"
 
@@ -7434,343 +7446,343 @@ msgstr "Format d'archive des sources non supporté"
 msgid "Patch didn't apply:\n"
 msgstr "Le patch n'a pas été appliqué :\n"
 
-#: Project.module:230
+#: Project.module:231
 msgid "Automation"
 msgstr "Automatisation"
 
-#: Project.module:231
+#: Project.module:232
 msgid "Basic"
 msgstr "Exemples de base"
 
-#: Project.module:233
+#: Project.module:234
 msgid "Drawing"
 msgstr "Dessin"
 
-#: Project.module:236
+#: Project.module:237
 msgid "Miscellaneous"
 msgstr "Divers"
 
-#: Project.module:237
+#: Project.module:238
 msgid "Networking"
 msgstr "Programmation réseau"
 
-#: Project.module:238
+#: Project.module:239
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: Project.module:240
+#: Project.module:241
 msgid "Sound"
 msgstr "Son"
 
-#: Project.module:242
+#: Project.module:243
 msgid "Controls"
 msgstr "Contrôles"
 
-#: Project.module:243
+#: Project.module:244
 msgid "Multimedia"
 msgstr "Multimedia"
 
-#: Project.module:244
+#: Project.module:245
 msgid "Web"
 msgstr "Web"
 
-#: Project.module:417
+#: Project.module:418
 msgid "File not found!"
 msgstr "Fichier introuvable !"
 
-#: Project.module:529
+#: Project.module:530
 msgid "This project does not exist."
 msgstr "Ce projet n'existe pas."
 
-#: Project.module:541
+#: Project.module:542
 msgid "Unable to find Gambas IDE executable in directory:\n\n&1"
 msgstr "Impossible de trouver l'exécutable de l'EDI Gambas dans le répertoire :\n\n&1"
 
-#: Project.module:560
+#: Project.module:561
 msgid "This is not a Gambas project."
 msgstr "Ce n'est pas un projet Gambas."
 
-#: Project.module:563
+#: Project.module:564
 msgid "This is a Gambas 1.0 project. Use Gambas 2 to convert it."
 msgstr "Ceci est un projet Gambas 1.0. Utilisez Gambas 2 pour le convertir."
 
-#: Project.module:566
+#: Project.module:567
 msgid "Convert"
 msgstr "Convertir"
 
-#: Project.module:566
+#: Project.module:567
 msgid "This is a Gambas 2.0 project.\n\nDo you want to convert it?"
 msgstr "Ceci est un projet Gambas 2.0.\n\nDésirez-vous le convertir ?"
 
-#: Project.module:584
+#: Project.module:585
 msgid "Do not open"
 msgstr "Ne pas ouvrir"
 
-#: Project.module:584
+#: Project.module:585
 msgid "Open after all"
 msgstr "Ouvrir malgré tout"
 
-#: Project.module:584
+#: Project.module:585
 msgid "This project seems to be already opened.\n\nOpening the same project twice can lead to data loss."
 msgstr "Il semble que ce projet soit déjà ouvert.\n\nOuvrir le même projet deux fois peut provoquer des pertes de données."
 
-#: Project.module:590
+#: Project.module:591
 msgid "It cannot be converted."
 msgstr "Il ne peut être converti."
 
-#: Project.module:590
+#: Project.module:591
 msgid "This project is read-only."
 msgstr "Le projet est en lecture seule."
 
-#: Project.module:601
+#: Project.module:602
 msgid "Current project"
 msgstr "Projet courant"
 
-#: Project.module:608
+#: Project.module:609
 msgid "Copying project inside a temporary directory..."
 msgstr "Copie du projet dans un répertoire temporaire..."
 
-#: Project.module:611
+#: Project.module:612
 msgid "Unable to create temporary directory"
 msgstr "Impossible de créer le répertoire temporaire"
 
-#: Project.module:641
+#: Project.module:642
 msgid "Converting project structure..."
 msgstr "Conversion de la structure du projet..."
 
-#: Project.module:674
+#: Project.module:675
 msgid "Applying conversion..."
 msgstr "Application de la conversion..."
 
-#: Project.module:680
+#: Project.module:681
 msgid "Unable to apply conversion"
 msgstr "Impossible d'appliquer la conversion"
 
-#: Project.module:799
+#: Project.module:800
 msgid "Some libraries used by the project are missing."
 msgstr "Des bibliothèques utilisées par le projet sont manquantes."
 
-#: Project.module:818
+#: Project.module:819
 msgid "Cannot open project file :"
 msgstr "Impossible d'ouvrir le fichier :"
 
-#: Project.module:870
+#: Project.module:871
 msgid "Cannot reload file."
 msgstr "Impossible de recharger le fichier."
 
-#: Project.module:1666
+#: Project.module:1667
 msgid "ALPHA VERSION, USE AT YOUR OWN RISK!"
 msgstr "VERSION ALPHA, À UTILISER À VOS RISQUES ET PÉRILS !"
 
-#: Project.module:1668
+#: Project.module:1669
 msgid "DEVELOPMENT VERSION, USE AT YOUR OWN RISK!"
 msgstr "VERSION DE DÉVELOPPEMENT, À UTILISER À VOS RISQUES ET PÉRILS !"
 
-#: Project.module:2026
+#: Project.module:2027
 msgid "Cannot open a binary file."
 msgstr "Impossible d'ouvrir un fichier binaire."
 
-#: Project.module:2064
+#: Project.module:2065
 msgid "Cannot open file."
 msgstr "Impossible d'ouvrir le fichier."
 
-#: Project.module:2222
+#: Project.module:2223
 msgid "&1th"
 msgstr "&1ème"
 
-#: Project.module:2275
+#: Project.module:2276
 msgid "in form definition"
 msgstr "dans la définition du formulaire"
 
-#: Project.module:2282
+#: Project.module:2283
 msgid "in &1."
 msgstr "dans &1."
 
-#: Project.module:2443
+#: Project.module:2444
 msgid "Some project source files are in conflict.\nPlease solve them if you want to compile the project."
 msgstr "Certains fichiers sources du projet sont en conflit.\nVeuillez résoudre ces conflits pour pouvoir compiler le projet."
 
-#: Project.module:2447
+#: Project.module:2448
 msgid "Compiling project"
 msgstr "Compilation du projet"
 
-#: Project.module:2698
+#: Project.module:2699
 msgid "File already exists."
 msgstr "Ce fichier existe déja."
 
-#: Project.module:2730
+#: Project.module:2731
 msgid "Directory already exists."
 msgstr "Le répertoire existe déja."
 
-#: Project.module:2742
+#: Project.module:2743
 msgid "Cannot link template file."
 msgstr "Impossible de créer le lien vers le fichier modèle."
 
-#: Project.module:2748
+#: Project.module:2749
 msgid "Cannot copy template file."
 msgstr "Impossible de copier le fichier modèle."
 
-#: Project.module:2954
+#: Project.module:2955
 msgid "The contents of VERSION file is incorrect."
 msgstr "Le contenu du fichier VERSION est incorrect."
 
-#: Project.module:2976
+#: Project.module:2977
 msgid "Cannot install library in &1."
 msgstr "Impossible d'installer la bibliothèque dans &1."
 
-#: Project.module:3018
+#: Project.module:3019
 msgid "Making executable..."
 msgstr "Génération de l'exécutable..."
 
-#: Project.module:3076
+#: Project.module:3077
 msgid "Cannot make executable."
 msgstr "Impossible de créer l'exécutable."
 
-#: Project.module:3529
+#: Project.module:3534
 msgid "Some components are missing: &1"
 msgstr "Certains composants ne sont pas installés : &1"
 
-#: Project.module:3731
+#: Project.module:3737
 msgid "Cannot write project file."
 msgstr "Impossible d'écrire le fichier projet."
 
-#: Project.module:3780
+#: Project.module:3786
 msgid "Unable to create desktop shortcut."
 msgstr "Imposible de créer le raccourci sur le bureau."
 
-#: Project.module:4044
+#: Project.module:4050
 msgid "The directory will be removed at the next commit."
 msgstr "Le répertoire sera supprimé à la prochaine publication."
 
-#: Project.module:4061
+#: Project.module:4067
 msgid "You must define a startup class or form!"
 msgstr "Vous devez définir une classe ou un formulaire de démarrage !"
 
-#: Project.module:4092
+#: Project.module:4098
 msgid "Please type a name."
 msgstr "Veuillez saisir un nom."
 
-#: Project.module:4096
+#: Project.module:4102
 msgid "This name contains a forbidden character:"
 msgstr "Ce nom contient un caractère interdit:"
 
-#: Project.module:4100
+#: Project.module:4106
 msgid "The name cannot begins with a dot."
 msgstr "Le nom ne peut pas commencer par un point."
 
-#: Project.module:4104
+#: Project.module:4110
 msgid "This name is already used. Choose another one."
 msgstr "Ce nom est déjà utilisé. Choisissez-en un autre."
 
-#: Project.module:4140
+#: Project.module:4146
 msgid "A class name must begin with a letter or an underscore, followed by any letter or digit."
 msgstr "Un nom de classe doit commencer par une lettre ou un caractère '_', et être suivi par des lettres ou des chiffres. "
 
-#: Project.module:4183
+#: Project.module:4189
 msgid "Destination already exists."
 msgstr "La destination existe déjà."
 
-#: Project.module:4365
+#: Project.module:4371
 msgid "Unable to rename '&1'"
 msgstr "Impossible de renommer « &1 »"
 
-#: Project.module:4481
+#: Project.module:4487
 msgid "Please type a project name."
 msgstr "Veuillez saisir un nom de projet."
 
-#: Project.module:4489
+#: Project.module:4495
 msgid "The project name cannot begin with a dot."
 msgstr "Un nom de projet ne peut commencer par un point."
 
-#: Project.module:4492
+#: Project.module:4498
 msgid "Non-ASCII characters are forbidden in a project name."
 msgstr "Un nom de projet ne peut contenir que des caractères ASCII."
 
-#: Project.module:4493
+#: Project.module:4499
 msgid "SPACE"
 msgstr "ESPACE"
 
-#: Project.module:4493
+#: Project.module:4499
 msgid "The following characters are forbidden in a project name:"
 msgstr "Les caractères suivants sont interdits dans un nom de projet :"
 
-#: Project.module:4500
+#: Project.module:4506
 msgid "This project already exists."
 msgstr "Ce projet existe déjà."
 
-#: Project.module:4503
+#: Project.module:4509
 msgid "The project directory already exists."
 msgstr "Le répertoire du projet existe déjà."
 
-#: Project.module:4505
+#: Project.module:4511
 msgid "The project directory cannot be created because a file with the same name already exists."
 msgstr "Le répertoire du projet ne peut être créé car un fichier avec le même nom existe déjà."
 
-#: Project.module:4553
+#: Project.module:4559
 msgid "Unable to create source archive."
 msgstr "Impossible de créer l'archive source."
 
-#: Project.module:4580
+#: Project.module:4586
 msgid "Create source package"
 msgstr "Générer une archive des sources du projet"
 
-#: Project.module:4860
+#: Project.module:4866
 msgid "Cannot copy file &1."
 msgstr "Impossible de copier le fichier &1."
 
-#: Project.module:4908
+#: Project.module:4914
 msgid "Cannot create link &1."
 msgstr "Impossible de créer le lien &1."
 
-#: Project.module:4923
+#: Project.module:4929
 msgid "Cannot move a directory inside itself."
 msgstr "Impossible de déplacer un répertoire à l'intérieur de lui-même."
 
-#: Project.module:4987
+#: Project.module:4993
 msgid "Cannot move file &1."
 msgstr "Impossible de déplacer le fichier &1."
 
-#: Project.module:5200
+#: Project.module:5206
 msgid "The following files couldn't be removed:"
 msgstr "Les fichiers suivants n'ont pu être supprimés :"
 
-#: Project.module:5685
+#: Project.module:5673
 msgid "Project cleanup..."
 msgstr "Nettoyage du projet..."
 
-#: Project.module:5691
+#: Project.module:5679
 msgid "Project files conversion..."
 msgstr "Conversion des fichiers du projet..."
 
-#: Project.module:5721
+#: Project.module:5709
 msgid "Unable to convert &1"
 msgstr "Impossible de convertir &1"
 
-#: Project.module:5972
+#: Project.module:5960
 msgid "Unable to update forms."
 msgstr "Impossible de mettre à-jour les formulaires."
 
-#: Project.module:6062
+#: Project.module:6050
 msgid "The &1 program is not installed on your system."
 msgstr "Le programme &1 n'est pas installé sur votre système."
 
-#: Project.module:6064
+#: Project.module:6052
 msgid "The following programs are not installed on your system: &1."
 msgstr "Les programmes suivants ne sont pas installés sur votre système : &1."
 
-#: Project.module:6156
+#: Project.module:6144
 msgid "Unable to read component description file."
 msgstr "Impossible de lire le fichier de description du composant."
 
-#: Project.module:6217
+#: Project.module:6205
 msgid "Cannot write component description file."
 msgstr "Impossible d'écrire le fichier de description du composant."
 
-#: Project.module:6278
+#: Project.module:6266
 msgid "Project templates"
 msgstr "Modèles de projet"
 
-#: Project.module:6324
+#: Project.module:6312
 msgid "Unable to run terminal."
 msgstr "Impossible de démarrer le terminal."
 

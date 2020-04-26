@@ -115,14 +115,15 @@ Static Private Sub AddPath(sMap As String, sPath As String, Optional sPattern As
     
     sPattern = "*"
     
-    aDir = Dir(sPath, "*", gb.Directory) 
+    aDir = Dir(sPath, "*", gb.Directory).Sort()
+    
     If aDir.Count Then
       If aDir[0] Like "*[1-9]x[1-9]*" Then
           sPattern = "&1x&1!&2"
       Else If IsDigit(aDir[0]) Or If Exist(sPath &/ "scalable") Then
         sPattern = "&1!&2"
       Else
-        aDir = Dir(sPath &/ aDir[0], "*", gb.Directory)
+        aDir = Dir(sPath &/ aDir[0], "*", gb.Directory).Sort()
         If aDir.Count Then
           If aDir[0] Like "*[1-9]x[1-9]*" Then
             sPattern = "&2!&1x&1"

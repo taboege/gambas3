@@ -7,48 +7,18 @@ Private $bInvert As Boolean
 
 Event _Fake
 
-' Private Sub Dump()
-'   
-'    Dim I As Integer
-'   ' 
-'   ' Print System.Backtrace.Join(" ")
-'   ' 
-'   Print "Selection = ";
-'   For I = 0 To $aSel.Max Step 2
-'     Print "["; $aSel[I]; ","; $aSel[I + 1]; "] ";
-'   Next
-'   Print
-'   
-' End
-' 
+Public Sub GetItemCount() As Integer
 
-Private Sub GetTable() As WebTable
-
-  Return Object.Parent(Me)
-
+  Return Object.Parent(Me).Count
+  
 End
 
 Public Sub Refresh()
   
-  GetTable().Refresh
+  Object.Parent(Me).Refresh
   
 End
 
-Public Sub SetSelection(aSel As Integer[], bInvert As Boolean)
-
-  $aSel = aSel
-  $bInvert = bInvert
-  
-End
-
-Public Sub Copy() As WebTableSelection
-  
-  Dim hSel As WebTableSelection = New WebTableSelection
-
-  hSel.SetSelection($aSel.Copy(), $bInvert)
-  Return hSel
-  
-End
 
 Private Sub Add(iStart As Integer, Optional iLength As Integer = 1)
   
@@ -177,7 +147,7 @@ Public Function GetSelectedRows() As Integer[]
   
   If $bInvert Then
     
-    For I = 0 To GetTable().Max
+    For I = 0 To GetItemCount() - 1
       If IsSelected(I) Then aRet.Add(I)
     Next
     
@@ -198,8 +168,8 @@ Public Function GetSelectedRows() As Integer[]
 
 End
 
-Private Sub Count_Read() As Integer
-  
+Private Function Count_Read() As Integer
+
   Dim I, N As Integer
 
   For I = 0 To $aSel.Max Step 2
@@ -208,17 +178,15 @@ Private Sub Count_Read() As Integer
   
   If $bInvert Then
     
-    Return GetTable().Count - N
+    Return GetItemCount() - N
     
   Else
     
     Return N
     
   Endif
-    
+
 End
-
-
 
 Public Sub IsEverythingSelected() As Boolean
   
@@ -226,61 +194,6 @@ Public Sub IsEverythingSelected() As Boolean
   
 End
 
-' Public Sub InsertRows(iStart As Integer, iLength As Integer)
-' 
-'   Dim I, S, L As Integer
-'   
-'   For I = 0 To $aSel.Max Step 2
-'     
-'     S = $aSel[i]    
-'     L = $aSel[I + 1]
-'     
-'     If iStart <= S Then
-'       $aSel[I] += iLength
-'     Else If iStart <= (S + L) Then
-'       $aSel[I + 1] = iStart - S
-'       $aSel.Add(iStart + iLength)
-'       $aSel.Add(L - (iStart - S))
-'     Endif
-'     
-'   Next
-'   
-'   'Dump
-' 
-' End
-' 
-' Public Sub RemoveRows(iStart As Integer, iLength As Integer)
-'   
-'   Dim I, S, L As Integer
-'   
-'   I = 0
-'   While I < $aSel.Count
-'     
-'     S = $aSel[I]
-'     L = $aSel[I + 1]
-'     
-'     If (iStart + iLength) <= S Then
-'       $aSel[I] -= iLength
-'     Else If iStart >= (S + L) Then
-'     Else 
-'       If iStart < S Then 
-'         iLength -= (S - iStart)
-'         $aSel[I] = iStart
-'       Endif
-'       $aSel[I + 1] -= iLength - (iStart - S)
-'     Endif
-'     
-'     If $aSel[I + 1] <= 0 Then
-'       $aSel.Remove(I, 2)
-'     Else
-'       I += 2
-'     Endif
-'     
-'   Wend
-'   
-'   'Dump
-'   
-' End
 
 Public Sub GetCurrent() As Integer
   
@@ -288,8 +201,56 @@ Public Sub GetCurrent() As Integer
   
   If $aSel.Count = 2 Then 
     iCurrent = $aSel[0]
-    If iCurrent < GetTable().Count Then Return iCurrent
+    If iCurrent < GetItemCount() Then Return iCurrent
   Endif
   Return -1
+  
+End
+
+Public Sub InsertRow(iRow As Integer)
+
+  Dim I As Integer
+  Dim S As Integer
+  Dim L As Integer
+  
+  For I = 0 To $aSel.Max Step 2
+    
+    S = $aSel[I]
+    L = $aSel[I + 1]
+    
+    If iRow <= S Then
+      Inc $aSel[I]
+    Else If iRow < (S + L) Then
+      Inc $aSel[I + 1]
+    Endif
+    
+  Next
+  
+End
+
+Public Sub RemoveRow(iRow As Integer)
+  
+  Dim I As Integer
+  Dim S As Integer
+  Dim L As Integer
+
+  I = 0
+  While I < $aSel.Count  
+    
+    S = $aSel[I]
+    L = $aSel[I + 1]
+    
+    If iRow <= S Then
+      Dec $aSel[I]
+    Else If iRow < (S + L) Then
+      Dec $aSel[I + 1]
+      If $aSel[I + 1] = 0 Then
+        $aSel.Remove(I, 2)
+        Continue
+      Endif
+    Endif
+    
+    I += 2
+  Wend
   
 End

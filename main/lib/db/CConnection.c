@@ -855,6 +855,8 @@ GB_DESC CDBDesc[] =
 	GB_STATIC_PROPERTY_READ("Collations", "String[]", Connection_Collations),
 	GB_STATIC_PROPERTY_READ("Handle", "p", Connection_Handle),
 
+	GB_STATIC_PROPERTY_READ("LastInsertId", "l", Connection_LastInsertId),
+
 	GB_STATIC_PROPERTY("Debug", "b", CCONNECTION_debug),
 
 	GB_STATIC_METHOD("Limit", "Connection", CCONNECTION_limit, "(Limit)i"),

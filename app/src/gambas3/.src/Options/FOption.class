@@ -1704,7 +1704,7 @@ Private Sub SaveLayout(Optional sFile As String)
   hSettings["Toolbar/Form"] = ToolBar.GetLayout("form")
   hSettings["Toolbar/Image"] = ToolBar.GetLayout("image")
   hSettings["ShowMenus"] = Settings["/ShowMenus"]
-  hSettings["ToolboxSize"] = Settings["/ToolboxSize"]
+  hSettings["Toolbox/Size"] = Settings["/Toolbox/Size"]
   hSettings["CloseWithMiddleClick"] = Settings["/CloseWithMiddleClick"]
   hSettings["ProjectFontSize"] = Settings["/ProjectFontSize"]
   hSettings["TitleFontSize"] = Settings["/TitleFontSize"]

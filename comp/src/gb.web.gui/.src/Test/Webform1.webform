@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { WebForm WebForm
-  #MoveScaled(0,0,90,91)
+  #MoveScaled(0,0,138,91)
   Height = "100%"
   Arrangement = Arrange.Vertical
   { WebMenu1 WebMenu
@@ -62,7 +62,7 @@
     }
   }
   { WebTabPanel1 WebTabPanel
-    #MoveScaled(1,1,88,72)
+    #MoveScaled(1,1,136,72)
     Expand = True
     Arrangement = Arrange.Vertical
     Margin = True
@@ -71,30 +71,30 @@
     Index = 0
     Text = ("Tab 1")
     { WebHBox1 WebHBox
-      #MoveScaled(1,1,85.75,6)
+      #MoveScaled(1,1,133.75,6)
       Spacing = True
       { WebButton1 WebButton
-        #MoveScaled(1,1,18,4)
+        #MoveScaled(1,1,11,4)
         Text = ("OK")
         Image = "icon:/small/apply"
       }
       { WebLabel1 WebLabel
-        #MoveScaled(20,1,30,4)
+        #MoveScaled(13,1,30,4)
         Expand = True
         Font = "bold,1.5em"
         Border = True
       }
       { WebButton6 WebButton
-        #MoveScaled(51,1,16,4)
+        #MoveScaled(44,1,16,4)
         Text = ("Remove tab 2")
       }
       { WebButton2 WebButton
-        #MoveScaled(68,1,11,4)
+        #MoveScaled(61,1,11,4)
         Text = ("Logout")
       }
     }
     { WebHBox3 WebHBox
-      #MoveScaled(1,8,85.75,6)
+      #MoveScaled(1,8,133.75,6)
       Spacing = True
       { WebComboBox1 WebComboBox
         #MoveScaled(1,1,30,4)
@@ -110,17 +110,58 @@
         Text = ("Reload")
         ShowArrow = True
       }
+      { WebFileButton1 WebFileButton
+        #MoveScaled(74,1,16,4)
+        Text = ("Select file") & "..."
+        Image = "icon:/small/directory"
+      }
+      { WebProgressBar1 WebProgressBar
+        #MoveScaled(91,1,24,4)
+        Width = "12em"
+      }
+      { WebButton7 WebButton
+        #MoveScaled(116,1,4,4)
+        Image = "icon:/small/cancel"
+      }
     }
     { WebTable1 WebTable
-      #MoveScaled(1,15,85.75,40)
+      #MoveScaled(1,15,133.75,40)
       Expand = True
       Mode = Select.Multiple
       Sortable = True
     }
     Index = 1
     Text = ("Tab 2")
+    { WebVBox1 WebVBox
+      #MoveScaled(1,1,133.75,12)
+      { WebRadioButton1 WebRadioButton
+        #MoveScaled(1,1,131.75,3)
+        Text = ("Alpha")
+      }
+      { WebRadioButton2 WebRadioButton
+        #MoveScaled(1,4,131.75,3)
+        Text = ("Beta")
+      }
+      { WebRadioButton3 WebRadioButton
+        #MoveScaled(1,7,131.75,3)
+        Text = ("Gamma")
+      }
+    }
+    { WebListBox1 WebListBox
+      #MoveScaled(1,14,133.75,31)
+      Height = "14em"
+      List = [("Élément 1"), ("Élément 2"), ("Élément 3"), ("Élément 4"), ("<i>Élément 5</i>"), ("Élément 6"), ("Élément 7"), ("Élément 8"), ("<span style=\"color:red;\">Élément 9</span>"), ("Élément 10"), ("Élément 11"), ("Élément 12")]
+      Mode = Select.Multiple
+      UseHTML = True
+    }
+    { WebTextArea1 WebTextArea
+      #MoveScaled(1,46,133.75,16)
+      Height = "8em"
+    }
+    Index = 2
+    Text = ("Tab 3")
     { WebHBox2 WebHBox
-      #MoveScaled(1,1,85.75,6)
+      #MoveScaled(1,1,133.75,6)
       Spacing = True
       { WebCheckBox1 WebCheckBox
         #MoveScaled(1,1,18,4)
@@ -140,29 +181,12 @@
       }
     }
     { WebImage1 WebImage
-      #MoveScaled(1,8,85.75,6)
+      #MoveScaled(1,8,133.75,6)
       Image = "favicon.png"
     }
     { lblTime WebLabel
-      #MoveScaled(1,15,85.75,4)
+      #MoveScaled(1,15,133.75,4)
       Font = "4em"
-    }
-    Index = 2
-    Text = ("Tab 3")
-    { WebVBox1 WebVBox
-      #MoveScaled(1,1,85.75,14)
-      { WebRadioButton1 WebRadioButton
-        #MoveScaled(1,1,83.75,4)
-        Text = ("Alpha")
-      }
-      { WebRadioButton2 WebRadioButton
-        #MoveScaled(1,5,83.75,4)
-        Text = ("Beta")
-      }
-      { WebRadioButton3 WebRadioButton
-        #MoveScaled(1,9,83.75,4)
-        Text = ("Gamma")
-      }
     }
     Index = 0
   }

@@ -120,7 +120,7 @@ Public Sub _new(Optional Parent As WebContainer)
   _NoRefresh = 1
   
   Inc $iCount
-  WebForm.PrintLog("==== " & $iCount & " controls")
+  'WebForm.PrintLog("==== " & $iCount & " controls")
   
   Inc $iLastId
   $iId = $iLastId
@@ -232,6 +232,7 @@ Private Sub Parent_Write(Value As WebContainer)
 
   Dim hParent As WebContainer
   Dim sParent As String
+  Dim hForm As WebForm
   
   hParent = Parent_Read()
   
@@ -239,8 +240,9 @@ Private Sub Parent_Write(Value As WebContainer)
 
   If Me Is WebMenu Then
     If Value Not Is WebForm And If Value Not Is WebMenu Then Error.Raise("Incorrect parent")
-    If Value Is WebForm Then
-      Value = Me.Form._GetMenuBar()
+    Try hForm = Value
+    If Not Error Then
+      Value = hForm._GetMenuBar()
       Value.Show
     Endif
   Endif
@@ -864,7 +866,7 @@ Public Sub Delete()
   $cFromId[$iId] = Null
   _Invalid = True
   Dec $iCount
-  WebForm.PrintLog("==== " & $iCount & " controls")
+  'WebForm.PrintLog("==== " & $iCount & " controls")
   'Debug $sName;; $iId;; System.Backtrace.Join(" ")
   
 End

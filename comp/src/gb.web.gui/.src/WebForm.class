@@ -143,6 +143,47 @@ Static Private Sub RenderIcon(sPath As String) As Boolean
   
 End
 
+Static Private Sub Upload(sKey As String) As Boolean
+  
+  Dim sPath As String
+  Dim sTarget As String
+  
+  PrintLog("UPLOAD " & sKey)
+  
+  sTarget = Upload.Path &/ sKey
+  
+  If Not Request.Cookies["GBSESSIONID"] Or If Not Exist(sTarget) Then 
+    PrintLog("UPLOAD DOES NOT EXIST")
+    Response.Status = "404 Not Found"
+    Response.Begin
+    Response.End
+    Return
+  Endif
+  
+  For Each sPath In Request.Files
+    
+    PrintLog("UPLOAD path = " & sPath)
+    PrintLog("UPLOAD target = " & sTarget)
+    Try Kill sTarget
+    Move sPath To sTarget
+    Break
+    
+  Next
+  
+  CGI["REQUEST_METHOD"] = "GET"
+  CGI["PATH_INFO"] = "/x"
+  CGI["QUERY_STRING"] = "c=" & URL.Encode(JSON.ToString(["finish", sKey]))
+
+Catch
+  
+  CGI["REQUEST_METHOD"] = "GET"
+  CGI["PATH_INFO"] = "/x"
+  CGI["QUERY_STRING"] = "c=" & URL.Encode(JSON.ToString(["error", sKey, Error.Text]))
+
+  Try Kill sTarget
+    
+End
+
 Static Public Sub Main()
 
   Dim hProcess As Process
@@ -150,8 +191,6 @@ Static Public Sub Main()
   Dim sRead As String
   Dim sWrite As String
   Dim sTemp As String
-  Dim sKey As String
-  Dim cEnv As Collection
   Dim sPath As String
   Dim aLib As String[]
   Dim sFile As String
@@ -228,6 +267,10 @@ Static Public Sub Main()
       
       If RenderIcon(Mid$(sPath, 6)) Then Goto NOT_FOUND
       Return
+      
+    Else If sPath Begins "upload:" Then
+      
+      If Upload(Mid$(sPath, 8)) Then Return
     
     Else If sPath = "~dump" Then
       
@@ -343,13 +386,10 @@ Static Public Sub Main()
   PrintLog("SEND SIGUSR2 TO PROCESS " & CStr(iPid))
   Signal.Send(iPid, Signal.SIGUSR2)
     
-  cEnv = New Collection
-  For Each sKey In Env
-    cEnv[sKey] = Env[sKey]
-  Next
   PrintLog("WRITE ENV")
+
   Write #$hWrite, Application.Id As Integer
-  Write #$hWrite, cEnv As Collection
+  Write #$hWrite, CGI.All As Collection
   
   ' If Request.Method = "POST" Then
   '   While Not Eof(File.In)
@@ -538,9 +578,8 @@ Static Private Sub HandleRequest()
 
   Dim sPath As String
 
-  PrintLog("HandleRequest")
-
   sPath = Mid$(Request.Path, 2)
+  PrintLog("HandleRequest: " & sPath)
 
   If sPath = "~logout" Then
     
@@ -874,6 +913,14 @@ Public Sub _HandleMessage()
         hCtrl = Me
       Endif
       hCtrl._UpdateProperty(aCmd[2], aCmd[3])
+      
+    Case "finish"
+      
+      Upload.Finish(aCmd[1])
+    
+    Case "error"
+      
+      Upload.Error(aCmd[1], aCmd[2])
     
   End Select
   

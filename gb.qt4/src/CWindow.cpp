@@ -105,6 +105,7 @@ DECLARE_EVENT(EVENT_Hide);
 DECLARE_EVENT(EVENT_Title);
 DECLARE_EVENT(EVENT_Icon);
 DECLARE_EVENT(EVENT_Font);
+DECLARE_EVENT(EVENT_State);
 
 DECLARE_METHOD(Window_Show);
 
@@ -1472,6 +1473,7 @@ GB_DESC CWindowDesc[] =
 	GB_EVENT("Title", NULL, NULL, &EVENT_Title),
 	GB_EVENT("Icon", NULL, NULL, &EVENT_Icon),
 	GB_EVENT("Font", NULL, NULL, &EVENT_Font),
+	GB_EVENT("State", NULL, NULL, &EVENT_State),
 
 	//GB_INTERFACE("Draw", &DRAW_Interface),
 
@@ -2627,12 +2629,10 @@ void MyMainWindow::changeEvent(QEvent *e)
 		void *_object = CWidget::get(this);
 		GB.Raise(THIS, EVENT_Font, 0);
 	}
-	/*else if (e->type() == QEvent::WindowStateChange)
+	else if (e->type() == QEvent::WindowStateChange)
 	{
-		qDebug("WindowStateChange");
-		CWINDOW *_object = (CWINDOW *)CWidget::get(this);
-		GB.Raise(THIS, EVENT_State, 0);
-	}*/
+		GB.Raise(CWidget::get(this), EVENT_State, 0);
+	}
 }
 
 Qt::WindowStates MyMainWindow::getState() const

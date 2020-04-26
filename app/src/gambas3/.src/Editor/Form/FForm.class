@@ -1928,9 +1928,9 @@ Public Sub Modify(Optional bReset As Boolean)
   Inc Project.TimeStamp
   Inc Age
   
-  FSearch.OnFileChange(Me.Path)
-
   $bModify = Not bReset
+  If $bModify Then FSearch.OnFileChange(Me.Path)
+
   DrawTitle
 
 End
@@ -3752,15 +3752,15 @@ Public Sub GetPosition() As Integer
 
 End
 
-Public Sub SetPosition(hResult As CFindResult, Optional bJustCheck As Boolean) As Boolean
+Public Sub SetPosition(hResult As CSearchResult, Optional bJustCheck As Boolean) As Boolean
 
-  Dim sName As String = hResult.GetLocation()
   Dim aName As String[]
   
   If bJustCheck Then
-    If Not sName Then Return True
+    FindLocation(hResult)
+    If Not hResult.Location Then Return True
   Else
-    aName = Split(sName, ".")
+    aName = Split(hResult.Location, ".")
     Try SelectControl(aName[0])
     If Not Error Then FProperty.FocusOn(aName[1])
   Endif
@@ -4392,34 +4392,50 @@ Public Sub dwgInfo_Draw()
 
 End
 
-Public Sub GetLocation(iLine As Integer) As String
+Private Sub FindLocation(hResult As CSearchResult)
 
-  Dim aText As String[]
   Dim sLine As String
   Dim iPos As Integer
   Dim sProperty As String
   Dim iLevel As Integer
+  Dim sText As String
+  Dim iPos2 As Integer
   
-  aText = Split(GetText(), "\n")
-  Dec iLine
-  If iLine > aText.Max Then Return
-  sLine = Trim(aText[iLine])
-  iPos = InStr(sLine, " = ")
-  If iPos = 0 Then Return
-  sProperty = Left(sLine, iPos - 1)
+  sText = GetText()
   
-  While iLine >= 0
-    sLine = Trim(aText[iLine])
+  iPos = RInStr(sText, "\n", hResult.Pos) + 1
+
+  iPos2 = InStr(sText, "\n", iPos + 1)
+  If iPos2 = 0 Then iPos2 = Len(sText) + 1
+
+  sLine = Mid$(sText, iPos, iPos2 - iPos)
+  
+  hResult.Column = hResult.Pos - iPos + 1
+  hResult.Text = sLine
+  
+  sLine = Trim(sLine)
+  iPos2 = InStr(sLine, " = ")
+  If iPos2 = 0 Then Return
+  sProperty = Left(sLine, iPos2 - 1)
+  
+  While iPos > 1
+    iPos2 = iPos - 1
+    If iPos = 2 Then
+      iPos = 1
+    Else
+      iPos = RInStr(sText, "\n", iPos - 2) + 1
+    Endif
+    sLine = Trim(Mid$(sText, iPos, iPos2 - iPos))
     If sLine = "}" Then
       Inc iLevel
     Else If sLine Begins "{ " Then
       If iLevel Then 
         Dec iLevel
       Else
-        Return Split(sLine, " ")[1] & "." & sProperty
+        hResult.Location = Split(sLine, " ")[1] & "." & sProperty
+        Break
       Endif
     Endif
-    Dec iLine
   Wend
   
 End

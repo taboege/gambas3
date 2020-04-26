@@ -133,7 +133,8 @@ Public Sub Purge(Optional KeepComment As Boolean, KeepString As Boolean, Replace
       If iState = Highlight.Comment Or If iState = Highlight.Help Then
         bReplace = True
       Endif
-    Else If Not KeepString And If iState = Highlight.String Then
+    Endif
+    If Not KeepString And If iState = Highlight.String Then
       bReplace = True
     Endif
     If bReplace Then

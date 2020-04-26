@@ -1093,9 +1093,9 @@ gw = {
       {
         tr = $(id + ':' + i);
         if (checked)
-          tr.addClass('gw-table-row-selected');
+          tr.addClass('gw-selected');
         else
-          tr.removeClass('gw-table-row-selected');
+          tr.removeClass('gw-selected');
       }
         
       gw.update(id, '!' + start + ':' + (end - start + 1), checked);
@@ -1105,7 +1105,7 @@ gw = {
     {
       var elt = $(id + ':' + row);
       var last = $(id).gw_current;
-      var selected = !elt.hasClass('gw-table-row-selected');
+      var selected = !elt.hasClass('gw-selected');
       
       if (event)
       {
@@ -1117,8 +1117,8 @@ gw = {
       else
       {
         if (last != undefined)
-          $(id + ':' + last) && $(id + ':' + last).removeClass('gw-table-row-selected');
-        elt.addClass('gw-table-row-selected');
+          $(id + ':' + last) && $(id + ':' + last).removeClass('gw-selected');
+        elt.addClass('gw-selected');
         gw.update(id, '$' + row, null);
       }
       
@@ -1282,7 +1282,7 @@ gw = {
       child = $(child);
       gw.table.scroll(id, child.offsetLeft - (sw.clientWidth - child.offsetWidth) / 2, child.offsetTop - (sw.clientHeight - child.offsetHeight) / 2);
     }
-},
+  },
   
   file: 
   {
@@ -1305,15 +1305,15 @@ gw = {
         return;
       }
       
-      gw.update(xhr.gw_id, '#progress', 1, function() {
+      gw.update(xhr.gw_id, 'progress', 1, function() {
         gw.answer(xhr); 
         gw.uploads[xhr.gw_id] = undefined;
-        gw.raise(xhr.gw_id, 'upload', [], true);
+        //gw.update(xhr.gw_id, 'finish', []);
         xhr.gw_id = undefined;
         });
     },
     
-    upload: function(id)
+    upload: function(id, key)
     {
       var elt = $(id + ':file');
       var file = elt.files[0];
@@ -1327,10 +1327,10 @@ gw = {
       
       //gw.log('gw.file.upload: ' + id + ': ' + file.name);
       
-      xhr.gw_progress = 0;
+      //xhr.gw_progress = 0;
       
-      xhr.gw_progress++;
-      gw.update(id, '#progress', 0, function() { xhr.gw_progress--; });
+      xhr.gw_progress = 1;
+      gw.update(id, 'progress', 0, function() { xhr.gw_progress--; });
       
       form.append('file', file);
       form.append('name', file.name);
@@ -1339,10 +1339,10 @@ gw = {
       //xhr.upload.addEventListener("loadstart", loadStartFunction, false);  
       //xhr.upload.addEventListener("load", transferCompleteFunction, false);
       
-      xhr.upload.addEventListener("progress", 
+      xhr.upload.addEventListener('progress', 
         function(e) 
         {
-          //console.log('upload: progress ' + e.loaded + ' / ' + e.total);
+          //console.log('upload: progress ' + e.loaded + ' / ' + e.total + ' ' + xhr.gw_id + ' ' + e.lengthComputable + ' ' + xhr.gw_progress);
           
           if (xhr.gw_id == undefined)
             return;
@@ -1351,10 +1351,10 @@ gw = {
           {
             var t = (new Date()).getTime();
             
-            if ((xhr.gw_time == undefined || (t - xhr.gw_time) > 250) && xhr.gw_progress == 0)
+            if ((xhr.gw_time == undefined || (t - xhr.gw_time) > 50) && xhr.gw_progress == 0)
             {
               xhr.gw_progress++;
-              gw.update(xhr.gw_id, '#progress', e.loaded / e.total, function() { xhr.gw_progress--; }); 
+              gw.update(xhr.gw_id, 'progress', e.loaded / e.total, function() { xhr.gw_progress--; }); 
               xhr.gw_time = t;
             }
           }
@@ -1364,7 +1364,7 @@ gw = {
       xhr.gw_command = ['upload', id];
       xhr.gw_id = id;
         
-      xhr.open("POST", $root + '/u', true);  
+      xhr.open('POST', $root + '/upload:' + key, true);  
       
       xhr.onreadystatechange = function() 
         {
@@ -1474,7 +1474,62 @@ gw = {
     {
       $(id).lastElementChild.innerHTML = text;
     }
-  }
+  },
   
+  listbox:
+  {
+    selectRange: function(id, start, end, checked)
+    {
+      var items = $(id).children;
+      var i;
+      var elt;
+      
+      if (end < start)
+      {
+        i = start;
+        start = end;
+        end = i;
+      }
+      
+      for (i = start; i <= end; i++)
+      {
+        elt = items[i];
+        if (checked)
+          elt.addClass('gw-selected');
+        else
+          elt.removeClass('gw-selected');
+      }
+        
+      gw.update(id, checked ? '+' : '-',  [start, end - start + 1]);
+    },
+  
+    select: function(id, row, event)
+    {
+      var items = $(id).children;
+      var elt = items[row];
+      var last = $(id).gw_current;
+      var selected = !elt.hasClass('gw-selected');
+      
+      if (event)
+      {
+        if (event.shiftKey && last)
+          gw.listbox.selectRange(id, last, row, selected);
+        else
+          gw.listbox.selectRange(id, row, row, selected);
+      }
+      else
+      {
+        if (last != undefined)
+          items[last] && items[last].removeClass('gw-selected');
+        elt.addClass('gw-selected');
+        gw.update(id, '$', row);
+      }
+      
+      $(id).gw_current = row;
+      
+      /*$(id).addClass('gw-unselectable');
+      setTimeout(function() { $(id).removeClass('gw-unselectable'); }, 0);*/
+    }
+  }
 }
 

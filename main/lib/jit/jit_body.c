@@ -1205,7 +1205,7 @@ static void pop_array(ushort code)
 				
 				pop_stack(3);
 				
-				goto CHECK_SWAP;
+				goto _CHECK_SWAP;
 			}
 		}
 		
@@ -1227,7 +1227,7 @@ static void pop_array(ushort code)
 	
 	STR_add(&expr, "CALL_POP_ARRAY(%d, 0x%04X);sp--;", _pc, code);
 	
-CHECK_SWAP:
+_CHECK_SWAP:
 	
 	push(T_VOID, "({%s})", expr);
 	
@@ -1693,14 +1693,39 @@ static bool push_subr_cat(ushort code)
 {
 	int index;
 	ushort code_pop;
-	char buf[16];
 	TYPE type;
 	
 	if ((code & 0x3F) >= 2)
+		goto _DEFAULT_SUBR;
+	
+	_pc++;
+	code_pop = _func->code[_pc];
+
+	if (PCODE_is(code_pop, C_POP_LOCAL))
 	{
-		push_subr(CALL_SUBR_CODE, code);
-		return FALSE;
+		index = (signed char)code_pop;
+		type = get_local_type(_func, index);
 	}
+	else if (PCODE_is(code_pop, C_POP_PARAM))
+	{
+		index = _func->n_param + (signed char)code_pop;
+		type = _func->param[index].type;
+	}
+	else if (PCODE_is(code_pop, C_POP_STATIC))
+	{
+		index = (code_pop & 0x7FF);
+		type = JIT_ctype_to_type(JIT_class, JIT_class->load->stat[index].type);
+	}
+	else if (PCODE_is(code_pop, C_POP_DYNAMIC))
+	{
+		index = (code_pop & 0x7FF);
+		type = JIT_ctype_to_type(JIT_class, JIT_class->load->dyn[index].type);
+	}
+	else
+		goto _DEFAULT_SUBR;
+
+	if (type != T_STRING)
+		goto _DEFAULT_SUBR;
 	
 	declare(&_decl_as, "GB_STRING as");
 	_no_release = TRUE;
@@ -1712,71 +1737,33 @@ static bool push_subr_cat(ushort code)
 
 	//expr = STR_print("({%s _a = %s; %s _b = %s; _a %s _b;})", JIT_get_ctype(type), expr1, JIT_get_ctype(type), expr2, op);
 	
-	_pc++;
-	code_pop = _func->code[_pc];
-
 	if (PCODE_is(code_pop, C_POP_LOCAL))
 	{
-		index = (signed char)code_pop;
-		
-		type = get_local_type(_func, index);
-		if (type != T_STRING)
-			goto _TYPE_MISMATCH;
-
-		if (index >= _func->n_local)
-			sprintf(buf, "c%d", _ctrl_index[index - _func->n_local]);
-		else
-			sprintf(buf, "l%d", index);
-		
-		JIT_print("  JIT.add_string_local(&%s, as);\n", buf, buf);
+		JIT_print("  JIT.add_string_local(&l%d, as);\n", index);
 	}
 	else if (PCODE_is(code_pop, C_POP_PARAM))
 	{
-		index = _func->n_param + (signed char)code_pop;
-		
-		type = _func->param[index].type;
-		if (type != T_STRING)
-			goto _TYPE_MISMATCH;
-		
-		sprintf(buf, "p%d", index);
-	
-		JIT_print("  JIT.add_string_local(&%s, as);\n", buf, buf);
+		JIT_print("  JIT.add_string_local(&p%d, as);\n", index);
 	}
 	else if (PCODE_is(code_pop, C_POP_STATIC))
 	{
-		void *addr;
-		
-		index = (code_pop & 0x7FF);
-
-		type = JIT_ctype_to_type(JIT_class, JIT_class->load->stat[index].type);
-		if (type != T_STRING)
-			goto _TYPE_MISMATCH;
-		
-		addr = &JIT_class->stat[JIT_class->load->stat[index].pos];
-
+		void *addr = &JIT_class->stat[JIT_class->load->stat[index].pos];
 		JIT_print("  JIT.add_string_global(%p, as);\n", addr);
 	}
 	else if (PCODE_is(code_pop, C_POP_DYNAMIC))
 	{
-		int pos;
-		
-		index = (code_pop & 0x7FF);
-		
-		type = JIT_ctype_to_type(JIT_class, JIT_class->load->dyn[index].type);
-		if (type != T_STRING)
-			goto _TYPE_MISMATCH;
-		
-		pos = JIT_class->load->dyn[index].pos;
-	
+		int pos = JIT_class->load->dyn[index].pos;
 		JIT_print("  JIT.add_string_global(&OP[%d], as);\n", pos);
 	}
 	
 	return TRUE;
 	
-_TYPE_MISMATCH:
+_DEFAULT_SUBR:
 
-	JIT_print("  THROW_TYPE_PC(GB_T_STRING, %p, %d);", (void *)type, _pc);
-	return TRUE;
+	push_subr(CALL_SUBR_CODE, code);
+	return FALSE;
+
+	//JIT_print("  THROW_TYPE_PC(GB_T_STRING, %p, %d);", (void *)type, _pc);
 }
 
 static void push_subr_comp(ushort code)

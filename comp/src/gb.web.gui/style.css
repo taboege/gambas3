@@ -515,10 +515,10 @@ P:first-child,UL:first-child,OL:first-child {
   background-image: url('//gw-arrow-right.png');
   background-size: 1em;
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: left;
   top: 0;
-  right: 0.5em;
-  width: 1em;
+  right: 0;
+  width: 1.5em;
   height: 100%;
 }
 
@@ -809,16 +809,10 @@ TABLE.gw-calendar > TBODY > TR > TD.gw-date-current {
   color: white;
 }
 
-.gw-file-input {
-  position: absolute;
-  left: -2000px;
-}
-
 .gw-progressbar {
   position: relative;
   border: solid 1px #C0C0C0;
   min-height: 0.5em;
-  border-radius: 0.25em;
 }
 
 .gw-progressbar.gw-noborder {
@@ -830,7 +824,6 @@ TABLE.gw-calendar > TBODY > TR > TD.gw-date-current {
   height: 100%;
   background: #C0C0C0;
   border: solid 1px white;
-  border-radius: 0.25em;
   z-index: -1;
 }
 
@@ -858,7 +851,7 @@ TABLE.gw-calendar > TBODY > TR > TD.gw-date-current {
   border: none;
 }
 
-.gw-table-row-selected {
+.gw-selected {
   background-color: #2980B9 !important;
   color: white !important;
 }
@@ -913,4 +906,35 @@ TABLE.gw-calendar > TBODY > TR > TD.gw-date-current {
 
 .gw-menu-shadow {
   box-shadow: 0 0 0.5em gray;
+}
+
+.gw-upload {
+  position: absolute;
+  overflow: hidden;
+}
+
+.gw-filebutton {
+  overflow: hidden;
+}
+
+.gw-filebutton > INPUT {
+  position: absolute;
+  left: -2000px;
+}
+
+.gw-listbox {
+  display: flex;
+  flex-direction: column;
+  border: solid 1px #C0C0C0;
+  user-select: none;
+  cursor: pointer;
+  overflow: auto;
+}
+
+.gw-listbox.gw-noborder {
+  border: none;
+}
+
+.gw-listbox > DIV {
+  padding: 0.25em 0.5em;
 }

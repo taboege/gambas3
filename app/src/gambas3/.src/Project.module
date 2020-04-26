@@ -1946,6 +1946,7 @@ Public Sub IsPatchFile(sPath As String) As Boolean
   Dim hFile As File
   Dim sHead As String
 
+  If Not IsTextFile(sPath) Then Return
   hFile = Open sPath
   sHead = Read #hFile, -4
   Return sHead = "diff"
@@ -1963,7 +1964,7 @@ Public Function LoadFile(sPath As String, Optional bNoErrorIfUnknown As Boolean)
 
   If Not hForm Then
 
-    Inc Application.Busy
+    'Inc Application.Busy
 
     'If VersionControl.InConflict(sPath) Then Error.Raise("File in conflict")
     If IsConflict(sPath) Then 
@@ -1994,7 +1995,7 @@ Public Function LoadFile(sPath As String, Optional bNoErrorIfUnknown As Boolean)
     Else If IsConnectionPath(sPath) Then
 
       If MConnection.CheckPassword(sPath) Then
-        Dec Application.Busy
+        'Dec Application.Busy
         Return
       Endif
       hForm = New FConnectionEditor(sPath)
@@ -2019,7 +2020,7 @@ Public Function LoadFile(sPath As String, Optional bNoErrorIfUnknown As Boolean)
           
           Else
             
-            Dec Application.Busy
+            'Dec Application.Busy
             Files[sPath] = Null
             If bNoErrorIfUnknown Then
               $bFileIsUnknown = True
@@ -2042,7 +2043,7 @@ Public Function LoadFile(sPath As String, Optional bNoErrorIfUnknown As Boolean)
       If bError Then
         Files[sPath] = Null
         Try hForm.Delete
-        Dec Application.Busy
+        'Dec Application.Busy
         Return
       Endif
       hForm.Icon = GetFileIcon(sPath)
@@ -2050,7 +2051,7 @@ Public Function LoadFile(sPath As String, Optional bNoErrorIfUnknown As Boolean)
 
     If hForm Then FSearch.OnNewForm(hForm)
     
-    Dec Application.Busy
+    'Dec Application.Busy
 
   Endif
 
@@ -2060,7 +2061,7 @@ Catch
 
   sErr = Error.Text & "\n" & Error.Backtrace.Join(" ")
   If hForm Then Try hForm.Delete
-  Dec Application.Busy
+  'Dec Application.Busy
   Try Files[sPath] = Null
   FMain.ShowError(("Cannot open file.") & "\n\n" & sErr, sPath)
 

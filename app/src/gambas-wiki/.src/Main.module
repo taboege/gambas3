@@ -417,6 +417,9 @@ Public Sub Main()
   Dim sPath As String
   Dim sText As String
   Dim cUser As Collection
+  Dim sFile As String
+  Dim sSearch As String
+  Dim sReplace As String
   
   ' If Application.Host = "gambasfarm.org" Then
   '   Response.Redirect("http://gambasfarm.org/farm")
@@ -447,6 +450,35 @@ Public Sub Main()
     Case "-offline"
       Shell "cd " & Shell$(File.Dir(Root)) & " && tar cfj gambas-wiki.tar.bz2 --exclude=passwd\\* --exclude=\\*.log --exclude=~page.\\* --exclude=~lock gambas && mv gambas-wiki.tar.bz2 ~/cgi-bin" Wait
       If Process.LastValue = 0 Then File.Save("~/cgi-bin/timestamp", Format(Now, "yyyymmdd"))
+      Return
+      
+    Case "-find"
+      
+      sSearch = Args[2]
+      If Not sSearch Then Quit 1
+      For Each sFile In RDir(Root &/ "data")
+        sPath = Root &/ "data" &/ sFile
+        If IsDir(sPath) Then Continue
+        sData = File.Load(sPath)
+        If InStr(sData, sSearch) Then Print sFile
+      Next
+      Return
+      
+    Case "-replace"
+      
+      sSearch = Args[2]
+      sReplace = Args[3]
+      If Not sSearch Then Quit 1
+      For Each sFile In RDir(Root &/ "data")
+        sPath = Root &/ "data" &/ sFile
+        If IsDir(sPath) Then Continue
+        sData = File.Load(sPath)
+        If InStr(sData, sSearch) Then
+          sData = Replace(sData, sSearch, sReplace)
+          File.Save(sPath, sData)
+          Print sFile
+        Endif
+      Next
       Return
       
   End Select
