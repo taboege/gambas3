@@ -2,7 +2,6 @@
 
 ''' Every test in this class failes, but is reverted to be reported as good
 
-Public Plan As Integer = 11
 
 Public Sub Setup()
 

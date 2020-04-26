@@ -1,7 +1,6 @@
 ' Gambas test file
 
 'Plan is one more because Test in TeardownEach is counted twice!
-Public Plan As Integer = 8
 
 Private $SetupIsDone As Boolean
 Private $EachSetupIsDone As Boolean
@@ -15,7 +14,10 @@ End
 
 Public Sub Teardown()
 
-    Assert.Ok($SetupIsDone, "Check if setup was successful.")
+    If Not $SetupIsDone Then
+        ' will bail out if TestSetup failed
+        Error.Raise("TestSetup failed: Setup was not executed correctly.")
+    Endif
     Assert.Note("Teardown TestModule")
 
 End

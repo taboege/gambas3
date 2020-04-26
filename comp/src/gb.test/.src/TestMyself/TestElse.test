@@ -1,6 +1,5 @@
 ' Gambas test file
 
-Public Plan As Integer = 5
 
 ' A Test with no message, should display then method name as message
 

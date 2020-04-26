@@ -2,9 +2,6 @@
 
 ''' Tests all Asserts
 
-'' Count of assertions in this TestModule
-Public Plan As Integer = 14
-
 Public Sub TestAssert()
 
     Assert.Ok(True, "Testing True")
