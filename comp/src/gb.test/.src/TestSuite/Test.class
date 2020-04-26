@@ -95,6 +95,9 @@ Function GetAllTestModules(Commands As TestCommand[]) As String[]
         Else
             'Add only testmodules whose names exist in Commands
             For Each Command In Commands
+                If Not sNames.Exist(Command.ModuleName) Then
+                    Assert.BailOut(Subst$(("There is no test called &1."), Command.ModuleName))
+                Endif
                 If Lower(Command.ModuleName) = Lower(sName) Then
                     TestModuleNames.Add(sName)
                 Endif

@@ -14,10 +14,11 @@ Public Sub Main()
     ' ------------------------------------------------- These must bailout
     'Tests = "TestBailout"
     'Tests = ""
+    'Tests = "TestAllAsserts, Wurstsupp"
 
     ' ------------------------------------------------- Playing field
-
-    'Tests = "TestAllAsserts"
+    
+    'Tests = "TestAllAsserts, Wurstsupp"
 
     Test.Main(Tests)
 
