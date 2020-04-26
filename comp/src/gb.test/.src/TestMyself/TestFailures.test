@@ -2,20 +2,6 @@
 
 ''' Every test in this class failes, but is reverted to be reported as good
 
-
-Public Sub Setup()
-
-    Assert.Note("------------------ Intentional Failures ------------------")
-
-End
-
-Public Sub Teardown()
-
-    Assert.Note("------------------ End Intentional Failures ------------------")
-    Assert.Note("11 Tests, 11 Failures, then everything is ok.")
-
-End
-
 Public Sub TestStringFailure()
 
     Assert.IntendedFailure()
@@ -73,7 +59,3 @@ Public Sub TestError()
     Assert.Error("No Error but error expected. Ok if not ok.")
 
 End
-
-
-
-'

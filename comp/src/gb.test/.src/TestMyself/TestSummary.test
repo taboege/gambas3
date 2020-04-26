@@ -1,6 +1,6 @@
 ' Gambas test file
 
-' Gambas test module file
+'' Can be executed to test a summary. Will fail.
 
 Public Sub DoSomeAsserts()
 

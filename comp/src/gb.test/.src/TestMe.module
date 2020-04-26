@@ -5,23 +5,19 @@ Public Sub Main()
     Dim Tests As String
 
     ' ------------------------------------------------- These must succeed
-    Tests = "TestAllAsserts, TestElse, TestError, TestSetupTeardown, TestInternals, TestFailures"
+    Tests = "TestAllAsserts, TestElse, TestError, TestSetupTeardown, TestInternals, TestFailures, TestSetup"
 
     ' ------------------------------------------------- This must not succeed
     'Tests = "TestCrashes"
+    'Tests = "TestSummary"
 
-    ' ------------------------------------------------- This must bailout
+    ' ------------------------------------------------- These must bailout
     'Tests = "TestBailout"
+    'Tests = ""
 
     ' ------------------------------------------------- Playing field
-    
+
     'Tests = "TestAllAsserts"
-    Tests = "TestSummary"
-    
-    
-    'FIXME:
-    'This failes, but should not
-    'Tests = "TestSetup"
 
     Test.Main(Tests)
 
