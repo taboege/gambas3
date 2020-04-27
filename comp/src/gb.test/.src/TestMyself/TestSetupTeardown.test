@@ -4,25 +4,25 @@
 
 Public Sub Setup()
 
-    Assert.Note("Setup TestModule")
+    Test.Note("Setup TestModule")
 
 End
 
 Public Sub Teardown()
 
-    Assert.Note("Teardown TestModule")
+    Test.Note("Teardown TestModule")
 
 End
 
 Public Sub SetupEach()
 
-    Assert.Note("Setup Each")
+    Test.Note("Setup Each")
 
 End
 
 Public Sub TeardownEach()
 
-    Assert.Note("Teardown Each")
+    Test.Note("Teardown Each")
 
 End
 

@@ -111,8 +111,8 @@ End
 
 Public Sub TestNote()
 
-    Assert.Note("The next note is Null and that's alright:")
-    Assert.Note(Null)
-    Assert.SkipAll("This doesn't actually assert anything")
+    Test.Note("The next note is Null and that's alright:")
+    Test.Note(Null)
+    Test.SkipAll("This doesn't actually assert anything")
 
 End

@@ -1,8 +1,16 @@
-' Gambas class file
+' Gambas module file
 
 Export
 
-Create Static
+Property Read Printer As TapPrinter
+Property Output As Stream
+Property Read Session As TapContext
+Property Read Finished As Boolean
+Property _Next As TestAssertion
+
+Private $hPrinter As New TapPrinter
+Private $hNext As TestAssertion
+
 
 ''' The static procedure Test.Main() starts test(s).
 
@@ -12,7 +20,7 @@ Create Static
 
 Public Sub Main(Optional Tests As String)
 
-    Assert.Reset() ' only if you run this Main multiple times per process, which you shouldn't
+    Test.Reset() ' only if you run this Main multiple times per process, which you shouldn't
     RunTests(Tests)
     PrintSummary()
 
@@ -23,11 +31,11 @@ Private Sub PrintSummary()
     'needed for debugging, to doubleclick on it
     Dim Session As TapContext
 
-    Session = Assert.Session
+    Session = Test.Session
     With Session
-        Assert.Print(gb.Lf) ' better readability for humans
-        Assert.Note(Subst$(("&2 - ran: '&1' "), .Summary.Description, IIf(.Summary.Success, "PASSED", "FAILED")))
-        If .TestsRun <> .Plan Then Assert.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
+        Test.Print(gb.Lf) ' better readability for humans
+        Test.Note(Subst$(("&2 - ran: '&1' "), .Summary.Description, IIf(.Summary.Success, "PASSED", "FAILED")))
+        If .TestsRun <> .Plan Then Test.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
         If Not .Summary.Success Then ShowFailures(.Summary.Subtests, "")
     End With
 
@@ -41,7 +49,7 @@ Private Sub ShowFailures(Tests As TestAssertion[], Prefix As String)
     For Each hTest In Tests
         sName = Prefix &/ hTest.Description
         ' Only show the deepest subtests that caused failures.
-        If Not hTest.Success And If Not hTest.Subtests.Count Then Assert.Note(Subst$(("FAILED &1"), sName))
+        If Not hTest.Success And If Not hTest.Subtests.Count Then Test.Note(Subst$(("FAILED &1"), sName))
         ShowFailures(hTest.Subtests, sName)
     Next
 
@@ -63,9 +71,9 @@ Private Function RunTests(Tests As String)
         Suite.AddAllTestCases(TestModule, aTestCommands)
     Next
 
-    Assert.Session.Summary.Description = Tests
+    Test.Session.Summary.Description = Tests
     Suite.Run()
-    If Not Assert.Finished Then Assert.Finish()
+    If Not Test.Finished Then Test.Finish()
 
 End
 
@@ -96,7 +104,7 @@ Function GetAllTestModules(Commands As TestCommand[]) As String[]
             'Add only testmodules whose names exist in Commands
             For Each Command In Commands
                 If Not sNames.Exist(Command.ModuleName) Then
-                    Assert.BailOut(Subst$(("There is no test called &1."), Command.ModuleName))
+                    Test.BailOut(Subst$(("There is no test called &1."), Command.ModuleName))
                 Endif
                 If Lower(Command.ModuleName) = Lower(sName) Then
                     TestModuleNames.Add(sName)
@@ -110,7 +118,83 @@ Function GetAllTestModules(Commands As TestCommand[]) As String[]
     Return TestModuleNames
 
 Catch
-    Assert.BailOut("Error in " & Error.Where & ": " & Error.Text)
-    Quit 1
+    Test.BailOut("Error in " & Error.Where & ": " & Error.Text)
 
 End
+
+' ------------------------------------------------- Test controls
+
+Public Sub BailOut(Optional Comment As String)
+    $hPrinter.BailOut(Comment)
+    Quit 1
+End
+'' Synonym for Note
+Public Sub Diagnostic(Comment As String)
+    $hPrinter.Diagnostic(Comment)
+End
+'' Synonym for Diagnostic
+Public Sub Note(Comment As String)
+    $hPrinter.Note(Comment)
+End
+
+Public Sub Print({Line} As String)
+    $hPrinter.Print({Line})
+End
+
+Private Function Printer_Read() As TapPrinter
+    Return $hPrinter
+End
+
+Private Function Output_Read() As Stream
+    Return $hPrinter.Output
+End
+
+Private Sub Output_Write(Value As Stream)
+    $hPrinter.Output = Value
+End
+
+Private Function Session_Read() As TapContext
+    Return $hPrinter.Session
+End
+
+Private Function Finished_Read() As Boolean
+    Return $hPrinter.Session.Finished
+End
+
+Public Sub Reset()
+    $hPrinter = New TapPrinter As "Printer"
+End
+
+Private Function _Next_Read() As TestAssertion
+    
+    If $hNext = Null Then
+        $hNext = New TestAssertion
+    Endif
+
+    Return $hNext
+
+End
+
+Private Sub _Next_Write(Value As TestAssertion)
+
+    $hNext = Value
+
+End
+
+
+Public Sub Subtest(Description As String, Optional Tests As Integer, Optional Comment As String)
+    Test.Printer.Subtest(Description, Tests, Comment)
+End
+
+Public Sub Plan(Tests As Integer, Optional Comment As String)
+    Test.Printer.Plan(Tests, Comment)
+End
+
+Public Sub SkipAll(Optional Comment As String)
+    Test.Printer.SkipAll(Comment)
+End
+
+Public Sub Finish()
+    Test.Printer.Finish()
+End
+

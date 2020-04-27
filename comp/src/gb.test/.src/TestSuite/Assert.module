@@ -1,44 +1,16 @@
-' Gambas class file
+' Gambas module file
 
 ''' Assertions which print TAP.
 
 Export
-Create Static
 
-Property Read Printer As TapPrinter
-Property Output As Stream
-Property Read Session As TapContext
-Property Read Finished As Boolean
-
-Private $hPrinter As TapPrinter
 Private $bIntendedFailure As Boolean
-Private $hNext As New TestAssertion
 
-Public Sub _new()
-   Reset()
-End
 
-Public Sub Reset()
-    $hPrinter = New TapPrinter As "Printer"
-End
 Public Sub IntendedFailure()
-  $bIntendedFailure = True
-End
 
-Public Sub Subtest(Description As String, Optional Tests As Integer, Optional Comment As String)
-    $hPrinter.Subtest(Description, Tests, Comment)
-End
+    $bIntendedFailure = True
 
-Public Sub Plan(Tests As Integer, Optional Comment As String)
-    $hPrinter.Plan(Tests, Comment)
-End
-
-Public Sub SkipAll(Optional Comment As String)
-    $hPrinter.SkipAll(Comment)
-End
-
-Public Sub Finish()
-    $hPrinter.Finish()
 End
 
 Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
@@ -48,60 +20,31 @@ Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
     If $bIntendedFailure Then Result = Not Result
     $bIntendedFailure = False
 
-    $hNext.Ok = Result
-    $hNext.Description = Description
-    bRes = $hPrinter.Assert($hNext).Ok
-    $hNext = New TestAssertion
+    ' Dim TheNext As TestAssertion
+    ' just for debug
+    'TheNext = Test._Next
+
+    Test._Next.Ok = Result
+    Test._Next.Description = Description
+    bRes = Test.Printer.Assert(Test._Next).Ok
+    Test._Next = New TestAssertion
     Return bRes
 
 End
 
 Public Sub Todo(Optional Comment As String)
-    $hNext.Directive = Tap.TODO
-    $hNext.Comment = Comment
+
+    Test._Next.Directive = Tap.TODO
+    Test._Next.Comment = Comment
+
 End
 
 Public Sub Skip(Optional Comment As String)
-    $hNext.Directive = Tap.SKIP
-    $hNext.Comment = Comment
+
+    Test._Next.Directive = Tap.SKIP
+    Test._Next.Comment = Comment
     Pass()
-End
 
-Public Sub BailOut(Optional Comment As String)
-    $hPrinter.BailOut(Comment)
-    Quit 1
-End
-'' Synonym for Note
-Public Sub Diagnostic(Comment As String)
-    $hPrinter.Diagnostic(Comment)
-End
-'' Synonym for Diagnostic
-Public Sub Note(Comment As String)
-    $hPrinter.Note(Comment)
-End
-
-Public Sub Print({Line} As String)
-    $hPrinter.Print({Line})
-End
-
-Private Function Printer_Read() As TapPrinter
-    Return $hPrinter
-End
-
-Private Function Output_Read() As Stream
-    Return $hPrinter.Output
-End
-
-Private Sub Output_Write(Value As Stream)
-    $hPrinter.Output = Value
-End
-
-Private Function Session_Read() As TapContext
-    Return $hPrinter.Session
-End
-
-Private Function Finished_Read() As Boolean
-    Return $hPrinter.Session.Finished
 End
 
 ' -------------------- High-level test functions --------------------
@@ -130,14 +73,14 @@ Public Sub Equals(Got As Variant, Expected As Variant, Optional Description As S
 
     bRes = Ok(Got = Expected, Description)
     If Not bRes Then
-        Note(Subst$(("  Got:      &1"), Got))
-        Note(Subst$(("  Expected: &1"), Expected))
+        Test.Note(Subst$(("  Got:      &1"), Got))
+        Test.Note(Subst$(("  Expected: &1"), Expected))
     Endif
     Return bRes
 
 End
 
-Public Sub NotEquals(Got As Variant, UnExpected As Variant, Optional Description As String) As Boolean
+Public Sub Notequals(Got As Variant, UnExpected As Variant, Optional Description As String) As Boolean
 
     Return Ok(Got <> UnExpected, Description)
 
@@ -149,8 +92,8 @@ Public Sub LessEqual(Got As Variant, Bound As Variant, Optional Description As S
 
     bRes = Ok(Got <= Bound, Description)
     If Not bRes Then
-        Note(Subst$(("  Got:      &1"), Got))
-        Note(Subst$(("  Expected: <= &1"), Bound))
+        Test.Note(Subst$(("  Got:      &1"), Got))
+        Test.Note(Subst$(("  Expected: <= &1"), Bound))
     Endif
     Return bRes
 
@@ -162,8 +105,8 @@ Public Sub Less(Got As Variant, Bound As Variant, Optional Description As String
 
     bRes = Ok(Got < Bound, Description)
     If Not bRes Then
-        Note(Subst$(("  Got:      &1"), Got))
-        Note(Subst$(("  Expected: < &1"), Bound))
+        Test.Note(Subst$(("  Got:      &1"), Got))
+        Test.Note(Subst$(("  Expected: < &1"), Bound))
     Endif
     Return bRes
 
@@ -175,8 +118,8 @@ Public Sub GreaterEqual(Got As Variant, Bound As Variant, Optional Description A
 
     bRes = Ok(Got >= Bound, Description)
     If Not bRes Then
-        Note(Subst$(("  Got:      &1"), Got))
-        Note(Subst$(("  Expected: >= &1"), Bound))
+        Test.Note(Subst$(("  Got:      &1"), Got))
+        Test.Note(Subst$(("  Expected: >= &1"), Bound))
     Endif
     Return bRes
 
@@ -188,8 +131,8 @@ Public Sub Greater(Got As Variant, Bound As Variant, Optional Description As Str
 
     bRes = Ok(Got > Bound, Description)
     If Not bRes Then
-        Note(Subst$(("  Got:      &1"), Got))
-        Note(Subst$(("  Expected: > &1"), Bound))
+        Test.Note(Subst$(("  Got:      &1"), Got))
+        Test.Note(Subst$(("  Expected: > &1"), Bound))
     Endif
     Return bRes
 
@@ -221,7 +164,7 @@ End
 
 Public Sub NotNull(Got As Variant, Optional Description As String) As Boolean
 
-    Return NotEquals(Got, Null, Description)
+    Return Notequals(Got, Null, Description)
 
 End
 
@@ -231,8 +174,8 @@ Public Sub Like(Got As String, Pattern As String, Optional Description As String
 
     bRes = Ok(Got Like Pattern, Description)
     If Not bRes Then
-        Note(Subst$(("  Got:      &1"), Got))
-        Note(Subst$(("  Expected: &1"), Pattern))
+        Test.Note(Subst$(("  Got:      &1"), Got))
+        Test.Note(Subst$(("  Expected: &1"), Pattern))
     Endif
     Return bRes
 
@@ -244,8 +187,8 @@ Public Sub Match(Got As String, Pattern As String, Optional Description As Strin
 
     bRes = Ok(Got Match Pattern, Description)
     If Not bRes Then
-        Note(Subst$(("  Got:      &1"), Got))
-        Note(Subst$(("  Expected: &1"), Pattern))
+        Test.Note(Subst$(("  Got:      &1"), Got))
+        Test.Note(Subst$(("  Expected: &1"), Pattern))
     Endif
     Return bRes
 
@@ -259,12 +202,12 @@ Public Sub StringEquals(Got As String, Expected As String, Optional Description 
     bRes = Equals(Got, Expected, Description)
     If Not bRes Then
         If Len(Got) <> Len(Expected) Then
-            Note(Subst$(("Strings are of different lengths &1 and &2, respectively."), Len(Got), Len(Expected)))
+            Test.Note(Subst$(("Strings are of different lengths &1 and &2, respectively."), Len(Got), Len(Expected)))
         Endif
         For iPos = 1 To Min(Len(Got), Len(Expected))
             If Mid$(Got, iPos, 1) <> Mid$(Expected, iPos, 1) Then Break
         Next
-        Note(Subst$(("Strings differ at position &1."), iPos))
+        Test.Note(Subst$(("Strings differ at position &1."), iPos))
     Endif
     Return bRes
 
@@ -282,11 +225,11 @@ Public Sub ErrorCode(Code As Integer, Optional Description As String) As Boolean
 
     If Not Error Then
         bRes = Fail(Description)
-        Note(("No error happened"))
+        Test.Note(("No error happened"))
     Else
         bRes = Equals(Error.Code, Code, Description)
         If Not bRes Then
-            Note(Subst$(("Error was: &1 (code: &2) at &3"), Error.Text, Error.Code, Error.Where))
+            Test.Note(Subst$(("Error was: &1 (code: &2) at &3"), Error.Text, Error.Code, Error.Where))
         Endif
     Endif
 
@@ -295,13 +238,13 @@ Public Sub ErrorCode(Code As Integer, Optional Description As String) As Boolean
 
 End
 
-Public Sub NotError(Optional Description As String) As Boolean
+Public Sub Noterror(Optional Description As String) As Boolean
 
     Dim bRes As Boolean
 
     bRes = Ok(Not Error , Description)
     If Not bRes Then
-        Note(Subst$(("Error was: &1 (code: &2) at &3"), Error.Text, Error.Code, Error.Where))
+        Test.Note(Subst$(("Error was: &1 (code: &2) at &3"), Error.Text, Error.Code, Error.Where))
     Endif
 
     Error.Clear()

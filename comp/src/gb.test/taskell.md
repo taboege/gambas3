@@ -7,8 +7,6 @@
     * [ ] New method Test.ShowTodos
     * [ ] New method Test.ShowSkips
 - Skip all
-- Free Assert from non-assertions
-    > There are things in Assert which are no assertions, like Print, Finish, Note and so on. These should be methods of Test. For example: Test.Plan, Test.Note, Test.Finish ...
 - Ensure TAP created according to  spec
 - Parser parse subtests
 - Plan
@@ -29,6 +27,8 @@
 
 ## Done
 
+- Free Assert from non-assertions
+    > There are things in Assert which are no assertions, like Print, Finish, Note and so on. These should be methods of Test. For example: Test.Plan, Test.Note, Test.Finish ...
 - Test.Main has to complain if testmodule doesn't exist
 - Human readability of TAP output
 - Subtests don't count the right way

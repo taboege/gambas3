@@ -29,7 +29,7 @@ Public Sub TestEqualsFailure()
 
     Dim oOne, oTwo As Object
 
-    Assert.Note("Equals failures")
+    Test.Note("Equals failures")
     Assert.IntendedFailure()
     Assert.Equals(2, 3)
     

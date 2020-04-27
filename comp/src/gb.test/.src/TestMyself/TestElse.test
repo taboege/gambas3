@@ -21,7 +21,7 @@ End
 
 Public Sub TestNote()
 
-    Assert.Note("This\nis\na\nnote")
-    Assert.SkipAll()
+    Test.Note("This\nis\na\nnote")
+    Test.SkipAll()
 
 End

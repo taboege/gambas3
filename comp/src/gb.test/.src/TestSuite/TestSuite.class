@@ -18,7 +18,7 @@ Public Sub Run()
 
     Assert $Tests
 
-    Assert.Plan($Tests.Count)
+    Test.Plan($Tests.Count)
     For Each oTest In $Tests
         CurrentTestModule = oTest.TestModule
         If LastTestModule Then
@@ -29,18 +29,18 @@ Public Sub Run()
                 StartTestModule(CurrentTestModule)
             Endif
         Else
-            'Assert.Note("-------------------- " & CurrentTestModule.Name)
+            'Test.Note("-------------------- " & CurrentTestModule.Name)
             CurrentAction = CurrentTestModule.Name & ":SetupTestModule"
             StartTestModule(CurrentTestModule)
         Endif
 
-       'Assert.Note(Subst$(("Subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
-        Assert.Print(gb.lf) ' better readability for humans
-        Assert.Print(Subst$(("Subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
-        Assert.Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
+       'Test.Note(Subst$(("Subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
+        Test.Print(gb.lf) ' better readability for humans
+        Test.Print(Subst$(("Subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
+        Test.Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
             'Debug oTest.Name
             oTest.Run()
-        If Not Assert.Finished Then Assert.Finish()
+        If Not Test.Finished Then Test.Finish()
         LastTestModule = CurrentTestModule
     Next
 
@@ -50,8 +50,7 @@ Public Sub Run()
     Endif
 
 Catch
-    Assert.BailOut("Test Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & ".")
-    Quit 1
+    Test.BailOut("Test Stopped with error \"" & Error.Text & "\" caused by " & CurrentAction & " in " & Error.Where & ".")
 
 End Sub
 

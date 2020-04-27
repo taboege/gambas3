@@ -8,7 +8,7 @@ Private $EachSetupIsDone As Boolean
 Public Sub Setup()
 
     $SetupIsDone = True
-    Assert.Note("Setup TestModule")
+    Test.Note("Setup TestModule")
 
 End
 
@@ -18,7 +18,7 @@ Public Sub Teardown()
         ' will bail out if TestSetup failed
         Error.Raise("TestSetup failed: Setup was not executed correctly.")
     Endif
-    Assert.Note("Teardown TestModule")
+    Test.Note("Teardown TestModule")
 
 End
 
@@ -26,14 +26,14 @@ Public Sub SetupEach()
 
     Assert.NotOk($EachSetupIsDone, "Check if each was not setup.")
     $EachSetupIsDone = True
-    Assert.Note("Setup Each")
+    Test.Note("Setup Each")
 
 End
 
 Public Sub TeardownEach()
 
     Assert.Ok($EachSetupIsDone, "Each setup done")
-    Assert.Note("Teardown Each")
+    Test.Note("Teardown Each")
     $EachSetupIsDone = False
 
 End
