@@ -9,7 +9,7 @@ Public Sub Main()
 
     ' ------------------------------------------------- This must not succeed
     'Tests = "TestCrashes"
-    'Tests = "TestSummary"
+    Tests = "TestSummary"
 
     ' ------------------------------------------------- These must bailout
     'Tests = "TestBailout"
