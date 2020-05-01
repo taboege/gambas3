@@ -1,6 +1,7 @@
 ## To Do
 
 - Skip all
+    > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
 - Ensure TAP created according to  spec
 - Parser parse subtests
 - Plan
@@ -16,10 +17,6 @@
 
 ## Work
 
-- Summary as a TAP comment
-    > Description in .hidden/summary-example-txt
-    * [ ] New method Test.ShowTodos
-    * [ ] New method Test.ShowSkips
 
 ## Done
 
@@ -36,3 +33,7 @@
 - Subtests don't count the right way
     > If there is only one testmodule called, subtest counts a lot of subtests instead just one
 - gb.test doesn't print to console
+- Summary as a TAP comment
+    > Description in .hidden/summary-example-txt
+    * [x] New method Test.ShowTodos
+    * [x] New method Test.ShowSkips

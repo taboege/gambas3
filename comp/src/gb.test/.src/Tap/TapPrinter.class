@@ -159,7 +159,14 @@ Public Sub Diagnostic(Comment As String)
 
     Dim sLine As String
 
-    For Each sLine In Split(Trim$(Comment), "\n")
+    ' Split on these doesn't do what I mean: on the empty string, we get
+    ' zero lines, on a newline we get two. I want one in both cases.
+    If Not Comment Or If Comment = gb.Lf Then
+        Print("#")
+        Return
+    Endif
+
+    For Each sLine In Split(Comment, "\n")
         Print("# " & sLine)
     Next
 

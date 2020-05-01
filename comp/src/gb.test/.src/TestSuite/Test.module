@@ -36,22 +36,91 @@ Private Sub PrintSummary()
         Test.Print(gb.Lf) ' better readability for humans
         Test.Note(Subst$(("&2 - ran: '&1' "), .Summary.Description, IIf(.Summary.Success, "PASSED", "FAILED")))
         If .TestsRun <> .Plan Then Test.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
-        If Not .Summary.Success Then ShowFailures(.Summary.Subtests, "")
+        Test.Note(gb.Lf)
+
+        If Not .Summary.Success Then ShowTestCollection(("&1 tests failed:"), FindFailures(.Summary.Subtests, ""))
+        ShowTestCollection(("&1 tests skipped:"), FindSkips(.Summary.Subtests, ""))
+        ShowTestCollection(("&1 tests todo:"), FindTodos(.Summary.Subtests, ""))
+        ShowTestCollection(("&1 tests bonus:"), FindBonus(.Summary.Subtests, ""))
     End With
 
 End
 
-Private Sub ShowFailures(Tests As TestAssertion[], Prefix As String)
+'' Prints a Collection[] of tests as returned by FindFailures, FindSkips, FindTodos.
+'' _Description_ can contain '&1' which is substituted for _TestCollection_.Count.
+Private Sub ShowTestCollection(Description As String, TestCollection As Collection[])
+
+    Dim cTest As Collection
+
+    If TestCollection.Count Then
+        Test.Note(Subst$(Description, TestCollection.Count))
+        For Each cTest In TestCollection
+            Dim hTest As TestAssertion = cTest!Assertion
+            Test.Note(Subst$(("&2: &1 -- &3 &4"), cTest["Path"], hTest.Id, hTest.Description, IIf(hTest.Comment, "# " & hTest.Comment, "")))
+        Next
+        Test.Note(gb.Lf)
+    Endif
+
+End
+
+Private Function FindFailures(Tests As TestAssertion[], Prefix As String) As Collection[]
 
     Dim hTest As TestAssertion
     Dim sName As String
+    Dim aRet As New Collection[]
 
     For Each hTest In Tests
         sName = Prefix &/ hTest.Description
         ' Only show the deepest subtests that caused failures.
-        If Not hTest.Success And If Not hTest.Subtests.Count Then Test.Note(Subst$(("FAILED &1"), sName))
-        ShowFailures(hTest.Subtests, sName)
+        If Not hTest.Success And If Not hTest.Subtests.Count Then aRet.Add(["Path": Prefix, "Assertion": hTest])
+        aRet.Insert(FindFailures(hTest.Subtests, sName))
     Next
+    Return aRet
+
+End
+
+Private Function FindSkips(Tests As TestAssertion[], Prefix As String) As Collection[]
+
+    Dim hTest As TestAssertion
+    Dim sName As String
+    Dim aRet As New Collection[]
+
+    For Each hTest In Tests
+        sName = Prefix &/ hTest.Description
+        If hTest.Directive = Tap.SKIP Then aRet.Add(["Path": Prefix, "Assertion": hTest])
+        aRet.Insert(FindSkips(hTest.Subtests, sName))
+    Next
+    Return aRet
+
+End
+
+Private Function FindTodos(Tests As TestAssertion[], Prefix As String) As Collection[]
+
+    Dim hTest As TestAssertion
+    Dim sName As String
+    Dim aRet As New Collection[]
+
+    For Each hTest In Tests
+        sName = Prefix &/ hTest.Description
+        If hTest.Directive = Tap.TODO And If Not hTest.Ok Then aRet.Add(["Path": Prefix, "Assertion": hTest])
+        aRet.Insert(FindTodos(hTest.Subtests, sName))
+    Next
+    Return aRet
+
+End
+
+Private Function FindBonus(Tests As TestAssertion[], Prefix As String) As Collection[]
+
+    Dim hTest As TestAssertion
+    Dim sName As String
+    Dim aRet As New Collection[]
+
+    For Each hTest In Tests
+        sName = Prefix &/ hTest.Description
+        If hTest.Directive = Tap.TODO And If hTest.Ok Then aRet.Add(["Path": Prefix, "Assertion": hTest])
+        aRet.Insert(FindBonus(hTest.Subtests, sName))
+    Next
+    Return aRet
 
 End
 
