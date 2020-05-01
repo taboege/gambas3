@@ -1,9 +1,5 @@
 ## To Do
 
-- Summary as a TAP comment
-    > Description in .hidden/summary-example-txt
-    * [ ] New method Test.ShowTodos
-    * [ ] New method Test.ShowSkips
 - Skip all
 - Ensure TAP created according to  spec
 - Parser parse subtests
@@ -20,11 +16,15 @@
 
 ## Work
 
-- Bug: Directives always 0
-    > Set a Breakpoint in TapPrinter.Finish() and test Tests = "TestSummary.DoSomeTodo". If run, see that $hCurrent.Summary.Directive = 0 instead of Tap.TODO. Bug = Directives are never stored.
+- Summary as a TAP comment
+    > Description in .hidden/summary-example-txt
+    * [ ] New method Test.ShowTodos
+    * [ ] New method Test.ShowSkips
 
 ## Done
 
+- No Bug: Directives always 0
+    > Was no bug, was lack of understanding
 - TestAssertion: Skip and Todo
     > TestAssertion must contain variables to store Skip and Todo for summary. See TestSummary.
 - Todo Directive

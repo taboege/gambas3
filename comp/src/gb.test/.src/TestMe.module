@@ -2,14 +2,28 @@
 
 Public Sub Main()
 
+    Dim asGood As New String[]
     Dim Tests As String
 
+    With asGood
+        .Add("TestAllAsserts")
+        .Add("TestElse")
+        .Add("TestError")
+        .Add("TestSetupTeardown")
+        .Add("TestInternals")
+        .Add("TestFailures")
+        .Add("TestSetup")
+        .Add("TestSummary.DoSomeAsserts")
+        .Add("TestSummary.DoTodo")
+        .Add("TestSummary.DoSkip")
+    End With
+
     ' ------------------------------------------------- These must succeed
-    'Tests = "TestAllAsserts, TestElse, TestError, TestSetupTeardown, TestInternals, TestFailures, TestSetup"
+    Tests = asGood.Join(",")
 
     ' ------------------------------------------------- This must not succeed
     'Tests = "TestCrashes"
-    Tests = "TestSummary"
+    'Tests = "TestSummary"
 
     ' ------------------------------------------------- These must bailout
     'Tests = "TestBailout"
@@ -17,18 +31,9 @@ Public Sub Main()
     'Tests = "TestAllAsserts, Wurstsupp"
 
     ' ------------------------------------------------- Playing field
-    
+
     'Tests = "TestAllAsserts, Wurstsupp"
 
-    Tests = "TestSummary.DoSomeTodo"
     Test.Main(Tests)
-
-    Cheese()
-
-End
-
-Private Sub (Cheese)()
-
-    'TestCommand.ParseCommands("TestAllAsserts.TestAssert,TestAllAsserts.TestAssertEmpty,TestElse")
 
 End

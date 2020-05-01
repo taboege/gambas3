@@ -1,7 +1,8 @@
 ' Gambas test file
 
-'' Can be executed to test a summary. Will fail.
+''' This test can be executed to test a summary. Will fail.
 
+'' Will succeed
 Public Sub DoSomeAsserts()
 
   Assert.Pass("Bla 1")
@@ -10,19 +11,25 @@ Public Sub DoSomeAsserts()
 
 End
 
-Public Sub DoSomeSkips()
+'' Will succeed
+Public Sub DoSkip()
 
-  Assert.Skip("Skip1")
-  Assert.Skip("Skip2")
-
-End
-
-Public Sub DoSomeTodo()
-
-  Assert.Todo("Todo1")
+  Assert.Skip("Report that a test is skipped.")
 
 End
 
+'' Will succeed
+Public Sub DoTodo()
+
+  Assert.Todo("Because not ok yet.")
+  Assert.Ok(False, "Must be ok.")
+
+  Assert.Todo("This Todo seems not to be removed yet.")
+  Assert.Ok(True, "Must be ok.")
+
+End
+
+'' Will fail
 Public Sub DoOneFailure()
 
   Assert.Ok(False, "Intentional failure")
