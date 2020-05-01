@@ -34,14 +34,16 @@ Private Sub PrintSummary()
     Session = Test.Session
     With Session
         Test.Print(gb.Lf) ' better readability for humans
-        Test.Note(Subst$(("&2 - ran: '&1' "), .Summary.Description, IIf(.Summary.Success, "PASSED", "FAILED")))
+        Test.Note(Subst$(("Ran: '&1' "), .Summary.Description))
         If .TestsRun <> .Plan Then Test.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
         Test.Note(gb.Lf)
 
         If Not .Summary.Success Then ShowTestCollection(("&1 tests failed:"), FindFailures(.Summary.Subtests, ""))
-        ShowTestCollection(("&1 tests skipped:"), FindSkips(.Summary.Subtests, ""))
-        ShowTestCollection(("&1 tests todo:"), FindTodos(.Summary.Subtests, ""))
-        ShowTestCollection(("&1 tests bonus:"), FindBonus(.Summary.Subtests, ""))
+        ShowTestCollection(("&1 skipped:"), FindSkips(.Summary.Subtests, ""))
+        ShowTestCollection(("&1 todo:"), FindTodos(.Summary.Subtests, ""))
+        ShowTestCollection(("&1 bonus:"), FindBonus(.Summary.Subtests, ""))
+        
+        Test.Note(IIf(.Summary.Success, "PASSED", "FAILED"))
     End With
 
 End
