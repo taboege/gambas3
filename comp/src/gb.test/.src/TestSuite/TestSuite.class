@@ -34,13 +34,12 @@ Public Sub Run()
             StartTestModule(CurrentTestModule)
         Endif
 
-       'Test.Note(Subst$(("Subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
-        Test.Print(gb.lf) ' better readability for humans
-        Test.Print(Subst$(("Subtest &1:&2"), oTest.TestModule.Name, oTest.Name))
-        Test.Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
+        Test.Print(gb.Lf) 'better readability for humans
+        Test.Print(Subst$(("TestCase &1:&2"), oTest.TestModule.Name, oTest.Name))
+        Test._Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
             'Debug oTest.Name
             oTest.Run()
-        If Not Test.Finished Then Test.Finish()
+        If Not Test._Finished Then Test._Finish()
         LastTestModule = CurrentTestModule
     Next
 

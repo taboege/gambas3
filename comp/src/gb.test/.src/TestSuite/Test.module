@@ -3,41 +3,38 @@
 Export
 
 Property Read Printer As TapPrinter
-Property Output As Stream
 Property Read Session As TapContext
-Property Read Finished As Boolean
+Property Read _Finished As Boolean
 Property _Next As TestAssertion
 
 Private $hPrinter As New TapPrinter
 Private $hNext As TestAssertion
 
 
-'' The static procedure Test.Main() starts test(s).
-''
-'' By default it runs all testcases in all testcontainers ordered by name and prints the result to the console.
+'' The static procedure Test.Main() starts tests. By default it runs all testcases in all 
+'' testcontainers ordered by name and prints the result to the console.
 '' 
 '' The optional string Tests ca be used to define a TestSuite which can be used to choose any 
 '' combination of testcontainers and testcases, separated by comma.
 '' 
-'' A testcontainer can be choosen by it's name, a testcase by it's testcontainers name followed by a dot and the name of the testcase.
-'' 
-'' Example: Test.Main("TestWWW, TestMail.Send, TestMail.Recieve") 
-'' 
-'' runs all testcases 
-'' in TestWWW and the testcases Send and Recieve of the testcontainer TestMail.
-'' 
-'' A testcontainer is a special class with the ending test. 
-'' It must contain at minimum one testcase. 
+'' A testcontainer is a special class with the ending test. It must contain at minimum one testcase. 
 '' 
 '' A test case is a public sub in a test container whose name is not 
 '' "Setup", "Teardown", "SetupEach" or "TeardownEach".
 '' 
-'' Public sub "Setup", "Teardown", "SetupEach" or "TeardownEach" can be used to create a testfixture, 
+'' A testcontainer can be choosen by it's name, a testcase by it's testcontainers' 
+'' name followed by a dot and the name of the testcase.
+'' 
+'' Example: Test.Main("TestWWW, TestMail.Send, TestMail.Recieve") 
+'' 
+'' runs all testcases in TestWWW and the testcases Send and Recieve of the testcontainer TestMail.
+'' 
+'' Public methods called "Setup", "Teardown", "SetupEach" or "TeardownEach" can be used to create a testfixture, 
 '' which defines a special environment for the tests.
 
 Public Sub Main(Optional Tests As String)
 
-    Test.Reset() ' only if you run this Main multiple times per process, which you shouldn't
+    Test._Reset() ' only if you run this Main multiple times per process, which you shouldn't
     RunTests(Tests)
     PrintSummary()
 
@@ -161,7 +158,7 @@ Private Function RunTests(Tests As String)
 
     Test.Session.Summary.Description = Tests
     Suite.Run()
-    If Not Test.Finished Then Test.Finish()
+    If Not Test._Finished Then Test._Finish()
 
 End
 
@@ -212,19 +209,20 @@ End
 
 ' ------------------------------------------------- Test controls
 
+'' Prints "Bail out!" and stops all testing immediately.
 Public Sub BailOut(Optional Comment As String)
     $hPrinter.BailOut(Comment)
     Quit 1
 End
-'' Synonym for Note
+'' Synonym for Note, prints Comment with leading #
 Public Sub Diagnostic(Comment As String)
     $hPrinter.Diagnostic(Comment)
 End
-'' Synonym for Diagnostic
+'' Synonym for Diagnostic, prints Comment with leading #
 Public Sub Note(Comment As String)
     $hPrinter.Note(Comment)
 End
-
+'' Prints Line to Stdout
 Public Sub Print({Line} As String)
     $hPrinter.Print({Line})
 End
@@ -233,23 +231,15 @@ Private Function Printer_Read() As TapPrinter
     Return $hPrinter
 End
 
-Private Function Output_Read() As Stream
-    Return $hPrinter.Output
-End
-
-Private Sub Output_Write(Value As Stream)
-    $hPrinter.Output = Value
-End
-
 Private Function Session_Read() As TapContext
     Return $hPrinter.Session
 End
 
-Private Function Finished_Read() As Boolean
+Private Function _Finished_Read() As Boolean
     Return $hPrinter.Session.Finished
 End
 
-Public Sub Reset()
+Public Sub _Reset()
     $hPrinter = New TapPrinter As "Printer"
 End
 
@@ -270,7 +260,7 @@ Private Sub _Next_Write(Value As TestAssertion)
 End
 
 
-Public Sub Subtest(Description As String, Optional Tests As Integer, Optional Comment As String)
+Public Sub _Subtest(Description As String, Optional Tests As Integer, Optional Comment As String)
     Test.Printer.Subtest(Description, Tests, Comment)
 End
 
@@ -282,7 +272,7 @@ Public Sub SkipAll(Optional Comment As String)
     Test.Printer.SkipAll(Comment)
 End
 
-Public Sub Finish()
+Public Sub _Finish()
     Test.Printer.Finish()
 End
 

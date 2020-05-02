@@ -1,5 +1,7 @@
 ## To Do
 
+- Decide where Skip, SkipAll, Todo reside
+    > SkipAll is in Test, Skip in Assert, Todo in Assert. This is inconsistent, We have to decide where they should be.
 - Skip all
     > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
 - Ensure TAP created according to  spec
@@ -10,21 +12,21 @@
     * [ ] Plan for testmodules (as a constant?)
 - Plan selftests
     > gb.test: Every subtest in all tests must plan the own assertion count
-- Assert and Test documentation
-    > Every public method in Test and Assert has to have a description
 - Install gbt3 at Gambas installation
 - gbt3 has to return exit status at the end
 
 ## Work
 
+
+## Done
+
+- Assert and Test documentation
+    > Every public method in Test and Assert has to have a description
 - Hide symbols in Test
     > There are symbols in Test which should not be shown to the enduser. These shoult be hidden by a leading underscore:
     * [ ] Subtest
     * [ ] Finish
     * [ ] Reset
-
-## Done
-
 - No Bug: Directives always 0
     > Was no bug, was lack of understanding
 - TestAssertion: Skip and Todo
