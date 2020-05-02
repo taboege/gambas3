@@ -116,3 +116,10 @@ Public Sub TestNote()
     Test.SkipAll("This doesn't actually assert anything")
 
 End
+
+Public Sub TestLike()
+
+    Assert.Like("Gambas", "G*", "Gambas like G*")
+    Assert.Like("Gambas", "?[Aa]*", "Gambas Like \"?[Aa]*\"")
+
+End
