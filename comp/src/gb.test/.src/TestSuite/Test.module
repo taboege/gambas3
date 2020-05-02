@@ -12,11 +12,28 @@ Private $hPrinter As New TapPrinter
 Private $hNext As TestAssertion
 
 
-''' The static procedure Test.Main() starts test(s).
-
-'' Runs all tests in all testcontainers and prints the result to the console.
-'' With Test.Main(NameTestModule) the tests can be restricted to only those of a single test module.
-'' With Test.Main(NameTestModule, NameProcedure) only a single test can be accomplished.
+'' The static procedure Test.Main() starts test(s).
+''
+'' By default it runs all testcases in all testcontainers ordered by name and prints the result to the console.
+'' 
+'' The optional string Tests ca be used to define a TestSuite which can be used to choose any 
+'' combination of testcontainers and testcases, separated by comma.
+'' 
+'' A testcontainer can be choosen by it's name, a testcase by it's testcontainers name followed by a dot and the name of the testcase.
+'' 
+'' Example: Test.Main("TestWWW, TestMail.Send, TestMail.Recieve") 
+'' 
+'' runs all testcases 
+'' in TestWWW and the testcases Send and Recieve of the testcontainer TestMail.
+'' 
+'' A testcontainer is a special class with the ending test. 
+'' It must contain at minimum one testcase. 
+'' 
+'' A test case is a public sub in a test container whose name is not 
+'' "Setup", "Teardown", "SetupEach" or "TeardownEach".
+'' 
+'' Public sub "Setup", "Teardown", "SetupEach" or "TeardownEach" can be used to create a testfixture, 
+'' which defines a special environment for the tests.
 
 Public Sub Main(Optional Tests As String)
 
@@ -137,7 +154,7 @@ Private Function RunTests(Tests As String)
 
     aTestCommands = TestCommand.ParseCommands(Tests)
 
-    For Each sTestModule In GetAllTestModules(aTestCommands)
+    For Each sTestModule In GetAllTestContainers(aTestCommands)
         TestModule = Class.Load(sTestModule)
         Suite.AddAllTestCases(TestModule, aTestCommands)
     Next
@@ -148,7 +165,7 @@ Private Function RunTests(Tests As String)
 
 End
 
-Function GetAllTestModules(Commands As TestCommand[]) As String[]
+Private Function GetAllTestContainers(Commands As TestCommand[]) As String[]
 
     Dim TestClass As Class
     Dim TestModuleNames As New String[]

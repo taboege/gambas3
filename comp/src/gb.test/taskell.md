@@ -17,6 +17,11 @@
 
 ## Work
 
+- Hide symbols in Test
+    > There are symbols in Test which should not be shown to the enduser. These shoult be hidden by a leading underscore:
+    * [ ] Subtest
+    * [ ] Finish
+    * [ ] Reset
 
 ## Done
 
