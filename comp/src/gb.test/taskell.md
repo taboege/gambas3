@@ -1,19 +1,19 @@
 ## To Do
 
+- Plan
+    > Plan does not work. It should define the  count of assertions in a subtest and if  defined ensure that all are executed
+    * [ ] Plan for subtests
+    * [ ] Plan for testmodules (as a constant?)
+- Parser parse subtests
 - Decide where Skip, SkipAll, Todo reside
     > SkipAll is in Test, Skip in Assert, Todo in Assert. This is inconsistent, We have to decide where they should be.
 - Skip all
     > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
 - Ensure TAP created according to  spec
-- Parser parse subtests
-- Plan
-    > Plan does not work. It should define the  count of assertions in a subtest and if  defined ensure that all are executed
-    * [ ] Plan for subtests
-    * [ ] Plan for testmodules (as a constant?)
 - Plan selftests
     > gb.test: Every subtest in all tests must plan the own assertion count
-- Install gbt3 at Gambas installation
 - gbt3 has to return exit status at the end
+- Install gbt3 at Gambas installation
 
 ## Work
 
