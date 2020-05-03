@@ -11,10 +11,11 @@
     > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
 - Plan selftests
     > gb.test: Every subtest in all tests must plan the own assertion count
-- Install gbt3 at Gambas installation
 
 ## Work
 
+- Install gbt3 at Gambas installation
+    > gbt3 is compiled and installed by make but there is no symlink gbt3 > gbt3.gambas
 
 ## Done
 
