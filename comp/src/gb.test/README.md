@@ -2,7 +2,7 @@
 
 A Gambas component for unittesting and test-driven programming. Inspired from quite an old program: [COMUnit](http://comunit.sourceforge.net) and other test frameworks. With this component you can develop software in a test-driven matter (write test first, program functionality afterwards) and you are able to ensure that on refactoring the desired results of your code stays the same.
 
-Tests are output as [Tap](https://testanything.org/ testanything.org) so that they can be displayed, analyzed or viewed with any [Tap consumer](https://testanything.org/consumers.html).
+Tests are output as [Tap](https://testanything.org/) so that they can be displayed, analyzed or viewed with any [Tap consumer](https://testanything.org/consumers.html).
 
 ## How it works
 
