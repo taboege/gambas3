@@ -45,9 +45,11 @@ Public Sub Main()
     sTestCmd = "Test.Main(" & sTestCmd & ")"
 
     Do
-        sRand = "TEST" & Randstr()
+        sRand = "GBTTHREETESTTEMP" & Randstr()
         sNewStartupFile = sPath &/ ".src" &/ sRand & ".module"
     Loop While Exist(sNewStartupFile)
+
+    'TODO: detect if old startup-file exists and stop execution if so
 
     'create test startup module
     sStartupSequence = "'Gambas module" & gb.Lf & gb.Lf &
@@ -65,6 +67,8 @@ Public Sub Main()
     'run tests
     hTestee = Exec [sExecutorPath, "-s", sRand, sPath] For Read
     $hHarness.Read(hTestee, File.Name(sPath))
+
+    Kill sNewStartupFile
 
     PrintSummary()
     ReturnExitCode()
@@ -84,7 +88,7 @@ End
 
 Private Sub ReturnExitCode()
 
-  'FIXME: has to be done
+    Quit $hHarness.Current.ExitCode
 
 End
 
@@ -92,7 +96,7 @@ Private Sub PrintSummary()
 
     'FIXME: As gb.test is able to print a summary, that should be used only
 
-    '#deletelater: Wir haben duplicated code, denn im Moment kommen 
+    '#deletelater: Wir haben duplicated code, denn im Moment kommen
     'zwei Summaries raus, die so aussehen:
     '
     ' ********************************************************************************
@@ -114,62 +118,64 @@ Private Sub PrintSummary()
     With $hHarness.Current
         If Not $bSparse Then
             Dim sLine As String
-            Print
+            'Plan has to be in first line (Python tappy failes with this line)
+            'Print
             For Each sLine In .Lines
                 Print sLine
             Next
-            Print
-            Print String$(80, "*")
-            Print
+            ' Print
+            ' Print String$(80, "*")
+            ' Print
         Endif
 
-        Print .Name;;
-        If .BailedOut Then
-            Print "bailed out";
-            If .BailMessage Then Print " with message";; .BailMessage
-        Else
-            Print IIf(.Success, "PASSED", "FAILED")
-        Endif
-        Print "Ran";; .Run;; Plural(.Run, "test");;
-        Print "("; "exit code";; .ExitCode; ",";;
-        Print "runtime";; Format$(DateDiff(.Started, .Ended, gb.Second), "0.00s"); ")"
-
-        If Not .BailedOut Then
-            If .Run <> .Planned Then
-                Print "Planned";; .Planned;; Plural(.Planned, "test");; "but ran";; .Run
-            Endif
-
-            If .Failed > 0 Then
-                Dim iInd As Integer
-                Print "Failed";; .Failed;; "out of";; .Run;; Plural(.Run, "test");; ":";;
-                For iInd = 0 To .Subtests.Max
-                    Print .Subtests[iInd].Description;
-                    If iInd < .Subtests.Max Then Print ",";;
-                Next
-                Print
-            Endif
-
-            If .Bonus Then
-                Print "Passed";; .Bonus;; "additional";; Plural(.Bonus, "test");; "marked as TODO"
-            Endif
-        Endif
-
-        If Not $bSparse Then
-            Print
-            Print String$(80, "*")
-            Print
-        Endif
+        ' summary comes in the TAP stream from gb.test
+        ' Print .Name;;
+        ' If .BailedOut Then
+        '     Print "bailed out";
+        '     If .BailMessage Then Print " with message";; .BailMessage
+        ' Else
+        '     Print IIf(.Success, "PASSED", "FAILED")
+        ' Endif
+        ' Print "Ran";; .Run;; Plural(.Run, "test");;
+        ' Print "("; "exit code";; .ExitCode; ",";;
+        ' Print "runtime";; Format$(DateDiff(.Started, .Ended, gb.Second), "0.00s"); ")"
+        '
+        ' If Not .BailedOut Then
+        '     If .Run <> .Planned Then
+        '         Print "Planned";; .Planned;; Plural(.Planned, "test");; "but ran";; .Run
+        '     Endif
+        '
+        '     If .Failed > 0 Then
+        '         Dim iInd As Integer
+        '         Print "Failed";; .Failed;; "out of";; .Run;; Plural(.Run, "test");; ":";;
+        '         For iInd = 0 To .Subtests.Max
+        '             Print .Subtests[iInd].Description;
+        '             If iInd < .Subtests.Max Then Print ",";;
+        '         Next
+        '         Print
+        '     Endif
+        '
+        '     If .Bonus Then
+        '         Print "Passed";; .Bonus;; "additional";; Plural(.Bonus, "test");; "marked as TODO"
+        '     Endif
+        ' Endif
+        '
+        ' If Not $bSparse Then
+        '     Print
+        '     Print String$(80, "*")
+        '     Print
+        ' Endif
 
     End With
 
 End
 
-'' **Regular English** plural: just appends an "s" to _Word_ if _Count_ is not 1.
-Private Function Plural(Count As Integer, Word As String) As String
-
-    Return Word & IIf(Count = 1, "", "s")
-
-End
+' '' **Regular English** plural: just appends an "s" to _Word_ if _Count_ is not 1.
+' Private Function Plural(Count As Integer, Word As String) As String
+'
+'     Return Word & IIf(Count = 1, "", "s")
+'
+' End
 
 Private Function Randstr() As String
 

@@ -9,10 +9,8 @@
     > SkipAll is in Test, Skip in Assert, Todo in Assert. This is inconsistent, We have to decide where they should be.
 - Skip all
     > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
-- Ensure TAP created according to  spec
 - Plan selftests
     > gb.test: Every subtest in all tests must plan the own assertion count
-- gbt3 has to return exit status at the end
 - Install gbt3 at Gambas installation
 
 ## Work
@@ -20,6 +18,9 @@
 
 ## Done
 
+- Ensure TAP created according to  spec
+    > Tested TAP via gbt3 and python tappy
+- gbt3 has to return exit status at the end
 - Assert and Test documentation
     > Every public method in Test and Assert has to have a description
 - Hide symbols in Test
