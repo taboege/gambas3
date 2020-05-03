@@ -4,7 +4,6 @@
 ''' runs tests and restores the project afterwards
 
 Private $hHarness As New TestHarness
-Private $bSparse As Boolean
 
 Public Sub Main()
 
@@ -15,11 +14,14 @@ Public Sub Main()
     With Args
         .Begin(Application.Name & " <options> [path to poject]\n\nType " & Application.Name & " -h for help")
         Try sTests = .Get("t", "tests", "Optional comma separated string of selected tests")
-        Try $bSparse = .Has("s", "sparse", "Do not echo the TAP stream")
         .End
     End With
 
     sPath = Args[Args.Max]
+
+    If sPath Begins "gbt3" Then
+        sPath = Null
+    Endif
 
     sCompilerPath = GetPath("gbc3")
     sExecutorPath = GetPath("gbx3")
@@ -116,17 +118,17 @@ Private Sub PrintSummary()
     ' ********************************************************************************
 
     With $hHarness.Current
-        If Not $bSparse Then
-            Dim sLine As String
-            'Plan has to be in first line (Python tappy failes with this line)
-            'Print
-            For Each sLine In .Lines
-                Print sLine
-            Next
-            ' Print
-            ' Print String$(80, "*")
-            ' Print
-        Endif
+        Dim sLine As String
+        'Plan has to be in first line (Python tappy failes with this line)
+        'Print
+        For Each sLine In .Lines
+            Print sLine
+        Next
+
+        ' Was Summary
+        ' Print
+        ' Print String$(80, "*")
+        ' Print
 
         ' summary comes in the TAP stream from gb.test
         ' Print .Name;;
