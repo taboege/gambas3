@@ -199,7 +199,7 @@ Public Sub GetCurrent() As Integer
   
   Dim iCurrent As Integer
   
-  If $aSel.Count = 2 And $aSel[1] = 1 Then 
+  If $aSel.Count = 2 And If $aSel[1] = 1 Then 
     iCurrent = $aSel[0]
     If iCurrent < GetItemCount() Then Return iCurrent
   Endif
