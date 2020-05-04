@@ -1,7 +1,7 @@
 ' Gambas class file
 
-Static Private BACKGROUND_COLOR As Integer = &H3398C3& '&HFFAF5F&
-Static Private TEXT_COLOR As Integer = &HDF6B00& ' &HDF6B00 '&HFFAF5F&
+Static Private BACKGROUND_COLOR As Integer = Project.COLOR_BLUE
+Static Private TEXT_COLOR As Integer = Project.COLOR_ORANGE
 
 Private $hLogo As Image
 Private $hText As Image

@@ -912,9 +912,7 @@ End
 
 Private Sub GetUncompressedPath(Optional bActual As Boolean) As String
 
-  Dim sPath As String = Project.Dir &/ ".hidden/.uncompressed" &/ Mid$(Path, Len(Project.Dir) + 1)
-  If bActual And If Not Exist(sPath) Then sPath = Path
-  Return sPath
+  Return Project.GetUncompressedPath(Path, bActual)
   
 End
 

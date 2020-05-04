@@ -51,6 +51,10 @@ Public Sub Panel_Draw()
     Paint.FillRect(0, 0, Paint.W, Paint.H, $iBackground)
   Endif
   
+  If $bInside And If Me.Enabled Then
+    Paint.FillRect(0, 0, Paint.W, Paint.H, Color.SetAlpha(Color.TextBackground, 192))
+  Endif
+  
   Paint.DrawPicture($hPict, 16, ($hPanel.H - $hPict.H) \ 2)
   'If $bInside Then Draw.Foreground = Color.Gradient($hPanel.Foreground, $iHighlight)
   Paint.Background = If(Me.Enabled, $hPanel.Foreground, Color.Merge($hPanel.Foreground, $hPanel.Background))
@@ -69,10 +73,6 @@ Public Sub Panel_Draw()
     Paint.Rectangle(2, 2, Paint.W - 4, Paint.H - 4)
     Paint.Stroke
     Paint.AntiAlias = True
-  Endif
-  
-  If $bInside And If Me.Enabled Then
-    Paint.FillRect(0, 0, Paint.W, Paint.H, Color.SetAlpha($iHighlight, 192))
   Endif
   
 End

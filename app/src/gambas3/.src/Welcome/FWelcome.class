@@ -81,7 +81,7 @@ Public Sub Form_Open()
 
   For Each hCtrl In [btnNew, btnOpen, btnRecent, btnExample, btnSoft, btnFarm, btnOpenExtern, btnAbout, btnQuit]
     hCtrl.Foreground = Color.White
-    hCtrl.Highlight = &H61A7C3&
+    'hCtrl.Highlight = &H61A7C3&
   Next
 
   ' Fill recent list
@@ -213,7 +213,7 @@ Private Sub Toggle(iState As Integer)
   End Select
   
   For Each hCtrl In [btnRecent, btnExample, btnSoft]
-    hCtrl.Background = If($iRecent = hCtrl.Tag, Color.SetAlpha(Color.TextBackground, 192), Color.Default)
+    hCtrl.Background = If($iRecent = hCtrl.Tag, Color.SetAlpha(Color.TextBackground, 160), Color.Default)
     'hCtrl.Foreground = If($iRecent = hCtrl.Tag, Color.TextForeground, Color.White)
   Next
   
