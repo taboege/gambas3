@@ -65,9 +65,7 @@ Public Sub _Render()
     Print "<div";
     If IsSelected(I) Then Print " class=\"gw-selected\"";
     If $iMode Then
-      Print " onmousedown=\"gw.listbox.select("; JS(Me.Name); ","; I;
-      If $iMode = Select.Multiple Then Print ",event";
-      Print ");\"";
+      Print " onmousedown=\"gw.listbox.select("; JS(Me.Name); ","; I; ",event,"; JS($iMode = Select.Multiple); ");\"";
     Endif
     If Object.CanRaise(Me, "Activate") Then Print Me._GetEventJS("ondblclick", "Activate");
     
