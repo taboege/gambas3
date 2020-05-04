@@ -197,6 +197,7 @@ Static Public Sub Main()
   Dim sVar As String
   Dim hLock As File
   Dim iPid As Integer
+  Dim sExec As String
   
   sTemp = Session.Path
   
@@ -337,7 +338,12 @@ Static Public Sub Main()
     sCookie = Session.Create()
     Try hLock = Lock sTemp &/ sCookie & ".lock" Wait 10
 
-    If Not Exist(Application.Path &/ Args[0]) Then
+    PrintLog("EXEC Application.Path = " & Application.Path)
+    PrintLog("EXEC Args = " & Args.All.Join(" | "))
+
+    sExec = Application.Path &/ File.Name(Args[0])
+
+    If Not Exist(sExec) Then
       If Class.IsLoaded("Debug") Then
         PrintLog("---------------- EXEC gbx3 -g -f " & Debug.Fifo & " " & Application.Path & " -- " & Application.Handle & " " & sCookie)
         hProcess = Exec ["gbx3", "-g", "-f", Debug.Fifo, Application.Path, "--", Application.Handle, sCookie] Wait
@@ -346,8 +352,8 @@ Static Public Sub Main()
         hProcess = Exec ["gbx3", Application.Path, "--", Application.Handle, sCookie] Wait
       Endif
     Else
-      PrintLog("---------------- EXEC " & Application.Path &/ Args[0] & " " & Application.Handle & " " & sCookie)
-      hProcess = Exec [Application.Path &/ Args[0], Application.Handle, sCookie] Wait
+      PrintLog("---------------- EXEC " & sExec & " " & Application.Handle & " " & sCookie)
+      hProcess = Exec [sExec, Application.Handle, sCookie] Wait
     Endif
     
     While Not Exist(sTemp &/ sCookie, True)

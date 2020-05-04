@@ -1503,14 +1503,17 @@ gw = {
       gw.update(id, checked ? '+' : '-',  [start, end - start + 1]);
     },
   
-    select: function(id, row, event)
+    select: function(id, row, event, multiple)
     {
       var items = $(id).children;
       var elt = items[row];
       var last = $(id).gw_current;
       var selected = !elt.hasClass('gw-selected');
       
-      if (event)
+      if (event.detail == 2)
+        return;
+      
+      if (multiple)
       {
         if (event.shiftKey && last)
           gw.listbox.selectRange(id, last, row, selected);
