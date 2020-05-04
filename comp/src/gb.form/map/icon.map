@@ -157,6 +157,7 @@ security                status/security-medium
 select                  actions/select-rectangular
 select-all              actions/edit-select-all
 server                  [breeze*!16]places/server-database;places/network-server
+share                   actions/document-share;actions/send-to
 shortcut                apps/accessories-character-map
 sort-ascent             actions/view-sort-ascending
 sort-descent            actions/view-sort-descending

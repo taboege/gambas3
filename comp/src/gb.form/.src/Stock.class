@@ -366,6 +366,10 @@ Static Private Sub DoLoadIcon(sPath As String, iSize As Integer, iRealSize As In
   Dim sDir As String
   Dim hPict As Picture
   Dim hImage As Image
+  Dim sFullName As String
+  Dim sExt As String
+  Dim aExt As String[]
+  Dim sSym As String
   
   sName = File.Name(sPath)
   sDir = File.Dir(sPath)
@@ -376,41 +380,33 @@ Static Private Sub DoLoadIcon(sPath As String, iSize As Integer, iRealSize As In
   
   If iRealSize Then
     
-    sName = sName & ".svg" 'File.SetExt(sName, "svg")  'Warning this change is for files than have a point in the name
-    Try hPict = PictureFromSvg(SvgImage.Load(sDir &/ sName), iRealSize)
-    If Not Error Then Goto RETURN_PICT
-    
-    sName = File.SetExt(sName, "svgz")
-    Try hPict = PictureFromSvg(SvgImage.Load(sDir &/ sName), iRealSize)
-    If Not Error Then Goto RETURN_PICT
-    
-    sName = File.SetExt(sName, "png")
-    Try hImage = Image.Load(sDir &/ sName)
-    If Not Error Then 
-      If $bDarkTheme Then hImage.Invert(Color.Background, Color.Foreground)
-      hPict = hImage.Stretch(iRealSize, iRealSize).Picture
-      Goto RETURN_PICT
-    Endif
+    aExt = [".svg", ".svgz", ".png"]
     
   Else
     
-    sName = sName & ".png" 'File.SetExt(sName, "png")  'Warning this change is for files than have a point in the name
-    Try hImage = Image.Load(sDir &/ sName)
-    If Not Error Then 
-      If $bDarkTheme Then hImage.Invert(Color.Background, Color.Foreground)
-      hPict = hImage.Picture
-      Goto RETURN_PICT
-    Endif
-    
-    sName = File.SetExt(sName, "svg")
-    Try hPict = PictureFromSvg(SvgImage.Load(sDir &/ sName), iSize)
-    If Not Error Then Goto RETURN_PICT
-    
-    sName = File.SetExt(sName, "svgz")
-    Try hPict = PictureFromSvg(SvgImage.Load(sDir &/ sName), iSize)
-    If Not Error Then Goto RETURN_PICT
+    aExt = [".png", ".svg", ".svgz"]
+    iRealSize = iSize
     
   Endif
+  
+  For Each sSym In ["", "-symbolic", ".symbolic", "-symbolic.symbolic"]
+    For Each sExt In aExt
+    
+      sFullName = sName & sSym & sExt
+      If sExt = ".png" Then
+        Try hImage = Image.Load(sDir &/ sFullName)
+        If Not Error Then 
+          If $bDarkTheme Then hImage.Invert(Color.Background, Color.Foreground)
+          hPict = hImage.Stretch(iRealSize, iRealSize).Picture
+          Goto RETURN_PICT
+        Endif
+      Else
+        Try hPict = PictureFromSvg(SvgImage.Load(sDir &/ sFullName), iRealSize)
+        If Not Error Then Goto RETURN_PICT
+      Endif
+      
+    Next
+  Next
   
   hPict = Null
   
@@ -783,6 +779,7 @@ Static Private Function Themes_Read() As String[]
   Dim I As Integer
   Dim sName As String
   Dim sCar As String
+  Dim aDir As String[]
   
   For Each sRoot In ["~/.icons", "~/.local/share/icons", "/usr/share/icons"]
     If Not IsDir(sRoot) Then Continue
@@ -799,10 +796,15 @@ Static Private Function Themes_Read() As String[]
 ADD_THEME:
   
   If Stat(sPath).Type = gb.Link Then Return
-  If Exist(sPath &/ "cursors") Then Return
+
+  aDir = Dir(sPath, "*", gb.Directory)
+  If aDir.Count = 0 Then Return
+  If aDir.Count = 1 And If aDir[0] = "cursors" Then Return
+
   sPath &/= "index.theme"
   If Not Exist(sPath) Then Return
   If Stat(sPath).Type = gb.Link Then Return
+  
   Try sTheme = File.Load(sPath)
   If Error Then Return
   If InStr(sTheme, "\nHidden=True") Then Return
