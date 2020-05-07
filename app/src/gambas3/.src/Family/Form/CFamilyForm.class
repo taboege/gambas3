@@ -143,13 +143,13 @@ Public Sub SelectImage(sPropertyType As String, sImage As String) As String
   Dim iOption As Integer
   Dim aSizes As String[]
 
-  If sPropertyType <> "Image" Then 
+  'If sPropertyType <> "Image" Then 
     If Project.Components.Exist("gb.form") Then
       iOption = FSelectIcon.SELECT_STOCK
       aSizes = Stock.Sizes
       aSizes.Insert(["16", "22", "24", "32", "48", "64", "96", "128", "192", "256"])
     Endif
-  Endif
+  'Endif
   If sPropertyType = "SvgImage" Then
     iOption += FSelectIcon.SELECT_SVGIMAGE
   Else

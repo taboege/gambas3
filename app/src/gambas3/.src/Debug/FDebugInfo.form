@@ -15,7 +15,7 @@
   { wizDebug Wizard
     MoveScaled(2,5,122,41)
     Arrangement = Arrange.Vertical
-    Count = 7
+    Count = 8
     ShowTitle = False
     ShowButton = False
     Border = False
@@ -317,6 +317,34 @@
       Border = False
       Limit = 65536
       Blink = True
+      ReadOnly = True
+    }
+    Index = 7
+    Text = ("Test")
+    { panVersionControl2 HBox
+      MoveScaled(0,0,119,4)
+      { btnTestClear ToolButton
+        MoveScaled(0,0,4,4)
+        ToolTip = ("Clear console")
+        Picture = Picture["icon:/small/clear"]
+      }
+      { btnTest ToolButton
+        MoveScaled(5,0,14,4)
+        AutoResize = True
+        Text = ("Test again")
+        Picture = Picture["icon:/small/ok"]
+      }
+    }
+    { Separator2 Separator
+      MoveScaled(19,6,34,0)
+    }
+    { trmTest TerminalView
+      MoveScaled(1,8,69,27)
+      Expand = True
+      Border = False
+      Limit = 65536
+      Blink = True
+      ReadOnly = True
     }
     Index = 0
   }

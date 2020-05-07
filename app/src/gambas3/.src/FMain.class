@@ -1421,6 +1421,8 @@ Public Sub Action_Activate((Key) As String) As Boolean
       panProject.Hidden = Not Action[Key].Value
     Case "start"
       Project.Run(False)
+    Case "test"
+      Project.Test()
     Case "pause"
       Design.Pause
     Case "stop"

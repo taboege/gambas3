@@ -65,7 +65,7 @@ Public Sub SelectButton(iTab As Integer)
   Dim hButton As ToolButton = Me.Children[iTab]
   
   If $bNoSelectButton Then Return
-  
+
   $bNoSelectButton = True
   If Not hButton.Value Then hButton.Value = True
   $bNoSelectButton = False

@@ -2,7 +2,7 @@
 
 Public Shown As Boolean
 
-Private Enum TAB_DEBUG, TAB_CONSOLE, TAB_BREAK, TAB_COMPILATION, TAB_TASK, TAB_SEARCH, TAB_VERSION_CONTROL
+Private Enum TAB_DEBUG, TAB_CONSOLE, TAB_BREAK, TAB_COMPILATION, TAB_TASK, TAB_SEARCH, TAB_VERSION_CONTROL, TAB_TEST
 
 Private $cRefreshBreakpoint As New Collection
 
@@ -316,6 +316,8 @@ Public Sub ReadConfig()
   
   Project.SetConsoleFont(trmVersionControl)
   MTheme.InitControl(trmVersionControl)
+  Project.SetConsoleFont(trmTest)
+  MTheme.InitControl(trmTest)
 
   For Each hCtrl In [panBreakpoint, panSearch, panVersionControl]
     Project.SetSmallFont(hCtrl)
@@ -900,6 +902,7 @@ Public Sub OnProjectChange()
   SetCompilation
   CloseSearch
   trmVersionControl.Clear
+  trmTest.Clear
   
 End
 
@@ -1412,6 +1415,12 @@ Public Sub ShowDebugging()
   
 End
 
+Public Sub ShowTest()
+  
+  FDebugButton.SelectButton(TAB_TEST)
+  
+End
+
 Public Sub cvwVariable_Rename()
   
   Dim sVar As String
@@ -1514,5 +1523,23 @@ End
 Public Sub cvwVariable_Select()
 
   Balloon.Hide(cvwVariable)
+
+End
+
+Public Sub GetTestTerminal() As TerminalView
+
+  Return trmTest
+
+End
+
+Public Sub btnTestClear_Click()
+
+  trmTest.Clear
+
+End
+
+Public Sub btnTest_Click()
+
+  Design.Test()
 
 End

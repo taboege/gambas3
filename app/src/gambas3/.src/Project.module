@@ -2548,6 +2548,13 @@ Public Sub Run(Optional bCompileAll As Boolean, Optional iDebug As Integer, Opti
 
 End
 
+Public Sub Test()
+  
+  If CheckRunning() Then Return
+  Design.Test
+  
+End
+
 Public Sub Forward()
 
   If CheckRunning() Then Return
