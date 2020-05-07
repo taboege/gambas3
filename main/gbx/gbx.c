@@ -198,7 +198,7 @@ static bool is_option_arg(char **argv, int argc, int *i, char option, const char
 			return FALSE;
 	}
 	
-	if (*i < (argc - 1) && *argv[*i + 1] && *argv[*i + 1] != '-')
+	if (*i < (argc - 1) && *argv[*i + 1] != '-')
 	{
 		*param = argv[*i + 1];
 		(*i)++;
