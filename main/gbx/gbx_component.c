@@ -126,6 +126,11 @@ void COMPONENT_load_all(void)
 		COMPONENT_create("gb.eval");
 		COMPONENT_create("gb.debug");
 	}
+	
+	if (PROJECT_run_tests)
+	{
+		COMPONENT_create("gb.test");
+	}
 
 	_load_all = TRUE;
 
