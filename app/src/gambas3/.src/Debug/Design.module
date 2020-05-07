@@ -1001,7 +1001,7 @@ Private Sub Start(sCmd As String)
     
     If Project.RedirectStderr Then
       $sPipeError = Temp$()
-      aExec.Add("-t")
+      aExec.Add("-r")
       aExec.Add($sPipeError)
     Endif
     
