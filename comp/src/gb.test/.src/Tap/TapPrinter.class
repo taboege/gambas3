@@ -4,8 +4,6 @@
 ''' 
 ''' [TAP]: http://testanything.org/tap-specification.html
 
-Export
-
 Event Filter
 
 Property {Output} As Stream Use $hOutput
@@ -20,7 +18,7 @@ Public Sub _new(Optional Tests As Integer, Optional Comment As String, Optional 
 
     $hOutput = {Output}
     With $hCurrent
-        .Plan = Tap.NO_PLAN
+        .Plan = Test.NO_PLAN
         .TestsRun = 0
         .LastId = 0
         .Finished = False
@@ -35,7 +33,7 @@ Public Sub Subtest(Description As String, Optional Tests As Integer, Optional Co
     With $hCurrent = New TapContext
         .Summary.Description = Description
         .Summary.Comment = Comment
-        .Plan = Tap.NO_PLAN
+        .Plan = Test.NO_PLAN
         .TestsRun = 0
         .LastId = 0
         .Finished = False
@@ -51,7 +49,7 @@ Public Sub Plan(Tests As Integer, Optional Comment As String)
         If .TestsRun Then Error.Raise(Subst$(("Too late to plan. Already ran &1 tests"), .TestsRun))
         ' TAP specification lists '1..0 # Skipped: WWW::Mechanize not installed'
         ' as a valid example.
-        If Tests <= Tap.NO_PLAN Then Error.Raise(("Number of tests must be non-negative"))
+        If Tests <= Test.NO_PLAN Then Error.Raise(("Number of tests must be non-negative"))
         .Plan = Tests
     End With
     Print(Subst$("1..&1&2", Tests, IIf(Comment, " # " & Comment, "")))
@@ -75,7 +73,7 @@ Public Sub Finish()
         If .Finished Then Error.Raise(("Tests already finished"))
 
         ' Print a plan line after the fact
-        If .Plan = Tap.NO_PLAN Then
+        If .Plan = Test.NO_PLAN Then
             .Plan = .TestsRun
             Print("1.." & .Plan)
         Endif
@@ -122,8 +120,8 @@ Public Sub Assert(Assertion As TestAssertion) As TestAssertion
         $hCurrent.LastId = .Id
         sLine = Subst$("&1 &2 - &3", IIf(.Ok, "ok", "not ok"), .Id, .Description)
 
-        If .Directive <> Tap.NONE Then
-            ' Matches the values of the Enum Tap.TODO, Tap.SKIP
+        If .Directive <> TestAssertion.NONE Then
+            ' Matches the values of the Enum TestAssertion.TODO, TestAssertion.SKIP
             sDirective = Choose(.Directive, "TODO", "SKIP")
             If Not sDirective Then Error.Raise(Subst$(("Unsupported directive '&1'"), .Directive))
             sLine &= " # " & sDirective

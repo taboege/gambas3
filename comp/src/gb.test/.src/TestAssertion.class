@@ -5,14 +5,17 @@
 
 Export
 
+'' Possible values for the Directive field
+Public Enum NONE = 0, TODO = 1, SKIP
+
 '' The serial number of this test.
 Public Id As Long = 0
 '' Whether "ok" or "not ok" was printed.
 Public Ok As Boolean = False
 '' The test description.
 Public Description As String = Null
-'' The Tap.* directive.
-Public Directive As Integer = Tap.NONE
+'' The TAP directive constant NONE, TODO or SKIP.
+Public Directive As Integer = NONE
 '' The comment after the test description and directive, if any.
 Public Comment As String = Null
 '' If this is a subtest summary assertion, here are the child assertions.
@@ -23,6 +26,6 @@ Property Read Success As Boolean
 
 Private Function Success_Read() As Boolean
 
-    Return Ok Or (Directive = Tap.TODO)
+    Return Ok Or (Directive = TODO)
 
 End

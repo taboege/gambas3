@@ -30,7 +30,7 @@ Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
 
     Test._Next.Ok = Result
     Test._Next.Description = Description
-    bRes = Test.Printer.Assert(Test._Next).Ok
+    bRes = Test._Printer.Assert(Test._Next).Ok
     Test._Next = New TestAssertion
     Return bRes
 
@@ -39,7 +39,7 @@ End
 '' Assert that the next assertion is a TODO. Even if it fails it reports ok.
 Public Sub Todo(Optional Comment As String)
 
-    Test._Next.Directive = Tap.TODO
+    Test._Next.Directive = TestAssertion.TODO
     Test._Next.Comment = Comment
 
 End
@@ -47,7 +47,7 @@ End
 '' Assert that a test is skipped. Reports ok.
 Public Sub Skip(Optional Comment As String)
 
-    Test._Next.Directive = Tap.SKIP
+    Test._Next.Directive = TestAssertion.SKIP
     Test._Next.Comment = Comment
     Pass()
 

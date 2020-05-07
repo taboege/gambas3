@@ -5,8 +5,6 @@
 ''' 
 ''' [TAP]: http://testanything.org/tap-specification.html
 
-Export
-
 Event Version(Version As Integer)
 
 Event Plan(Start As Integer, {End} As Integer)
@@ -83,7 +81,7 @@ Private Function ParseTest(sLine As String, ByRef Id As Long, ByRef Description 
     ' Tidy up caller's local variables
     Id = 0
     Description = ""
-    Directive = Tap.NONE
+    Directive = TestAssertion.NONE
     Comment = ""
 
     Inc $iTestsRun
@@ -127,9 +125,9 @@ Private Function ParseTest(sLine As String, ByRef Id As Long, ByRef Description 
         Endif
         Select Case Lower$(sWord)
             Case "todo"
-                Directive = Tap.TODO
+                Directive = TestAssertion.TODO
             Case "skip"
-                Directive = Tap.SKIP
+                Directive = TestAssertion.SKIP
             Default
                 Error.Raise(Subst$(("Invalid directive '&1'"), sWord))
         End Select

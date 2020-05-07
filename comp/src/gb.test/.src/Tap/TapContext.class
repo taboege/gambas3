@@ -2,8 +2,6 @@
 
 ''' The internal state of a TapPrinter. There is one such object for every subtest.
 
-Export
-
 '' The number of tests planned.
 Public Plan As Integer
 '' Whether the test is skipped altogether ("1..0 # SKIP" plan line).

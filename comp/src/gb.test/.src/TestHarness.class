@@ -131,18 +131,18 @@ Public Sub Parser_Assert(Ok As Boolean, Id As Long, Description As String, Direc
 
     With $hCurrent
         Select Case Directive
-            Case Tap.NONE
+            Case TestAssertion.NONE
                 If hTest.Success Then
                     Inc .Passed
                 Else
                     Inc .Failed
                 Endif
 
-            Case Tap.TODO
+            Case TestAssertion.TODO
                 Inc .Todo
                 If hTest.Success Then Inc .Bonus
 
-            Case Tap.SKIP
+            Case TestAssertion.SKIP
                 Inc .Skipped
 
         End Select
