@@ -1,0 +1,113 @@
+' Gambas module file
+
+''' Run tests, parse output and collect statistics.
+
+Export
+
+Private $hParser As TapParser
+Private $hStats As TestStats
+
+Public Sub RunTests(Project As String, Optional Tests As String)
+
+    Dim hProc As Process
+
+    $hParser = New TapParser As "Parser"
+    With $hStats = New TestStats
+        .Name = Subst$(("&1 - &2"), Project, Tests)
+        .Plan = [1, 0]
+        .Started = Now()
+    End With
+
+    ' Run the tests. Meanwhile the parser emits events which we handle to fill $hStats.
+    hProc = Exec ["gbx3", "-T", Tests, Project] For Input As "TapStream"
+    hProc.Wait()
+
+    With $hStats
+        .Ended = Now()
+        .ExitCode = hProc.Value
+        .Run = .Passed + .Failed + .Todo + .Skipped
+        .Delta = .Planned - .Run
+        .Success = .ExitCode = 0 And .Planned > 0 And .Run = .Planned And .Failed = 0
+    End With
+
+End
+
+' -------------------- From TapStream to Parser --------------------
+
+Private Sub AddLine(sLine As String)
+
+    $hStats.Lines.Add(sLine)
+    $hParser.ParseLine(sLine)
+
+End
+
+Public Sub TapStream_Read()
+
+    AddLine(Last.ReadLine())
+
+End
+
+Public Sub TapStream_Error(Message As String)
+
+    AddLine(Message)
+
+End
+
+' -------------------- From Parser to $hStats --------------------
+
+Public Sub Parser_Version(Version As Integer)
+
+    $hStats.Version = Version
+
+End
+
+Public Sub Parser_Plan(Start As Integer, {End} As Integer)
+
+    $hStats.Plan = [Start, {End}]
+    $hStats.Planned = 1 + {End} - Start
+
+End
+
+' FIXME: It is an error if the test IDs are not sequential, according to prove.
+' TODO: Subtests as produced by TapPrinter are not supported yet.
+
+Public Sub Parser_Assert(Ok As Boolean, Id As Long, Description As String, Directive As Integer, Comment As String)
+
+    Dim hTest As New TestAssertion
+
+    With hTest
+        .Ok = Ok
+        .Id = Id
+        .Description = Description
+        .Directive = Directive
+        .Comment = Comment
+    End With
+    $hStats.Subtests.Push(hTest)
+
+    With $hStats
+        Select Case Directive
+            Case TestAssertion.NONE
+                If hTest.Success Then
+                    Inc .Passed
+                Else
+                    Inc .Failed
+                Endif
+
+            Case TestAssertion.TODO
+                Inc .Todo
+                If hTest.Success Then Inc .Bonus
+
+            Case TestAssertion.SKIP
+                Inc .Skipped
+
+        End Select
+    End With
+
+End
+
+Public Sub Parser_BailOut(Comment As String)
+
+    $hStats.BailedOut = True
+    $hStats.BailMessage = Comment
+
+End
