@@ -39,6 +39,7 @@ Public Sub Main(Optional Tests As String)
     Test._Reset() ' only if you run this Main multiple times per process, which you shouldn't
     RunTests(Tests)
     PrintSummary()
+    Quit ExitCode()
 
 End
 
@@ -57,6 +58,12 @@ Private Sub PrintSummary()
 
         Test.Note(IIf(.Summary.Success, "PASSED", "FAILED"))
     End With
+
+End
+
+Private Function ExitCode() As Integer
+
+    Return IIf($hPrinter.Session.Summary.Success, 0, 1)
 
 End
 
