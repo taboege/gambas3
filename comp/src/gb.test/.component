@@ -1,5 +1,6 @@
 [Component]
 Key=gb.test
 Version=3.14.90
-State=2
+State=1
+Hidden=True
 Authors=Christof Thalhofer,Tobias Boege
