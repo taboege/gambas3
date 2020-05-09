@@ -55,7 +55,6 @@
 #include "gbc_header.h"
 #include "gbc_output.h"
 
-
 #if HAVE_GETOPT_LONG
 static struct option Long_options[] =
 {
@@ -80,7 +79,6 @@ static struct option Long_options[] =
 
 static bool main_debug = FALSE;
 static bool main_exec = FALSE;
-static bool main_verbose = FALSE;
 static bool main_compile_all = FALSE;
 static bool main_trans = FALSE;
 static bool main_warnings = FALSE;
@@ -134,7 +132,7 @@ static void get_arguments(int argc, char **argv)
 				break;
 
 			case 'v':
-				main_verbose = TRUE;
+				COMP_verbose = TRUE;
 				break;
 
 			case 'a':
@@ -298,14 +296,13 @@ static void compile_file(const char *file)
 
 	JOB->all = main_compile_all;
 	JOB->exec = main_exec;
-	JOB->verbose = main_verbose;
 	JOB->warnings = main_warnings;
 	JOB->swap = main_swap;
 	JOB->public_module = main_public_module;
 	JOB->no_old_read_syntax = main_no_old_read_syntax;
 	//JOB->class_file = main_class_file;
 
-	if (JOB->verbose)
+	if (COMP_verbose)
 	{
 		putchar('\n');
 		for (i = 1; i <= 9; i++)
@@ -442,7 +439,9 @@ static void init_files(const char *first)
 {
 	bool recursive;
 	const char *name;
+	const char *ext;
 	int i, n;
+	bool has_test;
 
 	ARRAY_create(&_files);
 
@@ -458,8 +457,18 @@ static void init_files(const char *first)
 	qsort(_files, n, sizeof(*_files), (int (*)(const void *, const void *))compare_path);
 
 	// Add the classes to the list of classes
+	has_test = FALSE;
 	for (i = 0; i < n; i++)
 	{
+		if (!has_test)
+		{
+			ext = FILE_get_ext(_files[i]);
+			if (strcmp(ext, "test") == 0)
+			{
+				has_test = TRUE;
+				COMPILE_add_component("gb.test");
+			}
+		}
 		name = FILE_get_basename(_files[i]);
 		COMPILE_add_class(name, strlen(name));
 	}
@@ -478,7 +487,7 @@ static void exit_files(void)
 		FILE *f = NULL;
 		const char *file;
 		
-		if (main_verbose)
+		if (COMP_verbose)
 			puts("creating '.test' file");
 		
 		COMPILE_create_file(&f, ".test");
@@ -564,7 +573,7 @@ static void compile_lang(void)
 		
 		unlink(file_mo);
 		// Shell "msgfmt -o " & Shell$(sPath) & " " & Shell(sTrans) Wait
-		if (main_verbose)
+		if (COMP_verbose)
 		{
 			cmd = STR_print("msgfmt -o %s %s 2>&1", file_mo, file_po);
 			printf("running: %s\n", cmd);
@@ -600,7 +609,7 @@ int main(int argc, char **argv)
 
 		if (main_compile_all)
 		{
-			if (main_verbose)
+			if (COMP_verbose)
 				puts("Removing .info and .list files");
 			FILE_chdir(FILE_get_dir(COMP_project));
 			FILE_unlink(".info");

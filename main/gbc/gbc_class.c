@@ -531,7 +531,7 @@ static int add_class(CLASS *class, int index, bool used, bool exported)
 
 		sym->class = num + 1;
 
-		if (JOB->verbose)
+		if (COMP_verbose)
 			printf("Adding class %.*s %s%s\n", sym->symbol.len, sym->symbol.name, used ? "" : "Unused ", exported ? "Exported" : "");
 		
 		JOB->class->class[num].exported = exported;
@@ -539,7 +539,7 @@ static int add_class(CLASS *class, int index, bool used, bool exported)
 
 	if (used != JOB->class->class[num].used)
 	{
-		if (JOB->verbose)
+		if (COMP_verbose)
 			printf("Switching class %.*s to %s\n", sym->symbol.len, sym->symbol.name, used ? "Used" : "Unused");
 		
 		JOB->class->class[num].used = used;
@@ -791,7 +791,7 @@ static void reorder_decl(CLASS *class, VARIABLE *tvar, const char *desc)
 	count = ARRAY_count(tvar);
 	if (count > 1)
 	{
-		if (JOB->verbose)
+		if (COMP_verbose)
 			printf("Reordering %s variables:", desc);
 
 		pos = 0;
@@ -812,12 +812,12 @@ static void reorder_decl(CLASS *class, VARIABLE *tvar, const char *desc)
 				var->pos = pos;
 				pos += var->size;
 
-				if (JOB->verbose)
+				if (COMP_verbose)
 					printf(" %s (%d) ", TABLE_get_symbol_name(class->table, var->index), var->pos);
 			}
 		}
 
-		if (JOB->verbose)
+		if (COMP_verbose)
 			printf("\n");
 	}
 }

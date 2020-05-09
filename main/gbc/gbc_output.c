@@ -604,7 +604,7 @@ static void output_class_ref(void)
 		}
 		else
 		{
-			if (JOB->verbose)
+			if (COMP_verbose)
 				printf("Ignoring class %.*s\n", sym->len, sym->name);
 			write_int(-1);
 		}

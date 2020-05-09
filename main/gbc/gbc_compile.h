@@ -59,7 +59,6 @@ typedef
 		int max_line;                      // maximum line number
 		char *source;                      // source file contents
 		unsigned step : 3;                 // compiler step (JOB_STEP_*)
-		unsigned verbose : 1;              // verbose compilation
 		unsigned debug : 1;                // if debugging information must be generated
 		unsigned trans : 1;                // if translation files must be generated
 		unsigned is_module : 1;            // if the source file is a module
@@ -74,7 +73,7 @@ typedef
 		unsigned no_old_read_syntax : 1;   // do not compile the old read syntax
 		unsigned exec : 1;                 // we are compiling for an executable
 		unsigned warnings : 1;             // if warnings must be printed
-		unsigned _reserved : 14;           // reserved
+		unsigned _reserved : 15;           // reserved
 		char *output;                      // output file
 		PATTERN *pattern;                  // lexical analyze
 		int pattern_count;                 // number of patterns
@@ -96,6 +95,7 @@ typedef
 
 #ifndef __GBC_COMPILE_C
 
+EXTERN bool COMP_verbose;
 EXTERN COMPILE COMP_current;
 EXTERN char *COMP_root;
 EXTERN char *COMP_project;
@@ -119,6 +119,7 @@ void COMPILE_end_class(void);
 void COMPILE_enum_class(char **name, int *len);
 void COMPILE_print(int type, int line, const char *msg, ...);
 void COMPILE_create_file(FILE **fw, const char *file);
+void COMPILE_add_component(const char *name);
 
 #define COMPILE_get_column(_pattern) (JOB->pattern_pos[(_pattern) - JOB->pattern])
 

@@ -1183,6 +1183,6 @@ void HEADER_do(void)
 
 	CLASS_sort_declaration(JOB->class);
 
-	if (JOB->verbose)
+	if (COMP_verbose)
 		CLASS_dump();
 }

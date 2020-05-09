@@ -462,14 +462,14 @@ static void class_update_exported(CLASS *class)
 
 		if (cmp == 0)
 		{
-			if (JOB->verbose)
+			if (COMP_verbose)
 				printf("Remove '%s' from .list file\n", name);
 			continue;
 		}
 		else if ((cmp > 0) && class->exported && !inserted)
 		{
 			COMPILE_create_file(&fw, ".list#");
-			if (JOB->verbose)
+			if (COMP_verbose)
 				printf("Insert '%s%s' into .list file\n", class->name, class->optional ? "?" : "");
 			fputs(class->name, fw);
 			if (class->has_static && COMPILE_version >= 0x03060090)
@@ -485,7 +485,7 @@ static void class_update_exported(CLASS *class)
 
 		if (exist_bytecode_file(name))
 		{
-			if (JOB->verbose)
+			if (COMP_verbose)
 				printf("Copy '%s' in .list file\n", name);
 
 			COMPILE_create_file(&fw, ".list#");
@@ -498,7 +498,7 @@ static void class_update_exported(CLASS *class)
 		}
 		else
 		{
-			if (JOB->verbose)
+			if (COMP_verbose)
 				printf("Remove '%s' from .list file\n", name);
 		}
 	}
@@ -524,7 +524,7 @@ static void insert_class_info(CLASS *class, FILE *fw)
 	const char *str;
 	int len;
 
-	if (JOB->verbose)
+	if (COMP_verbose)
 		printf("Insert '%s' information into .info file\n", class->name);
 
 	_finfo = fw;
@@ -773,7 +773,7 @@ void CLASS_export(void)
 
 		if (cmp == 0)
 		{
-			if (JOB->verbose)
+			if (COMP_verbose)
 				printf("Remove '%s' information from .info file\n", class->name);
 
 			for(;;)
@@ -800,7 +800,7 @@ void CLASS_export(void)
 
 		if (exist_bytecode_file(&line[1]))
 		{
-			if (JOB->verbose)
+			if (COMP_verbose)
 				printf("Copy '%s' information in .info file\n", &line[1]);
 			for(;;)
 			{
@@ -814,7 +814,7 @@ void CLASS_export(void)
 		}
 		else
 		{
-			if (JOB->verbose)
+			if (COMP_verbose)
 				printf("Remove '%s' information from .info file\n", &line[1]);
 			for(;;)
 			{
