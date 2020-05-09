@@ -3259,13 +3259,12 @@ Public Sub ReadProject(Optional bConvert As Boolean)
         Startup = sVal
 
       Case "component"
-        'If JustUpdateVersion Then
-        '  Components.Add(sVal)
-        'Else
+        hComp = Project.Documentation[sVal]
+        If Not hComp Then
+          aMissing.Add(sVal)
+        Else If Not hComp.Hidden Then
           If Not Components.Exist(sVal) Then Components.Add(sVal)
-          hComp = Project.Documentation[sVal]
-          If Not hComp Or If hComp.Hidden Then aMissing.Add(sVal)
-        'Endif
+        Endif
 
       Case "library"
         If bConvert Then
