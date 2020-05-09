@@ -2,7 +2,6 @@
 #define __C_KDF_C
 
 #include <openssl/evp.h>
-#include <openssl/kdf.h>
 
 #include "main.h"
 #include "c_kdf.h"
