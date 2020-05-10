@@ -12,7 +12,6 @@ gb_openssl_la_SOURCES = \
  c_openssl.h c_openssl.c \
  c_digest.h c_digest.c \
  c_cipher.h c_cipher.c \
- c_hmac.h c_hmac.c \
- c_kdf.h c_kdf.c
+ c_hmac.h c_hmac.c
 
  # c_signature.h c_signature.c

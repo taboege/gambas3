@@ -36,6 +36,7 @@
 
 #include <openssl/crypto.h>
 #include <openssl/rand.h>
+#include <openssl/evp.h>
 #include <openssl/err.h>
 
 #include "main.h"
@@ -71,10 +72,88 @@ BEGIN_METHOD(OpenSSL_RandomBytes, GB_INTEGER length)
 
 END_METHOD
 
+
+BEGIN_METHOD(OpenSSL_Pbkdf2, GB_STRING password; GB_STRING salt; GB_LONG iterations; GB_INTEGER keylength; GB_STRING method)
+
+#if OPENSSL_VERSION_NUMBER < 0x10002000L
+    GB.Error("Pbkdf2 not supported");
+    return;
+#else
+    int ret;
+    char hash[VARG(keylength)];
+    const EVP_MD *emethod;
+    emethod = EVP_get_digestbyname(STRING(method));
+    if (!emethod) {
+        GB.Error("Digest method not supported");
+        return;
+    }
+    memset(hash, 0, sizeof(hash));
+    ret = PKCS5_PBKDF2_HMAC((const char *) STRING(password), LENGTH(password), (const unsigned char *) STRING(salt),
+          LENGTH(salt), (int) VARG(iterations), emethod, VARG(keylength), (unsigned char *) hash);
+    if (ret == 0)  {
+         GB.Error("Pbkdf2 call failed");
+         return;
+    }
+    GB.ReturnNewString(hash, VARG(keylength));
+#endif
+
+END_METHOD
+
+BEGIN_METHOD(OpenSSL_Scrypt, GB_STRING password; GB_STRING salt; GB_LONG N; GB_LONG r; GB_LONG p; GB_LONG keylength)
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+    GB.Error("Scrypt not supported");
+    return;
+#else
+    int ret;
+    uint64_t lN, lR, lP;
+    size_t lKey;
+    char hash[VARG(keylength)];
+
+    lN = VARG(N);
+    if (lN < 2) {
+        GB.Error("N must be above 1");
+        return;
+    }
+    lR = VARG(r);
+    if (lR == 0) {
+        GB.Error("R must be above 0");
+        return;
+    }
+    lP = VARG(p);
+    if (lP == 0) {
+        GB.Error("P must be above 0");
+        return;
+    }
+    lKey = VARG(keylength);
+    if (lKey == 0) {
+        GB.Error("Key must not be null");
+        return;
+    }
+    if (EVP_PBE_scrypt(NULL, 0, NULL, 0, lN, lR, lP, 0, NULL, 0) == 0) {
+        GB.Error("Scrypt prep call failed");
+        return;
+    }
+    memset(hash, 0, sizeof(hash));
+    ret = EVP_PBE_scrypt((const char *) STRING(password), LENGTH(password), (const unsigned char *) STRING(salt),
+          LENGTH(salt), lN, lR, lP, 0, (unsigned char *) hash, lKey);
+    if (ret == 0) {
+        GB.Error("Scrypt call failed");
+        return;
+    }
+    GB.ReturnNewString(hash, lKey);
+#endif
+
+END_METHOD
+
 GB_DESC COpenSSL[] = {
 	GB_DECLARE_STATIC("OpenSSL"),
 
 	GB_STATIC_METHOD("RandomBytes", "s", OpenSSL_RandomBytes, "(Length)i"),
+
+	GB_STATIC_METHOD("Pbkdf2", "s", OpenSSL_Pbkdf2, "(Password)s(Salt)s(Iterations)i(KeyLength)i(Method)s"),
+
+	GB_STATIC_METHOD("Scrypt", "s", OpenSSL_Scrypt, "(Password)s(Salt)s(N)i(R)i(P)i(KeyLength)i"),
 
 	GB_END_DECLARE
 };

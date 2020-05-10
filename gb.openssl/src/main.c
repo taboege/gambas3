@@ -45,7 +45,6 @@
 #include "c_digest.h"
 #include "c_cipher.h"
 #include "c_hmac.h"
-#include "c_kdf.h"
 
 GB_INTERFACE GB EXPORT;
 
@@ -60,8 +59,6 @@ GB_DESC *GB_CLASSES[] EXPORT = {
 	CCipherText,
 
 	CHMac,
-	CPbkdf2,
-	CScrypt,
 
 //	CSignature,
 //	CSignatureMethod,
