@@ -296,22 +296,21 @@ Private Sub AddClassesAndFill(aClass As String[], Optional sBegin As String)
 
   If $bGambas Then
 
-    Project.Documentation["gb"].Load
+    'Project.Documentation["gb"].Load
   
     For Each sClass In Project.GetClasses()
       If sClass Like sBegin & "*" Then aClass.Add(sClass & " " & MHelp.TYPE_CLASS)
       'TRY lvwComp.Add(sClass, sClass)
     Next
+
+    aLib = [CComponent.PROJECT_NAME, "gb", "gb.test"]
   
-    aLib = Project.Components.Copy()
+    aLib.Insert(Project.Components)
     
     For Each sLib In Project.Libraries
       aLib.Add(File.Name(sLib))
     Next
     
-    aLib.Add(CComponent.PROJECT_NAME, 0)
-    aLib.Add("gb", 0)
-  
     For Each sLib In aLib
       
       If sLib <> CComponent.PROJECT_NAME Then

@@ -1120,6 +1120,7 @@ Public Sub Reset()
   $cImplement.Clear
   
   Components["gb"].Load
+  Components["gb.test"].Load()
   
 End
 

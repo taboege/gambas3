@@ -4672,8 +4672,6 @@ Public Sub RefreshComponents(Optional bForce As Boolean)
       If hComp Then hComp.Load()
     Next
     
-    Documentation["gb.test"].Load()
-
     For Each sLib In ExtraReferences
       Documentation.AddLibrary(sLib)
     Next
