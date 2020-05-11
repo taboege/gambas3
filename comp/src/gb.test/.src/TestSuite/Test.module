@@ -27,9 +27,9 @@ Private $hNext As TestAssertion
 '' A testcontainer can be choosen by it's name, a testcase by it's testcontainers' 
 '' name followed by a dot and the name of the testcase.
 '' 
-'' Example: Test.Main("TestWWW, TestMail.Send, TestMail.Recieve") 
+'' Example: Test.Main("TestWWW, TestMail.Send, TestMail.Receive") 
 '' 
-'' runs all testcases in TestWWW and the testcases Send and Recieve of the testcontainer TestMail.
+'' runs all testcases in TestWWW and the testcases Send and Receive of the testcontainer TestMail.
 '' 
 '' Public methods called "Setup", "Teardown", "SetupEach" or "TeardownEach" can be used to create a testfixture, 
 '' which defines a special environment for the tests.
