@@ -381,7 +381,7 @@ void SUBR_input(ushort code)
 		SP->_string.len = STRING_length(addr);
 	}
 	else
-		VALUE_null(SP);
+		STRING_void_value(SP);
 		
 	SP++;
 }
@@ -493,7 +493,7 @@ void SUBR_read(ushort code)
 		
 		if (len == 0)
 		{
-			VALUE_null(RETURN);
+			STRING_void_value(RETURN);
 		}
 		else if (len > 0)
 		{
@@ -519,7 +519,7 @@ void SUBR_read(ushort code)
 			
 			if (eff == 0)
 			{
-				VALUE_null(RETURN);
+				STRING_void_value(RETURN);
 				STRING_free(&data);
 			}
 			else
