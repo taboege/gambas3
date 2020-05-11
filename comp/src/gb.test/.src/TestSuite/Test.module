@@ -51,11 +51,13 @@ Private Sub PrintSummary()
         If .TestsRun <> .Plan Then Test.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
         Test.Note(gb.Lf)
 
-        If Not .Summary.Success Then ShowTestCollection(("&1 tests failed:"), FindFailures(.Summary.Subtests, ""))
+        
         ShowTestCollection(("&1 skipped:"), FindSkips(.Summary.Subtests, ""))
         ShowTestCollection(("&1 todo:"), FindTodos(.Summary.Subtests, ""))
         ShowTestCollection(("&1 bonus:"), FindBonus(.Summary.Subtests, ""))
 
+        
+        If Not .Summary.Success Then ShowTestCollection(("&1 tests failed:"), FindFailures(.Summary.Subtests, ""))
         Test.Note(IIf(.Summary.Success, "PASSED", "FAILED"))
     End With
 
@@ -167,13 +169,17 @@ Private Function RunTests(Tests As String)
 
 End
 
-Private Function GetAllTestContainers(Commands As TestCommand[]) As String[]
+Private Function GetAllTestContainers(Optional Commands As TestCommand[]) As String[]
 
     Dim TestClass As Class
     Dim TestModuleNames As New String[]
     Dim sNames As New String[]
     Dim sName As String
     Dim Command As TestCommand
+
+    If Commands = Null Then
+        Commands = New TestCommand[]
+    Endif
 
     If Exist(".../.test")
         sNames = Split(File.Load(".../.test"), gb.Lf, Null, True)
@@ -212,12 +218,24 @@ Catch
 
 End
 
-Public Function GetAllTests() As Variant
+'' Returns an collection of the testmodules and their testmethods. 
+'' Key is the name of the testmodule, Value is an array with the names of the testmethods it contains
 
-  Dim Modules As String[]
+Public Function GetAllTests() As Collection
+
+  Dim sModules As String[]
+  Dim sModule As String
+  Dim TestModule As Class
+  Dim Alltests As New Collection
+
+  sModules = GetAllTestContainers(Null)
   
-  Modules = GetAllTestContainers()
+  For Each sModule In sModules
+      TestModule = Class.Load(sModule)
+      Alltests.Add(TestSuite.GetTestsFromTestModule(Testmodule), TestModule.Name)
+  Next
   
+    Return Alltests
 
 End
 

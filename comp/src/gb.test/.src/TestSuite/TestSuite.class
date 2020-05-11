@@ -69,13 +69,6 @@ Private Sub StopTestModule(TestModule As Class)
 
 End
 
-'' Add a TestCase to the suite.
-Private Sub AddTestCase(oTestCase As TestCase)
-
-    Assert $Tests
-    $Tests.Add(oTestCase, Object.Class(oTestCase).Name)
-
-End Sub
 
 '' Create a new test case and add it to the suite.
 Private Function AddNewTestCase(sName As String, TestModule As Class)
@@ -91,7 +84,7 @@ Private Function AddNewTestCase(sName As String, TestModule As Class)
 
 End
 
-Static Private Function GetTestsFromTestModule(TestModule As Class) As String[]
+Static Public Function GetTestsFromTestModule(TestModule As Class) As String[]
 
     Dim sSymbol As String
     Dim NoTestSymbols As String[] = ["_Setup", "_SetupEach", "_Teardown", "_TeardownEach", "Plan"]
