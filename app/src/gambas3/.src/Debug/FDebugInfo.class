@@ -2,7 +2,7 @@
 
 Public Shown As Boolean
 
-Private Enum TAB_DEBUG, TAB_CONSOLE, TAB_BREAK, TAB_COMPILATION, TAB_TASK, TAB_SEARCH, TAB_VERSION_CONTROL, TAB_TEST
+Private Enum TAB_DEBUG, TAB_CONSOLE, TAB_BREAK, TAB_COMPILATION, TAB_TASK, TAB_TEST, TAB_VERSION_CONTROL, TAB_SEARCH
 
 Private $cRefreshBreakpoint As New Collection
 
@@ -319,7 +319,7 @@ Public Sub ReadConfig()
   Project.SetConsoleFont(trmTest)
   MTheme.InitControl(trmTest)
 
-  For Each hCtrl In [panBreakpoint, panSearch, panVersionControl]
+  For Each hCtrl In [panBreakpoint, panSearch, panVersionControl, panTest]
     Project.SetSmallFont(hCtrl)
   Next
   

@@ -884,6 +884,16 @@ Public Function ExistForm(sClass As String) As Boolean
 
 End
 
+Public Sub HasTest() As Boolean
+
+  Dim sPath As String
+  
+  For Each sPath In Sources
+    If File.Ext(sPath) = "test" Then Return True
+  Next
+  
+End
+
 Private Sub RefreshInheritance()
 
   Dim sKey As String

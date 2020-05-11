@@ -43,28 +43,28 @@
     Picture = Picture["icon:/small/tag"]
     Toggle = True
   }
-  { btnSearchList ToolButton btnDebug
-    Name = "btnSearchList"
-    MoveScaled(69,0,16,4)
+  { btnTest ToolButton btnDebug
+    Name = "btnTest"
+    MoveScaled(68,0,12,4)
     AutoResize = True
-    Text = ("Search result")
-    Picture = Picture["icon:/small/find"]
+    Text = ("Unit tests")
+    Picture = Picture["icon:/small/ok"]
     Toggle = True
   }
   { btnVersionControl ToolButton btnDebug
     Name = "btnVersionControl"
-    MoveScaled(85,0,18,4)
+    MoveScaled(81,0,18,4)
     AutoResize = True
     Text = ("Version control")
     Picture = Picture["icon:/small/clock"]
     Toggle = True
   }
-  { btnTest ToolButton btnDebug
-    Name = "btnTest"
-    MoveScaled(104,0,12,4)
+  { btnSearchList ToolButton btnDebug
+    Name = "btnSearchList"
+    MoveScaled(98,0,16,4)
     AutoResize = True
-    Text = ("Unit tests")
-    Picture = Picture["icon:/small/ok"]
+    Text = ("Search result")
+    Picture = Picture["icon:/small/find"]
     Toggle = True
   }
 }

@@ -222,7 +222,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gambas3 3.14.90\n"
-"PO-Revision-Date: 2020-05-07 12:56 UTC\n"
+"PO-Revision-Date: 2020-05-11 14:58 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -1234,11 +1234,11 @@ msgstr "Le programme a été terminé."
 msgid "The program has returned\nthe value: &1"
 msgstr "Le programme a retourné\nla valeur : &1"
 
-#: Design.module:994
+#: Design.module:995
 msgid "Output terminal"
 msgstr "Terminal de sortie"
 
-#: Design.module:1022
+#: Design.module:1023
 msgid "No terminal emulator found."
 msgstr "Aucun émulateur de terminal n'a été trouvé."
 
@@ -1849,7 +1849,7 @@ msgstr "Déselectionner tout"
 msgid "Gambas 3 project conversion"
 msgstr "Conversion en projet Gambas 3"
 
-#: FCrash.class:73 FTranslate.class:244 Project.module:4559
+#: FCrash.class:73 FTranslate.class:244 Project.module:4558
 msgid "The '&1' command has failed."
 msgstr "La commande '&1' a échoué."
 
@@ -2101,6 +2101,10 @@ msgstr "Objet courant"
 msgid "Local variables"
 msgstr "Variables locales"
 
+#: FDebugInfo.class:1544
+msgid "The project has no test module."
+msgstr "Le projet n'a pas de module de test."
+
 #: FDebugInfo.form:74 FMain.form:579
 msgid "Debug"
 msgstr "Débogage"
@@ -2182,8 +2186,8 @@ msgid "Test"
 msgstr "Tester"
 
 #: FDebugInfo.form:464
-msgid "Run tests"
-msgstr "Exécuter les tests"
+msgid "Test again"
+msgstr "Tester de nouveau"
 
 #: FEditor.class:3362
 msgid "Declarations"
@@ -2425,7 +2429,7 @@ msgstr "Le fichier n'est pas versionné, et doit être ajouté au référentiel.
 msgid "This file has not been modified since the last commit."
 msgstr "Ce fichier est inchangé depuis la dernière publication."
 
-#: FFileProperty.class:155 FMakeInstall.class:361 FProjectVersion.class:211 FSave.form:21 Project.module:3546 VersionControl.module:398
+#: FFileProperty.class:155 FMakeInstall.class:361 FProjectVersion.class:211 FSave.form:21 Project.module:3545 VersionControl.module:398
 msgid "Continue"
 msgstr "Continuer"
 
@@ -4085,7 +4089,7 @@ msgstr "Selectionnez l'archive source"
 msgid "*.gz;*.bz2;*.xz"
 msgstr ""
 
-#: FMakePatch.form:97 Project.module:4598
+#: FMakePatch.form:97 Project.module:4597
 msgid "Source packages"
 msgstr "Paquets sources"
 
@@ -4126,7 +4130,7 @@ msgstr "Nom de groupe incorrect !"
 msgid "This menu is too deep !"
 msgstr "Ce menu est trop profond !"
 
-#: FMenu.class:1077 Project.module:5474
+#: FMenu.class:1077 Project.module:5473
 msgid "modified"
 msgstr "modifié"
 
@@ -5874,7 +5878,7 @@ msgstr "Nouveau projet..."
 msgid "Recent projects"
 msgstr "Projets récents"
 
-#: FWelcome.class:72 Project.module:6277
+#: FWelcome.class:72 Project.module:6276
 msgid "Installed software"
 msgstr "Logiciels installés"
 
@@ -7650,151 +7654,151 @@ msgstr "Génération de l'exécutable..."
 msgid "Cannot make executable."
 msgstr "Impossible de créer l'exécutable."
 
-#: Project.module:3545
+#: Project.module:3544
 msgid "Some components are missing: &1"
 msgstr "Certains composants ne sont pas installés : &1"
 
-#: Project.module:3748
+#: Project.module:3747
 msgid "Cannot write project file."
 msgstr "Impossible d'écrire le fichier projet."
 
-#: Project.module:3797
+#: Project.module:3796
 msgid "Unable to create desktop shortcut."
 msgstr "Imposible de créer le raccourci sur le bureau."
 
-#: Project.module:4061
+#: Project.module:4060
 msgid "The directory will be removed at the next commit."
 msgstr "Le répertoire sera supprimé à la prochaine publication."
 
-#: Project.module:4078
+#: Project.module:4077
 msgid "You must define a startup class or form!"
 msgstr "Vous devez définir une classe ou un formulaire de démarrage !"
 
-#: Project.module:4109
+#: Project.module:4108
 msgid "Please type a name."
 msgstr "Veuillez saisir un nom."
 
-#: Project.module:4113
+#: Project.module:4112
 msgid "This name contains a forbidden character:"
 msgstr "Ce nom contient un caractère interdit:"
 
-#: Project.module:4117
+#: Project.module:4116
 msgid "The name cannot begins with a dot."
 msgstr "Le nom ne peut pas commencer par un point."
 
-#: Project.module:4121
+#: Project.module:4120
 msgid "This name is already used. Choose another one."
 msgstr "Ce nom est déjà utilisé. Choisissez-en un autre."
 
-#: Project.module:4157
+#: Project.module:4156
 msgid "A class name must begin with a letter or an underscore, followed by any letter or digit."
 msgstr "Un nom de classe doit commencer par une lettre ou un caractère '_', et être suivi par des lettres ou des chiffres. "
 
-#: Project.module:4200
+#: Project.module:4199
 msgid "Destination already exists."
 msgstr "La destination existe déjà."
 
-#: Project.module:4382
+#: Project.module:4381
 msgid "Unable to rename '&1'"
 msgstr "Impossible de renommer « &1 »"
 
-#: Project.module:4498
+#: Project.module:4497
 msgid "Please type a project name."
 msgstr "Veuillez saisir un nom de projet."
 
-#: Project.module:4506
+#: Project.module:4505
 msgid "The project name cannot begin with a dot."
 msgstr "Un nom de projet ne peut commencer par un point."
 
-#: Project.module:4509
+#: Project.module:4508
 msgid "Non-ASCII characters are forbidden in a project name."
 msgstr "Un nom de projet ne peut contenir que des caractères ASCII."
 
-#: Project.module:4510
+#: Project.module:4509
 msgid "SPACE"
 msgstr "ESPACE"
 
-#: Project.module:4510
+#: Project.module:4509
 msgid "The following characters are forbidden in a project name:"
 msgstr "Les caractères suivants sont interdits dans un nom de projet :"
 
-#: Project.module:4517
+#: Project.module:4516
 msgid "This project already exists."
 msgstr "Ce projet existe déjà."
 
-#: Project.module:4520
+#: Project.module:4519
 msgid "The project directory already exists."
 msgstr "Le répertoire du projet existe déjà."
 
-#: Project.module:4522
+#: Project.module:4521
 msgid "The project directory cannot be created because a file with the same name already exists."
 msgstr "Le répertoire du projet ne peut être créé car un fichier avec le même nom existe déjà."
 
-#: Project.module:4570
+#: Project.module:4569
 msgid "Unable to create source archive."
 msgstr "Impossible de créer l'archive source."
 
-#: Project.module:4597
+#: Project.module:4596
 msgid "Create source package"
 msgstr "Générer une archive des sources du projet"
 
-#: Project.module:4877
+#: Project.module:4876
 msgid "Cannot copy file &1."
 msgstr "Impossible de copier le fichier &1."
 
-#: Project.module:4925
+#: Project.module:4924
 msgid "Cannot create link &1."
 msgstr "Impossible de créer le lien &1."
 
-#: Project.module:4940
+#: Project.module:4939
 msgid "Cannot move a directory inside itself."
 msgstr "Impossible de déplacer un répertoire à l'intérieur de lui-même."
 
-#: Project.module:5004
+#: Project.module:5003
 msgid "Cannot move file &1."
 msgstr "Impossible de déplacer le fichier &1."
 
-#: Project.module:5217
+#: Project.module:5216
 msgid "The following files couldn't be removed:"
 msgstr "Les fichiers suivants n'ont pu être supprimés :"
 
-#: Project.module:5684
+#: Project.module:5683
 msgid "Project cleanup..."
 msgstr "Nettoyage du projet..."
 
-#: Project.module:5690
+#: Project.module:5689
 msgid "Project files conversion..."
 msgstr "Conversion des fichiers du projet..."
 
-#: Project.module:5720
+#: Project.module:5719
 msgid "Unable to convert &1"
 msgstr "Impossible de convertir &1"
 
-#: Project.module:5971
+#: Project.module:5970
 msgid "Unable to update forms."
 msgstr "Impossible de mettre à-jour les formulaires."
 
-#: Project.module:6061
+#: Project.module:6060
 msgid "The &1 program is not installed on your system."
 msgstr "Le programme &1 n'est pas installé sur votre système."
 
-#: Project.module:6063
+#: Project.module:6062
 msgid "The following programs are not installed on your system: &1."
 msgstr "Les programmes suivants ne sont pas installés sur votre système : &1."
 
-#: Project.module:6155
+#: Project.module:6154
 msgid "Unable to read component description file."
 msgstr "Impossible de lire le fichier de description du composant."
 
-#: Project.module:6216
+#: Project.module:6215
 msgid "Cannot write component description file."
 msgstr "Impossible d'écrire le fichier de description du composant."
 
-#: Project.module:6277
+#: Project.module:6276
 msgid "Project templates"
 msgstr "Modèles de projet"
 
-#: Project.module:6323
+#: Project.module:6322
 msgid "Unable to run terminal."
 msgstr "Impossible de démarrer le terminal."
 
