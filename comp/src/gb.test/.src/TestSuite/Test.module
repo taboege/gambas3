@@ -22,7 +22,7 @@ Private $hNext As TestAssertion
 '' A testcontainer is a special class with the ending test. It must contain at minimum one testcase. 
 '' 
 '' A test case is a public sub in a test container whose name is not 
-'' "Setup", "Teardown", "SetupEach" or "TeardownEach".
+'' "_Setup", "_Teardown", "_SetupEach" or "_TeardownEach".
 '' 
 '' A testcontainer can be choosen by it's name, a testcase by it's testcontainers' 
 '' name followed by a dot and the name of the testcase.
@@ -31,7 +31,7 @@ Private $hNext As TestAssertion
 '' 
 '' runs all testcases in TestWWW and the testcases Send and Receive of the testcontainer TestMail.
 '' 
-'' Public methods called "Setup", "Teardown", "SetupEach" or "TeardownEach" can be used to create a testfixture, 
+'' Public methods called "_Setup", "_Teardown", "_SetupEach" or "_TeardownEach" can be used to create a testfixture, 
 '' which defines a special environment for the tests.
 
 Public Sub Main(Optional Tests As String)
@@ -209,6 +209,15 @@ Private Function GetAllTestContainers(Commands As TestCommand[]) As String[]
 
 Catch
     Test.BailOut("Error in " & Error.Where & ": " & Error.Text)
+
+End
+
+Public Function GetAllTests() As Variant
+
+  Dim Modules As String[]
+  
+  Modules = GetAllTestContainers()
+  
 
 End
 
