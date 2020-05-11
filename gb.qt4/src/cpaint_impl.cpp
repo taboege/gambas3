@@ -237,9 +237,6 @@ static int Begin(GB_PAINT *d)
 		if (init_painting(d, target))
 			return TRUE;
 
-		if (wid->isCached())
-			PAINTER(d)->begin(wid);
-
 		d->area.width = wid->width();
 		d->area.height = wid->height();
 		return FALSE;
