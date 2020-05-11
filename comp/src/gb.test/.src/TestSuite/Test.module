@@ -13,23 +13,23 @@ Private $hPrinter As New TapPrinter
 Private $hNext As TestAssertion
 
 
-'' The static procedure Test.Main() starts tests. By default it runs all testcases in all 
-'' testcontainers ordered by name and prints the result to the console.
+'' The static procedure Test.Main() starts tests. By default it runs all testmethods in all 
+'' testmodules ordered by name and prints the result to the console.
 '' 
 '' The optional string Tests ca be used to define a TestSuite which can be used to choose any 
-'' combination of testcontainers and testcases, separated by comma.
+'' combination of testmodule and testmethod, separated by comma.
 '' 
-'' A testcontainer is a special class with the ending test. It must contain at minimum one testcase. 
+'' A testmodule is a special class with the ending test. It must contain at minimum one testmethod. 
 '' 
-'' A test case is a public sub in a test container whose name is not 
+'' A testmethod is a public sub in a testmodule whose name is not 
 '' "_Setup", "_Teardown", "_SetupEach" or "_TeardownEach".
 '' 
-'' A testcontainer can be choosen by it's name, a testcase by it's testcontainers' 
-'' name followed by a dot and the name of the testcase.
+'' A testmodule can be choosen by it's name, a testmethod by it's testmodules' 
+'' name followed by a dot and the name of the testmethod.
 '' 
 '' Example: Test.Main("TestWWW, TestMail.Send, TestMail.Receive") 
 '' 
-'' runs all testcases in TestWWW and the testcases Send and Receive of the testcontainer TestMail.
+'' runs all testmethods in TestWWW and the testmethods Send and Receive of the testmodule TestMail.
 '' 
 '' Public methods called "_Setup", "_Teardown", "_SetupEach" or "_TeardownEach" can be used to create a testfixture, 
 '' which defines a special environment for the tests.
@@ -147,7 +147,7 @@ Private Function FindBonus(Tests As TestAssertion[], Prefix As String) As Collec
 
 End
 
-'' Run all tests, optional limited by Container or TestCaseName. Track contains .
+'' Run all tests, optional limited by module or method name.
 
 Private Function RunTests(Tests As String)
 
@@ -158,7 +158,7 @@ Private Function RunTests(Tests As String)
 
     aTestCommands = TestCommand.ParseCommands(Tests)
 
-    For Each sTestModule In GetAllTestContainers(aTestCommands)
+    For Each sTestModule In GetAllTestModules(aTestCommands)
         TestModule = Class.Load(sTestModule)
         Suite.AddAllTestCases(TestModule, aTestCommands)
     Next
@@ -169,7 +169,7 @@ Private Function RunTests(Tests As String)
 
 End
 
-Private Function GetAllTestContainers(Optional Commands As TestCommand[]) As String[]
+Private Function GetAllTestModules(Optional Commands As TestCommand[]) As String[]
 
     Dim TestClass As Class
     Dim TestModuleNames As New String[]
@@ -228,7 +228,7 @@ Public Function GetAllTests() As Collection
   Dim TestModule As Class
   Dim Alltests As New Collection
 
-  sModules = GetAllTestContainers(Null)
+  sModules = GetAllTestModules(Null)
   
   For Each sModule In sModules
       TestModule = Class.Load(sModule)

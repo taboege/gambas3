@@ -9,6 +9,8 @@ Public Sub ParseTestCommands()
     Dim sGot As String
     Dim iGot As Integer
 
+    Test.Plan(9)
+
     'Three TestModules
     sCommand = "Bing, Bong, Bung"
     Commands = TestCommand.ParseCommands(sCommand)
@@ -64,7 +66,9 @@ End
 Public Sub ReflectTest()
 
     Dim tests As Collection
-
+    
+    Test.Plan(6)
+    
     tests = Test.GetAllTests()
 
     'count of all testmodules, if it fails we created a new one and we have to count new

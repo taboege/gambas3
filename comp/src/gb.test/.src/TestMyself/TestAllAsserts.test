@@ -30,7 +30,7 @@ Public Sub TestAssertEqualsLong()
 
     l = 555555555555555555
 
-    Assert.Equals(555555555555555555, l, "Check with two long")
+    Assert.Equals(555555555555555555, l, "Check long")
 
 End
 

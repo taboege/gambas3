@@ -1,12 +1,9 @@
 ## To Do
 
 - Plan
-    > Plan does not work. It should define the  count of assertions in a subtest and if  defined ensure that all are executed
-    * [ ] Plan for subtests
+    > Plan works but only for assertions in testmodules. If a plan failes it has to be reported in the summary which is not the case at the moment
     * [ ] Plan for testmodules (as a constant?)
 - Parser parse subtests
-- Decide where Skip, SkipAll, Todo reside
-    > SkipAll is in Test, Skip in Assert, Todo in Assert. This is inconsistent, We have to decide where they should be.
 - Skip all
     > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
 - Plan selftests
@@ -14,11 +11,14 @@
 
 ## Work
 
-- Install gbt3 at Gambas installation
-    > gbt3 is compiled and installed by make but there is no symlink gbt3 > gbt3.gambas
+- Decide where Skip, SkipAll, Todo reside
+    > SkipAll is in Test, Skip in Assert, Todo in Assert. This is inconsistent, We have to decide where they should be.
+- Document Approximate and RelativeApproximate
 
 ## Done
 
+- Install gbt3 at Gambas installation
+    > gbt3 is compiled and installed by make but there is no symlink gbt3 > gbt3.gambas
 - Ensure TAP created according to  spec
     > Tested TAP via gbt3 and python tappy
 - gbt3 has to return exit status at the end

@@ -27,10 +27,6 @@ Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
     If $bIntendedFailure Then Result = Not Result
     $bIntendedFailure = False
 
-    ' Dim TheNext As TestAssertion
-    ' just for debug
-    'TheNext = Test._Next
-
     Test._Next.Ok = Result
     Test._Next.Description = Description
     bRes = Test._Printer.Assert(Test._Next).Ok
