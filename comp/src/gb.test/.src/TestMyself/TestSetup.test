@@ -1,36 +1,36 @@
 ' Gambas test file
 
-'Plan is one more because Test in TeardownEach is counted twice!
+'Plan is one more because Test in _TeardownEach is counted twice!
 
 Private $SetupIsDone As Boolean
 Private $EachSetupIsDone As Boolean
 
-Public Sub Setup()
+Public Sub _Setup()
 
     $SetupIsDone = True
-    Test.Note("Setup TestModule")
+    Test.Note("_Setup TestModule")
 
 End
 
-Public Sub Teardown()
+Public Sub _Teardown()
 
     If Not $SetupIsDone Then
-        ' will bail out if TestSetup failed
-        Error.Raise("TestSetup failed: Setup was not executed correctly.")
+        ' will bail out if Test_Setup failed
+        Error.Raise("Test_Setup failed: _Setup was not executed correctly.")
     Endif
     Test.Note("Teardown TestModule")
 
 End
 
-Public Sub SetupEach()
+Public Sub _SetupEach()
 
     Assert.NotOk($EachSetupIsDone, "Check if each was not setup.")
     $EachSetupIsDone = True
-    Test.Note("Setup Each")
+    Test.Note("_Setup Each")
 
 End
 
-Public Sub TeardownEach()
+Public Sub _TeardownEach()
 
     Assert.Ok($EachSetupIsDone, "Each setup done")
     Test.Note("Teardown Each")

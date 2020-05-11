@@ -1,6 +1,9 @@
 ' Gambas module file
 
-''' Assertions which print TAP.
+''' This module extends the Assert instruction, which checks
+''' that Expression is TRUE, and if the Expression is FALSE, 
+''' an uncatchable "Assertion failed" error is raised, the 
+''' PRINT or ERROR instruction is executed, and the program stops immediately.
 
 Export
 
@@ -23,10 +26,6 @@ Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
 
     If $bIntendedFailure Then Result = Not Result
     $bIntendedFailure = False
-
-    ' Dim TheNext As TestAssertion
-    ' just for debug
-    'TheNext = Test._Next
 
     Test._Next.Ok = Result
     Test._Next.Description = Description

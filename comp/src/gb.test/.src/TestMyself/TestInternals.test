@@ -1,7 +1,5 @@
 ' Gambas test file
 
-' Gambas test module file
-
 '' P
 
 Public Sub ParseTestCommands()
@@ -10,19 +8,21 @@ Public Sub ParseTestCommands()
     Dim Commands As TestCommand[]
     Dim sGot As String
     Dim iGot As Integer
-    
+
+    Test.Plan(9)
+
     'Three TestModules
     sCommand = "Bing, Bong, Bung"
     Commands = TestCommand.ParseCommands(sCommand)
     sGot = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
-    
+
     Assert.Equals(sGot, "BingBongBung", "ParseCommands: Three testmodules")
-    
+
     'Test testmodules sort
     sCommand = "Bing,Bung,Bong"
     Commands = TestCommand.ParseCommands(sCommand)
     sGot = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
-    
+
     Assert.Equals(sGot, "BingBongBung", "ParseCommands: Testmodules have to be sorted")
 
     'Three testmodules, one with three methods
@@ -30,7 +30,7 @@ Public Sub ParseTestCommands()
     Commands = TestCommand.ParseCommands(sCommand)
     sGot = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
     Assert.Equals(sGot, "BingBongBung", "ParseCommands: Three testmodules, one with three methods")
-    
+
     'Methods name sort
     sGot = Commands[1].Methods.Join()
     Assert.Equals(sGot, "A,B,C", "ParseCommands: Methods name sort")
@@ -57,5 +57,28 @@ Public Sub ParseTestCommands()
 
     sGot = Commands[2].Methods[0]
     Assert.Equals(sGot, "U", "ParseCommands: Tipsy programmer 4")
+
+End
+
+'' Tests the ability to return all tests
+'' in the project as a collection
+
+Public Sub ReflectTest()
+
+    Dim tests As Collection
+    
+    Test.Plan(6)
+    
+    tests = Test.GetAllTests()
+
+    'count of all testmodules, if it fails we created a new one and we have to count new
+    Assert.Equals(tests.Count, 10, "number of all testmodules")
+    
+    'count of all testmethods, if it fails we created a new one and we have to count new
+    Assert.Equals(tests["TestAllAsserts"].Count, 13, "count of all testmethods in TestAllAsserts")
+    Assert.Equals(tests["TestBailout"].Count, 1, "count of all testmethods in TestBailout")
+    Assert.Equals(tests["TestCrashes"].Count, 2, "count of all testmethods in TestCrashes")
+    Assert.Equals(tests["TestElse"].Count, 3, "count of all testmethods in TestElse")
+    Assert.Equals(tests["TestEmpty"].Count, 0, "count of all testmethods in TestEmpty")
 
 End
