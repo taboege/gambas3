@@ -773,7 +773,7 @@ int SYSTRAY_event_filter(XEvent *e)
 			destroy_notify(ev.xdestroywindow);
 			break;
 		case ClientMessage:
-			LOG_TRACE(("ClientMessage(from 0x%x?)\n", ev.xclient.window));
+			PRINT_LOG(("ClientMessage(from 0x%x?)\n", ev.xclient.window));
 			if (client_message(ev.xclient))
 				return 1;
 			break;
@@ -896,8 +896,10 @@ int remote_main(int argc, char **argv)
 #endif
 
 /* main() */
-void SYSTRAY_init(Display *display, Window window)
+void SYSTRAY_init(Display *display, Window window, uint bg)
 {
+	XWindowAttributes xwa;
+	XColor color;
 	/* Read settings */
 	tray_init();
 
@@ -921,6 +923,14 @@ void SYSTRAY_init(Display *display, Window window)
 	else 
 		LOG_TRACE(("Opened dpy %p\n", tray_data.dpy));*/
 	tray_data.dpy = display;
+	
+	color.red = ((bg >> 16) & 0xFF) << 8;
+	color.green = ((bg >> 8) & 0xFF) << 8;
+	color.blue = (bg & 0xFF) << 8;
+	XGetWindowAttributes(tray_data.dpy, window, &xwa);
+	XAllocColor(display, DefaultColormapOfScreen(xwa.screen), &color);
+	
+	tray_data.bg = color.pixel;
 
 #ifdef ENABLE_GRACEFUL_EXIT_HACK
 	if ((async_dpy = XOpenDisplay(settings.display_str)) == NULL) 

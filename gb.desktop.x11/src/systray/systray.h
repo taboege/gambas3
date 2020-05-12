@@ -35,7 +35,7 @@ typedef
 
 //#define DEBUG
 
-void SYSTRAY_init(Display *display, Window window);
+void SYSTRAY_init(Display *display, Window window, uint bg);
 void SYSTRAY_exit();
 int SYSTRAY_event_filter(XEvent *ev);
 int SYSTRAY_get_count();
