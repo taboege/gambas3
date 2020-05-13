@@ -115,7 +115,7 @@ Public Function AddAllTestCases(TestModule As Class, Commands As TestCommand[])
     asTests = GetTestsFromTestModule(TestModule)
     asTests.Sort
 
-    Command = TestCommand.Find(Commands, TestModule.Name)
+    Command = TestCommand._Find(Commands, TestModule.Name)
     'If there was no Command then Command is Null
     Try MethodCounts = Command.Methods.Count
 

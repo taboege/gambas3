@@ -1,13 +1,22 @@
 ' Gambas module file
 
-''' Run tests, parse output and collect statistics.
+''' Lists tests, Run tests, parse output and collect statistics.
 
 Export
 
 Private $hParser As TapParser
 Private $hStats As TestStats
 
-Public Sub RunTests(Project As String, Optional Tests As String)
+'' Returns all tests in a project given by path
+Public Sub List(Project As String) As TestCommand[]
+
+  'TODO: Get the tests of a project and return them
+
+End
+
+'' Runs Tests in a project given by path
+
+Public Sub Run(Project As String, Optional Tests As String)
 
     Dim hProc As Process
 

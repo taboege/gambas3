@@ -1,8 +1,8 @@
 ' Gambas class file
 
-''' Helper class to split a string containing names of testmodules and testmethods into TestCommands.
-''' Does not check validity of symbols or if the symbols exist.
+''' TestCommand stores the name of a testmodule and testmethods to be executed.
 
+Export
 Create Static
 
 '' Name of the testmodule to be called
@@ -13,7 +13,7 @@ Public Methods As New String[]
 
 
 '' Finds the Command for the TestModule with name TestModuleName
-Static Public Function Find(Commands As TestCommand[], TestModuleName As String) As TestCommand
+Static Public Function _Find(Commands As TestCommand[], TestModuleName As String) As TestCommand
 
     Dim Command As TestCommand
 
