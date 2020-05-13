@@ -66,19 +66,30 @@ End
 Public Sub ReflectTest()
 
     Dim tests As Collection
-    
-    Test.Plan(6)
-    
-    tests = Test.GetAllTests()
+
+    Test.Plan(7)
+
+    tests = Test.AllTestsCollection()
 
     'count of all testmodules, if it fails we created a new one and we have to count new
     Assert.Equals(tests.Count, 10, "number of all testmodules")
-    
+
     'count of all testmethods, if it fails we created a new one and we have to count new
     Assert.Equals(tests["TestAllAsserts"].Count, 13, "count of all testmethods in TestAllAsserts")
     Assert.Equals(tests["TestBailout"].Count, 1, "count of all testmethods in TestBailout")
     Assert.Equals(tests["TestCrashes"].Count, 2, "count of all testmethods in TestCrashes")
     Assert.Equals(tests["TestElse"].Count, 3, "count of all testmethods in TestElse")
     Assert.Equals(tests["TestEmpty"].Count, 0, "count of all testmethods in TestEmpty")
+    Assert.Equals(tests["TestInternals"].Count, 3, "count of all testmethods in TestInternals")
+
+End
+
+'' test the ability to create a json string with my own tests
+Public Sub ReflectTestsJson()
+
+    ' These have to be adjusted when tests change
+    Dim tests As String = "{\"TestAllAsserts\":[\"TestLike\",\"TestNote\",\"TestAssert\",\"TestAssertEmpty\",\"TestAssertError\",\"TestAssertNotNull\",\"TestTodoErrorCode\",\"TestAssertErrorCode\",\"TestAssertEqualsDate\",\"TestAssertEqualsLong\",\"TestAssertEqualsFloat\",\"TestAssertEqualsObject\",\"TestAssertEqualsString\"],\"TestBailout\":[\"TestBailout\"],\"TestCrashes\":[\"TestDoACrash\",\"TestErrorTwo\"],\"TestElse\":[\"TestNote\",\"TestNoMessage\",\"TestNoMessageInbetween\"],\"TestEmpty\":[],\"TestError\":[\"TestError\"],\"TestFailures\":[\"TestError\",\"TestLongFailure\",\"TestEqualsFailure\",\"TestStringFailure\",\"TestLongTypeMismatchFailure\"],\"TestInternals\":[\"ReflectTest\",\"ReflectTestsJson\",\"ParseTestCommands\"],\"TestSetup\":[\"TestFirst\",\"NameOfMethodDoesNotStartWithTest\"],\"TestSummary\":[\"DoSkip\",\"DoTodo\",\"DoOneFailure\",\"DoSomeAsserts\"]}"
+
+    Assert.Equals(Test.AllTestsJson(), tests, "All Test names as Json")
 
 End
