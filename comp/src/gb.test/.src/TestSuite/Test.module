@@ -44,6 +44,11 @@ Public Sub Main(Optional Tests As String)
         Goto TheEnd
     Endif
 
+    If Tests = "*" Then
+        'triggers all tests
+        Tests = Null
+    Endif
+
     Test._Reset() ' only if you run this Main multiple times per process, which you shouldn't
     RunTests(Tests)
     PrintSummary()
