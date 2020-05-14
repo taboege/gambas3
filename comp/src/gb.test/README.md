@@ -2,7 +2,7 @@
 
 A Gambas component for unittesting and test-driven programming. With this component you can develop software in a test-driven matter (write test first, program functionality afterwards) and you are able to ensure that on refactoring the desired results of your code stays the same.
 
-Tests are output as [Tap](https://testanything.org/) so that they can be displayed, analyzed or viewed with any [Tap consumer](https://testanything.org/consumers.html). As each output containes a summary at the end  with the string "PASSED" or "FAILED" at the last line you can even view the console output to decide whether the test has been successful or not.
+Tests are output as [Tap](https://testanything.org/) so that they can be displayed, analyzed or viewed with any [Tap consumer](https://testanything.org/consumers.html). As each output includes a summary at the end  with the string "PASSED" or "FAILED" at the last line you can even view the console output to decide whether the test has been successful or not.
 
 ## How it works
 
