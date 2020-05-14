@@ -8,7 +8,8 @@ Private Const CURRENT_TESTSUITE_NAME As String = "[current]"
 Private $CurrentTestSuite As String
 
 Public Sub _new()
-
+  
+  Project.Compile()
   $MySettings = New Settings(Project.Dir &/ ".tests")
   $Tests = TestRunner.List(Project.Dir)
   
