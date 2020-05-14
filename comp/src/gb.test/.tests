@@ -1,0 +1,9 @@
+[General]
+CurrentTests="TestCrashes"
+CurrentTestsuite="43651952-d3ea-4a54-8ed2-648fef82dc49"
+
+[Testsuites]
+43651952-d3ea-4a54-8ed2-648fef82dc49="TestCrashes"
+All good tests="TestAllAsserts, TestCrashes, TestElse, TestError, TestFailures, TestInternals, TestSetup, TestSummary.DoSkip, TestSummary.DoSomeAsserts, TestSummary.DoTodo"
+Will Bail Out!!="TestBailout"
+

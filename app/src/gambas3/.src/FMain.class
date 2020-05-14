@@ -1423,6 +1423,8 @@ Public Sub Action_Activate((Key) As String) As Boolean
       Project.Run(False)
     Case "test"
       Project.Test()
+    Case "testdesign"
+      FTestSuite.ShowDialog()
     Case "pause"
       Design.Pause
     Case "stop"
