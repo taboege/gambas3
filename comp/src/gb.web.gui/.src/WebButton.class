@@ -85,14 +85,16 @@ Public Sub _BeforeRender()
   Dim vSave As Variant
   
   Print "<div"; Me._GetClassId(); 
-  If $bImmediate Then
-    Print " onclick=\"";
-    vSave = WebForm._BeginJavascript()
-    Raise Click
-    WebForm._EndJavascript(vSave)
-    Print "\"";
-  Else
-    Print Me._GetEventJS("onclick", "click");
+  If Me.Enabled Then
+    If $bImmediate Then
+      Print " onclick=\"";
+      vSave = WebForm._BeginJavascript()
+      Raise Click
+      WebForm._EndJavascript(vSave)
+      Print "\"";
+    Else
+      Print Me._GetEventJS("onclick", "click");
+    Endif
   Endif
   
   Me._RenderStyleSheet()
