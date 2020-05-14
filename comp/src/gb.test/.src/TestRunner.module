@@ -23,7 +23,7 @@ End
 
 '' Runs Tests in a project given by path
 
-Public Sub Run(Project As String, Optional Tests As String)
+Public Sub Run(Project As String, Optional Tests As String) As TestStats
 
     Dim hProc As Process
 
@@ -45,6 +45,7 @@ Public Sub Run(Project As String, Optional Tests As String)
         .Delta = .Planned - .Run
         .Success = .ExitCode = 0 And .Planned > 0 And .Run = .Planned And .Failed = 0
     End With
+    Return $hStats
 
 End
 
