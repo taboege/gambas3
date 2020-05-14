@@ -10,7 +10,12 @@ Private $hStats As TestStats
 '' Returns all tests in a project given by path
 Public Sub List(Project As String) As TestCommand[]
 
-  'TODO: Get the tests of a project and return them
+    Dim sTests As String
+    
+    'triggers gb.test inside a project to inspect 
+    'the project and return all tests inside as string
+    Shell "/usr/bin/gbx3 -T '" & Test._TRIG_GETTESTS & "' " & Project To sTests
+    Return TestCommand.FromString(sTests)
 
 End
 
