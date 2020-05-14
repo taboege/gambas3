@@ -111,7 +111,7 @@ BEGIN_METHOD(OpenSSL_Pbkdf2, GB_STRING password; GB_STRING salt; GB_LONG iterati
 		GB.Error("Invalid Parameter: method not a supported digest");
 		return;
 	}
-	memset(hash, 0, lKey));
+	memset(hash, 0, lKey);
 	ret = PKCS5_PBKDF2_HMAC((const char *) STRING(password), LENGTH(password), (const unsigned char *) STRING(salt),
 				LENGTH(salt), (int) VARG(iterations), emethod, lKey, (unsigned char *) hash);
 	if (ret == 0) {
