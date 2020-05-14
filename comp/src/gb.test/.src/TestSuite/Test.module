@@ -12,26 +12,25 @@ Property _Next As TestAssertion
 Private $hPrinter As New TapPrinter
 Private $hNext As TestAssertion
 
-
-'' The static procedure Test.Main() starts tests. By default it runs all testmethods in all 
+'' The static procedure Test.Main() starts tests. By default it runs all testmethods in all
 '' testmodules ordered by name and prints the result to the console.
-'' 
-'' The optional string Tests ca be used to define a TestSuite which can be used to choose any 
+''
+'' The optional string Tests ca be used to define a TestSuite which can be used to choose any
 '' combination of testmodule and testmethod, separated by comma.
-'' 
-'' A testmodule is a special class with the ending test. It must contain at minimum one testmethod. 
-'' 
-'' A testmethod is a public sub in a testmodule whose name is not 
+''
+'' A testmodule is a special class with the ending test. It must contain at minimum one testmethod.
+''
+'' A testmethod is a public sub in a testmodule whose name is not
 '' "_Setup", "_Teardown", "_SetupEach" or "_TeardownEach".
-'' 
-'' A testmodule can be choosen by it's name, a testmethod by it's testmodules' 
+''
+'' A testmodule can be choosen by it's name, a testmethod by it's testmodules'
 '' name followed by a dot and the name of the testmethod.
-'' 
-'' Example: Test.Main("TestWWW, TestMail.Send, TestMail.Receive") 
-'' 
+''
+'' Example: Test.Main("TestWWW, TestMail.Send, TestMail.Receive")
+''
 '' runs all testmethods in TestWWW and the testmethods Send and Receive of the testmodule TestMail.
-'' 
-'' Public methods called "_Setup", "_Teardown", "_SetupEach" or "_TeardownEach" can be used to create a testfixture, 
+''
+'' Public methods called "_Setup", "_Teardown", "_SetupEach" or "_TeardownEach" can be used to create a testfixture,
 '' which defines a special environment for the tests.
 
 Public Sub Main(Optional Tests As String)
@@ -51,12 +50,10 @@ Private Sub PrintSummary()
         If .TestsRun <> .Plan Then Test.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
         Test.Note(gb.Lf)
 
-        
         ShowTestCollection(("&1 skipped:"), FindSkips(.Summary.Subtests, ""))
         ShowTestCollection(("&1 todo:"), FindTodos(.Summary.Subtests, ""))
         ShowTestCollection(("&1 bonus:"), FindBonus(.Summary.Subtests, ""))
 
-        
         If Not .Summary.Success Then ShowTestCollection(("&1 tests failed:"), FindFailures(.Summary.Subtests, ""))
         Test.Note(IIf(.Summary.Success, "PASSED", "FAILED"))
     End With
@@ -218,24 +215,47 @@ Catch
 
 End
 
-'' Returns an collection of the testmodules and their testmethods. 
-'' Key is the name of the testmodule, Value is an array with the names of the testmethods it contains
+'' Returns an collection of the testmodules and their testmethods.
+'' Key is the name of the testmodule, Value is a string array with the names of the testmethods it contains
 
-Public Function GetAllTests() As Collection
+Public Function AllTestsCollection() As Collection
 
-  Dim sModules As String[]
-  Dim sModule As String
-  Dim TestModule As Class
-  Dim Alltests As New Collection
+    Dim sModules As String[]
+    Dim sModule As String
+    Dim TestModule As Class
+    Dim Alltests As New Collection
 
-  sModules = GetAllTestModules(Null)
-  
-  For Each sModule In sModules
-      TestModule = Class.Load(sModule)
-      Alltests.Add(TestSuite.GetTestsFromTestModule(Testmodule), TestModule.Name)
-  Next
-  
+    sModules = GetAllTestModules(Null)
+
+    For Each sModule In sModules
+        TestModule = Class.Load(sModule)
+        Alltests.Add(TestSuite.GetTestsFromTestModule(Testmodule), TestModule.Name)
+    Next
+
     Return Alltests
+
+End
+
+'' Returns a Json string containing the testmodules and their testmethods.
+
+Public Function AllTestsJson() As String
+
+    Dim tests As Collection
+    Dim asTests As String[]
+    Dim asLines As New String[]
+    Dim sBuf As String
+
+    tests = AllTestsCollection()
+
+    For Each tests
+        sBuf = "\"" & tests.Key & "\":"
+        asTests = tests[tests.Key]
+        sBuf &= "[" & asTests.Join(",", "\"") & "]"
+        asLines.Add(sBuf)
+    Next
+
+    
+    Return "{" & asLines.Join(",") & "}"
 
 End
 
@@ -243,57 +263,86 @@ End
 
 '' Prints "Bail out!" and stops all testing immediately.
 Public Sub BailOut(Optional Comment As String)
+
     $hPrinter.BailOut(Comment)
     Quit 1
+
 End
 '' Synonym for Note, prints Comment with leading #
+
 Public Sub Diagnostic(Comment As String)
+
     $hPrinter.Diagnostic(Comment)
+
 End
 '' Synonym for Diagnostic, prints Comment with leading #
+
 Public Sub Note(Comment As String)
+
     $hPrinter.Note(Comment)
+
 End
 '' Prints Line to Stdout
+
 Public Sub _Print({Line} As String)
+
     $hPrinter.Print({Line})
+
 End
 
 Private Function _Printer_Read() As TapPrinter
+
     Return $hPrinter
+
 End
 
 Private Function _Finished_Read() As Boolean
+
     Return $hPrinter.Session.Finished
+
 End
 
 Public Sub _Reset()
+
     $hPrinter = New TapPrinter As "Printer"
+
 End
 
 Private Function _Next_Read() As TestAssertion
+
     If $hNext = Null Then
         $hNext = New TestAssertion
     Endif
     Return $hNext
+
 End
 
 Private Sub _Next_Write(Value As TestAssertion)
+
     $hNext = Value
+
 End
 
 Public Sub _Subtest(Description As String, Optional Tests As Integer, Optional Comment As String)
+
     Test._Printer.Subtest(Description, Tests, Comment)
+
 End
 
 Public Sub Plan(Tests As Integer, Optional Comment As String)
+
     Test._Printer.Plan(Tests, Comment)
+
 End
 
 Public Sub SkipAll(Optional Comment As String)
+
     Test._Printer.SkipAll(Comment)
+
 End
 
 Public Sub _Finish()
+
     Test._Printer.Finish()
+
 End
