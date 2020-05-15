@@ -190,6 +190,7 @@ trash                   [breeze*!16]places/user-trash;places/user-trash
 undo                    actions/edit-undo
 unindent                actions/format-indent-less
 unlock                  actions/object-unlocked
+unselect                actions/edit-select-none
 up                      actions/go-up
 upload                  [breeze*]actions/cloud-upload
 user                    [breeze*]actions/user-identity;stock/stock_person;status/avatar-default

@@ -953,6 +953,8 @@ Private Sub FillMenu()
   
   If IsBookmarkVisible() Then 
   
+    $hBookmarkList.Load()
+  
     mnuBookmark = New Menu(mnuPopup)
     mnuBookmark.Name = "mnuBookmark"
     mnuBookmark.Text = ("Bookmarks")
