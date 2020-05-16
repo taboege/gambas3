@@ -75,6 +75,7 @@ Public Sub _new()
   $hView.Name = Me.Name & ":gridview"
   $hView.Rows.H = GetDefaultItemHeight()
   $hView.Padding = Desktop.Scale \ 2
+  '$hView.ShowCursor = True
   
   Me.Proxy = $hView
   
@@ -735,6 +736,8 @@ Public Sub GridView_MouseDown()
   Dim iRow As Integer = $hView.RowAt(Mouse.Y)
   Dim hItem As _TreeView_Item = RowToItem(iRow)
   Dim X As Integer
+  Dim iFrom As Integer
+  Dim bSelect As Boolean
 
   If Not hItem Then Return
 
@@ -772,8 +775,20 @@ Public Sub GridView_MouseDown()
     Endif
     
     If Mouse.X >= X + $iDepthW \ 8 And If Mouse.X < X + $iDepthW - $iDepthW \ 8 Then
-      hItem.Selected = Not hItem.Selected
+      iFrom = $hView.Row
+      Debug iFrom;; Mouse.Shift
+      If Mouse.Shift And If iFrom >= 0 Then
+        bSelect = RowToItem(iFrom).Selected
+        While iFrom <> iRow
+          iFrom += Sgn(iRow - iFrom)
+          RowToItem(iFrom).Selected = bSelect
+        Wend
+      Else
+        hItem.Selected = Not hItem.Selected
+      Endif
     Endif
+    
+    $hView.Row = iRow
     
   Endif  
   
@@ -1766,9 +1781,10 @@ End
 
 Private Sub ShowCheck_Write(Value As Boolean)
 
+  If $bShowCheck = Value Then Return
   $bShowCheck = Value
   $hView._DoNotDrawSelection = Value
-  $hView._NoMouse = True
+  $hView._NoMouse = Value
   $hView.Refresh
 
 End

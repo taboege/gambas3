@@ -7,7 +7,7 @@ Component=gb.image
 Component=gb.gui
 Arguments=[["-style=oxygen"],["-style=qtcurve"]]
 CurrentArgument=0
-Environment="GB_GUI=gb.qt5\nLIBOVERLAY_SCROLLBAR=0\nGB_REVERSE=1"
+Environment="GB_JIT_DEBUG=1\nGB_GUI=gb.qt5\nLIBOVERLAY_SCROLLBAR=0"
 TabSize=2
 Language=fr
 Type=Component
