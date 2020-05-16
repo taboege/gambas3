@@ -173,7 +173,11 @@ End
 
 Public Sub Form_Arrange()
 
-  panOpen.Move(Me.ClientW - panOpen.W - Desktop.Scale, Me.ClientH - panOpen.H - Desktop.Scale)
+  If System.RightToLeft Then
+    panOpen.Move(Desktop.Scale, Me.ClientH - panOpen.H - Desktop.Scale)
+  Else
+    panOpen.Move(Me.ClientW - panOpen.W - Desktop.Scale, Me.ClientH - panOpen.H - Desktop.Scale)
+  Endif
   panOpen.Raise
 
 End
