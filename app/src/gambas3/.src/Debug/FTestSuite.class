@@ -2,24 +2,38 @@
 
 Private $Tests As TestCommand[]
 Private $MySettings As Settings
-Private $Backuptests As String
-Public Const CURRENT_TESTSUITE_KEY As String = "43651952-d3ea-4a54-8ed2-648fef82dc49"
-Private Const CURRENT_TESTSUITE_NAME As String = "[current]"
-Private $CurrentTestSuite As String
+Private $sBackuptests As String
+Private Const CURRENT_TESTSUITE_KEY As String = "@Current"
+Public Const IDENT_CAR As String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ÀÁÂÃĂÄĀÅÆĆČÇÈÉÊĔËĒÌÍÎĬÏÐŁÑÒÓÔÕÖŐØŠÙÚÛÜŰÝÞßàáâãăäāåæćčçèéêĕëēìíîĭïðłñòóôõöőøšùúûüűýÿþ0123456789$#_+-.,:;?!~!\"§$%&/(){[]}=<>|'`^°€@ "
+Private $sCurrentTestSuiteCalled As String = "[" & ("current") & "]"
+Private $sCurrentTestSuite As String
 
 Public Sub _new()
-  
-  Project.Compile()
+
   $MySettings = New Settings(Project.Dir &/ ".tests")
   $Tests = TestRunner.List(Project.Dir)
-  
+
   'just for creation and debugging
   '$Tests = TestRunner.List("~/programming/gambas/gambas/comp/src/gb.test")
 
-  $CurrentTestSuite = CURRENT_TESTSUITE_KEY
+  $sCurrentTestSuite = CURRENT_TESTSUITE_KEY
 
+  'need to compile first
+  Project.Compile()
   FillTestSuites()
-  FillTree($MySettings["Testsuites" &/ $CurrentTestSuite])
+  FillTree(GetCurrentTests())
+
+End
+
+Private Function GetCurrentTests() As String
+
+  Return GetTestsFromSettings(CURRENT_TESTSUITE_KEY)
+
+End
+
+Private Function GetTestsFromSettings(TestSuite As String) As String
+
+  Return $MySettings["Testsuite " & Testsuite & "/Tests"]
 
 End
 
@@ -27,26 +41,39 @@ Private Sub FillTestSuites()
 
   Dim Testsuite As String
   Dim asBuf As New String[]
+  Dim sBuf As String
 
-  LVTestSuites.Clear
-  LVTestSuites.Add("*", "*")
-  LVTestSuites.Add(CURRENT_TESTSUITE_KEY, CURRENT_TESTSUITE_NAME)
-  LVTestSuites[CURRENT_TESTSUITE_KEY].Selected = True
+  lvwTestSuites.Clear
+  lvwTestSuites.Add("*", "*")
+  lvwTestSuites.Add(CURRENT_TESTSUITE_KEY, $sCurrentTestSuiteCalled)
+  lvwTestSuites[CURRENT_TESTSUITE_KEY].Selected = True
 
-  For Each Testsuite In $MySettings.keys["Testsuites"]
-    If Testsuite <> CURRENT_TESTSUITE_KEY Then
-      asBuf.Add(Testsuite)
+  For Each sBuf In $MySettings.Keys
+    If sBuf Begins "Testsuite " Then
+      Testsuite = Right(sBuf, Len(sBuf) - 10)
+
+      If IsNotValid(Testsuite, True) Then
+        Error.Raise(Subst(("Forbidden character in the name of a testsuite in &1. Please fix this file."), $MySettings.Path))
+      Endif
+
+      If Testsuite <> CURRENT_TESTSUITE_KEY Then
+        asBuf.Add(Testsuite)
+      Endif
     Endif
   Next
 
   asBuf.Sort
   For Each Testsuite In asBuf
-    LVTestSuites.Add(Testsuite, Testsuite)
+    lvwTestSuites.Add(Testsuite, Testsuite)
   Next
 
   If $MySettings["CurrentTestsuite"] Then
-    LVTestSuites[$MySettings["CurrentTestsuite"]].Selected = True
+    lvwTestSuites[$MySettings["CurrentTestsuite"]].Selected = True
   Endif
+
+Catch
+  Message.Error(Error.Text)
+  Me.Close
 
 End
 
@@ -57,8 +84,8 @@ Private Sub FillTree(Tests As String)
   Dim asSelected As New String[]
   Dim i As Integer
 
-  TreeTests.Clear
-  TreeTests.Selection.Clear
+  tvwTests.Clear
+  tvwTests.Selection.Clear
 
   asSelected = Split(Tests, ",")
 
@@ -66,27 +93,23 @@ Private Sub FillTree(Tests As String)
     asSelected[i] = Trim(asSelected[i])
   Next
 
-  'sort the other way round so that the last selected one is at the top
-  'asSelected.Sort(gb.Descent)
-
   For Each Command In $Tests
     sModule = Command.ModuleName
 
     If sKeyModule = Null Then
       sKeyModule = sModule
-      TreeTests.Add(sKeyModule, sModule)
+      tvwTests.Add(sKeyModule, sModule)
       sCur = sModule
       GoSub CHECK_SELECTED
     Else If sKeyModule <> sModule Then
-      TreeTests.Add(sModule, sModule, Null, Null, sKeyModule)
+      tvwTests.Add(sModule, sModule, Null, Null, sKeyModule)
       sKeyModule = sModule
       sCur = sModule
       GoSub CHECK_SELECTED
     Endif
 
     For Each sMethod In Command.Methods
-      'Debug "----------";; sMethod
-      TreeTests.Add(sModule & "." & sMethod, sMethod, Null, sKeyModule)
+      tvwTests.Add(sModule & "." & sMethod, sMethod, Null, sKeyModule)
       sCur = sModule & "." & sMethod
       GoSub CHECK_SELECTED
     Next
@@ -97,15 +120,13 @@ Private Sub FillTree(Tests As String)
 
 CHECK_SELECTED:
 
-  If TreeTests.MoveTo(sCur) = False Then
-    TreeTests.Item.Expanded = True
+  If tvwTests.MoveTo(sCur) = False Then
+    tvwTests.Item.Expanded = True
     If asSelected.Exist(sCur) Then
-      'TreeTests[sModule].Selected = True
-      'TreeTests.Key = sCur
-      TreeTests.Item.EnsureVisible()      
-      TreeTests.Item.Selected = True
+      tvwTests.Item.EnsureVisible()
+      tvwTests.Item.Selected = True
     Else
-      TreeTests.Item.Selected = False
+      tvwTests.Item.Selected = False
     Endif
 
   Endif
@@ -121,8 +142,8 @@ Private Sub FillSelected()
   Dim sTests As String
   Dim sKey As String
 
-  For Each sKey In TreeTests.Keys
-    If TreeTests[sKey].Selected = True Then
+  For Each sKey In tvwTests.Keys
+    If tvwTests[sKey].Selected = True Then
       asBuf.Add(sKey)
     Endif
   Next
@@ -137,42 +158,39 @@ Private Sub FillSelected()
     TxtSelected.Text = sTests
   Endif
 
-  'If $CurrentTestSuite = Null Then
-  '$CurrentTestSuite = CURRENT_TESTSUITE_KEY
-  'Endif
-
-  Debug "Store in ";; $CurrentTestSuite;; sTests
-  StoreTests($CurrentTestSuite, sTests)
+  StoreTests($sCurrentTestSuite, sTests)
 
 End
 
 Private Sub StoreTests(TestSuite As String, Tests As String)
 
-  $MySettings["CurrentTests"] = Tests
-  $MySettings["Testsuites" &/ TestSuite] = Tests
-  
+  Testsuite = Trim(Testsuite)
+  $MySettings["CurrentTestsuite"] = Testsuite
+  $MySettings["Testsuite " & TestSuite & "/Tests"] = Tests
+
   TxtSelected.Text = Tests
 
 End
 
-Public Sub TreeTests_Click()
+Public Sub tvwTests_Click()
 
-  $Backuptests = TxtSelected.Text
-  
+  $sBackuptests = TxtSelected.Text
+
   FillSelected()
-  
-  If Not LVTestSuites.Exist(CURRENT_TESTSUITE_KEY) Then
-    LVTestSuites.Add(CURRENT_TESTSUITE_KEY, CURRENT_TESTSUITE_NAME)
+
+  If Not lvwTestSuites.Exist(CURRENT_TESTSUITE_KEY) Then
+    lvwTestSuites.Add(CURRENT_TESTSUITE_KEY, $sCurrentTestSuiteCalled)
   Endif
-  LVTestSuites[CURRENT_TESTSUITE_KEY].Selected = True
+  lvwTestSuites[CURRENT_TESTSUITE_KEY].Selected = True
 
 End
 
 Public Sub Form_KeyPress()
 
+  'Maybe TODO: Ctrl-Z Ctrl-Y
   'ctrl-Z
   If Key.Control And If Key.Code = Key["z"] Then
-    FillTree($Backuptests)
+    FillTree($sBackuptests)
   Endif
 
   If Key.code = Key.Esc Then
@@ -181,61 +199,122 @@ Public Sub Form_KeyPress()
 
 End
 
-Public Sub BtSaveTestSuite_Click()
+Public Sub btnSave_Click()
 
-  If TxtNameTestSuite.Text Then
-    StoreTests(TxtNameTestSuite.Text, TxtSelected.Text)
-    $MySettings["CurrentTestsuite"] = TxtNameTestSuite.Text
+  Dim msg As String
+
+  If txtNameTestSuite.Text Then
+
+    If IsNotValid(txtNameTestSuite.Text) Then
+      msg = Subst(("There are forbidden characters in the name. Allowed characters are &1 and space."), GetAllowedCharsForHumans())
+      Message.Warning(msg)
+      Goto THE_END
+    Endif
+
+    If Trim(txtNameTestSuite.Text) = CURRENT_TESTSUITE_KEY Then
+      msg = Subst(("The name &1 is not allowed."), CURRENT_TESTSUITE_KEY)
+      Message.Warning(msg)
+      Goto THE_END
+    Endif
+
+    StoreTests(txtNameTestSuite.Text, TxtSelected.Text)
   Else
-    Message.Info("To store a testsuite you have to give a name.")
+    Message.Info(("To save a testsuite, you must specify a name."))
   Endif
   FillTestSuites()
-  TxtNameTestSuite.Text = Null
+  txtNameTestSuite.Text = Null
+
+THE_END:
 
 End
 
-Public Sub LVTestSuites_Click()
+Public Sub lvwTestSuites_Click()
 
   Dim Tests As String
-  
-  If LVTestSuites.Key Then
-    
-    $MySettings["CurrentTestsuite"] = LVTestSuites.Key
-    
-    If LVTestSuites.Key = "*" Then
+
+  If lvwTestSuites.Key Then
+
+    $MySettings["CurrentTestsuite"] = lvwTestSuites.Key
+
+    If lvwTestSuites.Key = "*" Then
       Tests = "*"
     Else
-      Tests = $MySettings["Testsuites" &/ LVTestSuites.Key] 
+      Tests = GetTestsFromSettings(lvwTestSuites.Key)
     Endif
-    
+
     FillTree(Tests)
-    
+
     'Name to store
-    If LVTestSuites.Key <> "*" And If LVTestSuites.Key <> CURRENT_TESTSUITE_KEY Then
-        TxtNameTestSuite.Text = LVTestSuites.Key
+    If lvwTestSuites.Key <> "*" And If lvwTestSuites.Key <> CURRENT_TESTSUITE_KEY Then
+      txtNameTestSuite.Text = lvwTestSuites.Key
     Else
-      TxtNameTestSuite.Text = Null
+      txtNameTestSuite.Text = Null
     Endif
   Endif
 
 End
 
-Public Sub TxtNameTestSuite_KeyPress()
+Public Sub txtNameTestSuite_KeyPress()
 
   If Key.Code = Key.Enter Or If Key.Code = Key.Return Then
-    BtSaveTestSuite_Click()
+    btnSave_Click()
   Endif
 
 End
 
-Public Sub LVTestSuites_KeyPress()
+Public Sub lvwTestSuites_KeyPress()
 
   If Key.Code = Key.Del Then
-    $MySettings["Testsuites" &/ LVTestSuites.Key] = Null
-    If $MySettings["CurrentTestsuite"] = LVTestSuites.Key Then
-      $MySettings["CurrentTestsuite"] = Null
+    'delete Testsuite
+    If lvwTestSuites.Key <> CURRENT_TESTSUITE_KEY And If lvwTestSuites.Key <> "*" Then
+      If $MySettings["Testsuite " & lvwTestSuites.Key & "/Tests"] Then
+        If Message.Question(Subst(("Do you really want to delete the testsuite &1?"), lvwTestSuites.Key), ("Cancel"), ("Yes")) = 2 Then
+          $MySettings["Testsuite " & lvwTestSuites.Key & "/Tests"] = Null
+          If $MySettings["CurrentTestsuite"] = lvwTestSuites.Key Then
+            $MySettings["CurrentTestsuite"] = Null
+          Endif
+          $MySettings.Save()
+          FillTestSuites
+        Endif
+      Endif
     Endif
-    FillTestSuites
   Endif
+
+  If Key.Code = Key.Enter Or If Key.Code = Key.Return Then
+    lvwTestSuites_Click()
+  Endif
+
+End
+
+Private Function IsNotValid(Name As String, Optional AllowSpecialChars As Boolean) As Boolean
+
+  Dim sChar As String
+  Dim i As Integer
+  Dim sAllowedChars As String
+
+  sAllowedChars = IDENT_CAR
+  If AllowSpecialChars = True Then
+    sAllowedChars &= "@*"
+  Endif
+
+  For i = 0 To Len(Name) - 1
+    sChar = Name[i]
+    If InStr(sAllowedChars, sChar) = 0 Then
+      Return True
+    Endif
+  Next
+
+End
+
+Private Function GetAllowedCharsForHumans() As String
+
+  Dim sBuf As String
+  Dim i As Integer
+
+  For i = 1 To String.Len(IDENT_CAR) Step 60
+    sbuf &= String.Mid(IDENT_CAR, i, 60) & gb.lf
+  Next
+
+  Return sbuf
 
 End

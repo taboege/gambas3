@@ -12,8 +12,8 @@ Property _Next As TestAssertion
 Private $hPrinter As New TapPrinter
 Private $hNext As TestAssertion
 
-'' Trigger string to get all tests as string
-Public Const _TRIG_GETTESTS As String = "c99f9d16-f4f3-4a42-93b3-cd567873d4b8"
+'' Trigger gb.test to get all tests as string. Used to get all test names on the commandline with gbx3 -T "@AllTestNames" /path/to/project
+Public Const _TRIG_GETTESTS As String = "@AllTestNames"
 
 
 '' The static procedure Test.Main() starts tests. By default it runs all testmethods in all

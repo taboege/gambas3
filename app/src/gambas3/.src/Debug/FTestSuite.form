@@ -4,58 +4,60 @@
   MoveScaled(0,0,148,98)
   Text = ("Choose Tests to be run with F4")
   Arrangement = Arrange.Vertical
-  { HSplit1 HSplit
+  { splSelectTests HSplit
     MoveScaled(1,1,116,62)
     Expand = True
-    { VBox1 VBox
+    { panTestSuites VBox
       MoveScaled(2,6,31,41)
-      { Label1 Label
+      { lblSuites Label
         MoveScaled(1,1,24,4)
         Text = ("Test Suites")
       }
-      { LVTestSuites ListView
+      { lvwTestSuites ListView
         MoveScaled(1,7,29,27)
         Expand = True
       }
     }
-    { VBox3 VBox
+    { panSelectTests VBox
       MoveScaled(43,11,56,31)
       Expand = True
-      { Label4 Label
+      { lblSelect Label
         MoveScaled(2,0,24,4)
         Text = ("Select tests")
       }
-      { TreeTests TreeView
+      { tvwTests TreeView
         MoveScaled(2,10,46,16)
+        NoTabFocus = True
         Expand = True
         Mode = Select.Multiple
       }
     }
   }
-  { VBox2 VBox
+  { panSelected VBox
     MoveScaled(3,68,115,21)
-    { Label2 Label
+    { lblSelected Label
       MoveScaled(1,0,35,4)
       Text = ("Selected tests (current testsuite)")
     }
     { txtSelected TextArea
       MoveScaled(1,4,112,11)
+      NoTabFocus = True
       Expand = True
       ReadOnly = True
       Wrap = True
     }
-    { HBox1 HBox
+    { panSave HBox
       MoveScaled(3,16,110,4)
       Spacing = True
       Invert = True
-      { BtSaveTestSuite Button
+      { btnSave Button
         MoveScaled(76,0,16,4)
         Text = ("Save")
       }
-      { TxtNameTestSuite TextBox
+      { txtNameTestSuite TextBox
         MoveScaled(51,0,24,4)
       }
-      { Label3 Label
+      { lblStoreas Label
         MoveScaled(7,0,43,4)
         Text = ("Store this testsuite as:")
         Alignment = Align.Right
