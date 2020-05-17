@@ -829,22 +829,24 @@ int main(int argc, char **argv)
 					"\nOptions:"
 					#if HAVE_GETOPT_LONG
 					"\n"
+					"  -h  --help                 display this help\n"
+					"  -L  --license              display license\n"
 					#if DO_PRELOADING
 					"  -p                         disable preloading\n"
 					#endif
 					"  -r  --root <directory>     gives the gambas installation directory\n"
+					"  -v                         verbose output\n"
 					"  -V  --version              display version\n"
-					"  -L  --license              display license\n"
-					"  -h  --help                 display this help\n"
 					#else
 					" (no long options on this system)\n"
+					"  -h                         display this help\n"
+					"  -L                         display license\n"
 					#if DO_PRELOADING
 					"  -p                         disable preloading\n"
 					#endif
 					"  -r <directory>             gives the gambas installation directory\n"
+					"  -v                         verbose output\n"
 					"  -V                         display version\n"
-					"  -L                         display license\n"
-					"  -h                         display this help\n"
 					#endif
 					"\n"
 					);
