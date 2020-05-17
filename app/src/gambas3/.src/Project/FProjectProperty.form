@@ -719,6 +719,7 @@
     { gvwStat GridView
       MoveScaled(3,4,62,25)
       Expand = True
+      Grid = False
       Padding = 4
     }
     { gvwVcInfo GridView
