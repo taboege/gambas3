@@ -1425,7 +1425,7 @@ Public Sub Action_Activate((Key) As String) As Boolean
       Project.Run(False)
     Case "test"
       Project.Test()
-    Case "testdesign"
+    Case "testsuites"
       FTestSuite.ShowDialog()
     Case "pause"
       Design.Pause
@@ -3155,5 +3155,6 @@ End
 Public Sub OnRefreshSources()
   
   Action["test"].Visible = Project.HasTest()
+  Action["testsuites"].Visible = Project.HasTest()
   
 End
