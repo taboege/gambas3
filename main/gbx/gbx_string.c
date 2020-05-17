@@ -393,7 +393,7 @@ int STRING_get_free_index(void)
 }
 
 
-void STRING_clear_cache(void)
+static void clear_cache(void)
 {
 	int i;
 
@@ -415,7 +415,7 @@ void STRING_clear_cache(void)
 
 void STRING_exit(void)
 {
-	STRING_clear_cache();
+	clear_cache();
 
 	#ifdef DEBUG_ME
 	fprintf(stderr, "STRING_exit\n");
