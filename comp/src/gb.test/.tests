@@ -12,7 +12,7 @@ Tests="TestCrashes"
 Tests="TestSummary"
 
 [Testsuite @Current]
-Tests="TestAllAsserts, TestElse, TestError, TestFailures, TestInternals, TestSetup, TestSummary.DoSkip, TestSummary.DoSomeAsserts, TestSummary.DoTodo"
+Tests="*"
 
 [Testsuite Good (these have to succed)]
 Tests="TestAllAsserts, TestElse, TestError, TestFailures, TestInternals, TestSetup, TestSummary.DoSkip, TestSummary.DoSomeAsserts, TestSummary.DoTodo"
