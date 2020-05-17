@@ -2633,7 +2633,7 @@ Public Sub ShowWatchResult(sStr As String)
     bError = True
   Endif
 
-  $hEditor.ShowMessageLabel(Html(sStr), If(bError, Highlight.Breakpoint, Highlight.CurrentLine))
+  $hEditor.ShowMessageLabel(Html(sStr), If(bError, Highlight.Breakpoint, Highlight.Normal))
 
 End
 

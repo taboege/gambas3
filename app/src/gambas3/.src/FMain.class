@@ -485,7 +485,7 @@ Public Sub mnuPopup_Show()
       Next
       mnuNewClass.Show
       mnuNewModule.Show
-      mnuNewTest.Visible = Project.HasTest
+      mnuNewTest.Show
       
     Endif
   
@@ -3150,3 +3150,8 @@ Public Sub btnWorkspaceProject_Click()
 
 End
 
+Public Sub OnRefreshSources()
+  
+  Action["test"].Visible = Project.HasTest()
+  
+End

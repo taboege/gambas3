@@ -223,9 +223,6 @@ Public UseInheritance As Boolean
 
 Private $bFileIsUnknown As Boolean
 
-' If test modules are visible
-Public Const HasTest As Boolean = True
-
 ' If GetFileIcon() has been called on an added file
 'Private $bLastAdded As Boolean
 
@@ -1599,10 +1596,17 @@ Public Sub RefreshRoot()
 
 End
 
+Private Sub OnRefreshSources()
+  
+  FMain.OnRefreshSources
+  FDebugButton.OnRefreshSources
+  
+End
+
 Private Sub RefreshSources()
 
   Dim hForm As Object
-  Dim sPath As Variant
+  Dim sPath As String
 
   Tree.RefreshSources
 
@@ -1618,7 +1622,8 @@ Private Sub RefreshSources()
   Next
 
   VersionControl.CheckPaths()
-
+  OnRefreshSources
+  
 End
 
 Public Sub FormatVersion(Optional bStripReleaseIfNull As Boolean) As String
@@ -2723,6 +2728,7 @@ Public Sub InsertSource(sName As String, sType As String, sDir As String, Option
   VersionControl.AddFile(sPath)
 
   Tree.Sources[sName] = sPath
+  OnRefreshSources
 
   If Not bNoRefresh Then Refresh
   If Not bNoOpen Then OpenFile(sPath)
@@ -4021,6 +4027,7 @@ Public Sub DeleteFile(sPath As String)
     Next
 
     Tree.Sources.Remove(File.Name(sPath))
+    OnRefreshSources
 
     If sName = Startup Then
       DefineStartup("")
@@ -4272,35 +4279,6 @@ End
 Public Sub RefreshKey(sKey As String, Optional sOld As String)
 
   Tree.RefreshKey(sKey, sOld)
-
-  ' If Not sKey Then Return
-  ' 
-  ' If Not ProjectTree.Exist(sKey) And If Not Exist(sKey) And If IsSourcePath(sKey) Then
-  '   sKey = FindForm(File.BaseName(sKey))
-  ' Endif
-  ' 
-  ' If Not sOld Then sOld = sKey
-  ' 
-  ' EnsureKey(sOld)
-  ' Try ProjectTree[sOld].Delete
-  ' If Error Then
-  '   If sOld <> sKey Then Return
-  ' Endif
-  ' 
-  ' If Not Exist(sKey) Then Return
-  ' 
-  ' If IsSourcePath(sKey) And If File.Ext(sKey) = "class" And If Not ExistForm(File.BaseName(sKey)) Then
-  '   RefreshInheritance
-  '   Return
-  ' Endif
-  ' 
-  ' If AddFile(File.Dir(sKey), File.Name(sKey), True) Then AddDir(sKey)
-  ' 'If IsDir(sKey) Then AddDir(sKey)
-  ' 
-  ' If sOld <> sKey And If Exist(sOld) Then
-  '   If AddFile(File.Dir(sOld), File.Name(sOld), True) Then AddDir(sOld)
-  '   'If IsDir(sOld) Then AddDir(sOld)
-  ' Endif
 
 End
 
@@ -6479,6 +6457,7 @@ Private Sub RenamePaths(sOld As String, sNew As String)
     Else
       Tree.Sources[File.Name(sOld)] = Null
       Tree.Sources[File.Name(sNew)] = sNew
+      OnRefreshSources
     Endif
   Endif
   
@@ -6606,5 +6585,11 @@ Public Sub GetUncompressedPath(sPath As String, Optional bActual As Boolean) As 
   Dim sUncPath As String = Project.Dir &/ ".hidden/.uncompressed" &/ Mid$(sPath, Len(Project.Dir) + 1)
   If bActual And If Not Exist(sUncPath) Then sUncPath = sPath
   Return sUncPath
+  
+End
+
+Public Sub HasTest() As Boolean
+  
+  Return Tree.HasTest()
   
 End

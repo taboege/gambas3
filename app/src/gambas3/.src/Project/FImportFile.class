@@ -21,7 +21,7 @@ Private Sub InitFilter()
   If Project.IsSourceDir($sDir) Then
     
     aFilter = ["*.module", ("Gambas modules"), "*.class", ("Gambas classes")]
-    If Project.HasTest Then aFilter.Insert(["*.test", ("Gambas test modules")])
+    aFilter.Insert(["*.test", ("Gambas test modules")])
     For Each hModule In CModule.All
       If Not hModule.Used Then Continue
       aFilter.Add("*." & hModule.Key)

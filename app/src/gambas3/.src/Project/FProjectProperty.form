@@ -122,7 +122,7 @@
     Border = True
     Index = 0
     Text = ("General")
-    Picture = Picture["icon:/medium/gambas"]
+    Picture = Picture["icon:/large/gambas"]
     { Panel1 HBox
       MoveScaled(1,0,84,8)
       Spacing = True
@@ -238,7 +238,7 @@
     }
     Index = 1
     Text = ("Information")
-    Picture = Picture["icon:/medium/info"]
+    Picture = Picture["icon:/large/info"]
     { Panel5 VBox
       MoveScaled(1,1,82,65)
       Expand = True
@@ -401,14 +401,14 @@
     }
     Index = 2
     Text = ("Components")
-    Picture = Picture["icon:/medium/component"]
+    Picture = Picture["icon:/large/component"]
     { choComponent ComponentChooser
       MoveScaled(6,9,67,37)
       Expand = True
     }
     Index = 3
     Text = ("Libraries")
-    Picture = Picture["icon:/medium/plugin"]
+    Picture = Picture["icon:/large/plugin"]
     { Label9 Label
       MoveScaled(1,1,26,3)
       Font = Font["Bold"]
@@ -482,7 +482,7 @@
     }
     Index = 4
     Text = ("Environment")
-    Picture = Picture["icon:/medium/select"]
+    Picture = Picture["icon:/large/attach"]
     { Panel3 Panel
       MoveScaled(9,9,69,42)
       Expand = True
@@ -519,7 +519,7 @@
     }
     Index = 5
     Text = ("Arguments")
-    Picture = Picture["icon:/medium/play"]
+    Picture = Picture["icon:/large/play"]
     { Panel4 Panel
       MoveScaled(1,2,81,60)
       Expand = True
@@ -569,7 +569,7 @@
     }
     Index = 6
     Text = ("Options")
-    Picture = Picture["icon:/medium/options"]
+    Picture = Picture["icon:/large/options"]
     { Panel6 VBox
       MoveScaled(0,0,86,60)
       Spacing = True
@@ -715,7 +715,7 @@
     }
     Index = 7
     Text = ("Statistics")
-    Picture = Picture["icon:/medium/monitor"]
+    Picture = Picture["icon:/large/monitor"]
     { gvwStat GridView
       MoveScaled(3,4,62,25)
       Expand = True

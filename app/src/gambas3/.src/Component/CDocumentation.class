@@ -908,10 +908,8 @@ Private Sub GetModule(sClass As String) As Object
   
   sPath = Project.FindPath(sClass & ".module")
   If sPath Then Return Project.LoadFile(sPath)
-  If Project.HasTest Then
-    sPath = Project.FindPath(sClass & ".test")
-    If sPath Then Return Project.LoadFile(sPath)
-  Endif
+  sPath = Project.FindPath(sClass & ".test")
+  If sPath Then Return Project.LoadFile(sPath)
   For Each sFamily In CFamily.List
     sPath = Project.FindPath(sClass & "." & sFamily)
     If sPath Then Return Project.LoadFile(sPath)

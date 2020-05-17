@@ -939,7 +939,7 @@ Private Sub UpdateStat()
   gvwStat.Rows.Count = 0
   
   AddStat(("Modules"), CStr(Project.GetCount("module")))
-  If Project.HasTest Then AddStat(("Test modules"), CStr(Project.GetCount("test")))
+  If Project.HasTest() Then AddStat(("Test modules"), CStr(Project.GetCount("test")))
   AddStat(("Classes"), CStr(Project.GetCount("class")))
 
   For Each hModule In CModule.All

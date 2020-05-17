@@ -85,3 +85,9 @@ Public Sub Form_Arrange()
   FOutput.UpdateWidth(Me.W)
 
 End
+
+Public Sub OnRefreshSources()
+  
+  btnTest.Visible = Project.HasTest()
+  
+End
