@@ -139,3 +139,9 @@ Public Sub Button5_Click()
   tvwTest.Current.Rename
 
 End
+
+Public Sub Button6_Click()
+
+  tvwTest.ShowCheck = Not tvwTest.ShowCheck
+
+End

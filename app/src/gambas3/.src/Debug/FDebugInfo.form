@@ -182,7 +182,7 @@
       #MoveScaled(73,17)
     }
     Index = 5
-    Text = ("Test")
+    Text = ("Unit tests")
     { panTest HBox
       MoveScaled(0,0,119,4)
       { btnTestClear ToolButton
@@ -193,7 +193,7 @@
       { btnTest ToolButton
         MoveScaled(5,0,14,4)
         AutoResize = True
-        Text = ("Test again")
+        Text = ("Run test")
         Picture = Picture["icon:/small/ok"]
       }
     }

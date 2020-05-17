@@ -485,7 +485,7 @@ Public Sub mnuPopup_Show()
       Next
       mnuNewClass.Show
       mnuNewModule.Show
-      mnuNewTest.Visible = Project.HasTest
+      mnuNewTest.Show
       
     Endif
   
@@ -1236,6 +1236,8 @@ Public Sub UpdateMenu()
   
   bVisible = False
   If Project.Components Then
+    mnuEnvDbDebug.Visible = Project.Components.Exist("gb.db")
+  
     If Project.Components.Exist("gb.gui") Or If Project.Components.Exist("gb.gui.qt") Then
       bVisible = True
     Endif
@@ -1309,7 +1311,7 @@ Public Sub OnProjectChange()
   mnuRedirectStderr.Value = Project.RedirectStderr
   mnuUseHttpServer.Value = Project.UseHttpServer
   mnuProfile.Value = Project.Profiling
-  'Action["breakerr"].Value = Project.BreakOnError
+
   OnRefreshComponents
   UpdateRunButton
   
@@ -2609,14 +2611,17 @@ Public Sub OnRefreshComponents()
   Dim iPos As Integer
   Dim sComp As String
   Dim hMenu As Menu
+  Dim aEnv As String[]
   
   For Each hMenu In mnuGUI.Children
     If hMenu.Text Then hMenu.Checked = False
-    If hMenu.Tag Then hMenu.Visible = Project.Documentation.Components.Exist(hMenu.Tag)
+    sComp = Mid$(hMenu.Tag, InStr(hMenu.Tag, "=") + 1)
+    If sComp Then hMenu.Visible = Project.Documentation.Components.Exist(sComp)
   Next
   
   hMenu = Null
-  iPos = Project.Environment.Find("GB_GUI=*", gb.Like)
+  aEnv = Project.Environment
+  iPos = aEnv.Find("GB_GUI=*", gb.Like)
   If iPos >= 0 Then
     sComp = Scan(Project.Environment[iPos], "*=*")[1]
     For Each hMenu In mnuGUI.Children
@@ -2634,30 +2639,45 @@ Public Sub OnRefreshComponents()
     mnuSetGUICurrentDesktop.Checked = True
   Endif
   
+  For Each hMenu In [mnuEnvReverse, mnuEnvNoJit, mnuEnvDbDebug]
+    hMenu.Checked = aEnv.Exist(hMenu.Tag)
+  Next
+  
 End
 
-Public Sub mnuSetGUI_Click()
+Public Sub mnuSetEnv_Click()
   
-  Dim sComp As String
   Dim iPos As Integer
-  Dim aEnv As String[] = Project.Environment
+  Dim aEnv As String[]
   Dim sEnv As String
+  Dim sVar As String
+  Dim sValue As String
+  Dim hMenu As Menu
+
+  hMenu = Last
   
-  sComp = Last.Tag
-  iPos = aEnv.Find("GB_GUI=*", gb.Like)
+  sEnv = hMenu.Tag
+  iPos = InStr(sEnv, "=")
+  sVar = Left(sEnv, iPos - 1)
+  sValue = Mid(sEnv, iPos + 1)
   
-  If Not sComp Then
+  aEnv = Project.Environment
+  iPos = aEnv.Find(sVar & "=*", gb.Like)
+
+  If Not sValue Then
     If iPos >= 0 Then 
       aEnv.Remove(iPos)
       Goto WRITE_PROJECT
     Endif
   Else
-    sEnv = "GB_GUI=" & sComp
     If iPos < 0 Then
       aEnv.Add(sEnv, 0)
       Goto WRITE_PROJECT
     Else If aEnv[iPos] <> sEnv Then
       aEnv[iPos] = sEnv
+      Goto WRITE_PROJECT
+    Else If hMenu.Toggle
+      aEnv.Remove(iPos)
       Goto WRITE_PROJECT
     Endif
   Endif
@@ -3132,3 +3152,8 @@ Public Sub btnWorkspaceProject_Click()
 
 End
 
+Public Sub OnRefreshSources()
+  
+  Action["test"].Visible = Project.HasTest()
+  
+End

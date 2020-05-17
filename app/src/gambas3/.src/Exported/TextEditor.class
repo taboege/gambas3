@@ -257,9 +257,10 @@ Public Sub ShowMessageLabel(sStr As String, iStyle As Integer, Optional bBottom 
     
   Endif
   
-  $hLabel.Foreground = Me.Styles[Highlight.Normal].Color
-  'If IsMissing(iStyle) Then iStyle = Highlight.Highlight
-  $hLabel.Background = Color.Merge(Me.Styles[iStyle].Color, Me.Styles[Highlight.Background].Color, 0.3)
+  ' $hLabel.Foreground = Me.Styles[Highlight.Normal].Color
+  ' $hLabel.Background = Color.Merge(Me.Styles[iStyle].Color, Me.Styles[Highlight.Background].Color, 0.3)
+  $hLabel.Foreground = Me.Styles[iStyle].Color 'Me.Styles[Highlight.Normal].Color
+  $hLabel.Background = Me.Styles[Highlight.Background].Color
   $hLabel.Text = "&nbsp;&nbsp;" & Replace(Replace(sStr, "<p>", " "), "<br>", " ") & "&nbsp;&nbsp;"
 
   $bLabelBottom = bBottom

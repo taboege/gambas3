@@ -749,9 +749,9 @@ Public Sub ScrollArea_Draw()
       
       If Not hRowBorder Then
         If $iMode And If Not _DoNotDrawSelection Then
-          If _IsRowSelected(I) Then
-            Paint.FillRect(0, Y, Paint.W, H, iBgSel)
-          Endif
+          If _IsRowSelected(I) Then Paint.FillRect(0, Y, Paint.W, H, iBgSel)
+        Else If $iMode = Select.Multiple And If _DoNotDrawSelection Then
+          If I = $iRow Then Paint.FillRect(0, Y, Paint.W, H, iBgSel)
         Endif
       Endif
       
@@ -802,10 +802,10 @@ Public Sub ScrollArea_Draw()
     If $bShowCursor Then
       'Paint.FillRect(hSpan.X, hSpan.Y, hSpan.W, hSpan.H, Color.SetAlpha(Color.SelectedBackground, 192))
       'Draw.ClipRect = hClip
-      Paint.Background = Color.LightBackground 'iGrid 'Color.LightForeground
-      Paint.LineCap = Paint.LineCapSquare
-      Paint.LineWidth = 1.5
-      Paint.Rectangle(hCursor.X, hCursor.Y, hCursor.W, hCursor.H)
+      ' Paint.Background = Color.LightBackground 'iGrid 'Color.LightForeground
+      ' Paint.LineCap = Paint.LineCapSquare
+      ' Paint.LineWidth = 1.5
+      Paint.DrawRect(hCursor.X, hCursor.Y, hCursor.W, hCursor.H, Color.LightBackground, 1.5)
       Paint.Stroke
     Endif
   Endif
@@ -1455,7 +1455,7 @@ Public Sub MoveTo(Row As Integer, Column As Integer)
         $hRows.UnSelect(S, L)
       Endif
     Endif
-  Else If $bKeyEvent And If $iMode = Select.Multiple Then
+  Else If $bKeyEvent And If $iMode = Select.Multiple And If Not _NoMouse Then
     $hRows._GetSel().UnSelectAll
     $hRows.Select($iRow, 1)
   Endif
@@ -1708,14 +1708,6 @@ Public Sub ScrollArea_KeyPress()
   
   $bKeyEvent = True
   
-  If $iMode = Select.Multiple Then
-    $bMoveSelect = Key.Shift
-    If $bMoveSelect And If $iMoveSelectRow < 0 Then
-      $iMoveSelectRow = $iRow
-      $hMoveOldSelection = $hRows._SaveSelection()
-    Endif
-  Endif
-  
   iCode = Key.Code
   If System.RightToLeft Then
     If iCode = Key.Left Then
@@ -1727,11 +1719,20 @@ Public Sub ScrollArea_KeyPress()
   
   Select iCode
     
-    Case Key.Up, Key.Down, Key.Left, Key.Right, Key.Home, Key.End, Key.PageUp, Key.PageDown
+    Case Key.Up, Key.Down, Key.Left, Key.Right, Key.Home, Key.End, Key.PageUp, Key.PageDown, Key.Space
+
       bStop = Raise KeyPress
       If bStop Then 
         Stop Event
         Goto _RETURN
+      Endif
+
+      If $iMode = Select.Multiple Then
+        $bMoveSelect = Key.Shift
+        If $bMoveSelect And If $iMoveSelectRow < 0 Then
+          $iMoveSelectRow = $iRow
+          $hMoveOldSelection = $hRows._SaveSelection()
+        Endif
       Endif
     
   End Select
@@ -1797,6 +1798,16 @@ Public Sub ScrollArea_KeyPress()
         MoveTo(iRow, $iCol)
       Else
         MoveTo($hRows.Count - 1, $iCol)
+      Endif
+      Stop Event
+      
+    Case Key.Space
+      If $iRow >= 0 And If $iMode = Select.Multiple Then 
+        If $hRows._IsSelected($iRow) Then
+          $hRows.UnSelect($iRow)
+        Else
+          $hRows.Select($iRow)
+        Endif
       Endif
       Stop Event
     

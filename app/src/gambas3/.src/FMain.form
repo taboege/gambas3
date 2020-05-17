@@ -265,65 +265,6 @@
       Picture = Picture["icon:/small/ok"]
       Shortcut = "F4"
     }
-    { mnuTestDesign Menu
-      Action = "testdesign"
-      Text = ("Define Testsuite")
-    }
-    { Menu36 Menu
-    }
-    { mnuUseTerminal Menu
-      Action = "terminal"
-      Text = Shortcut(("Use terminal emulator"), "t")
-      Toggle = True
-    }
-    { mnuRedirectStderr Menu
-      Action = "redirect"
-      Text = ("Redirect standard error output")
-      Toggle = True
-    }
-    { mnuUseHttpServer Menu
-      Action = "httpserver"
-      Text = ("Use embedded HTTP server")
-      Toggle = True
-    }
-    { mnuProfile Menu
-      Action = "profile"
-      Text = Shortcut(("Activate profiling"), "g")
-      Toggle = True
-    }
-    { mnuGUI Menu
-      Action = "gui"
-      Text = ("GUI component")
-      { mnuSetGUICurrentDesktop Menu mnuSetGUI
-        Name = "mnuSetGUICurrentDesktop"
-        Text = ("Current desktop")
-      }
-      { Menu30 Menu
-      }
-      { Menu21 Menu mnuSetGUI
-        Name = "Menu21"
-        #Translate = False
-        Text = "QT4"
-        Tag = "gb.qt4"
-      }
-      { Menu35 Menu mnuSetGUI
-        Name = "Menu35"
-        Text = ("QT5")
-        Tag = "gb.qt5"
-      }
-      { Menu27 Menu mnuSetGUI
-        Name = "Menu27"
-        #Translate = False
-        Text = "GTK+2"
-        Tag = "gb.gtk"
-      }
-      { Menu28 Menu mnuSetGUI
-        Name = "Menu28"
-        #Translate = False
-        Text = "GTK+3"
-        Tag = "gb.gtk3"
-      }
-    }
     { Menu14 Menu
     }
     { mnuPause Menu
@@ -354,6 +295,88 @@
       Action = "return"
       Text = Shortcut(("Finish"), "h")
       Picture = Picture["icon:/small/eject"]
+    }
+    { Menu36 Menu
+    }
+    { mnuUseTerminal Menu
+      Action = "terminal"
+      Text = Shortcut(("Use terminal emulator"), "t")
+      Toggle = True
+    }
+    { mnuRedirectStderr Menu
+      Action = "redirect"
+      Text = ("Redirect standard error output")
+      Toggle = True
+    }
+    { mnuUseHttpServer Menu
+      Action = "httpserver"
+      Text = ("Use embedded HTTP server")
+      Toggle = True
+    }
+    { mnuProfile Menu
+      Action = "profile"
+      Text = Shortcut(("Activate profiling"), "g")
+      Toggle = True
+    }
+    { Menu44 Menu
+    }
+    { mnuEnvReverse Menu mnuSetEnv
+      Name = "mnuEnvReverse"
+      Text = ("Invert language orientation")
+      Toggle = True
+      Tag = "GB_REVERSE=1"
+    }
+    { mnuEnvNoJit Menu mnuSetEnv
+      Name = "mnuEnvNoJit"
+      Text = ("Disable just-in-time compiler")
+      Toggle = True
+      Tag = "GB_NO_JIT=1"
+    }
+    { mnuEnvJitDebug Menu mnuSetEnv
+      Name = "mnuEnvJitDebug"
+      Text = ("Show just-in-time compiler debugging messages")
+      Toggle = True
+      Tag = "GB_JIT_DEBUG=1"
+    }
+    { mnuEnvDbDebug Menu mnuSetEnv
+      Name = "mnuEnvDbDebug"
+      Text = ("Show database requests")
+      Toggle = True
+      Tag = "GB_DB_DEBUG=1"
+    }
+    { mnuGUI Menu
+      Action = "gui"
+      Text = ("GUI component")
+      { mnuSetGUICurrentDesktop Menu mnuSetEnv
+        Name = "mnuSetGUICurrentDesktop"
+        Text = ("Current desktop")
+        Tag = "GB_GUI="
+      }
+      { Menu30 Menu
+      }
+      { Menu21 Menu mnuSetEnv
+        Name = "Menu21"
+        #Translate = False
+        Text = "QT4"
+        Tag = "GB_GUI=gb.qt4"
+      }
+      { Menu35 Menu mnuSetEnv
+        Name = "Menu35"
+        Text = ("QT5")
+        Tag = "GB_GUI=gb.qt5"
+      }
+      { Menu27 Menu mnuSetEnv
+        Name = "Menu27"
+        #Translate = False
+        Text = "GTK+2"
+        Tag = "GB_GUI=gb.gtk"
+      }
+      { Menu28 Menu mnuSetEnv
+        Name = "Menu28"
+        #Translate = False
+        Text = "GTK+3"
+        Tag = "GB_GUI=gb.gtk3"
+      }
     }
     { Menu9 Menu
     }

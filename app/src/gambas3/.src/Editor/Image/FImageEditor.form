@@ -96,12 +96,13 @@
     { mnuSelectAll Menu
       Action = ".select-all"
       Text = Shortcut(("Select All"), "A")
+      Picture = Picture["icon:/small/select-all"]
       Shortcut = "Ctrl+A"
     }
     { mnuHideSelection Menu
       Action = ".hide"
       Text = ("Hide selection")
-      Picture = Picture["img/draw/hide.png"]
+      Picture = Picture["icon:/small/unselect"]
       Shortcut = "Esc"
     }
     { mnuSelection Menu
@@ -457,7 +458,7 @@
       MoveScaled(86,0,4,4)
       ToolTip = ("Hide selection")
       Action = ".hide"
-      Picture = Picture["img/draw/hide.png"]
+      Picture = Picture["icon:/small/unselect"]
     }
     { btnEditSelection ToolButton btnTool
       Name = "btnEditSelection"
@@ -660,7 +661,7 @@
   { Action hide
     Text = "Hide selection"
     Shortcut = "Esc"
-    Picture = "img/draw/hide.png"
+    Picture = "icon:/small/unselect"
   }
   { Action intersection
     Text = "Intersection"
@@ -732,6 +733,7 @@
   { Action select-all
     Text = "Select All"
     Shortcut = "Ctrl+A"
+    Picture = "icon:/small/select-all"
   }
   { Action tiff
     Text = "Save as TIFF"
