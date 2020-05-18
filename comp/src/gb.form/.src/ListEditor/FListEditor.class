@@ -1,5 +1,7 @@
 ' Gambas class file
 
+Private $bUnique As Boolean
+
 Private Sub GetParent() As ListEditor
 
   Return Me.Parent
@@ -37,13 +39,23 @@ Public Sub SetList(aList As String[])
   UnSelect
   txtData.Clear
   lstData.List = aList
+  CheckUnique
   GetParent()._RaiseChange
   
 End
 
-Public Sub Add(sText As String)
+Public Sub Add(sText As String) As Boolean
+  
+  Dim iPos As Integer
   
   If Not sText Then Return
+  If $bUnique Then
+    iPos = lstData.Find(sText)
+    If iPos >= 0 Then
+      lstData.Index = iPos
+      Return True
+    Endif
+  Endif
   lstData.Add(sText)
   GetParent()._RaiseChange
   lstData.Index = -1
@@ -57,7 +69,7 @@ Public Sub btnAdd_Click()
   If txtData.ReadOnly Then Return
   
   If lstData.Index < 0 Then
-    Add(txtData.Text)
+    If Add(txtData.Text) Then Return
   Endif
   
   UnSelect
@@ -197,7 +209,7 @@ Public Sub GetEditor() As TextBox
   
 End
 
-Public Sub Form_Open()
+Public Sub _new()
 
   Me.Parent.Proxy = txtData
 
@@ -264,4 +276,50 @@ Public Sub Exist(Text As String) As Boolean
   
   Return lstData.Find(Text) >= 0
   
+End
+
+Public Sub lstData_Activate()
+
+  GetParent()._RaiseActivate
+
+End
+
+Public Sub Clear()
+  
+  lstData.Clear
+  txtData.Clear
+  
+End
+
+Public Sub IsUnique() As Boolean
+  
+  Return $bUnique
+  
+End
+
+Private Sub CheckUnique()
+
+  Dim I As Integer
+  Dim iPos As Integer
+  
+  If Not $bUnique Then Return
+
+  I = 1
+  While I < lstData.Count
+    iPos = lstData.Find(lstData[I])
+    If iPos <> I Then
+      lstData.Remove(I)
+    Else
+      Inc I
+    Endif
+  Wend
+
+End
+
+Public Sub SetUnique(bUnique As Boolean)
+  
+  If $bUnique = bUnique Then Return
+  $bUnique = bUnique
+  CheckUnique
+
 End

@@ -27,7 +27,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gb.form 3.12.90\n"
-"POT-Creation-Date: 2019-09-12 00:34 UTC\n"
+"POT-Creation-Date: 2020-05-18 12:59 UTC\n"
 "PO-Revision-Date: 2019-04-22 01:19 UTC\n"
 "Last-Translator: benoit <benoit@benoit-kubuntu>\n"
 "Language: fr\n"
@@ -39,31 +39,31 @@ msgstr ""
 msgid "More controls for graphical components"
 msgstr "Contrôles graphiques supplémentaires"
 
-#: CBookmarkList.class:47
+#: CBookmarkList.class:51
 msgid "Home"
 msgstr "Dossier personnel"
 
-#: CBookmarkList.class:49
+#: CBookmarkList.class:53
 msgid "Desktop"
 msgstr "Bureau"
 
-#: CBookmarkList.class:51
+#: CBookmarkList.class:55
 msgid "System"
 msgstr "Système"
 
-#: ColorPalette.class:145
+#: ColorPalette.class:143
 msgid "Last colors"
 msgstr "Dernières couleurs"
 
-#: ColorPalette.class:246
+#: ColorPalette.class:244
 msgid "Remove color"
 msgstr "Retirer la couleur"
 
-#: ColorPalette.class:250
+#: ColorPalette.class:248
 msgid "Remove all colors"
 msgstr "Retirer toutes les couleurs"
 
-#: ColorPalette.class:254
+#: ColorPalette.class:252
 msgid "Sort colors"
 msgstr "Trier les couleurs"
 
@@ -107,34 +107,6 @@ msgstr "Appliquer"
 msgid "Follow color grid"
 msgstr "Suivre la grille de couleurs"
 
-#: FColorChooser.form:110
-msgid "R"
-msgstr "-"
-
-#: FColorChooser.form:122
-msgid "H"
-msgstr "-"
-
-#: FColorChooser.form:139
-msgid "G"
-msgstr "-"
-
-#: FColorChooser.form:151
-msgid "S"
-msgstr "-"
-
-#: FColorChooser.form:168
-msgid "B"
-msgstr "-"
-
-#: FColorChooser.form:180
-msgid "V"
-msgstr "-"
-
-#: FColorChooser.form:198
-msgid "A"
-msgstr "-"
-
 #: FDirChooser.class:428
 msgid "Directory not found."
 msgstr "Répertoire introuvable."
@@ -143,103 +115,103 @@ msgstr "Répertoire introuvable."
 msgid "All files (*)"
 msgstr "Tous les fichiers (*)"
 
-#: FDirChooser.class:966
+#: FDirChooser.class:974
 msgid "&Bookmark current directory"
 msgstr "&Marquer le répertoire courant"
 
-#: FDirChooser.class:974
+#: FDirChooser.class:982
 msgid "&Edit bookmarks..."
 msgstr "&Editer les signets..."
 
-#: FDirChooser.class:983
+#: FDirChooser.class:991
 msgid "Show &details"
 msgstr "Vue &détaillée"
 
-#: FDirChooser.class:989
+#: FDirChooser.class:997
 msgid "Show &hidden files"
 msgstr "Afficher les fichiers &cachés"
 
-#: FDirChooser.class:995
+#: FDirChooser.class:1003
 msgid "Show &image preview"
 msgstr "Prévisualisation des &images"
 
-#: FDirChooser.class:1003
+#: FDirChooser.class:1011
 msgid "&Rename"
 msgstr "&Renommer"
 
-#: FDirChooser.class:1008
+#: FDirChooser.class:1016
 msgid "Copy"
 msgstr "Copier"
 
-#: FDirChooser.class:1013
+#: FDirChooser.class:1021
 msgid "&Delete"
 msgstr "&Supprimer"
 
-#: FDirChooser.class:1025
+#: FDirChooser.class:1033
 msgid "&Uncompress file"
 msgstr "&Décompresser le fichier"
 
-#: FDirChooser.class:1030
+#: FDirChooser.class:1038
 msgid "&Create directory"
 msgstr "&Créer un répertoire"
 
-#: FDirChooser.class:1035
+#: FDirChooser.class:1043
 msgid "Open in &file manager..."
 msgstr "Ouvrir dans le gestionnaire de &fichiers..."
 
-#: FDirChooser.class:1040
+#: FDirChooser.class:1048
 msgid "&Refresh"
 msgstr "&Actualiser"
 
-#: FDirChooser.class:1048
+#: FDirChooser.class:1056
 msgid "&Properties"
 msgstr "&Propriétés"
 
-#: FDirChooser.class:1265
+#: FDirChooser.class:1272
 msgid "Overwrite"
 msgstr "Ecraser"
 
-#: FDirChooser.class:1265
+#: FDirChooser.class:1272
 msgid "Overwrite all"
 msgstr "Tout écraser"
 
-#: FDirChooser.class:1265
+#: FDirChooser.class:1272
 msgid "This file or directory already exists."
 msgstr "Ce fichier ou ce répertoire existe déjà."
 
-#: FDirChooser.class:1284
+#: FDirChooser.class:1291
 msgid "Cannot list archive contents"
 msgstr "Impossible de lister le contenu de l'archive"
 
-#: FDirChooser.class:1318
+#: FDirChooser.class:1325
 msgid "Cannot uncompress file."
 msgstr "Impossible de décompresser le fichier."
 
-#: FDirChooser.class:1318
+#: FDirChooser.class:1325
 msgid "Unknown archive."
 msgstr "Archive inconnue."
 
-#: FDirChooser.class:1379
+#: FDirChooser.class:1386
 msgid "Delete file"
 msgstr "Supprimer le fichier"
 
-#: FDirChooser.class:1380
+#: FDirChooser.class:1387
 msgid "Do you really want to delete that file?"
 msgstr "Désirez-vous réellement supprimer ce fichier ?"
 
-#: FDirChooser.class:1387
+#: FDirChooser.class:1394
 msgid "Unable to delete file."
 msgstr "Impossible de supprimer le fichier."
 
-#: FDirChooser.class:1397
+#: FDirChooser.class:1404
 msgid "Delete directory"
 msgstr "Supprimer le répertoire"
 
-#: FDirChooser.class:1398
+#: FDirChooser.class:1405
 msgid "Do you really want to delete that directory?"
 msgstr "Désirez-vous vraiment supprimer ce répertoire ?"
 
-#: FDirChooser.class:1405
+#: FDirChooser.class:1412
 msgid "Unable to delete directory."
 msgstr "Impossible de supprimer le répertoire."
 
@@ -288,7 +260,7 @@ msgstr ""
 msgid "Show Shadow"
 msgstr ""
 
-#: FDocumentView.form:66
+#: FDocumentView.form:66 FTestTabPanel.form:64
 msgid "Padding"
 msgstr ""
 
@@ -465,7 +437,7 @@ msgstr "Aperçu"
 msgid "Errors"
 msgstr "Erreurs"
 
-#: FFontChooser.class:266
+#: FFontChooser.class:297
 msgid "How quickly daft jumping zebras vex"
 msgstr "Portez ce vieux whisky au juge blond qui fume"
 
@@ -489,23 +461,23 @@ msgstr "Barré"
 msgid "Relative"
 msgstr "Relatif"
 
-#: FIconPanel.form:17
+#: FIconPanel.form:18
 msgid "Item 0"
 msgstr ""
 
-#: FIconPanel.form:21
+#: FIconPanel.form:23
 msgid "Toto"
 msgstr ""
 
-#: FIconPanel.form:24
+#: FIconPanel.form:26
 msgid "Item 1"
 msgstr ""
 
-#: FIconPanel.form:26
+#: FIconPanel.form:28
 msgid "Item 2"
 msgstr ""
 
-#: FIconPanel.form:32
+#: FIconPanel.form:35
 msgid "Item 3"
 msgstr ""
 
@@ -533,11 +505,11 @@ msgstr "Déplacer l'élément vers le haut"
 msgid "Move item down"
 msgstr "Déplacer l'élément vers le bas"
 
-#: FMain.form:29 FTestFileView.form:31 FTestMenuButton.form:39 FWiki.form:20
+#: FMain.form:29 FTestFileChooser.form:31 FTestMenuButton.form:39 FWiki.form:20
 msgid "Menu2"
 msgstr ""
 
-#: FMain.form:33 FTestFileView.form:36 FTestMenuButton.form:43 FWiki.form:24
+#: FMain.form:33 FTestFileChooser.form:36 FTestMenuButton.form:43 FWiki.form:24
 msgid "Menu3"
 msgstr ""
 
@@ -563,7 +535,7 @@ msgid "ComboBox2"
 msgstr "-"
 
 #: FMain.form:80 FSwitchButton.form:35 FTestBalloon.form:12
-#: FTestFileView.form:86
+#: FTestFileChooser.form:86
 msgid "TextBox1"
 msgstr ""
 
@@ -587,7 +559,7 @@ msgstr "Transparent"
 msgid "Test"
 msgstr ""
 
-#: FSwitchButton.form:51 FTestFileView.form:81
+#: FSwitchButton.form:51 FTestFileChooser.form:81
 msgid "Label1"
 msgstr ""
 
@@ -615,23 +587,23 @@ msgstr ""
 msgid "Expander"
 msgstr ""
 
-#: FTestFileView.form:28 FTestMenuButton.form:35
+#: FTestFileChooser.form:28 FTestMenuButton.form:35
 msgid "Menu1"
 msgstr ""
 
-#: FTestFileView.form:41 FTestMenuButton.form:69
+#: FTestFileChooser.form:41 FTestMenuButton.form:69
 msgid "Menu7"
 msgstr ""
 
-#: FTestFileView.form:49 FTestMenuButton.form:52 FWiki.form:28
+#: FTestFileChooser.form:49 FTestMenuButton.form:52 FWiki.form:28
 msgid "Menu4"
 msgstr ""
 
-#: FTestFileView.form:54 FTestMenuButton.form:56 FWiki.form:32
+#: FTestFileChooser.form:54 FTestMenuButton.form:56 FWiki.form:32
 msgid "Menu5"
 msgstr ""
 
-#: FTestFileView.form:76
+#: FTestFileChooser.form:76
 msgid "Balloon"
 msgstr ""
 
@@ -671,15 +643,15 @@ msgstr ""
 msgid "Menu button"
 msgstr ""
 
-#: FTestTabPanel.form:38
+#: FTestTabPanel.form:41
 msgid "Text"
 msgstr ""
 
-#: FTestTabPanel.form:51
+#: FTestTabPanel.form:54
 msgid "Border"
 msgstr ""
 
-#: FTestTabPanel.form:56
+#: FTestTabPanel.form:59
 msgid "Orientation"
 msgstr ""
 
@@ -762,3 +734,24 @@ msgstr "&1 Gio"
 #: Wizard.class:86
 msgid "Step #&1"
 msgstr "Étape n°&1"
+
+#~ msgid "A"
+#~ msgstr "-"
+
+#~ msgid "V"
+#~ msgstr "-"
+
+#~ msgid "B"
+#~ msgstr "-"
+
+#~ msgid "S"
+#~ msgstr "-"
+
+#~ msgid "G"
+#~ msgstr "-"
+
+#~ msgid "H"
+#~ msgstr "-"
+
+#~ msgid "R"
+#~ msgstr "-"
