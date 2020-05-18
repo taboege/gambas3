@@ -2501,6 +2501,7 @@ End
 
 Public Sub OnBackgroundChange()
   
+  wrkProject.Background = Project.GetBackgroundBgColor()
   wrkProject.Image = Project.GetBackground()
   
 End
@@ -2621,7 +2622,7 @@ Public Sub OnRefreshComponents()
   aEnv = Project.Environment
   iPos = aEnv.Find("GB_GUI=*", gb.Like)
   If iPos >= 0 Then
-    sComp = Scan(Project.Environment[iPos], "*=*")[1]
+    sComp = Project.Environment[iPos]
     For Each hMenu In mnuGUI.Children
       If hMenu.Visible And If hMenu.Tag = sComp Then
         btnGUI.Text = hMenu.Text

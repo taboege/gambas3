@@ -5827,7 +5827,16 @@ End
 
 Public Sub GetBackgroundColor() As Integer
   
-  Return FColorChooser.FromString(Settings["/BackgroundColor", "LightForeground"])
+  Return FColorChooser.FromString(Settings["/Background/Color", "LightForeground"])
+  
+End
+
+Public Sub GetBackgroundBgColor() As Integer
+
+  Dim hColor As ColorInfo
+  hColor = Color[Color.Merge(Color.Background, Color.Foreground)]
+  hColor.Luminance = Max(0, Min(255, hColor.Luminance + GetBackgroundBrightness()))
+  Return hColor.Color
   
 End
 
@@ -5837,13 +5846,10 @@ Public Sub GetBackground() As Image
 
   If Not $bBackgroundValid Then
     $hBackground = Null
-    sBackground = Settings["/Background", DEFAULT_BACKGROUND]
-    If sBackground = "void" Then
-      $hBackground = New Image(32, 32, Color.LightForeground)
-    Else
-      Try $hBackground = Image.Load("img/background" &/ sBackground & ".png")
-    Endif
-    If $hBackground Then $hBackground.Colorize(GetBackgroundColor())
+    sBackground = Settings["/Background/Image", DEFAULT_BACKGROUND]
+    Try $hBackground = Image.Load("img/background" &/ sBackground & ".png")
+    If Not $hBackground Then $hBackground = New Image(32, 32, Color.LightForeground)
+    $hBackground.Colorize(GetBackgroundColor())
     $bBackgroundValid = True
   Endif
 
@@ -5858,6 +5864,7 @@ Public Sub DrawBackground()
   GetBackground()
   If $hBackground Then 
     hBrush = Paint.Brush
+    Paint.FillRect(0, 0, Paint.W, Paint.H, GetBackgroundBgColor())
     Paint.Brush = Paint.Image($hBackground)
     Paint.Rectangle(0, 0, Paint.W, Paint.H)
     Paint.Fill
@@ -5866,10 +5873,12 @@ Public Sub DrawBackground()
 
 End
 
-Private Sub ChangeBackground()
+Private Sub ChangeBackground(bInvalidate As Boolean)
 
-  $bBackgroundValid = False
-  GetBackground()
+  If bInvalidate Then
+    $bBackgroundValid = False
+    GetBackground()
+  Endif
   Try ActiveForm.OnBackgroundChange
   FMain.OnBackgroundChange
 
@@ -5878,18 +5887,31 @@ End
 Public Sub SetBackground(sBackground As String)
 
   If sBackground = DEFAULT_BACKGROUND Then sBackground = ""
-  Settings["/Background"] = sBackground
-  ChangeBackground
+  Settings["/Background/Image"] = sBackground
+  ChangeBackground(True)
 
 End
 
 Public Sub SetBackgroundColor(sColor As String)
   
-  Settings["/BackgroundColor"] = sColor
-  ChangeBackground
+  Settings["/Background/Color"] = sColor
+  ChangeBackground(True)
   
 End
 
+Public Sub GetBackgroundBrightness() As Integer
+  
+  Return Settings["/Background/Brightness", 0]
+  
+End
+
+
+Public Sub SetBackgroundBrightness(iBrightness As Integer)
+  
+  Settings["/Background/Brightness"] = iBrightness
+  ChangeBackground(False)
+  
+End
 
 ' Try to save all files if there is an unexpected error
 

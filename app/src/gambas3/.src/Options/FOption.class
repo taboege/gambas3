@@ -204,6 +204,8 @@ Public Sub _new()
   choBackgroundColor.Colors = aColors
   choBackgroundColor.Current = Project.GetBackgroundColor()
   
+  sldBackgroundBrightness.Value = Project.GetBackgroundBrightness()
+  
   btnAutoTrans_Click
   
   Me.Utility = Settings["/UseUtilityWindows", 1]
@@ -1021,7 +1023,7 @@ Private Sub RefreshBackground()
   
   Inc Application.Busy
   
-  iColor = FColorChooser.FromString(Settings["/BackgroundColor", "#FFFFFF"])
+  iColor = FColorChooser.FromString(Settings["/Background/Color", "#FFFFFF"])
   
   svwBackground.Children.Clear
   
@@ -1040,7 +1042,7 @@ Private Sub RefreshBackground()
     hBg.Tag = sBackground
   Next
   
-  sBackground = Settings["/Background", Project.DEFAULT_BACKGROUND]
+  sBackground = Settings["/Background/Image", Project.DEFAULT_BACKGROUND]
   For Each hBg In svwBackground.Children
     If hBg.Tag = sBackground Then 
       hBg.Selected = True
@@ -1817,5 +1819,19 @@ End
 Private Sub SetCurrentLayout()
 
   SaveLayout()
+
+End
+
+Public Sub sldBackgroundBrightness_Change()
+
+  Dim iVal As Integer
+  
+  iVal = sldBackgroundBrightness.Value
+  iVal = Sgn(iVal) * ((Abs(iVal) + 8) \ 16) * 16
+  Object.Lock(sldBackgroundBrightness)
+  sldBackgroundBrightness.Value = iVal
+  Object.Unlock(sldBackgroundBrightness)
+  Project.SetBackgroundBrightness(sldBackgroundBrightness.Value)
+  'RefreshBackground
 
 End
