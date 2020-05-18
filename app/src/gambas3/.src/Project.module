@@ -5849,6 +5849,7 @@ Public Sub GetBackground() As Image
     sBackground = Settings["/Background/Image", DEFAULT_BACKGROUND]
     Try $hBackground = Image.Load("img/background" &/ sBackground & ".png")
     If Not $hBackground Then $hBackground = New Image(32, 32, Color.LightForeground)
+    If Application.DarkTheme Then $hBackground = $hBackground.Invert(True)
     $hBackground.Colorize(GetBackgroundColor())
     $bBackgroundValid = True
   Endif
