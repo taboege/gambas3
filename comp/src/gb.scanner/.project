@@ -2,7 +2,7 @@
 Title=gb.scanner
 Startup=Main
 RedirectStderr=1
-Icon=scanner.png
+Icon=.hidden/scanner.png
 Version=3.14.90
 VersionFile=1
 Component=gb.image
