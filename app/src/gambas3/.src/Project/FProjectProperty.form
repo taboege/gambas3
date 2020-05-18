@@ -118,7 +118,7 @@
     Expand = True
     Arrangement = Arrange.Vertical
     Spacing = True
-    Count = 8
+    Count = 7
     Border = True
     Index = 0
     Text = ("General")
@@ -479,6 +479,7 @@
       MoveScaled(1,44,79,20)
       Expand = True
       ReadOnly = True
+      Unique = True
     }
     Index = 4
     Text = ("Environment")
@@ -518,56 +519,6 @@
       }
     }
     Index = 5
-    Text = ("Arguments")
-    Picture = Picture["icon:/large/play"]
-    { Panel4 Panel
-      MoveScaled(1,2,81,60)
-      Expand = True
-      Arrangement = Arrange.Vertical
-      Border = Border.Plain
-      { svwArgList ScrollView
-        MoveScaled(1,1,79,39)
-        Background = Color.TextBackground
-        Expand = True
-        Arrangement = Arrange.Vertical
-        Spacing = True
-        Margin = True
-        Border = False
-        ScrollBar = Scroll.Vertical
-        Focus = True
-      }
-      { Separator3 Separator
-        MoveScaled(24,42,14,0)
-      }
-      { HBox2 HBox
-        MoveScaled(0,45,77,4)
-        Background = Color.TextBackground
-        { btnNewArgument ToolButton
-          MoveScaled(0,0,16,4)
-          AutoResize = True
-          Text = ("Insert")
-          Picture = Picture["icon:/small/add"]
-        }
-        { btnRemoveArgument ToolButton
-          MoveScaled(17,0,16,4)
-          Enabled = False
-          AutoResize = True
-          Text = ("Remove")
-          Picture = Picture["icon:/small/remove"]
-        }
-        { btnMoveUpArg ToolButton
-          MoveScaled(34,0,4,4)
-          Enabled = False
-          Picture = Picture["icon:/small/up"]
-        }
-        { btnMoveDownArg ToolButton
-          MoveScaled(41,0,4,4)
-          Enabled = False
-          Picture = Picture["icon:/small/down"]
-        }
-      }
-    }
-    Index = 6
     Text = ("Options")
     Picture = Picture["icon:/large/options"]
     { Panel6 VBox
@@ -713,7 +664,7 @@
         }
       }
     }
-    Index = 7
+    Index = 6
     Text = ("Statistics")
     Picture = Picture["icon:/large/monitor"]
     { gvwStat GridView

@@ -252,12 +252,9 @@
       Picture = Picture["icon:/small/play"]
       Shortcut = "F5"
     }
-    { mnuRunWith Menu
-      Text = ("Run with")
-      { mnuRunWithNoArg Menu
-        Text = ("No argument")
-        Checked = True
-      }
+    { Menu45 Menu
+      Action = "run-with"
+      Text = ("Run with") & "..."
     }
     { mnuTest Menu
       Action = "test"
@@ -1014,12 +1011,11 @@
       Action = "test"
       Picture = Picture["icon:/small/ok"]
     }
-    { btnGo MenuButton
-      MoveScaled(74,0,6,4)
+    { btnGo ToolButton
+      MoveScaled(74,0,4,4)
       ToolTip = ("Run")
       Action = "start"
       Picture = Picture["icon:/small/play"]
-      Border = False
     }
     { btnPause ToolButton
       MoveScaled(79,0,4,4)
@@ -1213,7 +1209,7 @@
       MenuOnly = True
     }
     { btnVersionControl MenuButton
-      MoveScaled(84,4,8,4)
+      MoveScaled(82,4,6,4)
       ToolTip = ("Version control")
       Action = "version-control"
       AutoResize = True
@@ -1221,6 +1217,15 @@
       Border = False
       Menu = "mnuVersionControl"
       MenuOnly = True
+    }
+    { btnRunWith ToolButton
+      MoveScaled(89,4,15,4)
+      Visible = False
+      ToolTip = ("Run with arguments")
+      Action = "run-with"
+      AutoResize = True
+      Text = ("Run with") & "..."
+      Picture = Picture["icon:/small/play"]
     }
   }
   { sepMessage Separator
@@ -1343,19 +1348,19 @@
               MoveScaled(86,8,0,9)
               Visible = False
             }
-            { btnWorkspaceProperty ToolButton
-              MoveScaled(27,1,4,4)
-              Visible = False
-              ToolTip = ("Show properties sheet")
-              Ignore = True
-              Picture = Picture["icon:/small/properties"]
-            }
             { btnWorkspaceProject ToolButton
               MoveScaled(22,1,4,4)
               Visible = False
               ToolTip = ("Show project tree")
               Ignore = True
               Picture = Picture["icon:/small/view-tree"]
+            }
+            { btnWorkspaceProperty ToolButton
+              MoveScaled(27,1,4,4)
+              Visible = False
+              ToolTip = ("Show properties sheet")
+              Ignore = True
+              Picture = Picture["icon:/small/properties"]
             }
           }
           { panDebug SidePanel
@@ -1411,19 +1416,19 @@
               Text = ("Hierarchy")
               Index = 0
             }
-            { btnPropertyHelp ToolButton
-              MoveScaled(4,0,4,4)
-              Visible = False
-              ToolTip = ("Show property help")
-              Ignore = True
-              Picture = Picture["icon:/small/help"]
-            }
             { btnPropertyToolbar ToolButton
               MoveScaled(0,0,4,4)
               Visible = False
               ToolTip = ("Show controls")
               Ignore = True
               Picture = Picture["img/16/control.png"]
+            }
+            { btnPropertyHelp ToolButton
+              MoveScaled(4,0,4,4)
+              Visible = False
+              ToolTip = ("Show property help")
+              Ignore = True
+              Picture = Picture["icon:/small/help"]
             }
           }
           { panTool SidePanel
@@ -1765,6 +1770,11 @@
     Shortcut = ""
     Picture = "icon:/tiny/play"
   }
+  { Action run-with
+    Text = "Run with"
+    Shortcut = ""
+    Picture = "icon:/small/play"
+  }
   { Action save-as
     Text = "Save as"
     Shortcut = "Ctrl+Alt+S"
@@ -1881,7 +1891,7 @@
 { Toolbars
   { Toolbar main
     Text = ""
-    List = "new-project,open-project,save-project,save-project-as,project-property,refresh-project,option,shortcut,exec,translate,archive,install,project,property,control,console,find,help,compile,compile-all,test,start,pause,stop,step,forward,return,until,find-project,go-back,go-forward,browse-project,open-terminal,send-mail,publish,farm,gui,menu-file,menu-edit,menu-project,menu-debug,menu-view,menu-tool,menu-help,version-control"
+    List = "new-project,open-project,save-project,save-project-as,project-property,refresh-project,option,shortcut,exec,translate,archive,install,project,property,control,console,find,help,compile,compile-all,test,start,pause,stop,step,forward,return,until,find-project,go-back,go-forward,browse-project,open-terminal,send-mail,publish,farm,gui,menu-file,menu-edit,menu-project,menu-debug,menu-view,menu-tool,menu-help,version-control,run-with"
     Default = "new-project,open-project,save-project,save-project-as,project-property,option,|,exec,translate,|,compile,compile-all,test,start,pause,stop,step,forward,return,until,-,find-project,go-back,go-forward,version-control"
   }
 }

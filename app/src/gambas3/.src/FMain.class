@@ -1313,7 +1313,6 @@ Public Sub OnProjectChange()
   mnuProfile.Value = Project.Profiling
 
   OnRefreshComponents
-  UpdateRunButton
   
   'UpdateTranslate
   'RefreshInfo
@@ -1423,6 +1422,8 @@ Public Sub Action_Activate((Key) As String) As Boolean
       panProject.Hidden = Not Action[Key].Value
     Case "start"
       Project.Run(False)
+    Case "run-with"
+      If Not FArguments.Run() Then Project.Run(False)
     Case "test"
       Project.Test()
     Case "pause"
@@ -1452,7 +1453,6 @@ Public Sub Action_Activate((Key) As String) As Boolean
     Case "project-property"
       If Not FProjectProperty.Run() Then
         Project.Refresh
-        UpdateRunButton
       Endif
     Case "translate"
       Translate
@@ -2816,71 +2816,6 @@ Public Sub panDebug_Hide()
   FDebugInfo.OnVisibilityChange
   FDebugButton.OnVisibilityChange
 
-End
-
-Public Sub mnuRunWith_Show()
-  
-  Dim hMenu As Menu
-  Dim I As Integer
-  
-  mnuRunWith.Children.Clear
-  
-  hMenu = New Menu(mnuRunWith) As "runWithNoArg"
-  hMenu.Text = ("No argument")
-  'hMenu.Radio = True
-  If Project.CurrentArgument = 0 Then hMenu.Picture = Picture["icon:/small/ok"]
-  
-  hMenu = New Menu(mnuRunWith)
-    
-  For I = 0 To Project.Arguments.Max
-    hMenu = New Menu(mnuRunWith) As "runWithArg"
-    hMenu.Text = Project.ArgumentToString(Project.Arguments[I])
-    'hMenu.Radio = True
-    hMenu.Tag = I + 1
-    If Project.CurrentArgument = I + 1 Then hMenu.Picture = Picture["icon:/small/ok"]
-  Next
-  
-  hMenu = New Menu(mnuRunWith)
-  
-  hMenu = New Menu(mnuRunWith) As "mnuEditArgument"
-  hMenu.Text = ("Edit arguments") & "..."
-  hMenu.Picture = Picture["icon:/small/edit"]
-  
-End
-
-Public Sub runWithNoArg_Click()
-  
-  Project.CurrentArgument = 0
-  Project.WriteProject
-  
-End
-
-Public Sub runWithArg_Click()
-  
-  Project.CurrentArgument = Last.Tag
-  Project.WriteProject
-  
-End
-
-Public Sub mnuEditArgument_Click()
-  
-  FProjectProperty.ShowArguments
-  
-End
-
-
-Public Sub UpdateRunButton()
-  
-  If Project.Arguments.Count Then
-    btnGo.Arrow = True
-    btnGo.W = btnGo.H + Desktop.Scale * 2
-    btnGo.Menu = "mnuRunWith"
-  Else
-    btnGo.Arrow = False
-    btnGo.W = btnGo.H
-    btnGo.Menu = ""
-  Endif
-  
 End
 
 Public Sub mnuDoNotTranslate_Click()

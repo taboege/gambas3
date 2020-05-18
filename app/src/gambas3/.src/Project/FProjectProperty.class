@@ -156,15 +156,6 @@ End
 
 Private Sub InitEnvironment()
 
-  Dim aArg As String[]
-  Dim hArgListEditor As ArgListEditor
-
-  svwArgList.Children.Clear
-  For Each aArg In Project.Arguments
-    hArgListEditor = New ArgListEditor(svwArgList) As "ArgListEditor"
-    hArgListEditor.Set(aArg)
-  Next
-  
   tvwEnv.Columns.Count = 2
   tvwEnv.Columns[0].Text = ("Variable")
   tvwEnv.Columns[1].Text = ("Value")
@@ -180,9 +171,6 @@ End
 Private Sub SaveEnvironment()
   
   Dim iInd As Integer
-  Dim aArgList As String[][]
-  Dim hArgListEditor As ArgListEditor
-  Dim aArg As String[]
   
   tvwEnv.Save
   
@@ -194,15 +182,6 @@ Private Sub SaveEnvironment()
     Endif
   Wend
 
-  aArgList = New String[][]
-  For Each hArgListEditor In svwArgList.Children
-    aArg = hArgListEditor.Get()
-    If aArg.Count = 0 Then Continue
-    aArgList.Add(aArg)
-  Next
-
-  Project.Arguments = aArgList
-  
   Project.Environment = $aEnv
   
 End
@@ -1304,120 +1283,6 @@ End
 '   btnNewArgument_Click
 ' 
 ' End
-
-Private Sub UpdateArgButtons()
-
-  Dim iCurrent As Integer
-
-  iCurrent = GetCurrentArgListEditor()
-
-  btnMoveDownArg.Enabled = iCurrent >= 0 And iCurrent < svwArgList.Children.Count - 1
-  btnMoveUpArg.Enabled = iCurrent > 0
-  btnRemoveArgument.Enabled = iCurrent >= 0
-
-End
-
-Private Sub SelectArgListEditor(hArgListEditor As ArgListEditor)
-
-  Dim hChild As ArgListEditor
-  
-  If hArgListEditor And If hArgListEditor.Selected Then Return
-  
-  For Each hChild In svwArgList.Children
-    hChild.Selected = hChild = hArgListEditor
-  Next
-
-End
-
-Public Sub ArgListEditor_Click()
-
-  SelectArgListEditor(Last)
-  UpdateArgButtons
-  
-End
-
-Private Sub GetCurrentArgListEditor() As Integer
-  
-  Dim I As Integer
-  Dim hChild As ArgListEditor
-  
-  For I = 0 To svwArgList.Children.Count - 1
-    hChild = svwArgList.Children[I]
-    If hChild.Selected Then Return I
-  Next
-  
-  Return -1
-  
-End
-
-
-Public Sub btnNewArgument_Click()
-
-  Dim hArgListEditor As ArgListEditor
-
-  hArgListEditor = New ArgListEditor(svwArgList) As "ArgListEditor"
-  hArgListEditor.SetFocus
-
-End
-
-Public Sub btnRemoveArgument_Click()
-
-  Dim iCurrent As Integer
-
-  iCurrent = GetCurrentArgListEditor()
-  If iCurrent < 0 Then Return
-  
-  svwArgList.Children[iCurrent].Delete
-
-End
-
-Public Sub svwArgList_GotFocus()
-
-  SelectArgListEditor(Null)
-
-End
-
-Public Sub btnMoveUpArg_Click()
-
-  Dim iCurrent As Integer
-  Dim hArgListEditor As ArgListEditor
-
-  iCurrent = GetCurrentArgListEditor()
-  If iCurrent <= 0 Then Return
-  
-  hArgListEditor = svwArgList.Children[iCurrent]
-  hArgListEditor.Next = svwArgList.Children[iCurrent - 1]
-  hArgListEditor.SetFocus
-  
-  If iCurrent = (Project.CurrentArgument - 1) Then
-    Dec Project.CurrentArgument
-    Project.WriteProject
-  Endif
-
-  UpdateArgButtons
-
-End
-
-Public Sub btnMoveDownArg_Click()
-
-  Dim iCurrent As Integer
-  Dim hArgListEditor As ArgListEditor
-
-  iCurrent = GetCurrentArgListEditor()
-  If iCurrent < 0 Or If iCurrent >= svwArgList.Children.Count - 1 Then Return
-  
-  hArgListEditor = svwArgList.Children[iCurrent]
-  hArgListEditor.Next = svwArgList.Children[iCurrent + 1].Next
-  hArgListEditor.SetFocus
-
-  If iCurrent = (Project.CurrentArgument - 1) Then
-    Inc Project.CurrentArgument
-    Project.WriteProject
-  Endif
-
-  UpdateArgButtons
-
-End
 
 Public Sub btnShowDeprecated_Click()
 

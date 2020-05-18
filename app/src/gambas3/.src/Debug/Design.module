@@ -1,6 +1,7 @@
 ' Gambas module file
 
 Public Startup As String
+Public Arguments As String[]
 
 Private Const STATE_LAST As Integer = -1
 Private Const STATE_STOP As Integer = 0
@@ -987,13 +988,19 @@ Private Sub Start(sCmd As String)
     
     aExec.Add(File.Dir(SConv(Project.Path)))
     
-    If Project.Arguments.Count Then
-      iPos = Project.CurrentArgument - 1
-      If iPos >= 0 And If iPos < Project.Arguments.Count Then
-        aExec.Add("--")
-        aExec.Insert(Project.Arguments[iPos])
-      Endif
+    If Arguments Then
+      aExec.Add("--")
+      aExec.Insert(Arguments)
+      Arguments = Null
     Endif
+    
+    ' If Project.Arguments.Count Then
+    '   iPos = Project.CurrentArgument - 1
+    '   If iPos >= 0 And If iPos < Project.Arguments.Count Then
+    '     aExec.Add("--")
+    '     aExec.Insert(Project.Arguments[iPos])
+    '   Endif
+    ' Endif
     
     If bValgrind Then 
       aExec.Insert(["valgrind", "--tool=memcheck", "--num-callers=50"], 0)
