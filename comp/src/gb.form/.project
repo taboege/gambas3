@@ -5,7 +5,9 @@ Version=3.14.90
 VersionFile=1
 Component=gb.image
 Component=gb.gui
+Component=gb.form
 Component=gb.settings
+Component=gb.form.stock
 Authors="Benoît Minisini"
 Environment="GB_GUI=gb.qt5"
 TabSize=2

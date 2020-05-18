@@ -13,6 +13,9 @@ archive                 $(mime)/package-x-generic;apps/utilities-file-archiver
 attach                  status/mail-attachment;actions/mail-attachment
 audio                   $(mime)/audio-x-generic
 battery                 devices/battery
+brightness              #
+blue                    #
+blur                    #
 book                    [-breeze*]actions/address-book-new;apps/accessories-dictionary
 bookmark                places/bookmarks;actions/bookmark-new;places/user-bookmarks
 bottom                  actions/go-bottom
@@ -31,6 +34,7 @@ color-picker            actions/color-picker
 component               [-breeze*]actions/document-share;categories/applications-utilities;apps/nepomuk
 computer                devices/computer
 connect                 actions/network-connect
+contrast                #
 copy                    actions/edit-copy
 cpp                     $(mime)/text-x-c++src
 css                     $(mime)/text-css
@@ -64,7 +68,9 @@ forward                 actions/media-seek-forward
 fullscreen              actions/view-fullscreen
 gambas                  #
 game                    categories/applications-games;apps/preferences-desktop-gaming
+gamma                   #
 gnu                     #
+green                   #
 grid                    actions/view-grid;actions/games-config-board
 group                   [-breeze*]actions/user-group-new;apps/system-users
 h                       $(mime)/text-x-chdr
@@ -74,6 +80,7 @@ hardware                devices/audio-card
 help                    [breeze*]apps/system-help;apps/help-browser
 home                    actions/go-home
 html                    $(mime)/text-html
+hue                     #
 identity                apps/user-info;preferences/preferences-desktop-user;apps/preferences-desktop-user
 image                   $(mime)/image-x-generic
 important               emblems/emblem-important
@@ -91,6 +98,7 @@ language                [-breeze*]actions/im-google-talk;apps/preferences-deskto
 last                    actions/go-last
 layout                  actions/document-page-setup
 left                    actions/go-previous
+lightness               #
 link                    emblems/emblem-symbolic-link
 linux                   #
 lock                    actions/object-locked;status/object-locked
@@ -114,6 +122,7 @@ new-window              actions/window-new
 next                    actions/go-next;actions/go-next-view
 office                  [elementary]categories/applications-other;categories/applications-office
 ok                      actions/dialog-ok
+opacity                 #
 open                    actions/document-open
 open-recent             actions/document-open-recent
 options                 [breeze*]actions/configure-shortcuts;categories/preferences-system;actions/configure
@@ -138,6 +147,7 @@ quit                    actions/application-exit
 raise                   actions/object-ordre-raise
 recent                  [breeze*]actions/appointment-new;actions/document-open-recent
 record                  actions/media-record
+red                     #
 redo                    actions/edit-redo
 refresh                 actions/view-refresh
 remove                  actions/list-remove
@@ -147,6 +157,7 @@ rewind                  actions/media-seek-backward
 right                   actions/go-next
 rotate-left             actions/object-rotate-left
 rotate-right            actions/object-rotate-right
+saturation              #
 save                    actions/document-save
 save-as                 actions/document-save-as
 scanner                 [breeze*]devices/scanner;devices/scanner
@@ -186,6 +197,7 @@ text-top                actions/format-align-vertical-top
 text-underline          actions/format-text-underline
 tools                   [elementary]categories/applications-developmenent;[breeze*]categories/applications-system;actions/applications-system;categories/applications-system
 top                     actions/go-top
+transparency            #
 trash                   [breeze*!16]places/user-trash;places/user-trash
 undo                    actions/edit-undo
 unindent                actions/format-indent-less
