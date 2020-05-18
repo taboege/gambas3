@@ -9,7 +9,6 @@ Static Property Read Icons As String[]
 Static Property Read Sizes As String[]
 
 Static Private $bInit As Boolean
-Static Private $bDarkTheme As Boolean = False
 'Static Private $sTheme As String
 Static Private $aIconPath As String[]
 Static Private $cIconMap As Collection
@@ -396,7 +395,7 @@ Static Private Sub DoLoadIcon(sPath As String, iSize As Integer, iRealSize As In
       If sExt = ".png" Then
         Try hImage = Image.Load(sDir &/ sFullName)
         If Not Error Then 
-          If $bDarkTheme Then hImage.Invert(Color.Background, Color.Foreground)
+          'If Application.DarkTheme Then hImage.Invert(Color.Background, Color.Foreground)
           hPict = hImage.Stretch(iRealSize, iRealSize).Picture
           Goto RETURN_PICT
         Endif
@@ -744,7 +743,7 @@ Static Private Function PictureFromSvg(hSvg As SvgImage, iSize As Integer) As Pi
   hSvg.Paint()
   Paint.End
   
-  If $bDarkTheme Then hImage.Invert(Color.Background, Color.Foreground)
+  'If $bDarkTheme Then hImage.Invert(Color.Background, Color.Foreground)
 
   Return hImage.Picture
   
