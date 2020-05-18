@@ -33,6 +33,7 @@
 #include "gambas.h"
 #include "main.h"
 #include "gb.draw.h"
+#include "gb.image.h"
 #include "cpaint_impl.h"
 #include "CPicture.h"
 #include "CWidget.h"
@@ -192,6 +193,7 @@ BEGIN_PROPERTY(Application_Font)
 
 END_PROPERTY
 
+
 BEGIN_PROPERTY(Application_ActiveWindow)
 
 	//GB.ReturnObject(CWidget::get(qApp->activeWindow()));
@@ -199,17 +201,20 @@ BEGIN_PROPERTY(Application_ActiveWindow)
 
 END_PROPERTY
 
+
 BEGIN_PROPERTY(Application_ActiveControl)
 
 	GB.ReturnObject(CWIDGET_active_control);
 
 END_PROPERTY
 
+
 BEGIN_PROPERTY(Application_PreviousControl)
 
 	GB.ReturnObject(CWIDGET_previous_control);
 
 END_PROPERTY
+
 
 BEGIN_PROPERTY(Application_Busy)
 
@@ -233,6 +238,7 @@ BEGIN_PROPERTY(Application_Busy)
 
 END_PROPERTY
 
+
 BEGIN_PROPERTY(Application_ShowTooltips)
 
 	if (READ_PROPERTY)
@@ -241,6 +247,7 @@ BEGIN_PROPERTY(Application_ShowTooltips)
 		MyApplication::setTooltipEnabled(VPROP(GB_BOOLEAN));
 
 END_PROPERTY
+
 
 BEGIN_PROPERTY(Application_Animations)
 
@@ -254,6 +261,7 @@ BEGIN_PROPERTY(Application_Animations)
 
 END_PROPERTY
 
+
 BEGIN_PROPERTY(Application_Shadows)
 
 	if (READ_PROPERTY)
@@ -265,6 +273,7 @@ BEGIN_PROPERTY(Application_Shadows)
 	}
 
 END_PROPERTY
+
 
 BEGIN_PROPERTY(Application_MainWindow)
 
@@ -282,6 +291,7 @@ BEGIN_PROPERTY(Application_MainWindow)
 	}
 
 END_PROPERTY
+
 
 BEGIN_PROPERTY(Application_Embedder)
 
@@ -308,6 +318,7 @@ BEGIN_PROPERTY(Application_Embedder)
 
 END_PROPERTY
 
+
 BEGIN_PROPERTY(Application_Theme)
 
 	if (READ_PROPERTY)
@@ -317,6 +328,34 @@ BEGIN_PROPERTY(Application_Theme)
 
 END_PROPERTY
 
+
+BEGIN_PROPERTY(Application_DarkTheme)
+
+	static bool _init = FALSE;
+	static bool _dark = FALSE;
+	
+	uint bg;
+	char *env;
+	
+	if (!_init)
+	{
+		_init = TRUE;
+		bg = QApplication::palette().color(QPalette::Window).rgb() & 0xFFFFFF;
+		if (IMAGE.GetLuminance(bg) >= 128)
+		{
+			env = getenv("GB_GUI_DARK_THEME");
+			if (env && atoi(env))
+				_dark = TRUE;
+		}
+		else
+			_dark = TRUE;
+	}
+
+	GB.ReturnBoolean(_dark);
+
+END_PROPERTY
+
+
 BEGIN_PROPERTY(Application_Restart)
 
 	if (READ_PROPERTY)
@@ -325,6 +364,7 @@ BEGIN_PROPERTY(Application_Restart)
 		GB.StoreObject(PROP(GB_OBJECT), POINTER(&CAPPLICATION_Restart));
 
 END_PROPERTY
+
 
 BEGIN_PROPERTY(Application_DblClickTime)
 
@@ -487,6 +527,7 @@ GB_DESC ApplicationDesc[] =
 	GB_STATIC_PROPERTY("Shadows", "b", Application_Shadows),
 	GB_STATIC_PROPERTY("Embedder", "i", Application_Embedder),
 	GB_STATIC_PROPERTY("Theme", "s", Application_Theme),
+	GB_STATIC_PROPERTY_READ("DarkTheme", "b", Application_DarkTheme),
 	GB_STATIC_PROPERTY("Restart", "String[]", Application_Restart),
 	GB_STATIC_PROPERTY_READ("DblClickTime", "i", Application_DblClickTime),
 
