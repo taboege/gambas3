@@ -127,7 +127,7 @@ Public Sub _Compile(sArch As String) As Boolean
   
   hComp = New CCompilation(sName, sPathSO, fTime)
   
-  hComp.Run(sPath, sPathSO, "-w -fPIC -shared -lm")
+  hComp.Run(sPath, "-w -fPIC -shared -lm")
 
   ' If $bDebug Then Error "gb.jit: linking to "; sPathSO
   ' 
