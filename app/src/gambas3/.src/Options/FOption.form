@@ -160,24 +160,20 @@
       Spacing = True
       Indent = True
       { Label40 Label
-        MoveScaled(0,0,47,4)
+        MoveScaled(0,0,31,4)
         Expand = True
         Text = ("Default tab size")
       }
-      { Panel3 HBox
-        MoveScaled(50,0,16,4)
-        Spacing = True
-        { txtTabSize SpinBox
-          MoveScaled(0,0,6,4)
-          MinValue = 1
-          MaxValue = 16
-          Value = 2
-        }
-        { Label3 Label
-          MoveScaled(8,0,8,4)
-          Expand = True
-          Text = ("space(s)")
-        }
+      { txtTabSize SpinBox
+        MoveScaled(48,0,7,4)
+        MinValue = 1
+        MaxValue = 16
+        Value = 2
+      }
+      { Label3 Label
+        MoveScaled(57,0,8,4)
+        AutoResize = True
+        Text = ("space(s)")
       }
     }
     { HBox53 HBox
@@ -399,7 +395,7 @@
         Text = ("Close tabs with middle mouse click")
       }
       { btnCloseWithMiddleClick SwitchButton
-        MoveScaled(48,0,8,4)
+        MoveScaled(43,0,8,4)
         Animated = True
       }
     }
@@ -427,7 +423,7 @@
         Text = ("Show debugging panel if needed")
       }
       { btnShowDebug SwitchButton
-        MoveScaled(48,0,8,4)
+        MoveScaled(43,0,8,4)
         Animated = True
       }
     }
@@ -497,13 +493,13 @@
         Text = ("Global size")
       }
       { cmbProjectFontSize ComboBox
-        MoveScaled(23,0,10,4)
+        MoveScaled(23,0,11,4)
         #Translate = False
         ReadOnly = True
         List = ["100 %", "95 %", "90 %", "85 %", "80 %", "75 %", "70 %"]
       }
       { Panel25 Panel
-        MoveScaled(34,0,31,4)
+        MoveScaled(35,0,30,4)
       }
     }
     { HBox19 HBox
@@ -516,13 +512,13 @@
         Text = ("Title size")
       }
       { cmbTitleFontSize ComboBox
-        MoveScaled(23,0,10,4)
+        MoveScaled(23,0,11,4)
         #Translate = False
         ReadOnly = True
         List = ["100 %", "95 %", "90 %", "85 %", "80 %", "75 %", "70 %"]
       }
       { Panel24 Panel
-        MoveScaled(34,0,31,4)
+        MoveScaled(35,0,30,4)
       }
     }
     { HBox63 HBox
@@ -535,13 +531,13 @@
         Text = ("Debugger size")
       }
       { cmbDebuggerFontSize ComboBox
-        MoveScaled(23,0,10,4)
+        MoveScaled(23,0,11,4)
         #Translate = False
         ReadOnly = True
         List = ["100 %", "95 %", "90 %", "85 %", "80 %", "75 %", "70 %"]
       }
       { Panel5 Panel
-        MoveScaled(34,0,31,4)
+        MoveScaled(35,0,30,4)
       }
     }
     { HBox23 HBox
@@ -624,13 +620,13 @@
         Text = ("Zoom (browser excepted)")
       }
       { cmbHelpZoom ComboBox
-        MoveScaled(23,0,10,4)
+        MoveScaled(23,0,11,4)
         #Translate = False
         ReadOnly = True
         List = ["100 %", "95 %", "90 %", "85 %", "80 %", "75 %", "70 %"]
       }
       { Panel2 Panel
-        MoveScaled(34,0,31,4)
+        MoveScaled(35,0,30,4)
       }
     }
     { Spring1 Spring
@@ -871,7 +867,7 @@
         Text = ("Separate static symbols in method selector")
       }
       { btnSeparateStatic SwitchButton
-        MoveScaled(48,0,8,4)
+        MoveScaled(50,0,8,4)
         Animated = True
       }
     }
