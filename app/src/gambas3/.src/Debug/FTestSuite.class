@@ -12,7 +12,7 @@ Public Sub _new()
 
   $MySettings = New Settings(Project.Dir &/ ".tests")
   Project.Compile()
-  
+
   $Tests = TestRunner.List(Project.Dir)
 
   'just for creation and debugging
@@ -308,7 +308,7 @@ End
 
 Public Sub tvwTests_Select()
 
-    $sBackuptests = TxtSelected.Text
+  $sBackuptests = TxtSelected.Text
 
   FillSelected()
 

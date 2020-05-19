@@ -4,6 +4,8 @@
   MoveScaled(0,0,148,98)
   Text = ("Choose Tests to be run with F4")
   Arrangement = Arrange.Vertical
+  Spacing = True
+  Margin = True
   { splSelectTests HSplit
     MoveScaled(1,1,116,62)
     Expand = True
@@ -34,21 +36,22 @@
       }
     }
   }
-  { panSelected VBox
-    MoveScaled(3,68,115,21)
+  { panSelectedTests VBox
+    MoveScaled(1,64,116,21)
+    Spacing = True
     { lblSelected Label
-      MoveScaled(1,0,35,4)
+      MoveScaled(0,0,35,4)
       Text = ("Selected tests (current testsuite)")
     }
     { txtSelected TextArea
-      MoveScaled(1,4,112,11)
+      MoveScaled(0,4,112,11)
       NoTabFocus = True
       Expand = True
       ReadOnly = True
       Wrap = True
     }
     { panSave HBox
-      MoveScaled(3,16,110,4)
+      MoveScaled(1,16,109,4)
       Spacing = True
       Invert = True
       { btnSave Button
