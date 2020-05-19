@@ -30,6 +30,7 @@
         NoTabFocus = True
         Expand = True
         Mode = Select.Multiple
+        ShowCheck = True
       }
     }
   }
