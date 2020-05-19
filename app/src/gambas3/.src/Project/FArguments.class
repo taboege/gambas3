@@ -141,9 +141,3 @@ Public Sub btnUndo_Click()
   FillList
 
 End
-
-Public Sub Form_Activate()
-
-  Debug Application.ActiveControl.Name
-
-End
