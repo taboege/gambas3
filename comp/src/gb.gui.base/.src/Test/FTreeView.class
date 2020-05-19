@@ -13,6 +13,8 @@ Public Sub Form_Open()
   Dim sParent As String
   Dim bDark As Boolean
   
+  Debug Style.Name
+  
   Component.Load("gb.form")
   
   hDirPict = Picture["icon:/small/directory"]

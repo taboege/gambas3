@@ -747,11 +747,11 @@ Public Sub ScrollArea_Draw()
         hData.Border.Paint(RectF(hSpan.X, hSpan.Y, hSpan.W, hSpan.H))
       Endif
       
-      If Not hRowBorder Then
-        If $iMode And If Not _DoNotDrawSelection Then
+      If Not hRowBorder And If $iMode Then
+        If _DoNotDrawSelection Then
+          If I = $iRow And If $iMode = Select.Multiple Then Paint.FillRect(0, Y, Paint.W, H, iBgSel)
+        Else
           If _IsRowSelected(I) Then Paint.FillRect(0, Y, Paint.W, H, iBgSel)
-        Else If $iMode = Select.Multiple And If _DoNotDrawSelection Then
-          If I = $iRow Then Paint.FillRect(0, Y, Paint.W, H, iBgSel)
         Endif
       Endif
       
