@@ -172,19 +172,6 @@ Private Sub StoreTests(TestSuite As String, Tests As String)
 
 End
 
-Public Sub tvwTests_Click()
-
-  $sBackuptests = TxtSelected.Text
-
-  FillSelected()
-
-  If Not lvwTestSuites.Exist(CURRENT_TESTSUITE_KEY) Then
-    lvwTestSuites.Add(CURRENT_TESTSUITE_KEY, $sCurrentTestSuiteCalled)
-  Endif
-  lvwTestSuites[CURRENT_TESTSUITE_KEY].Selected = True
-
-End
-
 Public Sub Form_KeyPress()
 
   'Maybe TODO: Ctrl-Z Ctrl-Y
@@ -316,5 +303,18 @@ Private Function GetAllowedCharsForHumans() As String
   Next
 
   Return sbuf
+
+End
+
+Public Sub tvwTests_Select()
+
+    $sBackuptests = TxtSelected.Text
+
+  FillSelected()
+
+  If Not lvwTestSuites.Exist(CURRENT_TESTSUITE_KEY) Then
+    lvwTestSuites.Add(CURRENT_TESTSUITE_KEY, $sCurrentTestSuiteCalled)
+  Endif
+  lvwTestSuites[CURRENT_TESTSUITE_KEY].Selected = True
 
 End
