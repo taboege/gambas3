@@ -262,6 +262,10 @@
       Picture = Picture["icon:/small/ok"]
       Shortcut = "F4"
     }
+    { mnuTestsuites Menu
+      Action = "testsuites"
+      Text = ("Testsuites") & "..."
+    }
     { Menu14 Menu
     }
     { mnuPause Menu
@@ -1832,6 +1836,10 @@
     Text = "Test"
     Shortcut = "F4"
     Picture = "icon:/small/ok"
+  }
+  { Action testsuites
+    Text = "Testsuites"
+    Shortcut = ""
   }
   { Action tips
     Text = "Tips of the day"

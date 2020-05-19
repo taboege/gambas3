@@ -1,0 +1,67 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,148,98)
+  Text = ("Choose Tests to be run with F4")
+  Arrangement = Arrange.Vertical
+  { splSelectTests HSplit
+    MoveScaled(1,1,116,62)
+    Expand = True
+    { panTestSuites VBox
+      MoveScaled(2,6,31,41)
+      { lblSuites Label
+        MoveScaled(1,1,24,4)
+        Text = ("Test Suites")
+      }
+      { lvwTestSuites ListView
+        MoveScaled(1,7,29,27)
+        Expand = True
+      }
+    }
+    { panSelectTests VBox
+      MoveScaled(43,11,56,31)
+      Expand = True
+      { lblSelect Label
+        MoveScaled(2,0,24,4)
+        Text = ("Select tests")
+      }
+      { tvwTests TreeView
+        MoveScaled(2,10,46,16)
+        NoTabFocus = True
+        Expand = True
+        Mode = Select.Multiple
+      }
+    }
+  }
+  { panSelected VBox
+    MoveScaled(3,68,115,21)
+    { lblSelected Label
+      MoveScaled(1,0,35,4)
+      Text = ("Selected tests (current testsuite)")
+    }
+    { txtSelected TextArea
+      MoveScaled(1,4,112,11)
+      NoTabFocus = True
+      Expand = True
+      ReadOnly = True
+      Wrap = True
+    }
+    { panSave HBox
+      MoveScaled(3,16,110,4)
+      Spacing = True
+      Invert = True
+      { btnSave Button
+        MoveScaled(76,0,16,4)
+        Text = ("Save")
+      }
+      { txtNameTestSuite TextBox
+        MoveScaled(51,0,24,4)
+      }
+      { lblStoreas Label
+        MoveScaled(7,0,43,4)
+        Text = ("Store this testsuite as:")
+        Alignment = Align.Right
+      }
+    }
+  }
+}
