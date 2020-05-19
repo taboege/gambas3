@@ -11,6 +11,8 @@ Private $sCurrentTestSuite As String
 Public Sub _new()
 
   $MySettings = New Settings(Project.Dir &/ ".tests")
+  Project.Compile()
+  
   $Tests = TestRunner.List(Project.Dir)
 
   'just for creation and debugging
@@ -18,8 +20,6 @@ Public Sub _new()
 
   $sCurrentTestSuite = CURRENT_TESTSUITE_KEY
 
-  'need to compile first
-  Project.Compile()
   FillTestSuites()
   FillTree(GetCurrentTests())
 
