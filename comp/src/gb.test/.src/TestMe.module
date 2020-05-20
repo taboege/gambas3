@@ -33,6 +33,8 @@ Public Sub Main()
 
     'Tests = "TestAllAsserts, Wurstsupp"
 
-    Test.Main(Tests)
+    Debug TestCommand.ToString(TestRunner.List("~/programming/gambas/gambas/comp/src/gb.test"))
+
+    'Test.Main(Tests)
 
 End

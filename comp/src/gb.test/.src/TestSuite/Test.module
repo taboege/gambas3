@@ -12,6 +12,10 @@ Property _Next As TestAssertion
 Private $hPrinter As New TapPrinter
 Private $hNext As TestAssertion
 
+'' Trigger gb.test to get all tests as string. Used to get all test names on the commandline with gbx3 -T "@AllTestNames" /path/to/project
+Public Const _TRIG_GETTESTS As String = "@AllTestNames"
+
+
 '' The static procedure Test.Main() starts tests. By default it runs all testmethods in all
 '' testmodules ordered by name and prints the result to the console.
 ''
@@ -35,10 +39,22 @@ Private $hNext As TestAssertion
 
 Public Sub Main(Optional Tests As String)
 
+    If Tests = _TRIG_GETTESTS Then
+        Print AllTests()
+        Goto TheEnd
+    Endif
+
+    If Tests = "*" Then
+        'triggers all tests
+        Tests = Null
+    Endif
+
     Test._Reset() ' only if you run this Main multiple times per process, which you shouldn't
     RunTests(Tests)
     PrintSummary()
     Quit ExitCode()
+
+TheEnd:
 
 End
 
@@ -153,7 +169,7 @@ Private Function RunTests(Tests As String)
     Dim TestModule As Class
     Dim Suite As New TestSuite
 
-    aTestCommands = TestCommand.ParseCommands(Tests)
+    aTestCommands = TestCommand.FromString(Tests)
 
     For Each sTestModule In GetAllTestModules(aTestCommands)
         TestModule = Class.Load(sTestModule)
@@ -223,39 +239,40 @@ Public Function AllTestsCollection() As Collection
     Dim sModules As String[]
     Dim sModule As String
     Dim TestModule As Class
-    Dim Alltests As New Collection
+    Dim cAlltests As New Collection
 
     sModules = GetAllTestModules(Null)
 
     For Each sModule In sModules
         TestModule = Class.Load(sModule)
-        Alltests.Add(TestSuite.GetTestsFromTestModule(Testmodule), TestModule.Name)
+        cAlltests.Add(TestSuite.GetTestsFromTestModule(Testmodule), TestModule.Name)
     Next
 
-    Return Alltests
+    Return cAlltests
 
 End
 
-'' Returns a Json string containing the testmodules and their testmethods.
+'' Returns a comma separated string with all tests in the same way Test.Main() wants it.
 
-Public Function AllTestsJson() As String
+Public Function AllTests() As String
 
     Dim tests As Collection
     Dim asTests As String[]
     Dim asLines As New String[]
-    Dim sBuf As String
+    Dim sModule, sMethod As String
 
     tests = AllTestsCollection()
 
     For Each tests
-        sBuf = "\"" & tests.Key & "\":"
+        sModule = tests.Key
         asTests = tests[tests.Key]
-        sBuf &= "[" & asTests.Join(",", "\"") & "]"
-        asLines.Add(sBuf)
+        For Each sMethod In asTests
+            asLines.Add(sModule & "." & sMethod)
+        Next
     Next
 
-    
-    Return "{" & asLines.Join(",") & "}"
+    asLines.Sort()
+    Return asLines.Join(",")
 
 End
 

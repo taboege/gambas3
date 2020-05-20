@@ -566,20 +566,27 @@ Public Sub GridView_Draw(X As Integer, Y As Integer, W As Integer, H As Integer,
         
       Endif
       
-      If $bShowCheck Then
+      If $bShowCheck And If $hView.Mode Then
         
-        If hItem.Selected Then
-          XA = X + W + $iDepthW / 4
-          YA = Y + $iDepthW / 4
-          WA = $iDepthW / 2
-          HA = H - $iDepthW / 2
-          Paint.Background = Color.SetAlpha(Style.ForegroundOf($hView), 64)
-          Paint.LineWidth = $iDepthW / 12
-          Paint.LineCap = Paint.LineCapSquare
-          Paint.Check(XA, YA, WA, HA)
-          Paint.Stroke
+        ' If hItem.Selected Then
+        '   XA = X + W + $iDepthW / 4
+        '   YA = Y + $iDepthW / 4
+        '   WA = $iDepthW / 2
+        '   HA = H - $iDepthW / 2
+        '   Paint.Background = Color.SetAlpha(Style.ForegroundOf($hView), 64)
+        '   Paint.LineWidth = $iDepthW / 12
+        '   Paint.LineCap = Paint.LineCapSquare
+        '   Paint.Check(XA, YA, WA, HA)
+        '   Paint.Stroke
+        ' Endif
+        ' Paint.DrawRect(X + W, Y, H, H, Color.SetAlpha(Style.ForegroundOf($hView), 64), $iDepthW / 18)
+        
+        If $hView.Mode = Select.Single Then
+          Style.PaintOption(X + W, Y, H, H, hItem.Selected)
+        Else
+          Style.PaintCheck(X + W, Y, H, H, hItem.Selected)
         Endif
-        Paint.DrawRect(X + W, Y, H, H, Color.SetAlpha(Style.ForegroundOf($hView), 64), $iDepthW / 18)
+        
         W -= $iDepthW + Desktop.Scale \ 2
         
       Endif
@@ -653,20 +660,28 @@ Public Sub GridView_Draw(X As Integer, Y As Integer, W As Integer, H As Integer,
         
       Endif
       
-      If $bShowCheck Then
+      If $bShowCheck And If $hView.Mode Then
         
-        If hItem.Selected Then
-          XA = X + $iDepthW / 4
-          YA = Y + $iDepthW / 4
-          WA = H - $iDepthW / 2
-          HA = H - $iDepthW / 2
-          Paint.Background = Color.SetAlpha(Style.ForegroundOf($hView), 64)
-          Paint.LineWidth = $iDepthW / 12
-          Paint.LineCap = Paint.LineCapSquare
-          Paint.Check(XA, YA, WA, HA)
-          Paint.Stroke
+        ' If hItem.Selected Then
+        '   XA = X + $iDepthW / 4
+        '   YA = Y + $iDepthW / 4
+        '   WA = H - $iDepthW / 2
+        '   HA = H - $iDepthW / 2
+        '   Paint.Background = Color.SetAlpha(Style.ForegroundOf($hView), 64)
+        '   Paint.LineWidth = $iDepthW / 12
+        '   Paint.LineCap = Paint.LineCapSquare
+        '   Paint.Check(XA, YA, WA, HA)
+        '   Paint.Stroke
+        ' Endif
+        ' Paint.DrawRect(X, Y, H, H, Color.SetAlpha(Style.ForegroundOf($hView), 64), $iDepthW / 18)
+        
+        'Paint.FillRect(X, Y, H, H, Color.Yellow)
+        If $hView.Mode = Select.Single Then
+          Style.PaintOption(X, Y, H, H, hItem.Selected)
+        Else
+          Style.PaintCheck(X, Y, H, H, hItem.Selected)
         Endif
-        Paint.DrawRect(X, Y, H, H, Color.SetAlpha(Style.ForegroundOf($hView), 64), $iDepthW / 18)
+        
         X += $iDepthW + Desktop.Scale \ 2
         
       Endif
@@ -740,6 +755,7 @@ Public Sub GridView_MouseDown()
   Dim bSelect As Boolean
 
   If Not hItem Then Return
+  If Mouse.Click > 1 Then Return
 
   If Mouse.Right And If Not $bShowCheck Then
     $hView.Rows[iRow].Selected = True
@@ -774,9 +790,8 @@ Public Sub GridView_MouseDown()
       X += $iDepthW
     Endif
     
-    If Mouse.X >= X + $iDepthW \ 8 And If Mouse.X < X + $iDepthW - $iDepthW \ 8 Then
+    If Mouse.X >= X + $iDepthW \ 8 Then 'And If Mouse.X < X + $iDepthW - $iDepthW \ 8 Then
       iFrom = $hView.Row
-      Debug iFrom;; Mouse.Shift
       If Mouse.Shift And If iFrom >= 0 Then
         bSelect = RowToItem(iFrom).Selected
         While iFrom <> iRow

@@ -11,7 +11,6 @@ Public ModuleName As String
 '' Name of testmethods in a testmodule to be called. If empty, all will be called.
 Public Methods As New String[]
 
-
 '' Finds the Command for the TestModule with name TestModuleName
 Static Public Function _Find(Commands As TestCommand[], TestModuleName As String) As TestCommand
 
@@ -25,8 +24,31 @@ Static Public Function _Find(Commands As TestCommand[], TestModuleName As String
 
 End
 
+'' Creates a string from an array of TestCommands
+Static Public Function ToString(Commands As TestCommand[]) As String
+
+    Dim Command As TestCommand
+    Dim asBuf As New String[]
+    Dim sMethod As String
+
+    Commands.Sort()
+    For Each Command In Commands
+        If Command.Methods.Count = 0 Then
+            asBuf.Add(Command.ModuleName)
+        Else
+            Command.Methods.Sort()
+            For Each sMethod In Command.Methods
+                asBuf.Add(Command.ModuleName & "." & sMethod)
+            Next
+        Endif
+    Next
+
+    Return asBuf.Join(", ")
+
+End
+
 '' Parses a string with comma separated tests and creates an array of TestCommands.
-Static Public Function ParseCommands(Tests As String) As TestCommand[]
+Static Public Function FromString(Tests As String) As TestCommand[]
 
     Dim asAll As String[]
     Dim sCommand, sModulename, sMethodname As String

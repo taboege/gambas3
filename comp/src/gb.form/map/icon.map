@@ -37,6 +37,7 @@ connect                 actions/network-connect
 contrast                #
 copy                    actions/edit-copy
 cpp                     $(mime)/text-x-c++src
+crop                    actions/image-crop;actions/transform-crop
 css                     $(mime)/text-css
 cut                     actions/edit-cut
 database                [breeze*]places/network-server-database;apps/office-database
@@ -48,11 +49,11 @@ directory               places/folder
 disconnect              actions/network-disconnect
 down                    actions/go-down
 download                [elementary]actions/media-import-audio-cd;emblems/emblem-downloads;actions/edit-download;actions/download
-draw-circle             actions/draw-circle
+draw-circle             actions/draw-circle;tools/draw-ellipse
 draw-line               actions/draw-line
-draw-path               actions/draw-path
-draw-rectangle          actions/draw-rectangle
-draw-text               actions/draw-text
+draw-path               actions/draw-path;tools/draw-freehand
+draw-rectangle          actions/draw-rectangle;tools/draw-rectangle
+draw-text               actions/draw-text;tools/draw-text
 edit                    actions/document-edit;apps/accessories-text-editor
 eject                   actions/media-eject
 end                     actions/media-skip-forward
@@ -62,7 +63,7 @@ exclusive               #
 exec                    [breeze*]actions/run-build;actions/system-run
 file                    [-breeze*]actions/document-new;$(mime)/empty;$(mime)/application-x-zerosize
 file-manager            [-breeze*]apps/toolbar/system-file-manager;apps/system-file-manager
-fill                    actions/fill-color
+fill                    actions/color-fill;tools/color-fill
 filter                  actions/view-filter
 find                    actions/edit-find
 first                   actions/go-first
@@ -160,9 +161,11 @@ redo                    actions/edit-redo
 refresh                 actions/view-refresh
 remove                  actions/list-remove
 replace                 actions/edit-find-replace
+resize                  actions/transform-scale
 revert                  actions/document-revert
 rewind                  actions/media-seek-backward
 right                   actions/go-next
+rotate                  actions/transform-rotate
 rotate-left             actions/object-rotate-left
 rotate-right            actions/object-rotate-right
 saturation              #

@@ -1748,10 +1748,11 @@ Public Sub panToolbar_Draw()
     Paint.Brush = Paint.Image($hConfigureImage)
     Paint.Rectangle(0, 0, panToolBar.W, panToolBar.H)
     Paint.Fill
-    ' Draw.Foreground = panWhere.Background
-    ' 'Draw.LineStyle = Line.Solid
-    ' Draw.Rect(0, 0, panToolBar.W, panToolBar.H)
-    ' Draw.Rect(1, 1, panToolBar.W - 2, panToolBar.H - 2)
+  Else If GetToolBar().Design Then
+    Paint.Rectangle(0.5, 0.5, Paint.W - 1, Paint.H - 1)
+    Paint.LineWidth = 1
+    Paint.Background = Color.LightBackground
+    Paint.Stroke
   Endif
 
 End

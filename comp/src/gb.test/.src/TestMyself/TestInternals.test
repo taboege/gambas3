@@ -13,50 +13,59 @@ Public Sub ParseTestCommands()
 
     'Three TestModules
     sCommand = "Bing, Bong, Bung"
-    Commands = TestCommand.ParseCommands(sCommand)
+    Commands = TestCommand.FromString(sCommand)
     sGot = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
 
-    Assert.Equals(sGot, "BingBongBung", "ParseCommands: Three testmodules")
+    Assert.Equals(sGot, "BingBongBung", "FromString: Three testmodules")
 
     'Test testmodules sort
     sCommand = "Bing,Bung,Bong"
-    Commands = TestCommand.ParseCommands(sCommand)
+    Commands = TestCommand.FromString(sCommand)
     sGot = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
 
-    Assert.Equals(sGot, "BingBongBung", "ParseCommands: Testmodules have to be sorted")
+    Assert.Equals(sGot, "BingBongBung", "FromString: Testmodules have to be sorted")
 
     'Three testmodules, one with three methods
     sCommand = "Bong.B, Bing, Bong.A, Bung,  Bong.C"
-    Commands = TestCommand.ParseCommands(sCommand)
+    Commands = TestCommand.FromString(sCommand)
     sGot = Commands[0].ModuleName & Commands[1].ModuleName & Commands[2].ModuleName
-    Assert.Equals(sGot, "BingBongBung", "ParseCommands: Three testmodules, one with three methods")
+    Assert.Equals(sGot, "BingBongBung", "FromString: Three testmodules, one with three methods")
 
     'Methods name sort
     sGot = Commands[1].Methods.Join()
-    Assert.Equals(sGot, "A,B,C", "ParseCommands: Methods name sort")
+    Assert.Equals(sGot, "A,B,C", "FromString: Methods name sort")
 
     'Three testmodules, one with methods, but Bong also wanted all, the more greedy one has to get it
     sCommand = "Bong, Bing, Bong.A, Bung, Bong.B, Bong.C"
-    Commands = TestCommand.ParseCommands(sCommand)
+    Commands = TestCommand.FromString(sCommand)
     'Methods name sort
     iGot = Commands[1].Methods.Count
-    Assert.Equals(iGot, 0, "ParseCommands: Greedy testmodule Bong")
+    Assert.Equals(iGot, 0, "FromString: Greedy testmodule Bong")
 
     'Programmer was a little tipsy but got it all except Bung which only wants testmethod U
     sCommand = "Bong, Bong.A, Bing, Bing, Bing, Bing, Bing, Bing, Bong.A, Bung.U, Bong.B, Bong.C, Bing, Bing, Bing, Bong, Bong"
-    Commands = TestCommand.ParseCommands(sCommand)
+    Commands = TestCommand.FromString(sCommand)
     'Methods name sort
     iGot = Commands[0].Methods.Count
-    Assert.Equals(iGot, 0, "ParseCommands: Tipsy programmer 1")
+    Assert.Equals(iGot, 0, "FromString: Tipsy programmer 1")
 
     iGot = Commands[1].Methods.Count
-    Assert.Equals(iGot, 0, "ParseCommands: Tipsy programmer 2")
+    Assert.Equals(iGot, 0, "FromString: Tipsy programmer 2")
 
     iGot = Commands[2].Methods.Count
-    Assert.Equals(iGot, 1, "ParseCommands: Tipsy programmer 3")
+    Assert.Equals(iGot, 1, "FromString: Tipsy programmer 3")
 
     sGot = Commands[2].Methods[0]
-    Assert.Equals(sGot, "U", "ParseCommands: Tipsy programmer 4")
+    Assert.Equals(sGot, "U", "FromString: Tipsy programmer 4")
+
+End
+
+Public Sub CommandsToString()
+
+  Dim Commands As TestCommand[]
+  
+  Commands = TestCommand.FromString("Bong, Bong.A, Bing, Bing, Bing, Bing, Bing, Bing, Bong.A, Bung.U, Bong.B, Bong.C, Bing, Bing, Bing, Bong, Bong")
+  Assert.Equals(TestCommand.ToString(Commands), "Bing, Bong, Bung.U")
 
 End
 
@@ -80,16 +89,18 @@ Public Sub ReflectTest()
     Assert.Equals(tests["TestCrashes"].Count, 2, "count of all testmethods in TestCrashes")
     Assert.Equals(tests["TestElse"].Count, 3, "count of all testmethods in TestElse")
     Assert.Equals(tests["TestEmpty"].Count, 0, "count of all testmethods in TestEmpty")
-    Assert.Equals(tests["TestInternals"].Count, 3, "count of all testmethods in TestInternals")
+    Assert.Equals(tests["TestInternals"].Count, 4, "count of all testmethods in TestInternals")
 
 End
 
 '' test the ability to create a json string with my own tests
-Public Sub ReflectTestsJson()
+Public Sub ReflectTestsString()
+
+    'dim kass as string = Test.AllTests()
 
     ' These have to be adjusted when tests change
-    Dim tests As String = "{\"TestAllAsserts\":[\"TestLike\",\"TestNote\",\"TestAssert\",\"TestAssertEmpty\",\"TestAssertError\",\"TestAssertNotNull\",\"TestTodoErrorCode\",\"TestAssertErrorCode\",\"TestAssertEqualsDate\",\"TestAssertEqualsLong\",\"TestAssertEqualsFloat\",\"TestAssertEqualsObject\",\"TestAssertEqualsString\"],\"TestBailout\":[\"TestBailout\"],\"TestCrashes\":[\"TestDoACrash\",\"TestErrorTwo\"],\"TestElse\":[\"TestNote\",\"TestNoMessage\",\"TestNoMessageInbetween\"],\"TestEmpty\":[],\"TestError\":[\"TestError\"],\"TestFailures\":[\"TestError\",\"TestLongFailure\",\"TestEqualsFailure\",\"TestStringFailure\",\"TestLongTypeMismatchFailure\"],\"TestInternals\":[\"ReflectTest\",\"ReflectTestsJson\",\"ParseTestCommands\"],\"TestSetup\":[\"TestFirst\",\"NameOfMethodDoesNotStartWithTest\"],\"TestSummary\":[\"DoSkip\",\"DoTodo\",\"DoOneFailure\",\"DoSomeAsserts\"]}"
+    Dim tests As String = "TestAllAsserts.TestAssert,TestAllAsserts.TestAssertEmpty,TestAllAsserts.TestAssertEqualsDate,TestAllAsserts.TestAssertEqualsFloat,TestAllAsserts.TestAssertEqualsLong,TestAllAsserts.TestAssertEqualsObject,TestAllAsserts.TestAssertEqualsString,TestAllAsserts.TestAssertError,TestAllAsserts.TestAssertErrorCode,TestAllAsserts.TestAssertNotNull,TestAllAsserts.TestLike,TestAllAsserts.TestNote,TestAllAsserts.TestTodoErrorCode,TestBailout.TestBailout,TestCrashes.TestDoACrash,TestCrashes.TestErrorTwo,TestElse.TestNoMessage,TestElse.TestNoMessageInbetween,TestElse.TestNote,TestError.TestError,TestFailures.TestEqualsFailure,TestFailures.TestError,TestFailures.TestLongFailure,TestFailures.TestLongTypeMismatchFailure,TestFailures.TestStringFailure,TestInternals.CommandsToString,TestInternals.ParseTestCommands,TestInternals.ReflectTest,TestInternals.ReflectTestsString,TestSetup.NameOfMethodDoesNotStartWithTest,TestSetup.TestFirst,TestSummary.DoOneFailure,TestSummary.DoSkip,TestSummary.DoSomeAsserts,TestSummary.DoTodo"
 
-    Assert.Equals(Test.AllTestsJson(), tests, "All Test names as Json")
+    Assert.Equals(Test.AllTests(), tests, "All Test names as string")
 
 End

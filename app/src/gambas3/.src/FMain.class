@@ -1426,6 +1426,8 @@ Public Sub Action_Activate((Key) As String) As Boolean
       If Not FArguments.Run() Then Project.Run(False)
     Case "test"
       Project.Test()
+    Case "testsuites"
+      FTestSuite.ShowDialog()
     Case "pause"
       Design.Pause
     Case "stop"
@@ -3089,5 +3091,6 @@ End
 Public Sub OnRefreshSources()
   
   Action["test"].Visible = Project.HasTest()
+  Action["testsuites"].Visible = Project.HasTest()
   
 End

@@ -47,7 +47,7 @@
         Name = "mnuCrop"
         Action = ".crop"
         Text = ("Crop")
-        Picture = Picture["img/draw/crop.png"]
+        Picture = Picture["icon:/small/crop"]
         Shortcut = "Ctrl+K"
       }
       { mnuFlipH Menu btnFlipH
@@ -82,13 +82,13 @@
         Name = "mnuResize"
         Action = ".resize"
         Text = ("Resize") & "..."
-        Picture = Picture["img/draw/resize.png"]
+        Picture = Picture["icon:/small/resize"]
       }
       { mnuRotate Menu btnRotate
         Name = "mnuRotate"
         Action = ".rotate"
         Text = ("Rotate") & "..."
-        Picture = Picture["img/draw/rotate.png"]
+        Picture = Picture["icon:/small/rotate"]
       }
     }
     { Menu2 Menu
@@ -271,7 +271,7 @@
     }
   }
   { tlbMain ToolBar
-    MoveScaled(0,0,168,4)
+    MoveScaled(0,1,168,4)
     Key = "image"
     Text = ("Image editor")
     { btnSave MenuButton
@@ -524,7 +524,7 @@
       Visible = False
       ToolTip = ("Crop")
       Action = ".crop"
-      Picture = Picture["img/draw/crop.png"]
+      Picture = Picture["icon:/small/crop"]
     }
     { btnFlipH ToolButton
       MoveScaled(123,0,4,4)
@@ -555,7 +555,7 @@
       ToolTip = ("Resize or stretch image")
       Action = ".resize"
       AutoResize = True
-      Picture = Picture["img/draw/resize.png"]
+      Picture = Picture["icon:/small/resize"]
     }
     { btnRotate ToolButton
       MoveScaled(138,0,4,4)
@@ -563,7 +563,7 @@
       ToolTip = ("Rotate image")
       Action = ".rotate"
       AutoResize = True
-      Picture = Picture["img/draw/rotate.png"]
+      Picture = Picture["icon:/small/rotate"]
     }
     { Spring1 Spring
       MoveScaled(153,0,8,4)
@@ -624,7 +624,7 @@
   { Action crop
     Text = "Crop"
     Shortcut = "Ctrl+K"
-    Picture = "img/draw/crop.png"
+    Picture = "icon:/small/crop"
   }
   { Action cut
     Text = "Cut"
@@ -700,12 +700,12 @@
   { Action resize
     Text = "Resize"
     Shortcut = ""
-    Picture = "img/draw/resize.png"
+    Picture = "icon:/small/resize"
   }
   { Action rotate
     Text = "Rotate"
     Shortcut = ""
-    Picture = "img/draw/rotate.png"
+    Picture = "icon:/small/rotate"
   }
   { Action rotate-l
     Text = "Rotate counter-clockwise"
