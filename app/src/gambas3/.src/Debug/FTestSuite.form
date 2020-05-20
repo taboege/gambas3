@@ -16,8 +16,26 @@
         Text = ("Test Suites")
       }
       { lvwTestSuites ListView
-        MoveScaled(1,7,29,27)
+        MoveScaled(1,7,29,22)
+        ToolTip = ("Hit Del to delete a test suite.")
         Expand = True
+      }
+      { HBox1 HBox
+        MoveScaled(1,35,29,4)
+        { btnDeleteTestSuite Button
+          MoveScaled(0,0,13,4)
+          NoTabFocus = True
+          ToolTip = ("Delete test suite (Del)")
+          AutoResize = True
+          Text = ("Delete")
+        }
+        { btnRenameTestSuite Button
+          MoveScaled(14,0,14,4)
+          NoTabFocus = True
+          ToolTip = ("Rename test suite")
+          AutoResize = True
+          Text = ("Rename")
+        }
       }
     }
     { panSelectTests VBox

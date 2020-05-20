@@ -44,7 +44,7 @@ Private Sub FillTestSuites()
   Dim sBuf As String
 
   lvwTestSuites.Clear
-  lvwTestSuites.Add("*", "*")
+  lvwTestSuites.Add("*", "[All Tests]")
   lvwTestSuites.Add(CURRENT_TESTSUITE_KEY, $sCurrentTestSuiteCalled)
   lvwTestSuites[CURRENT_TESTSUITE_KEY].Selected = True
 
@@ -221,15 +221,11 @@ Public Sub lvwTestSuites_Click()
 
   If lvwTestSuites.Key Then
 
-    $MySettings["CurrentTestsuite"] = lvwTestSuites.Key
-
     If lvwTestSuites.Key = "*" Then
       Tests = "*"
     Else
       Tests = GetTestsFromSettings(lvwTestSuites.Key)
     Endif
-
-    FillTree(Tests)
 
     'Name to store
     If lvwTestSuites.Key <> "*" And If lvwTestSuites.Key <> CURRENT_TESTSUITE_KEY Then
@@ -237,6 +233,13 @@ Public Sub lvwTestSuites_Click()
     Else
       txtNameTestSuite.Text = Null
     Endif
+
+    FillTree(Tests)
+    
+    ' keep this at this position
+    $MySettings["CurrentTestsuite"] = lvwTestSuites.Key
+    $MySettings.Save
+    
   Endif
 
 End
@@ -252,23 +255,29 @@ End
 Public Sub lvwTestSuites_KeyPress()
 
   If Key.Code = Key.Del Then
-    'delete Testsuite
-    If lvwTestSuites.Key <> CURRENT_TESTSUITE_KEY And If lvwTestSuites.Key <> "*" Then
-      If $MySettings["Testsuite " & lvwTestSuites.Key & "/Tests"] Then
-        If Message.Question(Subst(("Do you really want to delete the testsuite &1?"), lvwTestSuites.Key), ("Cancel"), ("Yes")) = 2 Then
-          $MySettings["Testsuite " & lvwTestSuites.Key & "/Tests"] = Null
-          If $MySettings["CurrentTestsuite"] = lvwTestSuites.Key Then
-            $MySettings["CurrentTestsuite"] = Null
-          Endif
-          $MySettings.Save()
-          FillTestSuites
-        Endif
-      Endif
-    Endif
+    DeleteTestSuite()
   Endif
 
   If Key.Code = Key.Enter Or If Key.Code = Key.Return Then
     lvwTestSuites_Click()
+  Endif
+
+End
+
+Private Sub DeleteTestSuite()
+
+  'delete Testsuite
+  If lvwTestSuites.Key <> CURRENT_TESTSUITE_KEY And If lvwTestSuites.Key <> "*" Then
+    If $MySettings["Testsuite " & lvwTestSuites.Key & "/Tests"] Then
+      If Message.Question(Subst(("Do you really want to delete the testsuite &1?"), lvwTestSuites.Key), ("Cancel"), ("Yes")) = 2 Then
+        $MySettings["Testsuite " & lvwTestSuites.Key & "/Tests"] = Null
+        If $MySettings["CurrentTestsuite"] = lvwTestSuites.Key Then
+          $MySettings["CurrentTestsuite"] = Null
+        Endif
+        $MySettings.Save()
+        FillTestSuites
+      Endif
+    Endif
   Endif
 
 End
@@ -316,5 +325,37 @@ Public Sub tvwTests_Select()
     lvwTestSuites.Add(CURRENT_TESTSUITE_KEY, $sCurrentTestSuiteCalled)
   Endif
   lvwTestSuites[CURRENT_TESTSUITE_KEY].Selected = True
+
+End
+
+Public Sub btnDeleteTestSuite_Click()
+
+  DeleteTestSuite()
+
+End
+
+Public Sub btnRenameTestSuite_Click()
+
+  Dim sOldName, sNewName, sTests As String
+
+  If lvwTestSuites.Key <> CURRENT_TESTSUITE_KEY And If lvwTestSuites.Key <> "*" Then
+
+    sNewName = InputBox((Subst("Please enter new name for &1", lvwTestSuites.Key)), ("Rename Test Suite"), lvwTestSuites.Key)
+
+    If sNewName And If sNewName <> lvwTestSuites.Key Then
+      sOldName = lvwTestSuites.Key
+
+      sTests = $MySettings["Testsuite " & lvwTestSuites.Key & "/Tests"]
+      $MySettings["Testsuite " & sNewName & "/Tests"] = sTests
+      $MySettings["Testsuite " & lvwTestSuites.Key & "/Tests"] = Null
+
+      If $MySettings["CurrentTestsuite"] = sOldName Then
+        $MySettings["CurrentTestsuite"] = sNewName
+      Endif
+
+      $MySettings.Save()
+      FillTestSuites
+    Endif
+  Endif
 
 End
