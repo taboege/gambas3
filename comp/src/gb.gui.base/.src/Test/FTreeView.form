@@ -57,12 +57,14 @@
     MoveScaled(13,22,42,26)
     Drop = True
     Expand = True
+    Mode = Select.Multiple
     Sorted = True
     Editable = True
     Header = False
     Resizable = True
     Border = False
     ShowLines = True
+    ShowCheck = True
   }
   { GridView1 GridView
     MoveScaled(20,51,37,27)

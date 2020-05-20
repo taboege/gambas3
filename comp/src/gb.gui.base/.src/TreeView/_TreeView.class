@@ -751,8 +751,6 @@ Public Sub GridView_MouseDown()
   Dim iRow As Integer = $hView.RowAt(Mouse.Y)
   Dim hItem As _TreeView_Item = RowToItem(iRow)
   Dim X As Integer
-  Dim iFrom As Integer
-  Dim bSelect As Boolean
 
   If Not hItem Then Return
   If Mouse.Click > 1 Then Return
@@ -782,30 +780,39 @@ Public Sub GridView_MouseDown()
     
   Endif
   
-  If $bShowCheck Then
-  
-    If System.RightToLeft Then 
-      X -= $iDepthW
-    Else
-      X += $iDepthW
-    Endif
-    
-    If Mouse.X >= X + $iDepthW \ 8 Then 'And If Mouse.X < X + $iDepthW - $iDepthW \ 8 Then
-      iFrom = $hView.Row
-      If Mouse.Shift And If iFrom >= 0 Then
-        bSelect = RowToItem(iFrom).Selected
-        While iFrom <> iRow
-          iFrom += Sgn(iRow - iFrom)
-          RowToItem(iFrom).Selected = bSelect
-        Wend
-      Else
-        hItem.Selected = Not hItem.Selected
-      Endif
-    Endif
-    
-    $hView.Row = iRow
-    
-  Endif  
+  ' If False Then
+  ' 
+  '   If System.RightToLeft Then 
+  '     X -= $iDepthW
+  '   Else
+  '     X += $iDepthW
+  '   Endif
+  '   
+  '   If Mouse.X >= X + $iDepthW \ 8 Then 'And If Mouse.X < X + $iDepthW - $iDepthW \ 8 Then
+  ' 
+  '     iFrom = $hView.Row
+  '     If Mouse.Shift And If iFrom >= 0 Then
+  '       $bSelectItem = RowToItem(iFrom).Selected
+  '       While iFrom <> iRow
+  '         iFrom += Sgn(iRow - iFrom)
+  '         RowToItem(iFrom).Selected = $bSelectItem
+  '       Wend
+  '       $hView.Row = iRow
+  '     Else
+  '       $hView.Row = iRow
+  '       hItem.Selected = Not hItem.Selected
+  '       $bSelectItem = hItem.Selected
+  '     Endif
+  '     
+  '     Stop Event
+  ' 
+  '   Else
+  '     
+  '     $hView.Row = iRow
+  '     
+  '   Endif
+  '   
+  ' Endif  
   
 End
 
@@ -1799,7 +1806,8 @@ Private Sub ShowCheck_Write(Value As Boolean)
   If $bShowCheck = Value Then Return
   $bShowCheck = Value
   $hView._DoNotDrawSelection = Value
-  $hView._NoMouse = Value
+  $hView._ToggleSelection = Value
+  '$hView._NoMouse = Value
   $hView.Refresh
 
 End
