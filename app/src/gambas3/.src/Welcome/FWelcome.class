@@ -80,7 +80,7 @@ Public Sub Form_Open()
   btnSoft.Tag = LIST_SOFTWARE
 
   For Each hCtrl In [btnNew, btnOpen, btnRecent, btnExample, btnSoft, btnFarm, btnOpenExtern, btnAbout, btnQuit]
-    hCtrl.Foreground = Color.White
+    hCtrl.Foreground = Color.Foreground
     'hCtrl.Highlight = &H61A7C3&
   Next
 
@@ -213,7 +213,7 @@ Private Sub Toggle(iState As Integer)
   End Select
   
   For Each hCtrl In [btnRecent, btnExample, btnSoft]
-    hCtrl.Background = If($iRecent = hCtrl.Tag, Color.SetAlpha(Color.TextBackground, 160), Color.Default)
+    hCtrl.Background = If($iRecent = hCtrl.Tag, Color.SetAlpha(Color.TextForeground, 240), Color.Default)
     'hCtrl.Foreground = If($iRecent = hCtrl.Tag, Color.TextForeground, Color.White)
   Next
   
