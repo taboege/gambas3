@@ -164,11 +164,22 @@ End
 
 Private Sub StoreTests(TestSuite As String, Tests As String)
 
+  Dim i As Integer
+
+  Tests = Trim(Tests)
   Testsuite = Trim(Testsuite)
+  TxtSelected.Text = Tests
+  
+  'remove spaces
+  i = InStr(Tests, " ")
+  While i > 0 
+    Tests = Left(Tests, i - 1) & Right(Tests, Len(Tests) - i)
+    i = InStr(Tests, " ")
+  Wend
+  
   $MySettings["CurrentTestsuite"] = Testsuite
   $MySettings["Testsuite " & TestSuite & "/Tests"] = Tests
-
-  TxtSelected.Text = Tests
+  
 
 End
 
