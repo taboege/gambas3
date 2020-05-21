@@ -22,7 +22,7 @@
 '
 
 Public Const COLOR_ORANGE As Integer = &HDF6B00
-Public Const COLOR_BLUE As Integer = &H3398C3
+Public Const COLOR_BLUE As Integer = &H61A7C3 '&H3398C3
 
 Public ProjectTree As TreeView
 Public Tree As CProjectTree
@@ -333,6 +333,7 @@ Public Sub Main()
   Next
 
   Try Component.Load("gb.inotify")
+  Try Component.Load("gb.media")
   
   If Not Settings["/ShowMenus", True] Then Env["APPMENU_DISPLAY_BOTH"] = "1"
   Env["QT_LOGGING_RULES"] = "*.debug=false"

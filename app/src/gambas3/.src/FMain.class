@@ -2474,11 +2474,11 @@ Public Sub dwgWelcome_Draw()
   If Not frmWelcome.Visible Then Return
   
   If Not $hCornerNW Then
-    $hCornerNW = Image.Load("img/welcome/corner.png")
+    $hCornerNW = Image.Load("welcome/corner.png")
     $hCornerNE = $hCornerNW.Copy().RotateRight()
     $hCornerSE = $hCornerNE.Copy().RotateRight()
     $hCornerSW = $hCornerSE.Copy().RotateRight()
-    $hBorderN = Image.Load("img/welcome/border.png")
+    $hBorderN = Image.Load("welcome/border.png")
     $hBorderE = $hBorderN.Copy().RotateRight()
     $hBorderS = $hBorderE.Copy().RotateRight()
     $hBorderW = $hBorderS.Copy().RotateRight()

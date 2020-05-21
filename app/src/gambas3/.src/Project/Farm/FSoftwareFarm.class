@@ -18,6 +18,13 @@ Public Sub Run()
   
 End
 
+Public Sub _new()
+  
+  dwgTitle.Background = Project.COLOR_BLUE
+  
+End
+
+
 Public Sub Form_Open()
 
   Dim aGroup As New CSoftwareGroup[]
