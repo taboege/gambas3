@@ -259,7 +259,7 @@ Private Sub ShowError(Optional sErr As String)
     $bIgnoreNextTaskError = False
     Return
   Endif
-  If sErr Then $sError &= sErr
+  If sErr Then $sError &= sErr & "\n"
   tabInfo[TAB_ERROR].Visible = True
   txtError.Text = $sError
 
@@ -267,7 +267,7 @@ End
 
 Public Sub Task_Error(Data As String)
   
-  ShowError(Data)
+  ShowError(RTrim(Data))
   
 End
 
@@ -275,7 +275,7 @@ End
 Public Sub Task_Kill()
   
   Try UpdateSize(Last.Value)
-  If Error Then ShowError(Error.Text & "\n")
+  If Error Then ShowError(Error.Text)
   lblSize.Foreground = Color.Default
   
 End
@@ -383,11 +383,11 @@ Public Sub tabInfo_Click()
     
   Endif
   
-  hParent._RaiseClick()
+  If hParent Then hParent._RaiseClick()
   
 Catch
 
-  ShowError(Error.Text & "\n")
+  ShowError(Error.Text)
 
 End
 
