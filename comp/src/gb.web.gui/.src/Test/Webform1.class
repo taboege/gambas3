@@ -204,3 +204,9 @@ Public Sub WebListBox1_Select()
   WebTextArea1.Text = aSel.Join()
 
 End
+
+Public Sub WebButton8_Click()
+
+  WebTextBox1.SetFocus(True)
+
+End

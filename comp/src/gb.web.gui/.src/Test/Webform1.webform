@@ -179,6 +179,10 @@
         #MoveScaled(65,1,16,4)
         Text = ("Progress") & "..."
       }
+      { WebButton8 WebButton
+        #MoveScaled(82,1,16,4)
+        Text = ("Highlight")
+      }
     }
     { WebImage1 WebImage
       #MoveScaled(1,8,133.75,6)
