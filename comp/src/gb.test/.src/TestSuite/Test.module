@@ -363,3 +363,17 @@ Public Sub _Finish()
     Test._Printer.Finish()
 
 End
+
+Public Sub _List()
+
+    Dim sName As String
+    Dim hStat As ClassStat
+    
+    Component.Load("gb.util")
+    
+    For Each sName In Dir(".../.gambas")
+        hStat = Class.Stat("..." &/ sName)
+        If hStat.Test Then Print hStat.Name
+    Next
+    
+End
