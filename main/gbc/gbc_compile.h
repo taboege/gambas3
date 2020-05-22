@@ -63,6 +63,7 @@ typedef
 		unsigned trans : 1;                // if translation files must be generated
 		unsigned is_module : 1;            // if the source file is a module
 		unsigned is_form : 1;              // if the source is a class form
+		unsigned is_test : 1;              // if the source is a test module
 		unsigned declared : 1;             // ?
 		unsigned nobreak : 1;              // no breakpoint
 		unsigned exported : 1;             // there are some exported class
@@ -73,7 +74,7 @@ typedef
 		unsigned no_old_read_syntax : 1;   // do not compile the old read syntax
 		unsigned exec : 1;                 // we are compiling for an executable
 		unsigned warnings : 1;             // if warnings must be printed
-		unsigned _reserved : 15;           // reserved
+		unsigned _reserved : 14;           // reserved
 		char *output;                      // output file
 		PATTERN *pattern;                  // lexical analyze
 		int pattern_count;                 // number of patterns
