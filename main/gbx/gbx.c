@@ -55,6 +55,7 @@
 #include "gbx_api.h"
 #include "gbx_signal.h"
 #include "gbx_jit.h"
+#include "gbx_test.h"
 
 #if USE_PROFILE
 #include "gbx_profile.h"
@@ -420,9 +421,12 @@ int main(int argc, char *argv[])
 		/* Startup class */
 		
 		CLASS_load(PROJECT_class);
-		startup = (CLASS_DESC_METHOD *)CLASS_get_symbol_desc_kind(PROJECT_class, "main", CD_STATIC_METHOD, 0, T_ANY);
-		if (startup == NULL)
-			THROW(E_MAIN);
+		if (!PROJECT_run_tests)
+		{
+			startup = (CLASS_DESC_METHOD *)CLASS_get_symbol_desc_kind(PROJECT_class, "main", CD_STATIC_METHOD, 0, T_ANY);
+			if (startup == NULL)
+				THROW(E_MAIN);
+		}
 
 		//CAPP_init(); /* needs startup class */
 		CFILE_init_watch();
@@ -454,16 +458,18 @@ int main(int argc, char *argv[])
 	{
 		if (PROJECT_run_tests)
 		{
-			GB_Push(1, T_STRING, _tests, -1);
-			EXEC_public_desc(PROJECT_class, NULL, startup, 1);
+			TEST_run(_tests);
+			ret = 0;
 		}
 		else
+		{
 			EXEC_public_desc(PROJECT_class, NULL, startup, 0);
 
-		if (TYPE_is_boolean(startup->type))
-			ret = RP->_boolean.value ? 1 : 0;
-		else if (TYPE_is_integer(startup->type))
-			ret = RP->_integer.value & 0xFF;
+			if (TYPE_is_boolean(startup->type))
+				ret = RP->_boolean.value ? 1 : 0;
+			else if (TYPE_is_integer(startup->type))
+				ret = RP->_integer.value & 0xFF;
+		}
 
 		EXEC_release_return_value();
 
