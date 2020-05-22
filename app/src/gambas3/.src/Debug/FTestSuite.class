@@ -23,6 +23,9 @@ Public Sub _new()
   FillTestSuites()
   FillTree(GetCurrentTests())
 
+Catch
+  Message.Error(Error.Text)
+
 End
 
 Private Function GetCurrentTests() As String
