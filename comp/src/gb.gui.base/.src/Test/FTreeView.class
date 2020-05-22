@@ -86,6 +86,7 @@ End
 Public Sub tvwTest_MouseDrag()
 
   Debug "START"
+  Drag.Icon = Picture["icon:/small/text"]
   Drag(tvwTest, "toto", "text/plain")
   Debug "END"
 

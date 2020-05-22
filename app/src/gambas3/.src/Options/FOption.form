@@ -705,7 +705,7 @@
       { Label69 Label
         MoveScaled(0,0,47,4)
         Expand = True
-        Text = ("Adapt colors to dark themes")
+        Text = ("Invert colors for dark themes")
       }
       { btnInvertTheme SwitchButton
         MoveScaled(48,0,8,4)

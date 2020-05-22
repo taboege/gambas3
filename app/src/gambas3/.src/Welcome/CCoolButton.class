@@ -52,7 +52,7 @@ Public Sub Panel_Draw()
   Endif
   
   If $bInside And If Me.Enabled Then
-    Paint.FillRect(0, 0, Paint.W, Paint.H, Color.SetAlpha(Color.TextBackground, 192))
+    Paint.FillRect(0, 0, Paint.W, Paint.H, Color.SetAlpha(Color.TextForeground, 224))
   Endif
   
   Paint.DrawPicture($hPict, 16, ($hPanel.H - $hPict.H) \ 2)

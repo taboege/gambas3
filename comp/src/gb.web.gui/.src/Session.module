@@ -28,7 +28,7 @@ Public Sub _init()
   
   $sDir = File.Dir(File.Dir(Temp$())) &/ "session"
   Try Mkdir $sDir
-  $sDir &/= "gb.web.form2"
+  $sDir &/= "gb.web.gui"
   Try Mkdir $sDir
   
 End

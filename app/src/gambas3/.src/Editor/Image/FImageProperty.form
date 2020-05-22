@@ -597,22 +597,22 @@
         }
         { txtGridRes SpinBox
           MoveScaled(17,0,9,4)
-          MinValue = 8
+          MinValue = 4
           MaxValue = 512
-          Step = 8
+          Step = 4
           Value = 64
         }
       }
       { Panel5 HBox
         MoveScaled(1,5,40,4)
-        { Label13 Label
-          MoveScaled(0,0,14,4)
+        { chkGridSnap CheckBox
+          MoveScaled(0,0,15,4)
           Expand = True
-          AutoResize = True
           Text = ("Grid snap")
         }
         { txtGridSnap SpinBox
           MoveScaled(29,0,9,4)
+          MinValue = 1
           MaxValue = 512
           Step = 8
           Value = 8
