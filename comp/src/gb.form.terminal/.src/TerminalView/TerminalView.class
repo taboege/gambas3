@@ -447,14 +447,15 @@ End
 
 Public Sub View_Draw()
   
-  Dim bInvertColor As Boolean
+  Dim bDarkBackground As Boolean
   
   If $sBuffer Then OutputTimer_Timer
   
   ApplyLimit
   
-  bInvertColor = Color[Style.BackgroundOf($hView)].Value > Color[Style.ForegroundOf($hView)].Value 
-  $hScreen.Paint(GetScrollY(), $LH, $CW, $iAscent, $bHideCursor, $hCacheFont, bInvertColor)
+  bDarkBackground = Color[Style.BackgroundOf($hView)].Luminance < Color[Style.ForegroundOf($hView)].Luminance 
+  'Debug bInvertColor
+  $hScreen.Paint(GetScrollY(), $LH, $CW, $iAscent, $bHideCursor, $hCacheFont, bDarkBackground)
   
   If $bTermUseMouse Then
     Paint.FillRect($iMouseX * $CW, $iMouseY * $LH, $CW, $LH, Color.SetAlpha(Color.SelectedBackground, 64))

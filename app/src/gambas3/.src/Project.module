@@ -5836,7 +5836,11 @@ Public Sub GetBackgroundBgColor() As Integer
 
   Dim hColor As ColorInfo
   hColor = Color[Color.Merge(Color.Background, Color.Foreground)]
-  hColor.Luminance = Max(0, Min(255, hColor.Luminance + GetBackgroundBrightness()))
+  If Application.DarkTheme Then
+    hColor.Luminance = 255 - GetBackgroundBrightness()
+  Else
+    hColor.Luminance = GetBackgroundBrightness()
+  Endif
   Return hColor.Color
   
 End
@@ -5844,14 +5848,16 @@ End
 Public Sub GetBackground() As Image
 
   Dim sBackground As String
+  Dim iColor As Integer
 
   If Not $bBackgroundValid Then
     $hBackground = Null
     sBackground = Settings["/Background/Image", DEFAULT_BACKGROUND]
     Try $hBackground = Image.Load("img/background" &/ sBackground & ".png")
-    If Not $hBackground Then $hBackground = New Image(32, 32, Color.LightForeground)
+    If Not $hBackground Then $hBackground = New Image(32, 32, Color.RGB(128, 128, 128, 128))
     If Application.DarkTheme Then $hBackground = $hBackground.Invert(True)
-    $hBackground.Colorize(GetBackgroundColor())
+    iColor = GetBackgroundColor()
+    $hBackground.Colorize(iColor)
     $bBackgroundValid = True
   Endif
 

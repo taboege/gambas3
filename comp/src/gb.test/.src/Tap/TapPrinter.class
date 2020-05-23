@@ -148,6 +148,7 @@ End
 Public Sub BailOut(Optional Comment As String)
 
     Unwind()
+    'The string "Bail out!" must not be changed!
     Print("Bail out!" & IIf(Comment, " " & Comment, ""))
     $hCurrent.Finished = True
 

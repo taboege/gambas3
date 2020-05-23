@@ -64,3 +64,12 @@ Private Function TestModule_Read() As Class
     Return $MyTestModule
 
 End
+
+Public Function _compare(TC As Testcase) As Integer
+
+    If Me.TestModule.Name = TC.TestModule.Name Then 
+        Return Comp(Me.Name, TC.Name)
+    Endif
+    Return Comp(Me.TestModule.Name, TC.TestModule.Name)
+
+End

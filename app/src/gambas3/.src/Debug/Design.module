@@ -920,7 +920,7 @@ Private Sub Start(sCmd As String)
 
   If $bTest Then
     
-    aExec = [System.Path &/ "bin/gbx" & System.Version, "-g", "-f", $sFifo, "-T", "", File.Dir(SConv(Project.Path))]
+    aExec = [System.Path &/ "bin/gbx" & System.Version, "-g", "-f", $sFifo, "-T", "*", File.Dir(SConv(Project.Path))]
     
     $hProcess = FDebugInfo.GetTestTerminal().Exec(aExec)
     $hProcess.Term.Echo = True

@@ -2390,9 +2390,13 @@ void IMAGE_balance(GB_IMG *img, int brightness, int contrast, int gamma, int hue
 
 void IMAGE_invert(GB_IMG *img, bool keep_hue) // GB_COLOR bg, GB_COLOR fg)
 {
+	static uchar lum[256];
+	static bool init_lum = FALSE;
+
 	GET_POINTER(img, p, pm);
 	uint col;
 	int format = img->format;
+	int i;
 	
 	SYNCHRONIZE(img);
 	
@@ -2408,10 +2412,17 @@ void IMAGE_invert(GB_IMG *img, bool keep_hue) // GB_COLOR bg, GB_COLOR fg)
 	{
 		GB_COLOR gcol;
 		
+		if (!init_lum)
+		{
+			for (i = 0; i <= 255; i++)
+				lum[i] = COLOR_invert_luminance(i);
+			init_lum = TRUE;
+		}
+		
 		while (p != pm) 
 		{
 			gcol = GB_COLOR_from_format(*p, format);
-			gcol = COLOR_set_luminance(gcol, 255 - COLOR_get_luminance(gcol));
+			gcol = COLOR_set_luminance(gcol, lum[COLOR_get_luminance(gcol)]);
 			*p++ = GB_COLOR_to_format(gcol, format);
 		}
 	}

@@ -643,7 +643,7 @@ Public Sub dwgStyle_Draw()
   
   Paint.Background = iForeground
   If hStyle.Bold Then
-    LB = 1 + Paint.Font.H \ 6
+    LB = 1 + Paint.Font.H \ If(bInvert, 4, 6)
     XB = D
     While LB >= 2
       Paint.DrawText(sName, XB, 0, W, hDraw.H, Align.Normal) 'DrawText(sStr, SX, X + 1, Y)

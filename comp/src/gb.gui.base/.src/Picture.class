@@ -93,8 +93,10 @@ Static Public Sub _get(Path As String) As Picture
       sDarkPath = File.SetBaseName(sPath, sBaseName & "-dark")
       If Exist(sDarkPath) Then
         Try hPict = Image.Load(sDarkPath).Picture
-        If hPict Then Goto __LOAD_OK
+      Else
+        Try hPict = Image.Load(sPath).Invert(True).Picture
       Endif
+      If hPict Then Goto __LOAD_OK
     Endif
     
     Try hPict = Image.Load(sPath).Picture

@@ -1106,10 +1106,10 @@
       { sldBackgroundBrightness Slider
         MoveScaled(6,0,59,4)
         Expand = True
-        MinValue = -128
-        MaxValue = 128
+        MaxValue = 255
         Step = 16
         PageStep = 16
+        Value = 128
       }
     }
     Index = 9

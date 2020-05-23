@@ -481,7 +481,7 @@ static void exit_files(void)
 {
 	int i;
 
-	if (make_test)
+	/*if (make_test)
 	{
 		FILE *f = NULL;
 		const char *file;
@@ -504,7 +504,7 @@ static void exit_files(void)
 		fclose(f);
 	}
 	else
-		unlink(".test");
+		unlink(".test");*/
 	
 	for (i = 0; i < ARRAY_count(_files); i++)
 		STR_free(_files[i]);

@@ -186,7 +186,7 @@ Public Sub DrawingArea_Draw()
     Endif
     Paint.Background = iBg
     Paint.Fill(True)
-
+    
     'Paint.Brush = Paint.RadialGradient(X, Y, Desktop.Scale * 24, X, Y, [Color.Merge(Color.LightForeground, Color.TextBackground, 0.6), Color.Merge(Color.TextForeground, Color.TextBackground, 0.97)], [0.0, 1.0])
     'Paint.Fill(True)
     'Paint.Brush = Null

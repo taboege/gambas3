@@ -222,14 +222,16 @@ Private Sub Escape(hView As TerminalView, hScreen As TerminalScreen, hOutput As 
               Select Case iArg
                 Case 0
                   hScreen.Attr.Reset()
-                Case 30
-                  hScreen.Attr.Foreground = 0
-                Case 31 To 37
-                  hScreen.Attr.Foreground = iArg - 30 + 8
+                Case 30 To 37
+                  hScreen.Attr.Foreground = iArg - 30
+                Case 90 To 97
+                  hScreen.Attr.Foreground = iArg - 90 + 8
                 Case 39
                   hScreen.Attr.Foreground = -1
                 Case 40 To 47
                   hScreen.Attr.Background = iArg - 40
+                Case 100 To 107
+                  hScreen.Attr.Background = iArg - 40 + 8
                 Case 49
                   hScreen.Attr.Background = -1
                 Case 1

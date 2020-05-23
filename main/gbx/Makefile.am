@@ -76,7 +76,8 @@ gbx3_SOURCES = \
  gbx_c_enum.h gbx_c_enum.c \
  gbx_c_timer.h gbx_c_timer.c \
  gbx_struct.h gbx_struct.c \
- gbx_signal.h gbx_signal.c
+ gbx_signal.h gbx_signal.c \
+ gbx_test.h gbx_test.c
 
 gb_la_SOURCES = \
  gbx_info.h \

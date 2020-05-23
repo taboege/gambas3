@@ -243,15 +243,21 @@ static void header_module_type(void)
 
 	ext = FILE_get_ext(JOB->name);
 
-	if (strcasecmp(ext, "module") == 0 || strcasecmp(ext, "test") == 0)
+	JOB->is_test = FALSE;
+	JOB->is_form = FALSE;
+	
+	if (strcasecmp(ext, "module") == 0)
 	{
 		JOB->is_module = TRUE;
-		JOB->is_form = FALSE;
+	}
+	else if (strcasecmp(ext, "test") == 0)
+	{
+		JOB->is_module = TRUE;
+		JOB->is_test = TRUE;
 	}
 	else if (strcasecmp(ext, "class") == 0)
 	{
 		JOB->is_module = FALSE;
-		JOB->is_form = FALSE;
 	}
 	else
 	{
