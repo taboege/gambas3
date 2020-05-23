@@ -726,19 +726,21 @@ BEGIN_METHOD_VOID(Window_ShowModal)
 
 	if (check_opened(THIS, TRUE))
 		return;
-
-	THIS->ret = 0;
-
-	if (!emit_open_event(THIS))
+	
+	if (!THIS->toplevel)
 	{
-		if (THIS->toplevel)
-		{
-			//THIS->widget.flag.visible = true;
-			WINDOW->showModal();
-			//THIS->widget.flag.visible = false;
-		}
+		GB.Error("The window is not top-level");
+		return;
 	}
 
+	THIS->ret = 0;
+	THIS->modal = TRUE;
+
+	if (!emit_open_event(THIS))
+		WINDOW->showModal();
+
+	THIS->modal = FALSE;
+	
 	GB.ReturnInteger(THIS->ret);
 
 END_METHOD
@@ -772,7 +774,7 @@ END_METHOD
 BEGIN_PROPERTY(Window_Modal)
 
 	if (THIS->toplevel)
-		GB.ReturnBoolean(WINDOW->isModal());
+		GB.ReturnBoolean(THIS->modal);
 	else
 		GB.ReturnBoolean(false);
 
