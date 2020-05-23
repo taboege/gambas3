@@ -30,6 +30,14 @@
 #include "gbx_exec.h"
 #include "gbx_test.h"
 
+static CLASS_DESC_METHOD *find_method(const char *name)
+{
+	CLASS_DESC_METHOD *method = (CLASS_DESC_METHOD *)CLASS_get_symbol_desc_kind(PROJECT_class, name, CD_STATIC_METHOD, 0, T_ANY);
+	if (!method)
+		ERROR_panic("Test.%s() method unavailable", name);
+	return method;
+}
+
 static void error_test_run(CARRAY *tests)
 {
 	OBJECT_UNREF(tests);
@@ -48,48 +56,39 @@ void TEST_run(const char *test_list)
 
 	if (!test_list || !*test_list)
 	{
-		startup = (CLASS_DESC_METHOD *)CLASS_get_symbol_desc_kind(PROJECT_class, "_list", CD_STATIC_METHOD, 0, T_ANY);
-		if (!startup)
-			ERROR_panic("Test._List() method unavailable");
-		EXEC_public_desc(PROJECT_class, NULL, startup, 0);
+		EXEC_public_desc(PROJECT_class, NULL, find_method("_list"), 0);
 		return;
 	}
 	
-	if (test_list[0] == '*' && !test_list[1])
+	if (test_list[0] != '*' || test_list[1])
 	{
-		startup = (CLASS_DESC_METHOD *)CLASS_get_symbol_desc_kind(PROJECT_class, "_runall", CD_STATIC_METHOD, 0, T_ANY);
-		if (!startup)
-			ERROR_panic("Test._RunAll() method unavailable");
-		EXEC_public_desc(PROJECT_class, NULL, startup, 0);
-		return;
-	}
+		startup = find_method("_add");
+		
+		tests = STRING_split(test_list, strlen(test_list), ",", 1, NULL, 0, TRUE, FALSE);
 
-	startup = (CLASS_DESC_METHOD *)CLASS_get_symbol_desc_kind(PROJECT_class, "_run", CD_STATIC_METHOD, 0, T_ANY);
-	if (!startup)
-		ERROR_panic("Test._Run() method unavailable");
-	
-	tests = STRING_split(test_list, strlen(test_list), ",", 1, NULL, 0, TRUE, FALSE);
-
-	ON_ERROR_1(error_test_run, tests)
-	{
-		for (i = 0; i < tests->count; i++)
+		ON_ERROR_1(error_test_run, tests)
 		{
-			test = *(char **)CARRAY_get_data_unsafe(tests, i);
-			p = index(test, '.');
-			if (p)
-				name = STRING_new_temp(test, p - test);
-			else
-				name = test;
+			for (i = 0; i < tests->count; i++)
+			{
+				test = *(char **)CARRAY_get_data_unsafe(tests, i);
+				p = index(test, '.');
+				if (p)
+					name = STRING_new_temp(test, p - test);
+				else
+					name = test;
 
-			class = CLASS_find(name);
-			CLASS_load(class);
-			
-			GB_Push(2, T_OBJECT, class, T_STRING, test, STRING_length(test));
-			EXEC_public_desc(PROJECT_class, NULL, startup, 2);
+				class = CLASS_find(name);
+				CLASS_load(class);
+				
+				GB_Push(2, T_OBJECT, class, T_STRING, test, STRING_length(test));
+				EXEC_public_desc(PROJECT_class, NULL, startup, 2);
+			}
 		}
+		END_ERROR
+		
+		OBJECT_UNREF(tests);
 	}
-	END_ERROR
 	
-	OBJECT_UNREF(tests);
+	EXEC_public_desc(PROJECT_class, NULL, find_method("_run"), 0);
 }
 

@@ -282,6 +282,7 @@ int main(int argc, char *argv[])
 				"  -r <path>       redirect standard error output\n"
 				"  -s <class>      override startup class\n"
 				"  -t --trace      dump the position of each executed line of code\n"
+				"  -T              list all test modules\n"
 				"  -T <tests>      run the specified test modules\n"
 				"  -V --version    display version\n"
 				"\n"
