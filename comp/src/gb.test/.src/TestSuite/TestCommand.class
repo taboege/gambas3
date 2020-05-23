@@ -37,21 +37,19 @@ Static Public Function ToString(Commands As TestCommand[]) As String
             asBuf.Add(Command.ModuleName)
         Else
             Command.Methods.Sort()
-            For Each sMethod In Command.Methods
-                asBuf.Add(Command.ModuleName & "." & sMethod)
-            Next
+            asBuf.Add(Command.ModuleName & "." & Command.Methods.Join(";"))
         Endif
     Next
 
-    Return asBuf.Join(", ")
+    Return asBuf.Join(",")
 
 End
 
 '' Parses a string with comma separated tests and creates an array of TestCommands.
 Static Public Function FromString(Tests As String) As TestCommand[]
 
-    Dim asAll As String[]
-    Dim sCommand, sModulename, sMethodname As String
+    Dim asAll, asMethod As String[]
+    Dim sCommand, sModulename, sMethod As String
     Dim Command As TestCommand
     Dim Commands As New TestCommand[]
     Dim i As Integer
@@ -71,7 +69,7 @@ Static Public Function FromString(Tests As String) As TestCommand[]
 
             'just to be sure
             sModulename = Null
-            sMethodname = Null
+            sMethod = Null
             i = 0
 
             Command = New TestCommand
@@ -79,10 +77,15 @@ Static Public Function FromString(Tests As String) As TestCommand[]
             With Command
                 If InStr(sCommand, ".") > 0 Then
                     sModulename = Trim(Left(sCommand, InStr(sCommand, ".") - 1))
-                    sMethodname = Trim(Right(sCommand, Len(sCommand) - InStr(sCommand, ".")))
+                    sMethod = Trim(Right(sCommand, Len(sCommand) - InStr(sCommand, ".")))
 
+                    If InStr(sMethod, ";") > 0 Then
+                        asMethod = split(sMethod, ";")
+                        .Methods = asMethod
+                    Else
+                        .Methods.Add(sMethod)
+                    Endif
                     .ModuleName = sModulename
-                    .Methods.Add(sMethodname)
                 Else
                     .ModuleName = Trim(sCommand)
                 Endif
@@ -95,13 +98,12 @@ Static Public Function FromString(Tests As String) As TestCommand[]
 
             For Each Commands
                 If Commands[i].ModuleName = sModulename And If Commands[i].Methods.Count > 0 Then
-                    If Not Commands[i].Methods.Exist(sMethodname) Then
-                        Commands[i].Methods.Add(sMethodname)
+                    If Not Commands[i].Methods.Exist(sMethod) And If InStr(sMethod, ";") = 0 Then
+                        Commands[i].Methods.Add(sMethod)
                     Endif
                 Endif
                 Inc i
             Next
-
         Next
 
         For Each Command In Commands

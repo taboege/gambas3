@@ -65,7 +65,7 @@ Public Sub CommandsToString()
   Dim Commands As TestCommand[]
   
   Commands = TestCommand.FromString("Bong, Bong.A, Bing, Bing, Bing, Bing, Bing, Bing, Bong.A, Bung.U, Bong.B, Bong.C, Bing, Bing, Bing, Bong, Bong")
-  Assert.Equals(TestCommand.ToString(Commands), "Bing, Bong, Bung.U")
+  Assert.Equals(TestCommand.ToString(Commands), "Bing,Bong,Bung.U")
 
 End
 
@@ -89,18 +89,42 @@ Public Sub ReflectTest()
     Assert.Equals(tests["TestCrashes"].Count, 2, "count of all testmethods in TestCrashes")
     Assert.Equals(tests["TestElse"].Count, 3, "count of all testmethods in TestElse")
     Assert.Equals(tests["TestEmpty"].Count, 0, "count of all testmethods in TestEmpty")
-    Assert.Equals(tests["TestInternals"].Count, 4, "count of all testmethods in TestInternals")
+    Assert.Equals(tests["TestInternals"].Count, 5, "count of all testmethods in TestInternals")
 
 End
 
-'' test the ability to create a json string with my own tests
+'' test the ability to create a testsuite string with my own tests
 Public Sub ReflectTestsString()
 
-    'dim kass as string = Test.AllTests()
+    Dim easy As String = Test.AllTests()
+    Dim got, want As String
 
     ' These have to be adjusted when tests change
-    Dim tests As String = "TestAllAsserts.TestAssert,TestAllAsserts.TestAssertEmpty,TestAllAsserts.TestAssertEqualsDate,TestAllAsserts.TestAssertEqualsFloat,TestAllAsserts.TestAssertEqualsLong,TestAllAsserts.TestAssertEqualsObject,TestAllAsserts.TestAssertEqualsString,TestAllAsserts.TestAssertError,TestAllAsserts.TestAssertErrorCode,TestAllAsserts.TestAssertNotNull,TestAllAsserts.TestLike,TestAllAsserts.TestNote,TestAllAsserts.TestTodoErrorCode,TestBailout.TestBailout,TestCrashes.TestDoACrash,TestCrashes.TestErrorTwo,TestElse.TestNoMessage,TestElse.TestNoMessageInbetween,TestElse.TestNote,TestError.TestError,TestFailures.TestEqualsFailure,TestFailures.TestError,TestFailures.TestLongFailure,TestFailures.TestLongTypeMismatchFailure,TestFailures.TestStringFailure,TestInternals.CommandsToString,TestInternals.ParseTestCommands,TestInternals.ReflectTest,TestInternals.ReflectTestsString,TestSetup.NameOfMethodDoesNotStartWithTest,TestSetup.TestFirst,TestSummary.DoOneFailure,TestSummary.DoSkip,TestSummary.DoSomeAsserts,TestSummary.DoTodo"
+    want = "TestAllAsserts.TestAssert;TestAssertEmpty;TestAssertEqualsDate;TestAssertEqualsFloat;TestAssertEqualsLong;TestAssertEqualsObject;TestAssertEqualsString;TestAssertError;TestAssertErrorCode;TestAssertNotNull;TestLike;TestNote;TestTodoErrorCode,TestBailout.TestBailout,TestCrashes.TestDoACrash;TestErrorTwo,TestElse.TestNoMessage;TestNoMessageInbetween;TestNote,TestError.TestError,TestFailures.TestEqualsFailure;TestError;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TestSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TestSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo"
+    got = Test.AllTests()
+    Assert.Equals(got, want, "All Test names as string")
+    
+    want = Test.AllTests()
+    got = TestCommand.ToString(TestCommand.FromString(want))
 
-    Assert.Equals(Test.AllTests(), tests, "All Test names as string")
+    Assert.Equals(got, want, "Check that Testcommand To and Fromstring do it the same way as Test.AllTests")
+
+End
+
+Public Sub InterpreterInterface()
+
+  Dim Commands As TestCommand[]
+  Dim Tests As String = "TestAllAsserts.TestAssertEqualsDate;TestAssertEmpty;TestAssert,TestElse"
+  
+  Test.Note("Tests the testsuite as string as it is run by the interpreter")
+  
+  Commands = TestCommand.FromString(Tests)
+  
+  Assert.Equals(Commands.Count, 2, "we have 2 commands")
+  Assert.Equals(Commands[0].Methods.Count, 3, "command 2 has 3 methods")
+  Assert.Equals(Commands[0].Methods[0], "TestAssert", "methods were sorted")
+  
+  Tests = "TestAllAsserts.TestAssert;TestAssertEmpty;TestAssertEqualsDate,TestElse"
+    Assert.Equals(TestCommand.ToString(Commands), Tests, "commands as string defining a testsuite")
 
 End

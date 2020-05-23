@@ -18,6 +18,8 @@ Public Sub Run()
 
     Assert $Tests
 
+    $Tests.Sort()
+
     Test.Plan($Tests.Count)
     For Each oTest In $Tests
         CurrentTestModule = oTest.TestModule
@@ -37,8 +39,8 @@ Public Sub Run()
         Test._Print(gb.Lf) 'better readability for humans
         Test._Print(Subst$(("Test &1:&2"), oTest.TestModule.Name, oTest.Name))
         Test._Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
-            'Debug oTest.Name
-            oTest.Run()
+        'Debug oTest.Name
+        oTest.Run()
         If Not Test._Finished Then Test._Finish()
         LastTestModule = CurrentTestModule
     Next
@@ -69,7 +71,6 @@ Private Sub StopTestModule(TestModule As Class)
 
 End
 
-
 '' Create a new test case and add it to the suite.
 Public Function AddTestCase(sName As String, TestModule As Class)
 
@@ -80,17 +81,12 @@ Public Function AddTestCase(sName As String, TestModule As Class)
 
     test = New TestCase(sName, TestModule)
     Assert $Tests
-    $Tests.Add(test)
+
+    If Not $Tests.Exist(test) Then
+        $Tests.Add(test)
+    Endif
 
 End
-
-Public Function GetString() As String
-
-
-    Return "hululu"
-
-End
-
 
 Static Public Function GetTestsFromTestModule(TestModule As Class) As String[]
 
@@ -111,11 +107,10 @@ Static Public Function GetTestsFromTestModule(TestModule As Class) As String[]
 End
 
 '' Create all test cases that are contained in the specified TestModule and add them to the suite.
-Public Function AddAllTestCases(TestModule As Class, Optional Commands As TestCommand[])
+Public Function AddAllTestCases(TestModule As Class)
 
     Dim asTests As String[]
-    Dim i, Plan, MethodCounts As Integer
-    Dim Command As TestCommand
+    Dim i As Integer
     Dim NameProcedure As String
 
     Assert TestModule
@@ -123,35 +118,14 @@ Public Function AddAllTestCases(TestModule As Class, Optional Commands As TestCo
     asTests = GetTestsFromTestModule(TestModule)
     asTests.Sort
 
-    If Commands Then
-        Command = TestCommand._Find(Commands, TestModule.Name)
-        'If there was no Command then Command is Null
-        Try MethodCounts = Command.Methods.Count
-    Endif
-
     'Assert asTests.Count > 0 Error "Failed: No tests in " & TestModule.Name
     If asTests.Count = 0 Then
-         Assert.Todo("No tests in " & TestModule.Name)
+        Assert.Todo("No tests in " & TestModule.Name)
     Endif
 
     For i = 0 To asTests.Count - 1
-
         NameProcedure = CStr(asTests[i])
-        If MethodCounts = 0 Then
-            'add every testmethod 
-            AddTestCase(NameProcedure, TestModule)
-        Else
-            ' just certain TestMethods will be added, increase plan, if plan exists in TestModule
-            If TestModule.Symbols.Exist("Plan", gb.IgnoreCase) Then
-                Plan = Object.GetProperty(TestModule, "Plan")
-                Inc Plan
-                Object.SetProperty(TestModule, "Plan", Plan)
-            Endif
-            If Command.Methods.Exist(NameProcedure) Then
-                AddTestCase(NameProcedure, TestModule)
-            Endif
-        Endif
-
+        AddTestCase(NameProcedure, TestModule)
     Next
 
 End
