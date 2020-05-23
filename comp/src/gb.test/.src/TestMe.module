@@ -19,6 +19,7 @@ Public Sub Main()
 
     ' ------------------------------------------------- These must succeed
     Tests = asGood.Join(",")
+    Test.Main(Tests)
 
     ' ------------------------------------------------- This must not succeed
     'Tests = "TestCrashes"
@@ -33,8 +34,21 @@ Public Sub Main()
 
     'Tests = "TestAllAsserts, Wurstsupp"
 
-    Debug TestCommand.ToString(TestRunner.List("~/programming/gambas/gambas/comp/src/gb.test"))
+    'Debug TestCommand.ToString(TestRunner.List("~/programming/gambas/gambas/comp/src/gb.test"))
 
+    'Tests = "TestInternals.InterpreterInterface"
     'Test.Main(Tests)
+
+    ' ------------------------------------------------- Interpreter Interface
+    ' Dim testclass As Class
+    ' 
+    ' testclass = Class.Load("TestElse")
+    ' Test._Add(testclass, "TestElse.TestNote")
+    ' testclass = Class.Load("TestAllAsserts")
+    ' Test._Add(testclass, "TestAllAsserts")
+    ' ' these are already contained, do not increase the numbers of tests!
+    ' Test._Add(testclass, "TestAllAsserts.TestNote;TestLike")
+    ' 
+    ' Test._Run()
 
 End

@@ -12,9 +12,10 @@ Property _Next As TestAssertion
 Private $hPrinter As New TapPrinter
 Private $hNext As TestAssertion
 
+Private $Suite As TestSuite
+
 '' Trigger gb.test to get all tests as string. Used to get all test names on the commandline with gbx3 -T "@AllTestNames" /path/to/project
 Public Const _TRIG_GETTESTS As String = "@AllTestNames"
-
 
 '' The static procedure Test.Main() starts tests. By default it runs all testmethods in all
 '' testmodules ordered by name and prints the result to the console.
@@ -39,18 +40,21 @@ Public Const _TRIG_GETTESTS As String = "@AllTestNames"
 
 Public Sub Main(Optional Tests As String)
 
-    If Tests = _TRIG_GETTESTS Then
-        Print AllTests()
-        Goto TheEnd
-    Endif
+    ' If Tests = _TRIG_GETTESTS Then
+    '     Print AllTests()
+    '     Goto TheEnd
+    ' Endif
 
     If Tests = "*" Then
         'triggers all tests
         Tests = Null
     Endif
-
     Test._Reset() ' only if you run this Main multiple times per process, which you shouldn't
-    RunTests(Tests)
+    If Tests Then
+        FromString(Tests)
+    Endif
+    RunTests()
+    $hPrinter.Session.Summary.Description = TestCommand.ToString(TestCommand.FromString(Tests))
     PrintSummary()
     Quit ExitCode()
 
@@ -58,11 +62,57 @@ TheEnd:
 
 End
 
+'' Called by the interpreter when a collection of tests is to be run.
+'' Adds a single Testmodule, Tests must be a string in this format:
+'' Name of the testmodule (mandatory) and if testmethods have to be called
+'' it is followed by a dot and the testmethods have to be separated by a semikolon.
+
+Public Sub _Add(Testclass As Class, Tests As String)
+
+    Dim sName As String
+
+    If Not $Suite Then
+        $Suite = New TestSuite
+    Endif
+
+    If Testclass.Name = Tests Then
+        'Add all methods in Testclass
+        $Suite.AddAllTestCases(Testclass)
+        Goto TheEnd
+    Endif
+
+    ' got sth like "TestAllAsserts.TestAssertErrorCode;TestNote;TestLike"
+    For Each sName In Split(Split(Tests, ".")[1], ";")
+        $Suite.AddTestCase(sName, Testclass)
+    Next
+
+TheEnd:
+    If $hPrinter.Session.Summary.Description = Null Then
+        $hPrinter.Session.Summary.Description = Tests
+    Else
+        $hPrinter.Session.Summary.Description &= "," & Tests
+    Endif
+
+End
+
+'' Called by the interpreter when argument = "*". Example: gbx3 -T "*" /path/to/project
+
+Public Sub _Run()
+
+    'Test._Reset() ' only if you run this Main multiple times per process, which you shouldn't
+    RunTests()
+    PrintSummary()
+    Quit ExitCode()
+
+End
+
 Private Sub PrintSummary()
 
     With $hPrinter.Session
         Test._Print(gb.Lf) ' better readability for humans
-        Test.Note(Subst$(("Ran: '&1' "), .Summary.Description))
+        
+        ' even if the tests came in unsorted, print it sorted
+        Test.Note(Subst$(("Ran: '&1' "), TestCommand.ToString(TestCommand.FromString(.Summary.Description))))
         If .TestsRun <> .Plan Then Test.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
         Test.Note(gb.Lf)
 
@@ -160,43 +210,41 @@ Private Function FindBonus(Tests As TestAssertion[], Prefix As String) As Collec
 
 End
 
-'' Run all tests, optional limited by module or method name.
+'' Run all tests in $Suite. If $Suite is Null, run all tests.
 
-Private Function RunTests(Tests As String)
+Private Function RunTests()
 
-    Dim aTestCommands As TestCommand[]
+    Dim Testmodule As Class
     Dim sTestModule As String
-    Dim TestModule As Class
-    Dim Suite As New TestSuite
 
-    aTestCommands = TestCommand.FromString(Tests)
+    If Not $Suite Then
+        ' create as Suite with all tests
+        $Suite = New TestSuite
+        For Each sTestModule In GetAllTestModules()
+            TestModule = Class.Load(sTestModule)
+            $Suite.AddAllTestCases(TestModule)
+        Next
+    Endif
 
-    For Each sTestModule In GetAllTestModules(aTestCommands)
-        TestModule = Class.Load(sTestModule)
-        Suite.AddAllTestCases(TestModule, aTestCommands)
-    Next
-
-    $hPrinter.Session.Summary.Description = Tests
-    Suite.Run()
+    $Suite.Run()
     If Not Test._Finished Then Test._Finish()
 
 End
 
-Private Function GetAllTestModules(Optional Commands As TestCommand[]) As String[]
+Private Function GetAllTestModules() As String[]
 
     Dim TestClass As Class
     Dim TestModuleNames As New String[]
     Dim sNames As New String[]
     Dim sName As String
-    Dim Command As TestCommand
+    Dim hStat As ClassStat
 
-    If Commands = Null Then
-        Commands = New TestCommand[]
-    Endif
+    Component.Load("gb.util")
 
-    If Exist(".../.test")
-        sNames = Split(File.Load(".../.test"), gb.Lf, Null, True)
-    Endif
+    For Each sName In Dir(".../.gambas")
+        hStat = Class.Stat("..." &/ sName)
+        If hStat.Test Then sNames.Add(hStat.Name)
+    Next
 
     Assert sNames
 
@@ -206,24 +254,10 @@ Private Function GetAllTestModules(Optional Commands As TestCommand[]) As String
         TestClass = Class.Load(sName)
         If Not TestClass Then Error.Raise(Subst$(("Could not load test module '&1'"), sName))
         If TestModuleNames.Exist(sName) Then Continue
-        If Commands.Count = 0 Then
-            'Add every Testmodule
-            TestModuleNames.Add(sName)
-        Else
-            'Add only testmodules whose names exist in Commands
-            For Each Command In Commands
-                If Not sNames.Exist(Command.ModuleName) Then
-                    Test.BailOut(Subst$(("There is no test called &1."), Command.ModuleName))
-                Endif
-                If Lower(Command.ModuleName) = Lower(sName) Then
-                    TestModuleNames.Add(sName)
-                Endif
-            Next
-        Endif
+        TestModuleNames.Add(sName)
     Next
 
     TestModuleNames.Sort
-
     Return TestModuleNames
 
 Catch
@@ -241,7 +275,7 @@ Public Function AllTestsCollection() As Collection
     Dim TestModule As Class
     Dim cAlltests As New Collection
 
-    sModules = GetAllTestModules(Null)
+    sModules = GetAllTestModules()
 
     For Each sModule In sModules
         TestModule = Class.Load(sModule)
@@ -266,9 +300,10 @@ Public Function AllTests() As String
     For Each tests
         sModule = tests.Key
         asTests = tests[tests.Key]
-        For Each sMethod In asTests
-            asLines.Add(sModule & "." & sMethod)
-        Next
+        asTests.Sort
+        If asTests.Count > 0 Then
+            asLines.Add(sModule & "." & asTests.Join(";"))
+        Endif
     Next
 
     asLines.Sort()
@@ -368,12 +403,36 @@ Public Sub _List()
 
     Dim sName As String
     Dim hStat As ClassStat
-    
+
     Component.Load("gb.util")
-    
+
     For Each sName In Dir(".../.gambas")
         hStat = Class.Stat("..." &/ sName)
         If hStat.Test Then Print hStat.Name
     Next
+
+End
+Private Sub FromString(Tests As String)
+
+    Dim Commands As TestCommand[]
+    Dim Command As TestCommand
+    Dim TestModule As Class
+    Dim sName As String
+
+    Commands = TestCommand.FromString(Tests)
     
+    $Suite = New TestSuite
+
+    For Each Command In Commands
+        With Command
+            TestModule = Class.Load(.ModuleName)
+            If Command.Methods.Count = 0 Then
+                Command.Methods = $Suite.GetTestsFromTestModule(TestModule)
+            Endif
+            For Each sName In Command.Methods
+                $Suite.AddTestCase(sName, Testmodule)
+            Next
+        End With
+    Next
+
 End
