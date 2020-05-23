@@ -80,7 +80,7 @@ Static Public Function FromString(Tests As String) As TestCommand[]
                     sMethod = Trim(Right(sCommand, Len(sCommand) - InStr(sCommand, ".")))
 
                     If InStr(sMethod, ";") > 0 Then
-                        asMethod = split(sMethod, ";")
+                        asMethod = Split(sMethod, ";")
                         .Methods = asMethod
                     Else
                         .Methods.Add(sMethod)
