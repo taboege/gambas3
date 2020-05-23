@@ -2620,8 +2620,9 @@ Public Sub OnRefreshComponents()
     If sComp Then hMenu.Visible = Project.Documentation.Components.Exist(sComp)
   Next
   
-  hMenu = Null
   aEnv = Project.Environment
+  
+  hMenu = Null
   iPos = aEnv.Find("GB_GUI=*", gb.Like)
   If iPos >= 0 Then
     sComp = Project.Environment[iPos]
@@ -2640,7 +2641,7 @@ Public Sub OnRefreshComponents()
     mnuSetGUICurrentDesktop.Checked = True
   Endif
   
-  For Each hMenu In [mnuEnvReverse, mnuEnvNoJit, mnuEnvDbDebug]
+  For Each hMenu In [mnuEnvReverse, mnuEnvNoJit, mnuEnvDbDebug, mnuEnvJitDebug]
     hMenu.Checked = aEnv.Exist(hMenu.Tag)
   Next
   

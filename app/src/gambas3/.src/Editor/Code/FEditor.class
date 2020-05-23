@@ -2594,7 +2594,7 @@ End
 
 Public Sub Editors_MouseUp()
 
-  'HideMessage
+  Dim sText As String
   
   CPosition.Enable
   CPosition.SaveCurrent(Me)
@@ -2612,12 +2612,11 @@ Public Sub Editors_MouseUp()
     Return
   Endif
 
+  sText = Trim($hEditor.SelectedText)
   If Not Project.Running Then
-    'FindDefinition(True, Mouse.X, Mouse.Y)
-    Return
+  Else
+    FDebugInfo.InstantWatch(sText, Me) ', Me, $hEditor.ToPosX($hEditor.Column), $hEditor.ToPosY() + $hEditor.LineHeight)
   Endif
-
-  FDebugInfo.InstantWatch(Trim($hEditor.SelectedText), Me) ', Me, $hEditor.ToPosX($hEditor.Column), $hEditor.ToPosY() + $hEditor.LineHeight)
 
 End
 

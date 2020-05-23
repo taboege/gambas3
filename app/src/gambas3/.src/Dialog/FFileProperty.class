@@ -7,6 +7,7 @@ Static Private $sPath As String
 Private $iTabHistory As Integer
 Private $iTabChanges As Integer
 Private $bVersion As Boolean
+Private $bHideUndoButton As Boolean
 
 'Private $bStat As Boolean
 
@@ -85,7 +86,6 @@ Public Sub Form_Open()
   Me.Title = Subst(("'&1' properties"), File.Name(sPath))
   
   If VersionControl.Enabled And Not IsDir($sPath) Then
-    btnRevert.Show
     $iTabChanges = fprInfo.Add(panVersion, ("Changes"))
     $iTabHistory = fprInfo.Add(panHistory, ("History"))
     edtChange.Clear
@@ -100,6 +100,8 @@ Public Sub Form_Open()
   ' Endif
   
   btnClose.SetFocus
+  
+  UpdateUndoButton
 
 End
 
@@ -119,6 +121,7 @@ Private Sub LoadVersionControlInfo()
 
   Inc Application.Busy
 
+  $bHideUndoButton = False
   edtChange.Font = Font[Settings["/Editor/Font", Project.DEFAULT_FONT]]
   sDiff = VersionControl.Diff($sPath)
   If Project.IsFormPath($sPath) Then
@@ -136,13 +139,15 @@ Private Sub LoadVersionControlInfo()
       lblVersioning.Text = ("This file is locked, and will be deleted on the next commit.")
     Else If Project.IsAdded($sPath) Then
       lblVersioning.Text = ("This file is not versioned, and must be added to the repository.")
-      btnRevert.Hide
+      $bHideUndoButton = True
     Else
       lblVersioning.Text = ("This file has not been modified since the last commit.")
-      btnRevert.Hide
+      $bHideUndoButton = True
     Endif
     lblVersioning.Show
   Endif
+  
+  UpdateUndoButton
   
   Dec Application.Busy
   
@@ -188,6 +193,12 @@ End
 ' 
 ' End
 
+Private Sub UpdateUndoButton()
+
+  btnRevert.Visible = fprInfo.Index = $iTabChanges And Not $bHideUndoButton
+
+End
+
 Public Sub fprInfo_Click()
 
   Select Case fprInfo.Index
@@ -201,6 +212,8 @@ Public Sub fprInfo_Click()
       edtHistory.FillWithHistory($sPath)
     
   End Select
+  
+  UpdateUndoButton
 
 End
 
