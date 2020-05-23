@@ -71,7 +71,7 @@ End
 
 
 '' Create a new test case and add it to the suite.
-Private Function AddNewTestCase(sName As String, TestModule As Class)
+Public Function AddTestCase(sName As String, TestModule As Class)
 
     Dim test As TestCase
 
@@ -83,6 +83,14 @@ Private Function AddNewTestCase(sName As String, TestModule As Class)
     $Tests.Add(test)
 
 End
+
+Public Function GetString() As String
+
+
+    Return "hululu"
+
+End
+
 
 Static Public Function GetTestsFromTestModule(TestModule As Class) As String[]
 
@@ -103,7 +111,7 @@ Static Public Function GetTestsFromTestModule(TestModule As Class) As String[]
 End
 
 '' Create all test cases that are contained in the specified TestModule and add them to the suite.
-Public Function AddAllTestCases(TestModule As Class, Commands As TestCommand[])
+Public Function AddAllTestCases(TestModule As Class, Optional Commands As TestCommand[])
 
     Dim asTests As String[]
     Dim i, Plan, MethodCounts As Integer
@@ -115,9 +123,11 @@ Public Function AddAllTestCases(TestModule As Class, Commands As TestCommand[])
     asTests = GetTestsFromTestModule(TestModule)
     asTests.Sort
 
-    Command = TestCommand._Find(Commands, TestModule.Name)
-    'If there was no Command then Command is Null
-    Try MethodCounts = Command.Methods.Count
+    If Commands Then
+        Command = TestCommand._Find(Commands, TestModule.Name)
+        'If there was no Command then Command is Null
+        Try MethodCounts = Command.Methods.Count
+    Endif
 
     'Assert asTests.Count > 0 Error "Failed: No tests in " & TestModule.Name
     If asTests.Count = 0 Then
@@ -129,7 +139,7 @@ Public Function AddAllTestCases(TestModule As Class, Commands As TestCommand[])
         NameProcedure = CStr(asTests[i])
         If MethodCounts = 0 Then
             'add every testmethod 
-            AddNewTestCase(NameProcedure, TestModule)
+            AddTestCase(NameProcedure, TestModule)
         Else
             ' just certain TestMethods will be added, increase plan, if plan exists in TestModule
             If TestModule.Symbols.Exist("Plan", gb.IgnoreCase) Then
@@ -138,7 +148,7 @@ Public Function AddAllTestCases(TestModule As Class, Commands As TestCommand[])
                 Object.SetProperty(TestModule, "Plan", Plan)
             Endif
             If Command.Methods.Exist(NameProcedure) Then
-                AddNewTestCase(NameProcedure, TestModule)
+                AddTestCase(NameProcedure, TestModule)
             Endif
         Endif
 
