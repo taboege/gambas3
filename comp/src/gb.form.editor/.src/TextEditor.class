@@ -291,6 +291,17 @@ Private Function Text_Read() As String
   
 End
 
+Private Sub CalcBoldWidth()
+  
+  If Color[$hStyles[Highlight.Background].Color].Luminance < Color[$hStyles[Highlight.Normal].Color].Luminance Then
+    $BW = 1 + $LH \ 4
+  Else
+    $BW = 1 + $LH \ 6
+  Endif
+  
+End
+
+
 Private Sub CalcSizes()
   
   Dim hParent As Control
@@ -301,7 +312,7 @@ Private Sub CalcSizes()
   '$hFontBold.Bold = True
   
   $LH = $hFont.Height + 1
-  $BW = 1 + $LH \ 6
+  CalcBoldWidth
   $hRows.Height = $LH
   
   hParent = Me
@@ -3106,6 +3117,7 @@ Public Sub View_Draw()
     $iMatchColor = $hStyles[Highlight.Highlight].Color
     '$iIndentColor = Color.Gradient($iBackground, $iForeground)
     $iMarginColor = Color.Merge($iLimitColor, $iBackground, 0.8)
+    CalcBoldWidth
     $bStyleChanged = False
   Endif
   
@@ -5284,6 +5296,7 @@ End
 Public Sub Styles_Change()
   
   If $bStyleChanged Then Return
+  
   $bStyleChanged = True
   ClearCacheText
   If $hLabelFrame Then
