@@ -1,7 +1,5 @@
 ' Gambas class file
 
-
-
 Public Sub Button2_Click()
 
   FTestDateChooser.ShowDialog
