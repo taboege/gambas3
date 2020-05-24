@@ -894,6 +894,21 @@ Public Sub HasTest() As Boolean
   
 End
 
+Public Sub GetTestModules() As String[]
+  
+  Dim sPath As String
+  Dim aResult As New String[]
+  
+  For Each sPath In Sources
+    If File.Ext(sPath) = "test" Then aResult.Add(sPath)
+  Next
+  
+  aResult.Sort(gb.Natural)
+  Return aResult
+  
+End
+
+
 Private Sub RefreshInheritance()
 
   Dim sKey As String

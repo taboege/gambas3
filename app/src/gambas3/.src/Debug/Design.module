@@ -730,7 +730,7 @@ End
 
 Public Sub Test()
   
-  If Not Project.Tree.HasTest() Then
+  If Not Project.HasTest() Then
     Message.Warning(("The project has no test module."))
     Return
   Endif
