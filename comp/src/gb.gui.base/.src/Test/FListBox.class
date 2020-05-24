@@ -4,6 +4,7 @@
 Public Sub Form_Open()
 
   'ListBox1.List = Dir("~")
+  ListBox1.Index = 0
 
 End
 
