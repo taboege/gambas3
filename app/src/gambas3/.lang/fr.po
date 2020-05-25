@@ -222,7 +222,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gambas3 3.14.90\n"
-"PO-Revision-Date: 2020-05-24 06:47 UTC\n"
+"PO-Revision-Date: 2020-05-24 22:18 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -974,7 +974,7 @@ msgstr "ici"
 msgid "IDE extensions"
 msgstr "Extension de l'EDI"
 
-#: CProjectList.class:552 CVersionControlGit.class:398 CWaitingAnimation.class:63 FArguments.form:46 FColorChooser.form:68 FComponentChooser.form:97 FConflict.class:197 FConnectionEditor.class:470 FCrash.form:97 FCreateFile.form:204 FDebugExpr.form:46 FDebugInfo.form:408 FExportData.class:126 FFarmConfig.form:38 FFarmLogin.form:126 FFarmRegister.form:141 FFarmRequest.form:43 FFieldChooser.form:144 FFileProperty.class:160 FFontChooser.form:40 FGotoLine.form:23 FHelpBrowser.form:73 FImageOffsetSelection.form:33 FImageQuality.form:30 FImageResize.form:49 FImageRotate.form:32 FLayout.form:50 FList.form:128 FMain.class:258 FMakeInstall.class:361 FMenu.form:414 FNewConnection.form:318 FNewTable.form:86 FNewTranslation.form:21 FOption.class:820 FPasteSpecial.form:86 FPasteTable.form:105 FProjectChooser.form:73 FProjectProperty.form:968 FProjectVersion.class:211 FProxy.form:57 FPublish.class:273 FReportBorderChooser.form:48 FReportBoxShadowChooser.form:27 FReportBrushChooser.form:36 FReportCoordChooser.form:26 FReportPaddingChooser.form:75 FSave.form:28 FSaveProjectAs.form:81 FSearch.class:942 FSelectComponent.form:39 FSelectExtraFile.form:43 FSelectIcon.form:89 FSelectLibrary.form:66 FSnippet.form:57 FSoftwareFarm.class:559 FTableChooser.form:68 FTestSuite2.class:327 FText.form:40 FTranslate.class:677 FVersionControl.form:98 FWebFontChooser.form:129 Project.module:568 VersionControl.module:398
+#: CProjectList.class:552 CVersionControlGit.class:398 CWaitingAnimation.class:63 FArguments.form:46 FColorChooser.form:68 FComponentChooser.form:97 FConflict.class:197 FConnectionEditor.class:470 FCrash.form:97 FCreateFile.form:204 FDebugExpr.form:46 FDebugInfo.form:408 FExportData.class:126 FFarmConfig.form:38 FFarmLogin.form:126 FFarmRegister.form:141 FFarmRequest.form:43 FFieldChooser.form:144 FFileProperty.class:160 FFontChooser.form:40 FGotoLine.form:23 FHelpBrowser.form:73 FImageOffsetSelection.form:33 FImageQuality.form:30 FImageResize.form:49 FImageRotate.form:32 FLayout.form:50 FList.form:128 FMain.class:258 FMakeInstall.class:361 FMenu.form:414 FNewConnection.form:318 FNewTable.form:86 FNewTranslation.form:21 FOption.class:820 FPasteSpecial.form:86 FPasteTable.form:105 FProjectChooser.form:73 FProjectProperty.form:968 FProjectVersion.class:211 FProxy.form:57 FPublish.class:273 FReportBorderChooser.form:48 FReportBoxShadowChooser.form:27 FReportBrushChooser.form:36 FReportCoordChooser.form:26 FReportPaddingChooser.form:75 FSave.form:28 FSaveProjectAs.form:81 FSearch.class:942 FSelectComponent.form:39 FSelectExtraFile.form:43 FSelectIcon.form:89 FSelectLibrary.form:66 FSnippet.form:57 FSoftwareFarm.class:559 FTableChooser.form:68 FTestSuite.class:328 FText.form:40 FTranslate.class:677 FVersionControl.form:98 FWebFontChooser.form:129 Project.module:568 VersionControl.module:398
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -1446,7 +1446,7 @@ msgstr "Enregistrer"
 msgid "Solve"
 msgstr "Résoudre"
 
-#: FConflict.form:166 FConflictEditor.form:306 FDebugInfo.form:415 FEditor.form:346 FFileProperty.form:94 FForm.form:438 FImageEditor.form:392 FMain.form:410 FPatch.form:88 FProjectVersion.form:322 FSystemInfo.form:67 FTestSuite2.form:159 FTextEditor.form:342 FTips.form:83 FTranslate.form:411
+#: FConflict.form:166 FConflictEditor.form:306 FDebugInfo.form:415 FEditor.form:346 FFileProperty.form:94 FForm.form:438 FImageEditor.form:392 FMain.form:410 FPatch.form:88 FProjectVersion.form:322 FSystemInfo.form:67 FTestSuite.form:172 FTextEditor.form:342 FTips.form:83 FTranslate.form:411
 msgid "Close"
 msgstr "Fermer"
 
@@ -1765,7 +1765,7 @@ msgstr "Nouvelle table"
 msgid "Delete table"
 msgstr "Supprimer la table"
 
-#: FConnectionEditor.form:134 FDebugInfo.form:192 FMain.form:1228 FMakeInstall.form:762 FOption.form:1544 FProjectProperty.form:597 FPublish.form:268 FSoftwareFarm.form:426 FTestSuite2.class:327
+#: FConnectionEditor.form:134 FDebugInfo.form:192 FMain.form:1228 FMakeInstall.form:762 FOption.form:1544 FProjectProperty.form:597 FPublish.form:268 FSoftwareFarm.form:426 FTestSuite.class:328
 msgid "Remove"
 msgstr "Supprimer"
 
@@ -3017,7 +3017,7 @@ msgstr "Transparence"
 msgid "Preview"
 msgstr "Aperçu"
 
-#: FImageProperty.form:702 FProjectProperty.form:956 FTestSuite2.form:153
+#: FImageProperty.form:702 FProjectProperty.form:956 FTestSuite.form:166
 msgid "Reset"
 msgstr "Réinitialiser"
 
@@ -3447,7 +3447,7 @@ msgstr "Démarrer avec"
 msgid "Test"
 msgstr "Tester"
 
-#: FMain.form:609 FTestSuite2.form:31
+#: FMain.form:609 FTestSuite.form:32
 msgid "Test suites"
 msgstr "Suites de tests"
 
@@ -4397,7 +4397,7 @@ msgstr "Impossible de décompresser la documentation."
 msgid "Unable to install documentation."
 msgstr "Impossible d'installer la documentation."
 
-#: FOption.class:1636 FTestSuite2.class:32
+#: FOption.class:1636 FTestSuite.class:32
 msgid "Default"
 msgstr "Par défault"
 
@@ -5657,19 +5657,43 @@ msgstr "Veuillez recopier ces informations dans tous vos rapports de bugs."
 msgid "Choose a table"
 msgstr "Choisissez une table"
 
-#: FTestSuite2.class:163
+#: FTestSuite.class:164
 msgid "Test suite #&1"
 msgstr "Suite de tests n°&1"
 
-#: FTestSuite2.class:193
+#: FTestSuite.class:194
 msgid "This test suite already exists."
 msgstr "Cette suite de tests existe déjà."
 
-#: FTestSuite2.class:327
+#: FTestSuite.class:328
 msgid "Do you really want to remove this test suite?"
 msgstr "Désirez-vous vraiment supprimer cette suite de tests ?"
 
-#: FTestSuite2.form:132
+#: FTestSuite.form:60
+msgid "New test suite"
+msgstr "Nouvelle série de tests"
+
+#: FTestSuite.form:67
+msgid "Duplicate test suite"
+msgstr "Dupliquer la série de tests"
+
+#: FTestSuite.form:74
+msgid "Rename test suite"
+msgstr "Renommer la série de tests"
+
+#: FTestSuite.form:81
+msgid "Delete test suite"
+msgstr "Supprimer la série de tests"
+
+#: FTestSuite.form:114
+msgid "Select all tests"
+msgstr "Sélectionner tous les tests"
+
+#: FTestSuite.form:121
+msgid "Unselect all tests"
+msgstr "Déselectionner tous les tests"
+
+#: FTestSuite.form:145
 msgid "Test with"
 msgstr "Tester avec"
 

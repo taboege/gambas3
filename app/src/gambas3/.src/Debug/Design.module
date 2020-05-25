@@ -837,6 +837,32 @@ Private Sub MakeBreakpoint(sBreakpoint As String, bOn As Boolean) As String
   
 End
 
+Private Sub GetTestSuite() As String
+
+  Dim hSettings As Settings
+  Dim iSuite As Integer
+  Dim sSuite As Variant
+  Dim aTest As String[]
+  Dim I As Integer
+
+  hSettings = New Settings(Project.Dir &/ ".test")
+  iSuite = hSettings["/TestSuites/TestWith", 0]
+  If iSuite = 0 Then
+    sSuite = hSettings["/TestSuites/Default"]
+  Else
+    sSuite = hSettings["/TestSuites/" & CStr(iSuite) &/ "Tests"]
+  Endif
+  
+  If Not sSuite Then
+    aTest = Project.Tree.GetTestModules()
+    For I = 0 To aTest.Max
+      aTest[I] = File.BaseName(aTest[I])
+    Next
+    sSuite = aTest.Join()
+  Endif
+  Return sSuite
+
+End
 
 Private Sub Start(sCmd As String)
 
@@ -920,7 +946,7 @@ Private Sub Start(sCmd As String)
 
   If $bTest Then
     
-    aExec = [System.Path &/ "bin/gbx" & System.Version, "-g", "-f", $sFifo, "-T", "*", File.Dir(SConv(Project.Path))]
+    aExec = [System.Path &/ "bin/gbx" & System.Version, "-g", "-f", $sFifo, "-T", GetTestSuite(), File.Dir(SConv(Project.Path))]
     
     $hProcess = FDebugInfo.GetTestTerminal().Exec(aExec)
     $hProcess.Term.Echo = True

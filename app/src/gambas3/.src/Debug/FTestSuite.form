@@ -1,88 +1,124 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,148,98)
-  Text = ("Choose Tests to be run with F4")
+  MoveScaled(0,0,92,66)
+  Text = ("Test suites")
   Arrangement = Arrange.Vertical
-  Spacing = True
-  Margin = True
-  { splSelectTests HSplit
-    MoveScaled(1,1,116,62)
+  { HBox2 HBox
+    MoveScaled(2,4,83,42)
     Expand = True
-    { panTestSuites VBox
-      MoveScaled(2,6,31,41)
-      { lblSuites Label
-        MoveScaled(1,1,24,4)
-        Text = ("Test Suites")
-      }
-      { lvwTestSuites ListView
-        MoveScaled(1,7,29,22)
-        ToolTip = ("Hit Del to delete a test suite.")
+    { Panel1 VBox
+      MoveScaled(2,2,37.875,37.875)
+      Expand = True
+      { lvwSuite ListView
+        MoveScaled(4,3,27,23)
         Expand = True
+        Sorted = True
+        Editable = True
+        Border = False
       }
-      { HBox1 HBox
-        MoveScaled(1,35,29,4)
-        { btnDeleteTestSuite Button
-          MoveScaled(0,0,13,4)
-          NoTabFocus = True
-          ToolTip = ("Delete test suite (Del)")
+      { Separator4 Separator
+        MoveScaled(10,28,13,0)
+      }
+      { Panel2 HBox
+        MoveScaled(5,29,25,4)
+        { btnNew ToolButton
+          MoveScaled(0,0,4,4)
+          ToolTip = ("New test suite")
           AutoResize = True
-          Text = ("Delete")
+          Picture = Picture["icon:/small/add"]
         }
-        { btnRenameTestSuite Button
-          MoveScaled(14,0,14,4)
-          NoTabFocus = True
+        { btnCopy ToolButton
+          MoveScaled(4,0,4,4)
+          ToolTip = ("Duplicate test suite")
+          AutoResize = True
+          Picture = Picture["icon:/small/copy"]
+        }
+        { btnRename ToolButton
+          MoveScaled(8,0,4,4)
           ToolTip = ("Rename test suite")
           AutoResize = True
-          Text = ("Rename")
+          Picture = Picture["icon:/small/edit"]
+        }
+        { btnDelete ToolButton
+          MoveScaled(12,0,4,4)
+          ToolTip = ("Delete test suite")
+          AutoResize = True
+          Picture = Picture["icon:/small/remove"]
         }
       }
     }
-    { panSelectTests VBox
-      MoveScaled(43,11,56,31)
+    { Separator1 Separator
+      MoveScaled(41,14,0,10)
+    }
+    { Panel5 VBox
+      MoveScaled(44,2,27.875,37.875)
       Expand = True
-      { lblSelect Label
-        MoveScaled(2,0,24,4)
-        Text = ("Select tests")
-      }
-      { tvwTests TreeView
-        MoveScaled(2,10,46,16)
-        NoTabFocus = True
+      { tvwSuite TreeView
+        MoveScaled(0,0,27,20)
         Expand = True
         Mode = Select.Multiple
+        Sorted = True
+        Border = False
         ShowCheck = True
+      }
+      { Separator2 Separator
+        MoveScaled(7,22,16,0)
+      }
+      { Panel6 HBox
+        MoveScaled(2,26,17,4)
+        { btnSelectAll ToolButton
+          MoveScaled(0,0,4,4)
+          ToolTip = ("Select all tests")
+          AutoResize = True
+          Picture = Picture["icon:/small/select-all"]
+        }
+        { btnUnselectAll ToolButton
+          MoveScaled(4,0,4,4)
+          ToolTip = ("Unselect all tests")
+          AutoResize = True
+          Picture = Picture["icon:/small/unselect"]
+        }
       }
     }
   }
-  { panSelectedTests VBox
-    MoveScaled(1,64,116,21)
-    Spacing = True
-    { lblSelected Label
-      MoveScaled(0,0,35,4)
-      Text = ("Selected tests (current testsuite)")
-    }
-    { txtSelected TextArea
-      MoveScaled(0,4,112,11)
-      NoTabFocus = True
+  { Separator3 Separator
+    MoveScaled(41,48,10,0)
+  }
+  { HBox3 HBox
+    MoveScaled(3,52,84,6)
+    Margin = True
+    { Panel3 HBox
+      MoveScaled(1,1,31,4)
       Expand = True
-      ReadOnly = True
-      Wrap = True
-    }
-    { panSave HBox
-      MoveScaled(1,16,109,4)
       Spacing = True
-      Invert = True
-      { btnSave Button
-        MoveScaled(76,0,16,4)
-        Text = ("Save")
+      { Label1 Label
+        MoveScaled(0,0,9,4)
+        AutoResize = True
+        Text = ("Test with")
       }
-      { txtNameTestSuite TextBox
-        MoveScaled(51,0,24,4)
+      { cmbTestWith ComboBox
+        MoveScaled(10,0,20,4)
+        Expand = True
+        ReadOnly = True
       }
-      { lblStoreas Label
-        MoveScaled(7,0,43,4)
-        Text = ("Store this testsuite as:")
-        Alignment = Align.Right
+    }
+    { Panel4 HBox
+      MoveScaled(35,1,44,4)
+      Expand = True
+      Spacing = True
+      { Spring1 Spring
+        MoveScaled(2,1,5,1)
+      }
+      { btnReset Button
+        MoveScaled(8,0,16,4)
+        Text = ("Reset")
+        Picture = Picture["icon:/small/undo"]
+      }
+      { btnClose Button
+        MoveScaled(25,0,16,4)
+        Text = ("Close")
+        Picture = Picture["icon:/small/close"]
       }
     }
   }
