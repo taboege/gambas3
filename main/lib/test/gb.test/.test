@@ -1,0 +1,38 @@
+[TestSuites]
+Count=1
+TestWith=1
+Default="TestAllAsserts,TestFailures.TestEqualsFailure;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands"
+
+[TestSuites/1]
+Name="Suite de tests n°1"
+Tests="TestCrashes.TestDoACrash;TestErrorTwo,TestElse.TestNoMessage;TestNoMessageInbetween;TestNote,TestEmpty"
+
+[TestSuites/Suite1]
+Name="Série de tests n°1"
+
+[TestSuites/Suite2]
+Name="Série de tests n°2"
+Tests="TestElse"
+
+[TestSuites/Suite3]
+Name="Série de tests n°3"
+Tests="TestError"
+
+[TestSuites/Suite4]
+Name="Série de tests n°6"
+
+[TestSuites/Suite5]
+Name="Série de tests n°7"
+Tests="TestElse.TestNoMessage;TestNote"
+
+[TestSuites/Suite6]
+Name="Série de tests n°8"
+Tests="TestCrashes"
+
+[TestSuites/Suite7]
+Name="Test suite #1"
+Tests="TestAllAsserts,TestBailout,TestCrashes"
+
+[TestSuites/Suite8]
+Name="Série de tests n°7"
+

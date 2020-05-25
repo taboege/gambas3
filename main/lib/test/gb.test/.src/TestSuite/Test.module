@@ -2,6 +2,8 @@
 
 Export
 
+Class __Test
+
 '' Special value for unspecified test plan
 Public Const NO_PLAN As Integer = -1
 
@@ -45,9 +47,14 @@ Public Sub Main(Optional Tests As String)
     '     Goto TheEnd
     ' Endif
 
+    If Not Tests Then
+        PrintAllTests()
+        Return
+    Endif
+
     If Tests = "*" Then
         'triggers all tests
-        Tests = Null
+        Tests = ""
     Endif
     Test._Reset() ' only if you run this Main multiple times per process, which you shouldn't
     If Tests Then
@@ -62,49 +69,49 @@ TheEnd:
 
 End
 
-'' Called by the interpreter when a collection of tests is to be run.
-'' Adds a single Testmodule, Tests must be a string in this format:
-'' Name of the testmodule (mandatory) and if testmethods have to be called
-'' it is followed by a dot and the testmethods have to be separated by a semikolon.
+' '' Called by the interpreter when a collection of tests is to be run.
+' '' Adds a single Testmodule, Tests must be a string in this format:
+' '' Name of the testmodule (mandatory) and if testmethods have to be called
+' '' it is followed by a dot and the testmethods have to be separated by a semikolon.
+' 
+' Public Sub _Add(Testclass As Class, Tests As String)
+' 
+'     Dim sName As String
+' 
+'     If Not $Suite Then
+'         $Suite = New TestSuite
+'     Endif
+' 
+'     If Testclass.Name = Tests Then
+'         'Add all methods in Testclass
+'         $Suite.AddAllTestCases(Testclass)
+'         Goto TheEnd
+'     Endif
+' 
+'     ' got sth like "TestAllAsserts.TestAssertErrorCode;TestNote;TestLike"
+'     For Each sName In Split(Split(Tests, ".")[1], ";")
+'         $Suite.AddTestCase(sName, Testclass)
+'     Next
+' 
+' TheEnd:
+'     If $hPrinter.Session.Summary.Description = Null Then
+'         $hPrinter.Session.Summary.Description = Tests
+'     Else
+'         $hPrinter.Session.Summary.Description &= "," & Tests
+'     Endif
+' 
+' End
 
-Public Sub _Add(Testclass As Class, Tests As String)
-
-    Dim sName As String
-
-    If Not $Suite Then
-        $Suite = New TestSuite
-    Endif
-
-    If Testclass.Name = Tests Then
-        'Add all methods in Testclass
-        $Suite.AddAllTestCases(Testclass)
-        Goto TheEnd
-    Endif
-
-    ' got sth like "TestAllAsserts.TestAssertErrorCode;TestNote;TestLike"
-    For Each sName In Split(Split(Tests, ".")[1], ";")
-        $Suite.AddTestCase(sName, Testclass)
-    Next
-
-TheEnd:
-    If $hPrinter.Session.Summary.Description = Null Then
-        $hPrinter.Session.Summary.Description = Tests
-    Else
-        $hPrinter.Session.Summary.Description &= "," & Tests
-    Endif
-
-End
-
-'' Called by the interpreter when argument = "*". Example: gbx3 -T "*" /path/to/project
-
-Public Sub _Run()
-
-    'Test._Reset() ' only if you run this Main multiple times per process, which you shouldn't
-    RunTests()
-    PrintSummary()
-    Quit ExitCode()
-
-End
+' '' Called by the interpreter when argument = "*". Example: gbx3 -T "*" /path/to/project
+' 
+' Public Sub _Run()
+' 
+'     'Test._Reset() ' only if you run this Main multiple times per process, which you shouldn't
+'     RunTests()
+'     PrintSummary()
+'     Quit ExitCode()
+' 
+' End
 
 Private Sub PrintSummary()
 
@@ -221,7 +228,7 @@ Private Function RunTests()
         ' create as Suite with all tests
         $Suite = New TestSuite
         For Each sTestModule In GetAllTestModules()
-            TestModule = Class.Load(sTestModule)
+            TestModule = __Test.Load(sTestModule)
             $Suite.AddAllTestCases(TestModule)
         Next
     Endif
@@ -251,7 +258,7 @@ Private Function GetAllTestModules() As String[]
     sNames.Sort
 
     For Each sName In sNames
-        TestClass = Class.Load(sName)
+        TestClass = __Test.Load(sName)
         If Not TestClass Then Error.Raise(Subst$(("Could not load test module '&1'"), sName))
         If TestModuleNames.Exist(sName) Then Continue
         TestModuleNames.Add(sName)
@@ -278,7 +285,7 @@ Public Function AllTestsCollection() As Collection
     sModules = GetAllTestModules()
 
     For Each sModule In sModules
-        TestModule = Class.Load(sModule)
+        TestModule = __Test.Load(sModule)
         cAlltests.Add(TestSuite.GetTestsFromTestModule(Testmodule), TestModule.Name)
     Next
 
@@ -293,7 +300,7 @@ Public Function AllTests() As String
     Dim tests As Collection
     Dim asTests As String[]
     Dim asLines As New String[]
-    Dim sModule, sMethod As String
+    Dim sModule As String
 
     tests = AllTestsCollection()
 
@@ -399,7 +406,7 @@ Public Sub _Finish()
 
 End
 
-Public Sub _List()
+Private Sub PrintAllTests()
 
     Dim sName As String
     Dim hStat As ClassStat
@@ -428,7 +435,7 @@ Private Sub FromString(Tests As String)
 
     For Each Command In Commands
         With Command
-            TestModule = Class.Load(.ModuleName)
+            TestModule = __Test.Load(.ModuleName)
             If Command.Methods.Count = 0 Then
                 Command.Methods = $Suite.GetTestsFromTestModule(TestModule)
             Endif
