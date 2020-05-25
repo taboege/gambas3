@@ -60,34 +60,33 @@ void TEST_run(const char *test_list)
 		return;
 	}
 	
-	if (test_list[0] != '*' || test_list[1])
+	startup = find_method("_add");
+	
+	tests = STRING_split(test_list, strlen(test_list), ",", 1, NULL, 0, TRUE, FALSE);
+
+	ON_ERROR_1(error_test_run, tests)
 	{
-		startup = find_method("_add");
-		
-		tests = STRING_split(test_list, strlen(test_list), ",", 1, NULL, 0, TRUE, FALSE);
-
-		ON_ERROR_1(error_test_run, tests)
+		for (i = 0; i < tests->count; i++)
 		{
-			for (i = 0; i < tests->count; i++)
-			{
-				test = *(char **)CARRAY_get_data_unsafe(tests, i);
-				p = index(test, '.');
-				if (p)
-					name = STRING_new_temp(test, p - test);
-				else
-					name = test;
+			test = *(char **)CARRAY_get_data_unsafe(tests, i);
+			p = index(test, '.');
+			if (p)
+				name = STRING_new_temp(test, p - test);
+			else
+				name = test;
 
-				class = CLASS_find(name);
-				CLASS_load(class);
-				
-				GB_Push(2, T_OBJECT, class, T_STRING, test, STRING_length(test));
-				EXEC_public_desc(PROJECT_class, NULL, startup, 2);
-			}
+			class = CLASS_find(name);
+			CLASS_load(class);
+			if (!class->is_test)
+				continue;
+			
+			GB_Push(2, T_OBJECT, class, T_STRING, test, STRING_length(test));
+			EXEC_public_desc(PROJECT_class, NULL, startup, 2);
 		}
-		END_ERROR
-		
-		OBJECT_UNREF(tests);
 	}
+	END_ERROR
+
+	OBJECT_UNREF(tests);
 	
 	EXEC_public_desc(PROJECT_class, NULL, find_method("_run"), 0);
 }

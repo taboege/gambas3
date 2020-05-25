@@ -298,7 +298,7 @@ typedef
 		unsigned has_operators : 1;       //          If the _operators interface is implemented
 		unsigned is_simple : 1;           //          Class has no parent, no child, is not virtual, and has no 'check' function.
 		unsigned has_free : 1;            //          The class has a free function
-		unsigned _reserved : 1;           //  24  36
+		unsigned is_test : 1;             //  24  36  The class is a test module
 
 		short n_desc;                     //  26  38  number of descriptions
 		short n_event;                    //  28  40  number of events
@@ -391,9 +391,11 @@ typedef
 	enum
 	{
 		CI_EXPORTED = 1,
-		CI_AUTOCREATE = 2,
+		CI_AUTO_CREATE = 2,
 		CI_OPTIONAL = 4,
-		CI_NOCREATE = 8
+		CI_NO_CREATE = 8,
+		CI_HAS_FAST = 16,
+		CI_TEST = 32
 	}
 	CLASS_INFO_FLAG;
 
