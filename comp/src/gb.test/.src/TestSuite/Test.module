@@ -403,13 +403,16 @@ Public Sub _List()
 
     Dim sName As String
     Dim hStat As ClassStat
+    Dim aTest As New String[]
 
     Component.Load("gb.util")
 
     For Each sName In Dir(".../.gambas")
         hStat = Class.Stat("..." &/ sName)
-        If hStat.Test Then Print hStat.Name
+        If hStat.Test Then aTest.Add(hStat.Name)
     Next
+    
+    Print aTest.Join();
 
 End
 Private Sub FromString(Tests As String)
