@@ -759,6 +759,7 @@ _INIT_AGAIN:
     
     If Not bIsFake Then
       FDebugInfo.OnProjectChange
+      FDebugButton.OnProjectChange
     Endif
     
   Endif
