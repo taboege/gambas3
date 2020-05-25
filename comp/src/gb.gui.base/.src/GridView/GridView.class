@@ -119,6 +119,7 @@ Private $bHasDrawEvent As Boolean
 Private $hObsClick As Observer
 Private $iPadding As Integer = 2
 Private $iTextHeight As Integer
+Private $bDoNotRaiseSelect As Boolean
 
 Public Sub _new()
   
@@ -1316,6 +1317,11 @@ Private Sub AfterMouseUp()
     $hTimerScroll = Null
   Endif
   
+  If $bMoveSelect Or If $bMoveUnselect Then 
+    $bDoNotRaiseSelect = False
+    _RaiseSelect
+  Endif
+  
   If _NoMouse Then Return
   
   $bResize = False
@@ -1460,6 +1466,7 @@ Public Sub MoveTo(Row As Integer, Column As Integer)
     Raise Select
   Else If $bMoveSelect Or If $bMoveUnSelect Then
     If $vMoveOldSelection Then
+      $bDoNotRaiseSelect = True
       $hRows._RestoreSelection($vMoveOldSelection)
       S = Min($iRow, $iMoveSelectRow)
       L = Max($iRow, $iMoveSelectRow) - Min($iRow, $iMoveSelectRow) + 1
@@ -1468,6 +1475,7 @@ Public Sub MoveTo(Row As Integer, Column As Integer)
       Else
         $hRows.UnSelect(S, L)
       Endif
+      $bDoNotRaiseSelect = False
     Endif
   Else If $bKeyEvent And If $iMode = Select.Multiple And If Not _NoMouse Then
     $hRows._GetSelection().UnSelectAll
@@ -1650,6 +1658,7 @@ End
 
 Public Sub _RaiseSelect()
   
+  If $bDoNotRaiseSelect Then Return
   $hView.Refresh
   Raise Select
   

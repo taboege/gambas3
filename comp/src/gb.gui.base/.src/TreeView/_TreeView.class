@@ -979,7 +979,7 @@ Private Sub Key_Write(Value As String)
 
   Dim iRow As Integer
   
-  If Not Value Then 
+  If Not Value Or If Not $cItem.Exist(Value) Then 
     $hView.Row = -1
     Return
   Endif
@@ -1009,10 +1009,10 @@ Public Sub GridView_Select()
   Dim sCursor As String
   
   If $iNoEvent Then Return
-  If $hView.Row < 0 Then Return
+  If $hView.Row < 0 And If $hView.Mode <> Select.Multiple Then Return
   
   sCursor = $sCursor
-  SetCursor(_RowToItem($hView.Row).Key)
+  SetCursor(Key_Read()) '_RowToItem($hView.Row).Key)
   Raise Select
   $sCursor = sCursor
   
