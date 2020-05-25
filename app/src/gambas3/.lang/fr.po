@@ -222,7 +222,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gambas3 3.14.90\n"
-"PO-Revision-Date: 2020-05-25 09:46 UTC\n"
+"PO-Revision-Date: 2020-05-25 10:20 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -4363,7 +4363,7 @@ msgstr "Voulez-vous vraiment supprimer ce fragment ?"
 
 #: FOption.class:1190
 msgid "Do you really want to install the Gambas font into your personal font directory?"
-msgstr "Voulez-vous vraiment installer la police Gambas dans votre répertoire personnel de polices ?"
+msgstr "Voulez-vous vraiment installer la police « Gambas »\ndans votre répertoire personnel de polices ?"
 
 #: FOption.class:1190 FSoftwareFarm.class:600
 msgid "Install"

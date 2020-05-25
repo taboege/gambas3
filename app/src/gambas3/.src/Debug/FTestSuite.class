@@ -2,17 +2,16 @@
 
 Private $cSuites As New Collection
 Private $bNoSelect As Boolean
-Private $aOldSelection As New String[]
 
 Public Sub btnClose_Click()
 
-  SaveSuites
   Me.Close
 
 End
 
 Public Sub Form_Open()
 
+  Settings.Read(Me)
   LoadTests
   LoadSuites
 
@@ -75,12 +74,21 @@ Private Sub LoadSuites()
     
   Next
   
-  lvwSuite["$"].Selected = True
   
   LoadTestWith
   Try cmbTestWith.Index = hSettings["/TestSuites/TestWith", 0]
   If Error Then cmbTestWith.Index = 0
+
+  If cmbTestWith.Index = 0 Then
+    lvwSuite.Key = "$"
+  Else
+    lvwSuite.Key = cmbTestWith.Text
+  Endif
   
+Catch
+  
+  Message.Error(("Unable to load test suites.") & "\n\n" & Error.Text)
+
 End
 
 Private Sub LoadTests()
@@ -153,6 +161,10 @@ Public Sub lvwSuite_Select()
     
     tvwSuite.MoveNext()
   Wend
+  
+  tvwSuite.MoveFirst()
+  tvwSuite.Key = tvwSuite.Item.Key
+  tvwSuite.Current.EnsureVisible()
   
 End
 
@@ -255,8 +267,6 @@ End
 
 Public Sub tvwSuite_Select()
 
-  Dim bSelect As Boolean
-  Dim aSel As String[]
   Dim sKey As String
   Dim bBefore As Boolean
   Dim aOld As String[]
@@ -378,6 +388,10 @@ Private Sub SaveSuites()
   hSettings["/TestSuites/Count"] = iCount
   hSettings["/TestSuites/TestWith"] = cmbTestWith.Index
   hSettings.Save
+  
+Catch
+  
+  Message.Error(("Unable to save test suites.") & "\n\n" & Error.Text)
 
 End
 
@@ -416,5 +430,25 @@ End
 Public Sub btnCopy_Click()
 
   CreateSuite(lvwSuite.Key)
+
+End
+
+Public Sub Form_Close()
+
+  Settings.Write(Me)
+  SaveSuites
+
+End
+
+Public Sub Form_KeyPress()
+
+  Select Case Key.Code
+    Case Key["+"]
+      btnNew.Value = True
+    Case Key.Delete, Key["-"]
+      btnDelete.Value = True
+    Case Key["Z"]
+      If Key.Control Then btnReset.Value = True
+  End Select
 
 End
