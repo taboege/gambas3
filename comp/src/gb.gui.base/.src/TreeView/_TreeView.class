@@ -1551,12 +1551,17 @@ Private Function Selection_Read() As String[]
 
   Dim aSel As New String[]
   Dim cSel As Collection
+  Dim sKey As String
   
-  cSel = $hSelection.Keys
-  
-  For Each cSel
-    aSel.Add(cSel.Key)
-  Next
+  If $hView.Mode = Select.Single Then
+    sKey = Key_Read()
+    If sKey Then aSel.Add(sKey)
+  Else If $hView.Mode = Select.Multiple Then
+    cSel = $hSelection.Keys
+    For Each cSel
+      aSel.Add(cSel.Key)
+    Next
+  Endif
   
   Return aSel
 
@@ -1567,14 +1572,19 @@ Private Sub Selection_Write(Value As String[])
   Dim sKey As String
   Dim hItem As _TreeView_Item
   
-  Inc $iNoEvent
-  UnselectAll
-  For Each sKey In Value
-    If Not sKey Then Continue
-    hItem = $cItem[sKey]
-    If hItem Then hItem.Selected = True
-  Next
-  Dec $iNoEvent
+  If $hView.Mode = Select.Single Then
+    Try sKey = Value[Value.Max] 
+    Key_Write(sKey)
+  Else If $hView.Mode = Select.Multiple Then
+    Inc $iNoEvent
+    UnselectAll
+    For Each sKey In Value
+      If Not sKey Then Continue
+      hItem = $cItem[sKey]
+      If hItem Then hItem.Selected = True
+    Next
+    Dec $iNoEvent
+  Endif
   
   If $iNoEvent Then Return
   Raise Select
