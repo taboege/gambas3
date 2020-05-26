@@ -101,6 +101,7 @@ internet                [-breeze*]places/folder-html;categories/applications-int
 intersection            #
 js                      $(mime)/application-javascript
 jump                    actions/go-jump
+key                     [breeze*]$(mime)/application-pgp-keys;apps/password-manager;apps/keyring-manager;actions/pgp-keys
 keyboard                preferences/preferences-desktop-keyboard;apps/preferences-desktop-keyboard
 lamp                    actions/help-hint
 language                [-breeze*]actions/im-google-talk;apps/preferences-desktop-locale

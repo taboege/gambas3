@@ -288,11 +288,12 @@ Public Sub _put(Value As Variant, Key As String)
 End
 
 
-Public Sub Clear(Optional ParentKey As String)
+Public Sub Clear(Optional ParentKey As String, Recursive As Boolean)
 
   Dim sSlot As String
   Dim hSlot As Collection
   Dim vVal As Variant
+  Dim sRemove As String
 
   If Not ParentKey Then
     If $cSlot.Count Then
@@ -300,19 +301,37 @@ Public Sub Clear(Optional ParentKey As String)
       $bModify = True
       $bModifyAll = True
     Endif
-  Else
-    sSlot = GetSlot(ParentKey &/ "g")
+    Return
+  Endif
+  
+  sSlot = GetSlot(ParentKey &/ "g")
+  
+  If Not Recursive Then
     hSlot = $cSlot[sSlot]
     If hSlot Then 
-      For Each vVal In hSlot
-        $cModify[sSlot &/ hSlot.Key] = True
-      Next
-      $cSlot.Remove(sSlot)
-      $bModify = True
+      sRemove = sSlot
+      GoSub REMOVE_SLOT
     Endif
+  Else
+    
+    For Each hSlot In $cSlot
+      sRemove = $cSlot.Key
+      If sRemove = sSlot Or If sRemove Begins sSlot & "/" Then
+        GoSub REMOVE_SLOT
+      Endif
+    Next
   Endif
+  
+  Return
+  
+REMOVE_SLOT:
 
-  'Save()
+  For Each vVal In hSlot
+    $cModify[sRemove &/ hSlot.Key] = True
+  Next
+  $cSlot.Remove(sRemove)
+  $bModify = True
+  Return
 
 End
 

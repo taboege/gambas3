@@ -732,7 +732,7 @@ Public Sub tbvField_Data(Row As Integer, Column As Integer)
         
       Case 0
         If hCField.Key Then
-          .Picture = Picture["img/16/key.png"]
+          .Picture = Picture["icon:/small/key"]
           .Alignment = Align.Center
         Endif
         

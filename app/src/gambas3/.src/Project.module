@@ -6374,8 +6374,6 @@ Public Sub ShouldTranslate(sPath As String, Optional bRecursive As Boolean) As B
   sRelPath = MakeProjectRelativePath(sPath)
   If DoNotTranslate.Exist(sRelPath) Then Return
   
-  If File.BaseName(sPath) = "CRecentProject" Then Stop
-  
   If File.Ext(sPath) = "class" Then
     sFormPath = FindForm(File.BaseName(sPath))
     If sFormPath Then
