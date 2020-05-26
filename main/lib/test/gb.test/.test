@@ -1,11 +1,23 @@
 [TestSuites]
-Count=1
-TestWith=1
-Default="TestAllAsserts,TestFailures.TestEqualsFailure;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands"
+Count=4
+TestWith=3
+Default="TestAllAsserts,TestFailures.TestEqualsFailure;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString"
 
 [TestSuites/1]
-Name="Suite de tests n°1"
-Tests="TestCrashes.TestDoACrash;TestErrorTwo,TestElse.TestNoMessage;TestNoMessageInbetween;TestNote,TestEmpty"
+Name="! Must Bail out!"
+Tests="TestBailout.TestBailout"
+
+[TestSuites/2]
+Name="! Must fail (a couple of crashes)"
+Tests="TestCrashes.TestDoACrash;TestErrorTwo"
+
+[TestSuites/3]
+Name="! Must fail (wrong plan)"
+Tests="TestWrongPlan.IHaveAWrongPlan"
+
+[TestSuites/4]
+Name="All good"
+Tests="TestAllAsserts.TestAssert;TestAssertEmpty;TestAssertEqualsDate;TestAssertEqualsFloat;TestAssertEqualsLong;TestAssertEqualsObject;TestAssertEqualsString;TestAssertError;TestAssertErrorCode;TestAssertNotNull;TestLike;TestNote;TestTodoErrorCode,TestElse.TestNoMessage;TestNoMessageInbetween;TestNote,TestEmpty,TestError.TestError,TestFailures.TestEqualsFailure;TestError;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TestSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TestSummary.DoSkip;DoSomeAsserts;DoTodo"
 
 [TestSuites/Suite1]
 Name="Série de tests n°1"
