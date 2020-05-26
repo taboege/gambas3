@@ -128,7 +128,7 @@ Static Public Sub GetIcon(sClass As String, sComp As String, Optional iSize As I
   Endif
 
   If iSize Then
-    If hImage.Width <> iSize Then hImage = Image.Stretch(iSize, iSize)
+    If hImage.Width <> iSize Then hImage = hImage.Stretch(iSize, iSize)
   Endif
 
   If Application.DarkTheme Then hImage = hImage.Invert(True)

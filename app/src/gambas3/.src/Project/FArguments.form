@@ -16,7 +16,7 @@
     Spacing = True
     { btnUndo Button
       MoveScaled(1,0,16,4)
-      Text = ("Revert")
+      Text = ("Reset")
       Picture = Picture["icon:/small/undo"]
     }
     { Spring1 Spring
@@ -29,7 +29,8 @@
     }
     { btnCancel Button
       MoveScaled(43,0,16,4)
-      Text = ("Cancel")
+      Text = ("Close")
+      Picture = Picture["icon:/small/close"]
       Cancel = True
     }
   }
