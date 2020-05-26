@@ -116,10 +116,11 @@ Private $bSorted As Boolean
 
 Private $bHasDrawEvent As Boolean
 
-Private $hObsClick As Observer
 Private $iPadding As Integer = 2
 Private $iTextHeight As Integer
 Private $bDoNotRaiseSelect As Boolean
+
+Private $hTimerClick As Timer
 
 Public Sub _new()
   
@@ -138,7 +139,7 @@ Public Sub _new()
   
   Me.Proxy = $hView
   
-  $hObsClick = New Observer(Me, True) As "GridViewClick"
+  $hTimerClick = New Timer As "GridViewClick"
   
 End
 
@@ -1211,6 +1212,8 @@ Public Sub ScrollArea_MouseDown()
   If Mouse.Click > 1 Then Return
   
   Me.SetFocus
+  
+  $hTimerClick.Trigger
   
   bCancel = Raise MouseDown
   Stop Event
@@ -2383,7 +2386,7 @@ Private Sub Background_Write(Value As Integer)
 
 End
 
-Public Sub GridViewClick_MouseDown()
+Public Sub GridViewClick_Timer()
   
   If $bInCell Then Raise Click
   
