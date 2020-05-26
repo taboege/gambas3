@@ -74,7 +74,7 @@ End
 Private Sub PrintSummary()
 
     With $hPrinter.Session
-        Test._Print(gb.Lf) ' better readability for humans
+        Test._Print(Null) ' better readability for humans
         
         ' even if the tests came in unsorted, print it sorted
         Test.Note(Subst$(("Ran: '&1' "), TestCommand.ToString(TestCommand.FromString(.Summary.Description))))

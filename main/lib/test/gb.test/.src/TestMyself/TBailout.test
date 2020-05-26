@@ -1,6 +1,6 @@
 ' Gambas test file
 
-Public Sub TestBailout()
+Public Sub Bailout()
 
     Test.Note("This will stop all testing immediately")
     Test.BailOut("Bo-Test")

@@ -1,7 +1,5 @@
 ' Gambas test file
 
-'' P
-
 Public Sub ParseTestCommands()
 
     Dim sCommand As String
@@ -84,12 +82,12 @@ Public Sub ReflectTest()
     Assert.Equals(tests.Count, 11, "number of all testmodules")
 
     'count of all testmethods, if it fails we created a new one and we have to count new
-    Assert.Equals(tests["TestAllAsserts"].Count, 13, "count of all testmethods in TestAllAsserts")
-    Assert.Equals(tests["TestBailout"].Count, 1, "count of all testmethods in TestBailout")
-    Assert.Equals(tests["TestCrashes"].Count, 2, "count of all testmethods in TestCrashes")
-    Assert.Equals(tests["TestElse"].Count, 3, "count of all testmethods in TestElse")
-    Assert.Equals(tests["TestEmpty"].Count, 0, "count of all testmethods in TestEmpty")
-    Assert.Equals(tests["TestInternals"].Count, 5, "count of all testmethods in TestInternals")
+    Assert.Equals(tests["TAllAsserts"].Count, 13, "count of all testmethods in TAllAsserts")
+    Assert.Equals(tests["TBailout"].Count, 1, "count of all testmethods in TBailout")
+    Assert.Equals(tests["TCrashes"].Count, 2, "count of all testmethods in TCrashes")
+    Assert.Equals(tests["TElse"].Count, 3, "count of all testmethods in TElse")
+    Assert.Equals(tests["TEmpty"].Count, 0, "count of all testmethods in TEmpty")
+    Assert.Equals(tests["TInternals"].Count, 5, "count of all testmethods in TInternals")
 
 End
 
@@ -101,9 +99,9 @@ Public Sub ReflectTestsString()
 
     ' These have to be adjusted when tests change
     ' If tests are updated, get them with 
-    ' Dim cheese As String = Test.AllTests()
+    Dim cheese As String = Test.AllTests()
     
-    want = "TestAllAsserts.TestAssert;TestAssertEmpty;TestAssertEqualsDate;TestAssertEqualsFloat;TestAssertEqualsLong;TestAssertEqualsObject;TestAssertEqualsString;TestAssertError;TestAssertErrorCode;TestAssertNotNull;TestLike;TestNote;TestTodoErrorCode,TestBailout.TestBailout,TestCrashes.TestDoACrash;TestErrorTwo,TestElse.TestNoMessage;TestNoMessageInbetween;TestNote,TestError.TestError,TestFailures.TestEqualsFailure;TestError;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TestSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TestSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo,TestWrongPlan.IHaveAWrongPlan"
+    want = "TAllAsserts.Assert;AssertEmpty;AssertEqualsDate;AssertEqualsFloat;AssertEqualsLong;AssertEqualsObject;AssertEqualsString;AssertError;AssertErrorCode;AssertNotNull;Like;Note;TodoErrorCode,TBailout.Bailout,TCrashes.DoACrash;ErrorTwo,TElse.NoMessage;NoMessageInbetween;Note,TError.Error,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo,TWrongPlan.IHaveAWrongPlan"
     got = Test.AllTests()
     Assert.Equals(got, want, "All Test names as string")
     

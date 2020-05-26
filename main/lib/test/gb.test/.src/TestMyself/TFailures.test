@@ -2,21 +2,21 @@
 
 ''' Every test in this class failes, but is reverted to be reported as good
 
-Public Sub TestStringFailure()
+Public Sub StringFailure()
 
     Assert.IntendedFailure()
     Assert.StringEquals("Lisa", "Paul", "Intentional String failure. Ok if not ok.")
 
 End
 
-Public Sub TestLongFailure()
+Public Sub LongFailure()
 
     Assert.IntendedFailure()
     Assert.Equals(2, 3, "Intentional Long failure. Ok if not ok.")
 
 End
 
-Public Sub TestLongTypeMismatchFailure()
+Public Sub LongTypeMismatchFailure()
 
     Dim s As String = "3.0"
     
@@ -25,7 +25,7 @@ Public Sub TestLongTypeMismatchFailure()
 
 End
 
-Public Sub TestEqualsFailure()
+Public Sub EqualsFailure()
 
     Dim oOne, oTwo As Object
 
@@ -46,7 +46,7 @@ Public Sub TestEqualsFailure()
 
 End
 
-Public Sub TestError()
+Public Sub Error()
 
     Dim a As Long
 
