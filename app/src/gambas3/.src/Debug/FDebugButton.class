@@ -1,7 +1,6 @@
 ' Gambas class file
 
 Private $bNoSelectButton As Boolean
-Private $hTimerReset As Timer
 
 Public Sub ReadConfig()
   
