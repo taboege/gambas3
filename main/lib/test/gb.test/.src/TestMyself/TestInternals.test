@@ -81,7 +81,7 @@ Public Sub ReflectTest()
     tests = Test.AllTestsCollection()
 
     'count of all testmodules, if it fails we created a new one and we have to count new
-    Assert.Equals(tests.Count, 10, "number of all testmodules")
+    Assert.Equals(tests.Count, 11, "number of all testmodules")
 
     'count of all testmethods, if it fails we created a new one and we have to count new
     Assert.Equals(tests["TestAllAsserts"].Count, 13, "count of all testmethods in TestAllAsserts")
@@ -100,7 +100,10 @@ Public Sub ReflectTestsString()
     Dim got, want As String
 
     ' These have to be adjusted when tests change
-    want = "TestAllAsserts.TestAssert;TestAssertEmpty;TestAssertEqualsDate;TestAssertEqualsFloat;TestAssertEqualsLong;TestAssertEqualsObject;TestAssertEqualsString;TestAssertError;TestAssertErrorCode;TestAssertNotNull;TestLike;TestNote;TestTodoErrorCode,TestBailout.TestBailout,TestCrashes.TestDoACrash;TestErrorTwo,TestElse.TestNoMessage;TestNoMessageInbetween;TestNote,TestError.TestError,TestFailures.TestEqualsFailure;TestError;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TestSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TestSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo"
+    ' If tests are updated, get them with 
+    ' Dim cheese As String = Test.AllTests()
+    
+    want = "TestAllAsserts.TestAssert;TestAssertEmpty;TestAssertEqualsDate;TestAssertEqualsFloat;TestAssertEqualsLong;TestAssertEqualsObject;TestAssertEqualsString;TestAssertError;TestAssertErrorCode;TestAssertNotNull;TestLike;TestNote;TestTodoErrorCode,TestBailout.TestBailout,TestCrashes.TestDoACrash;TestErrorTwo,TestElse.TestNoMessage;TestNoMessageInbetween;TestNote,TestError.TestError,TestFailures.TestEqualsFailure;TestError;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TestSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TestSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo,TestWrongPlan.IHaveAWrongPlan"
     got = Test.AllTests()
     Assert.Equals(got, want, "All Test names as string")
     

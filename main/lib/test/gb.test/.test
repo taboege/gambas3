@@ -1,6 +1,6 @@
 [TestSuites]
 Count=4
-TestWith=3
+TestWith=4
 Default="TestAllAsserts,TestFailures.TestEqualsFailure;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString"
 
 [TestSuites/1]
