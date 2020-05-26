@@ -367,7 +367,7 @@ Private Sub SaveSuites()
 
   hSettings = New Settings(Project.Dir &/ ".test")
   
-  hSettings.Clear("/TestSuites")
+  hSettings.Clear("/TestSuites", True)
 
   lvwSuite.MoveFirst
   While lvwSuite.Available

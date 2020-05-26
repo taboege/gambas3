@@ -41,7 +41,6 @@ Private Sub ShowWaiting(bShow As Boolean)
     $hSpinner.Hide
   Endif
 
-
 End
 
 ' Public Sub WebView_Error()

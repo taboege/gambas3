@@ -68,13 +68,8 @@ End
 
 Static Public Sub GetIcon(sClass As String, sComp As String, Optional iSize As Integer) As Picture
   
-  Dim hPict As Picture
   Dim hImage As Image
   Dim sPath As String
-  'Dim sText As String
-  'Dim X, Y As Float
-  'Dim iInd As Integer
-  'Dim I As Integer
   Dim hClass As CClassInfo
   Dim W As Integer
   Dim F As Integer
@@ -88,16 +83,16 @@ Static Public Sub GetIcon(sClass As String, sComp As String, Optional iSize As I
     Else
       sPath = File.Dir(File.Dir(Component.Path)) &/ "share/gambas" & System.Version &/ "control" &/ sComp &/ LCase(sClass) & ".png"
     Endif
-    Try hPict = Picture.Load(sPath)
-    If hPict Then Break
+    Try hImage = Image.Load(sPath)
+    If hImage Then Break
     If hClass.Parent <> sClass Then Break
     sComp = hClass.ParentComponent
     If Not sComp Then Break
   Loop
 
-  If Not hPict Then Try hPict = Picture["img/control" &/ LCase(sClass) & ".png"]
+  If Not hImage Then Try hImage = Image.Load("img/control" &/ LCase(sClass) & ".png")
   
-  If Not hPict Then
+  If Not hImage Then
     
     hImage = New Image(1, 1)
     
@@ -130,15 +125,15 @@ Static Public Sub GetIcon(sClass As String, sComp As String, Optional iSize As I
     
     Paint.End
     
-    hPict = hImage.Picture
-    
   Endif
 
   If iSize Then
-    If hPict.Width <> iSize Then hPict = hPict.Image.Stretch(iSize, iSize).Picture
+    If hImage.Width <> iSize Then hImage = Image.Stretch(iSize, iSize)
   Endif
 
-  Return hPict
+  If Application.DarkTheme Then hImage = hImage.Invert(True)
+
+  Return hImage.Picture
   
 End
 
