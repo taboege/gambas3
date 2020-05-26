@@ -1,6 +1,6 @@
 ' Gambas test file
 
-Public Sub TestError()
+Public Sub Error()
 
     Dim a As Long
 

@@ -1,43 +1,9 @@
 ' Gambas module file
 
+' Playground for development ...
+
+
 Public Sub Main()
-
-    Dim asGood As New String[]
-    Dim Tests As String
-
-    With asGood
-        .Add("TestAllAsserts")
-        .Add("TestElse")
-        .Add("TestError")
-        .Add("TestInternals")
-        .Add("TestFailures")
-        .Add("TestSetup")
-        .Add("TestSummary.DoSomeAsserts")
-        .Add("TestSummary.DoTodo")
-        .Add("TestSummary.DoSkip")
-    End With
-
-    ' ------------------------------------------------- These must succeed
-    Tests = asGood.Join(",")
-    Test.Main(Tests)
-
-    ' ------------------------------------------------- This must not succeed
-    'Tests = "TestCrashes"
-    'Tests = "TestSummary"
-
-    ' ------------------------------------------------- These must bailout
-    'Tests = "TestBailout"
-    'Tests = ""
-    'Tests = "TestAllAsserts, Wurstsupp"
-
-    ' ------------------------------------------------- Playing field
-
-    'Tests = "TestAllAsserts, Wurstsupp"
-
-    'Debug TestCommand.ToString(TestRunner.List("~/programming/gambas/gambas/comp/src/gb.test"))
-
-    'Tests = "TestInternals.InterpreterInterface"
-    'Test.Main(Tests)
 
     ' ------------------------------------------------- Interpreter Interface
     ' Dim testclass As Class

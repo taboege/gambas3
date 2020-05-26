@@ -3,14 +3,14 @@
 
 ' A Test with no message, should display then method name as message
 
-Public Sub TestNoMessage()
+Public Sub NoMessage()
 
     'There is no message whicht
     Assert.Ok(True)
 
 End
 
-Public Sub TestNoMessageInbetween()
+Public Sub NoMessageInbetween()
 
     Assert.Ok(True, "TestNoMessageInbetween Assert 1 description defined")
     Assert.Ok(True)
@@ -19,7 +19,7 @@ Public Sub TestNoMessageInbetween()
 
 End
 
-Public Sub TestNote()
+Public Sub Note()
 
     Test.Note("This\nis\na\nnote")
     Test.SkipAll()

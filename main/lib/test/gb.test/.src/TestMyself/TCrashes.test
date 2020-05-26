@@ -6,13 +6,13 @@
 ''' But the test system has to report it 
 ''' and shall not crash itself
 
-Public Sub TestErrorTwo()
+Public Sub ErrorTwo()
 
     Error.Raise("I shot the sheriff.")
 
 End
 
-Public Sub TestDoACrash()
+Public Sub DoACrash()
 
     Dim a As Long
 

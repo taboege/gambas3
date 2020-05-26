@@ -16,6 +16,9 @@ Private $hNext As TestAssertion
 
 Private $Suite As TestSuite
 
+'' Used to trigger Test.Main to print all tests as comma separated string.
+Public Const _TRIGGER_GET_ALLTESTS As String = "#GetAllTests"
+
 
 '' The static procedure Test.Main() starts tests. By default it runs all testmethods in all
 '' testmodules ordered by name and prints the result to the console.
@@ -41,10 +44,16 @@ Private $Suite As TestSuite
 Public Sub Main(Optional Tests As String)
 
     If Not Tests Then
-        PrintAllTests()
+        'prints the names of all testmodules
+        PrintAllTestModules()
         Return
     Endif
 
+    If Tests = _TRIGGER_GET_ALLTESTS Then
+        Print AllTests()
+        Return
+    Endif
+    
     If Tests = "*" Then
         'triggers all tests
         Tests = ""
@@ -65,7 +74,7 @@ End
 Private Sub PrintSummary()
 
     With $hPrinter.Session
-        Test._Print(gb.Lf) ' better readability for humans
+        Test._Print(Null) ' better readability for humans
         
         ' even if the tests came in unsorted, print it sorted
         Test.Note(Subst$(("Ran: '&1' "), TestCommand.ToString(TestCommand.FromString(.Summary.Description))))
@@ -176,8 +185,7 @@ Private Function RunTests()
     If Not $Suite Then
         ' create as Suite with all tests
         $Suite = New TestSuite
-        For Each sTestModule In GetAllTestModules()
-            TestModule = __Test.Load(sTestModule)
+        For Each TestModule In GetAllTestModules()
             $Suite.AddAllTestCases(TestModule)
         Next
     Endif
@@ -187,10 +195,10 @@ Private Function RunTests()
 
 End
 
-Private Function GetAllTestModules() As String[]
+Private Function GetAllTestModules() As Class[]
 
     Dim TestClass As Class
-    Dim TestModuleNames As New String[]
+    Dim TestModules As New Class[]
     Dim sNames As New String[]
     Dim sName As String
     Dim hStat As ClassStat
@@ -209,12 +217,10 @@ Private Function GetAllTestModules() As String[]
     For Each sName In sNames
         TestClass = __Test.Load(sName)
         If Not TestClass Then Error.Raise(Subst$(("Could not load test module '&1'"), sName))
-        If TestModuleNames.Exist(sName) Then Continue
-        TestModuleNames.Add(sName)
+        TestModules.Add(TestClass)
     Next
 
-    TestModuleNames.Sort
-    Return TestModuleNames
+    Return TestModules
 
 Catch
     Test.BailOut("Error in " & Error.Where & ": " & Error.Text)
@@ -226,16 +232,16 @@ End
 
 Public Function AllTestsCollection() As Collection
 
-    Dim sModules As String[]
+    Dim aoTestModules As Class[]
     Dim sModule As String
     Dim TestModule As Class
     Dim cAlltests As New Collection
+    Dim oTestModule As Class
 
-    sModules = GetAllTestModules()
+    aoTestModules = GetAllTestModules()
 
-    For Each sModule In sModules
-        TestModule = __Test.Load(sModule)
-        cAlltests.Add(TestSuite.GetTestsFromTestModule(Testmodule), TestModule.Name)
+    For Each oTestModule In aoTestModules
+        cAlltests.Add(TestSuite.GetTestsFromTestModule(oTestModule), oTestModule.Name)
     Next
 
     Return cAlltests
@@ -355,7 +361,7 @@ Public Sub _Finish()
 
 End
 
-Private Sub PrintAllTests()
+Private Sub PrintAllTestModules()
 
     Dim sName As String
     Dim hStat As ClassStat
@@ -371,6 +377,8 @@ Private Sub PrintAllTests()
     Print aTest.Join();
 
 End
+
+'Fill suite from String
 Private Sub FromString(Tests As String)
 
     Dim Commands As TestCommand[]

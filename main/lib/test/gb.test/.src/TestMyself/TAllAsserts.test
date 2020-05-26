@@ -2,14 +2,14 @@
 
 ''' Tests all Asserts
 
-Public Sub TestAssert()
+Public Sub Assert()
 
     Test.Plan(1)
     Assert.Ok(True, "Testing True")
 
 End
 
-Public Sub TestAssertEmpty()
+Public Sub AssertEmpty()
 
     Test.Plan(2)
     Assert.Null("", "Empty with \"\"")
@@ -17,7 +17,7 @@ Public Sub TestAssertEmpty()
 
 End
 
-Public Sub TestAssertEqualsFloat()
+Public Sub AssertEqualsFloat()
 
     Dim f As Float
 
@@ -27,7 +27,7 @@ Public Sub TestAssertEqualsFloat()
 
 End
 
-Public Sub TestAssertEqualsLong()
+Public Sub AssertEqualsLong()
 
     Dim l As Long
 
@@ -37,7 +37,7 @@ Public Sub TestAssertEqualsLong()
 
 End
 
-Public Sub TestAssertEqualsDate()
+Public Sub AssertEqualsDate()
 
     Dim d As Date
     Dim sdate As String
@@ -51,7 +51,7 @@ Public Sub TestAssertEqualsDate()
 
 End
 
-Public Sub TestAssertEqualsObject()
+Public Sub AssertEqualsObject()
 
     Dim s As New TestCase("1", Me)
     Dim s2 As Object
@@ -62,7 +62,7 @@ Public Sub TestAssertEqualsObject()
 
 End
 
-Public Sub TestAssertEqualsString()
+Public Sub AssertEqualsString()
 
     Dim s1, s2 As String
 
@@ -73,7 +73,7 @@ Public Sub TestAssertEqualsString()
 
 End
 
-Public Sub TestAssertNotNull()
+Public Sub AssertNotNull()
 
     Test.Plan(2)
     Assert.NotNull("" & Null & 1, "String is not Null")
@@ -81,7 +81,7 @@ Public Sub TestAssertNotNull()
 
 End
 
-Public Sub TestAssertError()
+Public Sub AssertError()
 
     Dim r As Float
     Test.Plan(1)
@@ -91,7 +91,7 @@ Public Sub TestAssertError()
 
 End
 
-Public Sub TestAssertErrorCode()
+Public Sub AssertErrorCode()
 
     Dim r As Float
     Test.Plan(1)
@@ -100,7 +100,7 @@ Public Sub TestAssertErrorCode()
 
 End
 
-Public Sub TestTodoErrorCode()
+Public Sub TodoErrorCode()
 
     Dim r As Float
     Test.Plan(2)
@@ -115,7 +115,7 @@ Public Sub TestTodoErrorCode()
 
 End
 
-Public Sub TestNote()
+Public Sub Note()
 
     Test.Plan(0)
     Test.Note("The next note is Null and that's alright:")
@@ -124,7 +124,7 @@ Public Sub TestNote()
 
 End
 
-Public Sub TestLike()
+Public Sub Like()
     Test.Plan(2)
     Assert.Like("Gambas", "G*", "Gambas like G*")
     Assert.Like("Gambas", "?[Aa]*", "Gambas Like \"?[Aa]*\"")
