@@ -16,6 +16,9 @@ Private $hNext As TestAssertion
 
 Private $Suite As TestSuite
 
+'' Used to trigger Test.Main to print all tests as comma separated string.
+Public Const _TRIGGER_GET_ALLTESTS As String = "#GetAllTests"
+
 
 '' The static procedure Test.Main() starts tests. By default it runs all testmethods in all
 '' testmodules ordered by name and prints the result to the console.
@@ -41,10 +44,16 @@ Private $Suite As TestSuite
 Public Sub Main(Optional Tests As String)
 
     If Not Tests Then
-        PrintAllTests()
+        'prints the names of all testmodules
+        PrintAllTestModules()
         Return
     Endif
 
+    If Tests = _TRIGGER_GET_ALLTESTS Then
+        Print AllTests()
+        Return
+    Endif
+    
     If Tests = "*" Then
         'triggers all tests
         Tests = ""
@@ -352,7 +361,7 @@ Public Sub _Finish()
 
 End
 
-Private Sub PrintAllTests()
+Private Sub PrintAllTestModules()
 
     Dim sName As String
     Dim hStat As ClassStat
