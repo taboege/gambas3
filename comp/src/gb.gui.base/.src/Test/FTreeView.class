@@ -152,3 +152,9 @@ Public Sub Button6_Click()
   tvwTest.ShowCheck = Not tvwTest.ShowCheck
 
 End
+
+Public Sub tvwTest_MouseDown()
+
+  Debug
+
+End

@@ -121,6 +121,7 @@ Private $iTextHeight As Integer
 Private $bDoNotRaiseSelect As Boolean
 
 Private $hTimerClick As Timer
+Private $bMoveRaiseSelect As Boolean
 
 Public Sub _new()
   
@@ -1216,8 +1217,10 @@ Public Sub ScrollArea_MouseDown()
   $hTimerClick.Trigger
   
   bCancel = Raise MouseDown
-  Stop Event
-  If bCancel Then Return
+  If bCancel Then 
+    Stop Event
+    Return
+  Endif
   
   iOldRow = $iRow
   
@@ -1322,7 +1325,10 @@ Private Sub AfterMouseUp()
   
   If $bMoveSelect Or If $bMoveUnselect Then 
     $bDoNotRaiseSelect = False
-    _RaiseSelect
+    If $bMoveRaiseSelect Then
+      $bMoveRaiseSelect = False
+      _RaiseSelect
+    Endif
   Endif
   
   If _NoMouse Then Return
@@ -1479,6 +1485,7 @@ Public Sub MoveTo(Row As Integer, Column As Integer)
         $hRows.UnSelect(S, L)
       Endif
       $bDoNotRaiseSelect = False
+      $bMoveRaiseSelect = True
     Endif
   Else If $bKeyEvent And If $iMode = Select.Multiple And If Not _NoMouse Then
     $hRows._GetSelection().UnSelectAll
