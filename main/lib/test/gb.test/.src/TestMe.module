@@ -19,7 +19,9 @@ Public Sub Main()
 
     ' ------------------------------------------------- These must succeed
     Tests = asGood.Join(",")
-    Test.Main(Tests)
+    'Test.Main(Tests)
+
+    'Print Test.AllTests()
 
     ' ------------------------------------------------- This must not succeed
     'Tests = "TestCrashes"
@@ -37,7 +39,7 @@ Public Sub Main()
     'Debug TestCommand.ToString(TestRunner.List("~/programming/gambas/gambas/comp/src/gb.test"))
 
     'Tests = "TestInternals.InterpreterInterface"
-    'Test.Main(Tests)
+    Test.Main(Tests)
 
     ' ------------------------------------------------- Interpreter Interface
     ' Dim testclass As Class
