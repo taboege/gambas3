@@ -596,8 +596,9 @@ static void load_and_relocate(CLASS *class, int len_data, CLASS_DESC **pstart, i
 
 	/* Creation flags */
 
-	class->auto_create = (info->flag & CI_AUTOCREATE) != 0;
-	class->no_create = (info->flag & CI_NOCREATE) != 0;
+	class->auto_create = (info->flag & CI_AUTO_CREATE) != 0;
+	class->no_create = (info->flag & CI_NO_CREATE) != 0;
+	class->is_test = (info->flag & CI_TEST) != 0;
 	//fprintf(stderr, "%s: info->flag = %d auto_create = %d no_create = %d\n", class->name, info->flag, class->auto_create, class->no_create);
 
 	/* Debugging information */

@@ -263,7 +263,7 @@
       Shortcut = "F4"
     }
     { mnuTestsuites Menu
-      Action = "testsuites"
+      Action = "test-suite"
       Text = ("Test suites") & "..."
       Shortcut = "Shift+F4"
     }
@@ -1284,43 +1284,6 @@
         Expand = True
         Border = False
       }
-      { panTreeToolbar Panel
-        MoveScaled(2,8,22,3)
-        Visible = False
-        Ignore = True
-        Arrangement = Arrange.Horizontal
-        AutoResize = True
-        { btnEdit ToolButton
-          MoveScaled(0,0,3,3)
-          Action = "edit-file"
-          Picture = Picture["icon:/tiny/edit"]
-        }
-        { btnOpenCode ToolButton
-          MoveScaled(3,0,3,3)
-          Action = "edit-class"
-          Picture = Picture["icon:/tiny/text"]
-        }
-        { btnRunThat ToolButton
-          MoveScaled(6,0,3,3)
-          Action = "run-that"
-          Picture = Picture["icon:/tiny/play"]
-        }
-        { btnDoNotTranslate ToolButton
-          MoveScaled(9,0,3,3)
-          Action = "do-not-translate"
-          Picture = Picture["img/16/do-not-translate.png"]
-        }
-        { btnStartup ToolButton
-          MoveScaled(12,0,3,3)
-          Action = "startup"
-          Picture = Picture["icon:/tiny/program"]
-        }
-        { btnInfo ToolButton
-          MoveScaled(15,0,3,3)
-          Action = "info"
-          Picture = Picture["icon:/tiny/info"]
-        }
-      }
       { timSearchProject #Timer
         #MoveScaled(22,13)
         Delay = 500
@@ -1558,17 +1521,16 @@
   { Action do-not-translate
     Text = "Do not translate"
     Shortcut = ""
-    Picture = "img/16/do-not-translate.png"
+    Picture = "img/32/do-not-translate.png"
   }
   { Action edit-class
     Text = "Open code"
     Shortcut = ""
-    Picture = "icon:/tiny/text"
   }
   { Action edit-file
     Text = "Open"
     Shortcut = ""
-    Picture = "icon:/tiny/edit"
+    Picture = "icon:/small/edit"
   }
   { Action exec
     Text = "Executable"
@@ -1625,7 +1587,7 @@
   { Action info
     Text = "Properties"
     Shortcut = "Ctrl+Shift+I"
-    Picture = "icon:/tiny/info"
+    Picture = "icon:/small/info"
   }
   { Action install
     Text = "Installation package"
@@ -1773,7 +1735,7 @@
   { Action run-that
     Text = "Run this class"
     Shortcut = ""
-    Picture = "icon:/tiny/play"
+    Picture = "icon:/small/play"
   }
   { Action run-with
     Text = "Run with"
@@ -1810,10 +1772,6 @@
     Shortcut = "F5"
     Picture = "icon:/small/play"
   }
-  { Action startup
-    Text = ""
-    Picture = "icon:/tiny/program"
-  }
   { Action startup-class
     Text = "Startup class"
     Shortcut = "Alt+S"
@@ -1838,7 +1796,7 @@
     Shortcut = "F4"
     Picture = "icon:/small/ok"
   }
-  { Action testsuites
+  { Action test-suite
     Text = "Test suites"
     Shortcut = "Shift+F4"
   }

@@ -95,7 +95,7 @@ Private $iDimResize As Integer
 Private $bMoveSelect As Boolean
 Private $bMoveUnSelect As Boolean
 Private $iMoveSelectRow As Integer = -1
-Private $hMoveOldSelection As GridViewSelection
+Private $vMoveOldSelection As Variant
 Private $bKeyEvent As Boolean
 Private $bIgnoreMove As Boolean
 
@@ -116,9 +116,12 @@ Private $bSorted As Boolean
 
 Private $bHasDrawEvent As Boolean
 
-Private $hObsClick As Observer
 Private $iPadding As Integer = 2
 Private $iTextHeight As Integer
+Private $bDoNotRaiseSelect As Boolean
+
+Private $hTimerClick As Timer
+Private $bMoveRaiseSelect As Boolean
 
 Public Sub _new()
   
@@ -137,7 +140,7 @@ Public Sub _new()
   
   Me.Proxy = $hView
   
-  $hObsClick = New Observer(Me, True) As "GridViewClick"
+  $hTimerClick = New Timer As "GridViewClick"
   
 End
 
@@ -1207,8 +1210,17 @@ Public Sub ScrollArea_MouseDown()
   If Me.Design Then Return
   If Not Me.Enabled Then Return
   If _NoMouse Then Return
+  If Mouse.Click > 1 Then Return
   
   Me.SetFocus
+  
+  $hTimerClick.Trigger
+  
+  bCancel = Raise MouseDown
+  If bCancel Then 
+    Stop Event
+    Return
+  Endif
   
   iOldRow = $iRow
   
@@ -1229,32 +1241,32 @@ Public Sub ScrollArea_MouseDown()
         If $hRows._IsSelected($iRow) Then
           $hRows.UnSelect($iRow, 1)
           $iMoveSelectRow = $iRow
-          $hMoveOldSelection = $hRows._SaveSelection()
+          $vMoveOldSelection = $hRows._SaveSelection()
           $bMoveUnSelect = True
         Else
           $hRows.Select($iRow, 1)
           $iMoveSelectRow = $iRow
-          $hMoveOldSelection = $hRows._SaveSelection()
+          $vMoveOldSelection = $hRows._SaveSelection()
           $bMoveSelect = True
         Endif
       Else If Mouse.Shift And If iOldRow >= 0 Then 
-        $hRows._GetSel().UnSelectAll
+        $hRows._GetSelection().UnSelectAll
         $hRows.Select(iOldRow, 1)
         $iMoveSelectRow = iOldRow
-        $hMoveOldSelection = $hRows._SaveSelection()
+        $vMoveOldSelection = $hRows._SaveSelection()
         $bMoveSelect = True
         Dec $iRow
         MoveTo($iRow + 1, -1)
       Else If Not _IsRowSelected($iRow) Then
-        If Not _ToggleSelection Then $hRows._GetSel().UnSelectAll
+        If Not _ToggleSelection Then $hRows._GetSelection().UnSelectAll()
         $hRows.Select($iRow, 1)
         $iMoveSelectRow = $iRow
-        $hMoveOldSelection = $hRows._SaveSelection()
+        $vMoveOldSelection = $hRows._SaveSelection()
         $bMoveSelect = True
       Else
         If _ToggleSelection Then
           $hRows.UnSelect($iRow, 1)
-          $hMoveOldSelection = $hRows._SaveSelection()
+          $vMoveOldSelection = $hRows._SaveSelection()
           $bMoveUnSelect = True
         Endif
         $iMoveSelectRow = $iRow
@@ -1311,12 +1323,20 @@ Private Sub AfterMouseUp()
     $hTimerScroll = Null
   Endif
   
+  If $bMoveSelect Or If $bMoveUnselect Then 
+    $bDoNotRaiseSelect = False
+    If $bMoveRaiseSelect Then
+      $bMoveRaiseSelect = False
+      _RaiseSelect
+    Endif
+  Endif
+  
   If _NoMouse Then Return
   
   $bResize = False
   $bMoveSelect = False
   $bMoveUnSelect = False
-  $hMoveOldSelection = Null
+  $vMoveOldSelection = Null
   $iMoveSelectRow = -1
   $bIgnoreMove = False
   
@@ -1454,8 +1474,9 @@ Public Sub MoveTo(Row As Integer, Column As Integer)
   If $iMode = Select.Single Then 
     Raise Select
   Else If $bMoveSelect Or If $bMoveUnSelect Then
-    If $hMoveOldSelection Then
-      $hRows._RestoreSelection($hMoveOldSelection)
+    If $vMoveOldSelection Then
+      $bDoNotRaiseSelect = True
+      $hRows._RestoreSelection($vMoveOldSelection)
       S = Min($iRow, $iMoveSelectRow)
       L = Max($iRow, $iMoveSelectRow) - Min($iRow, $iMoveSelectRow) + 1
       If $bMoveSelect Then
@@ -1463,9 +1484,11 @@ Public Sub MoveTo(Row As Integer, Column As Integer)
       Else
         $hRows.UnSelect(S, L)
       Endif
+      $bDoNotRaiseSelect = False
+      $bMoveRaiseSelect = True
     Endif
   Else If $bKeyEvent And If $iMode = Select.Multiple And If Not _NoMouse Then
-    $hRows._GetSel().UnSelectAll
+    $hRows._GetSelection().UnSelectAll
     $hRows.Select($iRow, 1)
   Endif
   
@@ -1645,6 +1668,7 @@ End
 
 Public Sub _RaiseSelect()
   
+  If $bDoNotRaiseSelect Then Return
   $hView.Refresh
   Raise Select
   
@@ -1740,7 +1764,7 @@ Public Sub ScrollArea_KeyPress()
         $bMoveSelect = Key.Shift
         If $bMoveSelect And If $iMoveSelectRow < 0 Then
           $iMoveSelectRow = $iRow
-          $hMoveOldSelection = $hRows._SaveSelection()
+          $vMoveOldSelection = $hRows._SaveSelection()
         Endif
       Endif
     
@@ -2044,7 +2068,7 @@ Public Sub _RemoveRows(Start As Integer, Length As Integer)
     Inc D
   Next
   
-  $hRows._GetSel().RemoveRows(Start, Length)
+  $hRows._GetSelection().RemoveRows(Start, Length)
   $hRows.Count -= Length
   
 End
@@ -2061,7 +2085,7 @@ Public Sub _InsertRows(Start As Integer, Length As Integer)
     Next
   Next
   
-  $hRows._GetSel().InsertRows(Start, Length)
+  $hRows._GetSelection().InsertRows(Start, Length)
   $hRows.Count += Length
   
 End
@@ -2369,7 +2393,7 @@ Private Sub Background_Write(Value As Integer)
 
 End
 
-Public Sub GridViewClick_MouseDown()
+Public Sub GridViewClick_Timer()
   
   If $bInCell Then Raise Click
   

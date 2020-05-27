@@ -59,8 +59,10 @@ Private $hSortTimer As Timer
 Private $bNoRoot As Boolean
 Private $iLock As Integer
 
+Private $hSelection As TreeViewSelection
 Private $iSaveSelection As Integer
-Private $aSaveSelection As String[]
+Private $vSaveSelection As Variant
+
 Private $iDepthW As Integer
 Private $bShowLines As Boolean
 Private $bShowCheck As Boolean
@@ -75,6 +77,9 @@ Public Sub _new()
   $hView.Name = Me.Name & ":gridview"
   $hView.Rows.H = GetDefaultItemHeight()
   $hView.Padding = Desktop.Scale \ 2
+  
+  $hSelection = New TreeViewSelection As "TreeViewSelection"
+  $hView.Rows._SetSelection($hSelection)
   '$hView.ShowCursor = True
   
   Me.Proxy = $hView
@@ -136,6 +141,8 @@ End
 Public Sub _Add((Key) As String, Text As String, Optional (Picture) As Picture, Optional Parent As String, Optional After As String) As _TreeView_Item
   
   Dim hItem, hParent As _TreeView_Item
+  
+  If $hRenameBox Then Cancel()
   
   If Not Key Then Error.Raise("Null key")
   If $cItem.Exist(Key) Then Error.Raise("Key already used: " & Key)
@@ -225,6 +232,8 @@ Public Sub Remove((Key) As String)
   Dim sCurrent As String
   Dim iRow As Integer
   Dim hItem As _TreeView_Item
+  
+  If $hRenameBox Then Cancel()
   
   If Not Key Then Error.Raise("Null key")
   
@@ -352,7 +361,7 @@ Private Sub GetPreviousItem(hItem As _Treeview_Item) As _TreeView_Item
 
 End
 
-Private Sub RowToItem(iRow As Integer) As _TreeView_Item
+Public Sub _RowToItem(iRow As Integer) As _TreeView_Item
   
   Dim hParent As _TreeView_Item
   Dim hChild As _TreeView_Item
@@ -483,7 +492,7 @@ End
 
 Public Sub GridView_Data(Row As Integer, (Column) As Integer)
   
-  Dim hItem As _TreeView_Item = RowToItem(Row)
+  Dim hItem As _TreeView_Item = _RowToItem(Row)
   If Not hItem Then Return
   
   $hView.Data.Background = hItem.Background
@@ -492,7 +501,7 @@ End
 
 Public Sub GridView_Draw(X As Integer, Y As Integer, W As Integer, H As Integer, Row As Integer, Column As Integer)
   
-  Dim hItem As _TreeView_Item = RowToItem(Row)
+  Dim hItem As _TreeView_Item = _RowToItem(Row)
   Dim sText As String
   Dim XA As Float
   Dim YA As Float
@@ -730,7 +739,7 @@ End
 
 Public Sub GridView_Activate()
   
-  Dim hItem As _TreeView_Item = RowToItem($hView.Row)
+  Dim hItem As _TreeView_Item = _RowToItem($hView.Row)
   Dim bCancel As Boolean
   Dim sCursor As String
   
@@ -749,14 +758,14 @@ End
 Public Sub GridView_MouseDown()
   
   Dim iRow As Integer = $hView.RowAt(Mouse.Y)
-  Dim hItem As _TreeView_Item = RowToItem(iRow)
+  Dim hItem As _TreeView_Item = _RowToItem(iRow)
   Dim X As Integer
 
   If Not hItem Then Return
   If Mouse.Click > 1 Then Return
 
   If Mouse.Right And If Not $bShowCheck Then
-    $hView.Rows[iRow].Selected = True
+    _SetItemSelected(hItem, True) '.Rows[iRow].Selected = True
   Endif
 
   If System.RightToLeft Then
@@ -771,48 +780,15 @@ Public Sub GridView_MouseDown()
 
   X -= $hView.ScrollX
 
-  If hItem.Count And If Not $bNoRoot Then
-
-    If Mouse.X >= X And If Mouse.X < X + $iDepthW Then
+  If Mouse.X < X + $iDepthW Then
+    If hItem.Count And If Not $bNoRoot And If Mouse.X >= X Then
       hItem.Expanded = Not hItem.Expanded
-      Return
+    Else
+      $hView.Row = iRow
     Endif
-    
+    Stop Event
+    Return
   Endif
-  
-  ' If False Then
-  ' 
-  '   If System.RightToLeft Then 
-  '     X -= $iDepthW
-  '   Else
-  '     X += $iDepthW
-  '   Endif
-  '   
-  '   If Mouse.X >= X + $iDepthW \ 8 Then 'And If Mouse.X < X + $iDepthW - $iDepthW \ 8 Then
-  ' 
-  '     iFrom = $hView.Row
-  '     If Mouse.Shift And If iFrom >= 0 Then
-  '       $bSelectItem = RowToItem(iFrom).Selected
-  '       While iFrom <> iRow
-  '         iFrom += Sgn(iRow - iFrom)
-  '         RowToItem(iFrom).Selected = $bSelectItem
-  '       Wend
-  '       $hView.Row = iRow
-  '     Else
-  '       $hView.Row = iRow
-  '       hItem.Selected = Not hItem.Selected
-  '       $bSelectItem = hItem.Selected
-  '     Endif
-  '     
-  '     Stop Event
-  ' 
-  '   Else
-  '     
-  '     $hView.Row = iRow
-  '     
-  '   Endif
-  '   
-  ' Endif  
   
 End
 
@@ -829,10 +805,12 @@ Public Sub GridView_KeyPress()
   Else If Key.Text = "-" Then
     hItem = Current_Read()
     If hItem Then hItem.Expanded = False
+  Else If Key.Code = Key.Space Or If Key.Code = Key.Return Or If Key.Code = Key.Enter Then
+    hItem = Current_Read()
+    If hItem Then hItem.Expanded = Not hItem.Expanded
   Endif
   
 End
-
 
 Private Function Count_Read() As Integer
 
@@ -986,7 +964,7 @@ End
 
 Private Function Current_Read() As _TreeView_Item
 
-  Return RowToItem($hView.Row)
+  Return _RowToItem($hView.Row)
 
 End
 
@@ -1001,7 +979,7 @@ Private Sub Key_Write(Value As String)
 
   Dim iRow As Integer
   
-  If Not Value Then 
+  If Not Value Or If Not $cItem.Exist(Value) Then 
     $hView.Row = -1
     Return
   Endif
@@ -1031,10 +1009,10 @@ Public Sub GridView_Select()
   Dim sCursor As String
   
   If $iNoEvent Then Return
-  If $hView.Row < 0 Then Return
+  If $hView.Row < 0 And If $hView.Mode <> Select.Multiple Then Return
   
   sCursor = $sCursor
-  SetCursor(RowToItem($hView.Row).Key)
+  SetCursor(Key_Read()) '_RowToItem($hView.Row).Key)
   Raise Select
   $sCursor = sCursor
   
@@ -1254,7 +1232,7 @@ Private Function Available_Read() As Boolean
 End
 
 Public Sub SelectAll()
-  
+
   $hView.SelectAll
   
 End
@@ -1270,7 +1248,7 @@ Public Sub FindAt((X) As Integer, Y As Integer) As Boolean
   Dim iRow As Integer = $hView.RowAt(Y)
 
   If iRow < 0 Then Return True
-  Return SetCursor(RowToItem(iRow).Key)
+  Return SetCursor(_RowToItem(iRow).Key)
   
 End
 
@@ -1327,19 +1305,28 @@ End
 
 Public Sub _IsItemSelected(hItem As _TreeView_Item) As Boolean
   
-  Dim iRow As Integer = _ItemToRow(hItem)
-  Return $hView.Rows[iRow].Selected
+  If $hView.Mode = Select.Single Then Return $hView.Row = _ItemToRow(hItem)
+  Return $hSelection.IsItemSelected(hItem.Key)
+  
+  ' Dim iRow As Integer = _ItemToRow(hItem)
+  ' Return $hView.Rows[iRow].Selected
   
 End
 
 Public Sub _SetItemSelected(hItem As _TreeView_Item, bSelected As Boolean)
   
-  Dim iRow As Integer
+  If $hView.Mode = Select.Single Then
+    SetItemVisible(hItem)
+    'UnselectAll
+    If bSelected Then
+      $hView.Row = _ItemToRow(hItem)
+    Else
+      $hView.Row = -1
+    Endif
+    Return
+  Endif
   
-  If $hView.Mode = Select.Single Then SetItemVisible(hItem)
-  
-  iRow = _ItemToRow(hItem)
-  $hView.Rows[iRow].Selected = bSelected
+  $hSelection.SelectItem(hItem.Key, bSelected)
   
 End
 
@@ -1563,11 +1550,18 @@ End
 Private Function Selection_Read() As String[]
 
   Dim aSel As New String[]
-  Dim iRow As Integer
+  Dim cSel As Collection
+  Dim sKey As String
   
-  For Each iRow In $hView.Rows.Selection
-    aSel.Add(RowToItem(iRow).Key)
-  Next
+  If $hView.Mode = Select.Single Then
+    sKey = Key_Read()
+    If sKey Then aSel.Add(sKey)
+  Else If $hView.Mode = Select.Multiple Then
+    cSel = $hSelection.Keys
+    For Each cSel
+      aSel.Add(cSel.Key)
+    Next
+  Endif
   
   Return aSel
 
@@ -1578,14 +1572,19 @@ Private Sub Selection_Write(Value As String[])
   Dim sKey As String
   Dim hItem As _TreeView_Item
   
-  Inc $iNoEvent
-  UnselectAll
-  For Each sKey In Value
-    If Not sKey Then Continue
-    hItem = $cItem[sKey]
-    If hItem Then hItem.Selected = True
-  Next
-  Dec $iNoEvent
+  If $hView.Mode = Select.Single Then
+    Try sKey = Value[Value.Max] 
+    Key_Write(sKey)
+  Else If $hView.Mode = Select.Multiple Then
+    Inc $iNoEvent
+    UnselectAll
+    For Each sKey In Value
+      If Not sKey Then Continue
+      hItem = $cItem[sKey]
+      If hItem Then hItem.Selected = True
+    Next
+    Dec $iNoEvent
+  Endif
   
   If $iNoEvent Then Return
   Raise Select
@@ -1595,7 +1594,11 @@ End
 Public Sub _SaveSelection()
   
   If $iSaveSelection = 0 Then
-    $aSaveSelection = Selection_Read()
+    If $hView.Mode = Select.Multiple Then
+      $vSaveSelection = $hSelection.Save()
+    Else
+      $vSaveSelection = Key_Read()
+    Endif
   Endif
   
   Inc $iSaveSelection
@@ -1607,12 +1610,20 @@ Public Sub _RestoreSelection()
   Dec $iSaveSelection
   
   If $iSaveSelection = 0 Then 
+    
     Inc $iNoEvent
     Inc $iSaveSelection
-    Selection_Write($aSaveSelection)
+    
+    If $hView.Mode = Select.Multiple Then
+      $hSelection.Restore($vSaveSelection)
+    Else
+      Key_Write($vSaveSelection)
+    Endif
+    
     Dec $iSaveSelection
     Dec $iNoEvent
-    $aSaveSelection = Null
+    $vSaveSelection = Null
+    
   Endif
   
 End
@@ -1697,7 +1708,7 @@ Private Sub UpdateRowHeight(hItem As _TreeView_Item, iStart As Integer, Optional
   Endif
   
   While iStart <= iEnd
-    $hView.Rows[iStart].H = RowToItem(iStart)._GetHeight()
+    $hView.Rows[iStart].H = _RowToItem(iStart)._GetHeight()
     Inc iStart
   Wend
   

@@ -759,6 +759,7 @@ _INIT_AGAIN:
     
     If Not bIsFake Then
       FDebugInfo.OnProjectChange
+      FDebugButton.OnProjectChange
     Endif
     
   Endif
@@ -6365,9 +6366,22 @@ End
 
 Public Sub ShouldTranslate(sPath As String, Optional bRecursive As Boolean) As Boolean
   
+  Dim sRelPath As String
+  Dim sFormPath As String
+  
   If Not sPath Then Return
   
-  If DoNotTranslate.Exist(MakeProjectRelativePath(sPath)) Then Return
+  sRelPath = MakeProjectRelativePath(sPath)
+  If DoNotTranslate.Exist(sRelPath) Then Return
+  
+  If File.Ext(sPath) = "class" Then
+    sFormPath = FindForm(File.BaseName(sPath))
+    If sFormPath Then
+      sRelPath = MakeProjectRelativePath(sFormPath)
+      If DoNotTranslate.Exist(sRelPath) Then Return
+    Endif
+  Endif
+  
   If Not bRecursive Then Return True
   
   sPath = File.Dir(sPath)

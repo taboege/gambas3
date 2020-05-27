@@ -140,6 +140,7 @@ lib/data/Makefile \
 lib/clipper/Makefile \
 lib/inotify/Makefile \
 lib/jit/Makefile \
+lib/test/Makefile \
 ])
 AC_OUTPUT
 

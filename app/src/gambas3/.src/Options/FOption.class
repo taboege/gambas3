@@ -611,7 +611,7 @@ Public Sub dwgStyle_Draw()
   Dim XB As Integer
 
   sName = MTheme.ColorNames[MTheme.ColorKeys.Find(sKey)]
-  bInvert = Settings["/Editor/InvertTheme", 0]
+  If Application.DarkTheme Then bInvert = Settings["/Editor/InvertTheme", 0]
   If bInvert Then 
     iBg = CStyle[$cCurrent["Background"]].Foreground
     If Color[iBg].Value < 128 Then bInvert = False
