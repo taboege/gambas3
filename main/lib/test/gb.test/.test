@@ -1,5 +1,5 @@
 [TestSuites]
-Count=4
+Count=5
 TestWith=4
 Default="TestAllAsserts,TestFailures.TestEqualsFailure;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString"
 
@@ -19,32 +19,7 @@ Tests="TWrongPlan.IHaveAWrongPlan"
 Name="All good"
 Tests="TAllAsserts.Assert;AssertEmpty;AssertEqualsDate;AssertEqualsFloat;AssertEqualsLong;AssertEqualsObject;AssertEqualsString;AssertError;AssertErrorCode;AssertNotNull;Like;Note;TodoErrorCode,TElse.NoMessage;NoMessageInbetween;Note,TEmpty,TError.Error,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSummary.DoSkip;DoSomeAsserts;DoTodo"
 
-[TestSuites/Suite1]
-Name="Série de tests n°1"
-
-[TestSuites/Suite2]
-Name="Série de tests n°2"
-Tests="TestElse"
-
-[TestSuites/Suite3]
-Name="Série de tests n°3"
-Tests="TestError"
-
-[TestSuites/Suite4]
-Name="Série de tests n°6"
-
-[TestSuites/Suite5]
-Name="Série de tests n°7"
-Tests="TestElse.TestNoMessage;TestNote"
-
-[TestSuites/Suite6]
-Name="Série de tests n°8"
-Tests="TestCrashes"
-
-[TestSuites/Suite7]
-Name="Test suite #1"
-Tests="TestAllAsserts,TestBailout,TestCrashes"
-
-[TestSuites/Suite8]
-Name="Série de tests n°7"
+[TestSuites/5]
+Name="Keep this test suite, it is necessary for testing gb.test."
+Tests="TInternals.FindTestSuiteByName"
 

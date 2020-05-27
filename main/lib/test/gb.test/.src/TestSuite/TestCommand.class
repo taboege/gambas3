@@ -29,7 +29,6 @@ Static Public Function ToString(Commands As TestCommand[]) As String
 
     Dim Command As TestCommand
     Dim asBuf As New String[]
-    Dim sMethod As String
 
     Commands.Sort()
     For Each Command In Commands

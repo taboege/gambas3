@@ -1,0 +1,34 @@
+' Gambas module file
+
+''' Helper functions for Test class (that need to be tested but should not be exported)
+
+'' fiddle out testsuite's tests out of .test file
+Public Function GetTestSuiteByName(Name As String) As String
+
+    Dim sTests As String
+    Dim asLines As String[]
+    Dim bFoundName As Boolean
+    Dim sLine As String
+
+    If Name Begins "@" Then
+        Name = Right(Name, String.Len(Name) - 1)
+    Endif
+
+    sTests = File.Load(Application.Path &/ ".test")
+    asLines = Split(sTests, gb.lf)
+
+    For Each sLine In asLines
+        If bFoundName = True Then
+            'sLine starts with 'Tests="'
+            Return String.Mid(sLine, 8, String.Len(sLine) - 8)
+        Endif
+        If InStr(sLine, "\"" & Name & "\"") Then
+            bFoundName = True
+        Endif
+    Next
+
+    If bFoundName = False Then
+        Error.Raise(Subst(("Could not find a test suite with name &1."), Name))
+    Endif
+
+End

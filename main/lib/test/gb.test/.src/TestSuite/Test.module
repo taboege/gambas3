@@ -19,7 +19,6 @@ Private $Suite As TestSuite
 '' Used to trigger Test.Main to print all tests as comma separated string.
 Public Const _TRIGGER_GET_ALLTESTS As String = "#GetAllTests"
 
-
 '' The static procedure Test.Main() starts tests. By default it runs all testmethods in all
 '' testmodules ordered by name and prints the result to the console.
 ''
@@ -43,6 +42,8 @@ Public Const _TRIGGER_GET_ALLTESTS As String = "#GetAllTests"
 
 Public Sub Main(Optional Tests As String)
 
+    Dim sTestsuite As String
+
     If Not Tests Then
         'prints the names of all testmodules
         PrintAllTestModules()
@@ -53,21 +54,38 @@ Public Sub Main(Optional Tests As String)
         Print AllTests()
         Return
     Endif
-    
+
     If Tests = "*" Then
         'triggers all tests
         Tests = ""
     Endif
+
+    If Tests Begins "@" Then
+        'a test suite was called by name
+        sTestsuite = Tests
+        Tests = MTest.GetTestSuiteByName(Tests)
+    Endif
+
+    ' run tests
     Test._Reset() ' only if you run this Main multiple times per process, which you shouldn't
     If Tests Then
         FromString(Tests)
     Endif
     RunTests()
-    $hPrinter.Session.Summary.Description = TestCommand.ToString(TestCommand.FromString(Tests))
+
+    If sTestsuite Then
+        sTestsuite = Replace(sTestsuite, "@", "Testsuite: ")
+        $hPrinter.Session.Summary.Description = sTestsuite
+    Else
+        $hPrinter.Session.Summary.Description = TestCommand.ToString(TestCommand.FromString(Tests))
+    Endif
+
     PrintSummary()
     Quit ExitCode()
 
 TheEnd:
+Catch
+    Test.BailOut(Error.Text)
 
 End
 
@@ -75,9 +93,9 @@ Private Sub PrintSummary()
 
     With $hPrinter.Session
         Test._Print(Null) ' better readability for humans
-        
+
         ' even if the tests came in unsorted, print it sorted
-        Test.Note(Subst$(("Ran: '&1' "), TestCommand.ToString(TestCommand.FromString(.Summary.Description))))
+        Test.Note(Subst$(("Ran '&1' "), TestCommand.ToString(TestCommand.FromString(.Summary.Description))))
         If .TestsRun <> .Plan Then Test.Note(Subst$(("Planned &1 tests but ran &2"), .Plan, .TestsRun))
         Test.Note(gb.Lf)
 
@@ -180,7 +198,6 @@ End
 Private Function RunTests()
 
     Dim Testmodule As Class
-    Dim sTestModule As String
 
     If Not $Suite Then
         ' create as Suite with all tests
@@ -233,8 +250,6 @@ End
 Public Function AllTestsCollection() As Collection
 
     Dim aoTestModules As Class[]
-    Dim sModule As String
-    Dim TestModule As Class
     Dim cAlltests As New Collection
     Dim oTestModule As Class
 
@@ -373,7 +388,7 @@ Private Sub PrintAllTestModules()
         hStat = Class.Stat("..." &/ sName)
         If hStat.Test Then aTest.Add(hStat.Name)
     Next
-    
+
     Print aTest.Join();
 
 End
@@ -387,7 +402,7 @@ Private Sub FromString(Tests As String)
     Dim sName As String
 
     Commands = TestCommand.FromString(Tests)
-    
+
     $Suite = New TestSuite
 
     For Each Command In Commands
