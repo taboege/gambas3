@@ -9,16 +9,16 @@
     > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
 - Plan selftests
     > gb.test: Every subtest in all tests must plan the own assertion count
-- TestAllAssertion must test all assertions
 
 ## Work
 
-- Decide where Skip, SkipAll, Todo reside
-    > SkipAll is in Test, Skip in Assert, Todo in Assert. This is inconsistent, We have to decide where they should be. Chris: I am for Test.
 - Document Approximate and RelativeApproximate
+- TestAllAssertion must test all assertions
 
 ## Done
 
+- Decide where Skip, SkipAll, Todo reside
+    > SkipAll is in Test, Skip in Assert, Todo in Assert. This is inconsistent, We have to decide where they should be. Chris: I am for Test.
 - Install gbt3 at Gambas installation
     > gbt3 is compiled and installed by make but there is no symlink gbt3 > gbt3.gambas
 - Ensure TAP created according to  spec

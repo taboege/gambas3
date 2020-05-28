@@ -1,7 +1,7 @@
 [TestSuites]
 Count=5
 TestWith=4
-Default="TestAllAsserts,TestFailures.TestEqualsFailure;TestLongFailure;TestLongTypeMismatchFailure;TestStringFailure,TestInternals.CommandsToString;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString"
+Default="TSummary.DoTodo"
 
 [TestSuites/1]
 Name="! Must Bail out!"

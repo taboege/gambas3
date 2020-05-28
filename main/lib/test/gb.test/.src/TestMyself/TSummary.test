@@ -14,17 +14,17 @@ End
 '' Will succeed
 Public Sub DoSkip()
 
-  Assert.Skip("Report that a test is skipped.")
+  Test.Skip("I skip this test to test Test.Skip.")
 
 End
 
 '' Will succeed
 Public Sub DoTodo()
 
-  Assert.Todo("Because not ok yet.")
+  Test.Todo("This fails but is todo.")
   Assert.Ok(False, "Must be ok.")
 
-  Assert.Todo("This Todo seems not to be removed yet.")
+  Test.Todo("This todo seems not to be removed yet, it is a bonus.")
   Assert.Ok(True, "Must be ok.")
 
 End

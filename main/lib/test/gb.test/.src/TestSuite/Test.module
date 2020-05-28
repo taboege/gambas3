@@ -311,6 +311,24 @@ Public Sub Note(Comment As String)
     $hPrinter.Note(Comment)
 
 End
+
+'' Tell the testing system that the next assertion is a TODO. Even if it fails it reports ok, but will be reported as Todo.
+Public Sub Todo(Optional Comment As String)
+
+    Test._Next.Directive = TestAssertion.TODO
+    Test._Next.Comment = Comment
+
+End
+
+'' Tell the testing system that a test is skipped. Reports ok.
+Public Sub Skip(Optional Comment As String)
+
+    Test._Next.Directive = TestAssertion.SKIP
+    Test._Next.Comment = Comment
+    Assert.Pass()
+
+End
+
 '' Prints Line to Stdout
 
 Public Sub _Print({Line} As String)
