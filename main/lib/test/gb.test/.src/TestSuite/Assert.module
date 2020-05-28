@@ -54,12 +54,12 @@ Public Sub Equals(Got As Variant, Expected As Variant, Optional Description As S
 
     bRes = Ok(Got = Expected, Description)
     If Not bRes Then
-        Test.Note(Subst$(("  Got:      &1"), Got))
-        Test.Note(Subst$(("  Expected: &1"), Expected))
+        NoteGotAndExpected(Got, Expected)
     Endif
     Return bRes
 
 End
+
 '' Assert that Got <> Expected
 
 Public Sub Notequals(Got As Variant, UnExpected As Variant, Optional Description As String) As Boolean
@@ -75,8 +75,7 @@ Public Sub LessEqual(Got As Variant, Bound As Variant, Optional Description As S
 
     bRes = Ok(Got <= Bound, Description)
     If Not bRes Then
-        Test.Note(Subst$(("  Got:      &1"), Got))
-        Test.Note(Subst$(("  Expected: <= &1"), Bound))
+        NoteGotAndExpected(Got, Bound)
     Endif
     Return bRes
 
@@ -89,8 +88,7 @@ Public Sub Less(Got As Variant, Bound As Variant, Optional Description As String
 
     bRes = Ok(Got < Bound, Description)
     If Not bRes Then
-        Test.Note(Subst$(("  Got:      &1"), Got))
-        Test.Note(Subst$(("  Expected: < &1"), Bound))
+        NoteGotAndExpected(Got, Bound)
     Endif
     Return bRes
 
@@ -103,8 +101,7 @@ Public Sub GreaterEqual(Got As Variant, Bound As Variant, Optional Description A
 
     bRes = Ok(Got >= Bound, Description)
     If Not bRes Then
-        Test.Note(Subst$(("  Got:      &1"), Got))
-        Test.Note(Subst$(("  Expected: >= &1"), Bound))
+        NoteGotAndExpected(Got, Bound)
     Endif
     Return bRes
 
@@ -117,8 +114,7 @@ Public Sub Greater(Got As Variant, Bound As Variant, Optional Description As Str
 
     bRes = Ok(Got > Bound, Description)
     If Not bRes Then
-        Test.Note(Subst$(("  Got:      &1"), Got))
-        Test.Note(Subst$(("  Expected: > &1"), Bound))
+        NoteGotAndExpected(Got, Bound)
     Endif
     Return bRes
 
@@ -164,8 +160,7 @@ Public Sub Like(Got As String, Pattern As String, Optional Description As String
 
     bRes = Ok(Got Like Pattern, Description)
     If Not bRes Then
-        Test.Note(Subst$(("  Got:      &1"), Got))
-        Test.Note(Subst$(("  Expected: &1"), Pattern))
+        NoteGotAndExpected(Got, Pattern)
     Endif
     Return bRes
 
@@ -178,8 +173,7 @@ Public Sub Match(Got As String, Pattern As String, Optional Description As Strin
 
     bRes = Ok(Got Match Pattern, Description)
     If Not bRes Then
-        Test.Note(Subst$(("  Got:      &1"), Got))
-        Test.Note(Subst$(("  Expected: &1"), Pattern))
+        NoteGotAndExpected(Got, Pattern)
     Endif
     Return bRes
 
@@ -260,5 +254,18 @@ Public Sub Noterror(Optional Description As String) As Boolean
 
     Error.Clear()
     Return bRes
+
+End
+
+' ------------------------------------------------- Helper functions
+
+Private Sub NoteGotAndExpected(Got As String, Expected As String)
+
+    Test.Note(Null)
+    Test.Note(Subst$(("------------- Expected -------------" & gb.lf & "&1"), Expected))
+    Test.Note(Null)
+    Test.Note(Subst$(("---------------- Got ---------------" & gb.lf & "&1"), Got))
+    Test.Note("------------------------------------")
+    Test.Note(Null)
 
 End

@@ -60,10 +60,10 @@ End
 
 Public Sub CommandsToString()
 
-  Dim Commands As TestCommand[]
-  
-  Commands = TestCommand.FromString("Bong, Bong.A, Bing, Bing, Bing, Bing, Bing, Bing, Bong.A, Bung.U, Bong.B, Bong.C, Bing, Bing, Bing, Bong, Bong")
-  Assert.Equals(TestCommand.ToString(Commands), "Bing,Bong,Bung.U")
+    Dim Commands As TestCommand[]
+
+    Commands = TestCommand.FromString("Bong, Bong.A, Bing, Bing, Bing, Bing, Bing, Bing, Bong.A, Bung.U, Bong.B, Bong.C, Bing, Bing, Bing, Bong, Bong")
+    Assert.Equals(TestCommand.ToString(Commands), "Bing,Bong,Bung.U")
 
 End
 
@@ -83,7 +83,7 @@ Public Sub ReflectTest()
     Assert.Equals(tests["TAllAsserts"].Count, 21, "count of all testmethods in TAllAsserts")
     Assert.Equals(tests["TBailout"].Count, 1, "count of all testmethods in TBailout")
     Assert.Equals(tests["TCrashes"].Count, 2, "count of all testmethods in TCrashes")
-    Assert.Equals(tests["TElse"].Count, 3, "count of all testmethods in TElse")
+    Assert.Equals(tests["TElse"].Count, 4, "count of all testmethods in TElse")
     Assert.Equals(tests["TEmpty"].Count, 0, "count of all testmethods in TEmpty")
     Assert.Equals(tests["TInternals"].Count, 6, "count of all testmethods in TInternals")
 
@@ -93,15 +93,15 @@ End
 Public Sub ReflectTestsString()
 
     ' These have to be adjusted when tests change
-    ' If tests are updated, get them with 
+    ' If tests are updated, get them with
     ' Dim easy As String = Test.AllTests()
 
     Dim got, want As String
-    
-    want = "TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;IsType;Less;LessEqual;Like;Match;NotNull;NotOk;Notequals;Noterror;Null;Ok;Pass;RelativeApproximate;StringEquals,TBailout.Bailout,TCrashes.DoACrash;ErrorTwo,TElse.NoMessage;NoMessageInbetween;Note,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSkipAll.SkipAll,TSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo;TodoErrorCode,TWrongPlan.IHaveAWrongPlan"
+
+    want = "TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;IsType;Less;LessEqual;Like;Match;NotNull;NotOk;Notequals;Noterror;Null;Ok;Pass;RelativeApproximate;StringEquals,TBailout.Bailout,TCrashes.DoACrash;ErrorTwo,TElse.NoMessage;NoMessageInbetween;Note;TestNoteGotAndExpected,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSkipAll.SkipAll,TSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo;TodoErrorCode,TWrongPlan.IHaveAWrongPlan"
     got = Test.AllTests()
     Assert.Equals(got, want, "All Test names as string")
-    
+
     want = Test.AllTests()
     got = TestCommand.ToString(TestCommand.FromString(want))
 
@@ -111,18 +111,18 @@ End
 
 Public Sub InterpreterInterface()
 
-  Dim Commands As TestCommand[]
-  Dim Tests As String = "TestAllAsserts.TestAssertEqualsDate;TestAssertEmpty;TestAssert,TestElse"
-  
-  Test.Note("Tests the testsuite as string as it is run by the interpreter")
-  
-  Commands = TestCommand.FromString(Tests)
-  
-  Assert.Equals(Commands.Count, 2, "we have 2 commands")
-  Assert.Equals(Commands[0].Methods.Count, 3, "command 2 has 3 methods")
-  Assert.Equals(Commands[0].Methods[0], "TestAssert", "methods were sorted")
-  
-  Tests = "TestAllAsserts.TestAssert;TestAssertEmpty;TestAssertEqualsDate,TestElse"
+    Dim Commands As TestCommand[]
+    Dim Tests As String = "TestAllAsserts.TestAssertEqualsDate;TestAssertEmpty;TestAssert,TestElse"
+
+    Test.Note("Tests the testsuite as string as it is run by the interpreter")
+
+    Commands = TestCommand.FromString(Tests)
+
+    Assert.Equals(Commands.Count, 2, "we have 2 commands")
+    Assert.Equals(Commands[0].Methods.Count, 3, "command 2 has 3 methods")
+    Assert.Equals(Commands[0].Methods[0], "TestAssert", "methods were sorted")
+
+    Tests = "TestAllAsserts.TestAssert;TestAssertEmpty;TestAssertEqualsDate,TestElse"
     Assert.Equals(TestCommand.ToString(Commands), Tests, "commands as string defining a testsuite")
 
 End
@@ -130,9 +130,7 @@ End
 Public Sub FindTestSuiteByName()
 
     Dim sName As String = "Keep this test suite, it is necessary for testing gb.test."
-    
+
     Assert.Equals(MTest.GetTestSuiteByName(sName), "TInternals.FindTestSuiteByName")
-  
-  
 
 End
