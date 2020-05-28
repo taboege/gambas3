@@ -304,6 +304,17 @@ Public Sub Diagnostic(Comment As String)
     $hPrinter.Diagnostic(Comment)
 
 End
+
+'' If the next assertion is a failure it reports ok.
+'' In other words: Reverses the result of the following assertion.
+'' "not ok" will be "ok" and vice versa.
+
+Public Sub IntendedFailure()
+
+    Assert._IntendedFailure = True
+
+End
+
 '' Synonym for Diagnostic, prints Comment with leading #
 
 Public Sub Note(Comment As String)

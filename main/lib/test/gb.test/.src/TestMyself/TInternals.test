@@ -80,9 +80,7 @@ Public Sub ReflectTest()
 
     'count of all testmodules, if it fails we created a new one and we have to count new
     Assert.Equals(tests.Count, 11, "number of all testmodules")
-
-    'count of all testmethods, if it fails we created a new one and we have to count new
-    Assert.Equals(tests["TAllAsserts"].Count, 13, "count of all testmethods in TAllAsserts")
+    Assert.Equals(tests["TAllAsserts"].Count, 21, "count of all testmethods in TAllAsserts")
     Assert.Equals(tests["TBailout"].Count, 1, "count of all testmethods in TBailout")
     Assert.Equals(tests["TCrashes"].Count, 2, "count of all testmethods in TCrashes")
     Assert.Equals(tests["TElse"].Count, 3, "count of all testmethods in TElse")
@@ -100,7 +98,7 @@ Public Sub ReflectTestsString()
 
     Dim got, want As String
     
-    want = "TAllAsserts.Assert;AssertEmpty;AssertEqualsDate;AssertEqualsFloat;AssertEqualsLong;AssertEqualsObject;AssertEqualsString;AssertError;AssertErrorCode;AssertNotNull;Like;Note;TodoErrorCode,TBailout.Bailout,TCrashes.DoACrash;ErrorTwo,TElse.NoMessage;NoMessageInbetween;Note,TError.Error,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo,TWrongPlan.IHaveAWrongPlan"
+    want = "TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;IsType;Less;LessEqual;Like;Match;NotNull;NotOk;Notequals;Noterror;Null;Ok;Pass;RelativeApproximate;StringEquals,TBailout.Bailout,TCrashes.DoACrash;ErrorTwo,TElse.NoMessage;NoMessageInbetween;Note,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSkipAll.SkipAll,TSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo;TodoErrorCode,TWrongPlan.IHaveAWrongPlan"
     got = Test.AllTests()
     Assert.Equals(got, want, "All Test names as string")
     

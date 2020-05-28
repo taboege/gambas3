@@ -29,6 +29,22 @@ Public Sub DoTodo()
 
 End
 
+Public Sub TodoErrorCode()
+
+    Dim r As Float
+    Test.Plan(2)
+    
+    Try r = 2 / 1
+    Test.Todo("See automatic diagnostics 1/2")
+    Assert.ErrorCode(26, "Division by zero?")
+
+    Try r = 2 / 0
+    Test.Todo("See automatic diagnostics 2/2")
+    Assert.ErrorCode(25, "Division by zero?")
+
+End
+
+
 '' Will fail
 Public Sub DoOneFailure()
 

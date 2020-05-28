@@ -1,8 +1,5 @@
 ' Gambas test file
 
-
-' A Test with no message, should display then method name as message
-
 Public Sub NoMessage()
 
     'There is no message whicht
@@ -22,6 +19,9 @@ End
 Public Sub Note()
 
     Test.Note("This\nis\na\nnote")
-    Test.SkipAll()
+    Test.Plan(0)
+    Test.Note("The next note is Null and that's alright:")
+    Test.Note(Null)
+    Test.SkipAll("This doesn't actually assert anything")
 
 End

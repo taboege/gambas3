@@ -17,7 +17,7 @@ Tests="TWrongPlan.IHaveAWrongPlan"
 
 [TestSuites/4]
 Name="All good"
-Tests="TAllAsserts.Assert;AssertEmpty;AssertEqualsDate;AssertEqualsFloat;AssertEqualsLong;AssertEqualsObject;AssertEqualsString;AssertError;AssertErrorCode;AssertNotNull;Like;Note;TodoErrorCode,TElse.NoMessage;NoMessageInbetween;Note,TEmpty,TError.Error,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSummary.DoSkip;DoSomeAsserts;DoTodo"
+Tests="TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;IsType;Less;LessEqual;Like;Match;NotNull;NotOk;Notequals;Noterror;Null;Ok;Pass;RelativeApproximate;StringEquals,TElse.NoMessage;NoMessageInbetween;Note,TEmpty,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSkipAll.SkipAll"
 
 [TestSuites/5]
 Name="Keep this test suite, it is necessary for testing gb.test."

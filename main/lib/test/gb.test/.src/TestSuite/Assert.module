@@ -1,31 +1,21 @@
 ' Gambas module file
 
 ''' This module extends the Assert instruction, which checks
-''' that Expression is TRUE, and if the Expression is FALSE, 
-''' an uncatchable "Assertion failed" error is raised, the 
+''' that Expression is TRUE, and if the Expression is FALSE,
+''' an uncatchable "Assertion failed" error is raised, the
 ''' PRINT or ERROR instruction is executed, and the program stops immediately.
 
 Export
 
-Private $bIntendedFailure As Boolean
-
-'' If the next assertion is a failure it reports ok. 
-'' In other words: Reverses the result of the following assertion. 
-'' "not ok" will be "ok" and vice versa.
-
-Public Sub IntendedFailure()
-
-    $bIntendedFailure = True
-
-End
+Public _IntendedFailure As Boolean
 
 '' Assert that Result = True
 Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
 
-    If $bIntendedFailure Then Result = Not Result
-    $bIntendedFailure = False
+    If _IntendedFailure Then Result = Not Result
+    _IntendedFailure = False
 
     Test._Next.Ok = Result
     Test._Next.Description = Description
@@ -34,7 +24,6 @@ Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
     Return bRes
 
 End
-
 
 ' -------------------- High-level test functions --------------------
 '' Assert that a test is passed. Reports Ok
@@ -58,6 +47,7 @@ Public Sub NotOk(Result As Boolean, Optional Description As String) As Boolean
 
 End
 '' Assert that Got = Expected
+
 Public Sub Equals(Got As Variant, Expected As Variant, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -71,12 +61,14 @@ Public Sub Equals(Got As Variant, Expected As Variant, Optional Description As S
 
 End
 '' Assert that Got <> Expected
+
 Public Sub Notequals(Got As Variant, UnExpected As Variant, Optional Description As String) As Boolean
 
     Return Ok(Got <> UnExpected, Description)
 
 End
 '' Assert that Got <= Bound
+
 Public Sub LessEqual(Got As Variant, Bound As Variant, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -104,6 +96,7 @@ Public Sub Less(Got As Variant, Bound As Variant, Optional Description As String
 
 End
 '' Assert that Got >= Bound
+
 Public Sub GreaterEqual(Got As Variant, Bound As Variant, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -117,6 +110,7 @@ Public Sub GreaterEqual(Got As Variant, Bound As Variant, Optional Description A
 
 End
 '' Assert that Got > Bound
+
 Public Sub Greater(Got As Variant, Bound As Variant, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -142,24 +136,28 @@ Public Sub RelativeApproximate(Got As Float, Expected As Float, RelPrecision As 
 
 End
 '' Assert that Got is of the type Type
+
 Public Sub IsType(Got As Variant, Type As Integer, Optional Description As String) As Boolean
 
     Return Equals(TypeOf(Got), Type, Description)
 
 End
 '' Assert that Got = Null
+
 Public Sub Null(Got As Variant, Optional Description As String) As Boolean
 
     Return Equals(Got, Null, Description)
 
 End
 '' Assert that Got <> Null
+
 Public Sub NotNull(Got As Variant, Optional Description As String) As Boolean
 
     Return Notequals(Got, Null, Description)
 
 End
 '' Assert that Got Like Pattern. See also the Like string operator.
+
 Public Sub Like(Got As String, Pattern As String, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -173,6 +171,7 @@ Public Sub Like(Got As String, Pattern As String, Optional Description As String
 
 End
 '' Assert that Got Match Pattern. See also the Match string operator.
+
 Public Sub Match(Got As String, Pattern As String, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -206,7 +205,7 @@ Public Sub StringEquals(Got As String, Expected As String, Optional Description 
 
 End
 '' Assert that an error happened. Reports not ok if no error happened.
-'' 
+''
 '' Example:
 '' Try 2/0
 '' Assert.Error("division by zero")
@@ -217,9 +216,9 @@ Public Sub Error(Optional Description As String) As Boolean
 
 End
 
-'' Assert that an error happened with error code. Reports not ok 
+'' Assert that an error happened with error code. Reports not ok
 '' if no error happend or if the error code is wrong.
-'' 
+''
 '' Example:
 '' Try Print 2 / 0
 '' Assert.ErrorCode(26, "division by zero with code 26")
@@ -249,7 +248,6 @@ End
 ''
 ''Try Print 2 / 2
 ''Assert.Noterror("Division ok")
-
 
 Public Sub Noterror(Optional Description As String) As Boolean
 

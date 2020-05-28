@@ -2,22 +2,7 @@
 
 ''' Tests all Asserts
 
-Public Sub Assert()
-
-    Test.Plan(1)
-    Assert.Ok(True, "Testing True")
-
-End
-
-Public Sub AssertEmpty()
-
-    Test.Plan(2)
-    Assert.Null("", "Empty with \"\"")
-    Assert.Null(Null, "Empty with Null")
-
-End
-
-Public Sub AssertEqualsFloat()
+Public Sub Approximate()
 
     Dim f As Float
 
@@ -27,17 +12,18 @@ Public Sub AssertEqualsFloat()
 
 End
 
-Public Sub AssertEqualsLong()
+Public Sub Equals()
+
+    Test.Plan(3)
+
+    ' ------------------------------------------------- Long
 
     Dim l As Long
 
     l = 555555555555555555
-    Test.Plan(1)
     Assert.Equals(555555555555555555, l, "Check long")
 
-End
-
-Public Sub AssertEqualsDate()
+    ' ------------------------------------------------- Date
 
     Dim d As Date
     Dim sdate As String
@@ -46,44 +32,24 @@ Public Sub AssertEqualsDate()
     d = Now()
     sdate = CString(d)
     d2 = CDate(sdate)
-    Test.Plan(1)
+
     Assert.Equals(d, d2, "Check with equal dates")
 
-End
-
-Public Sub AssertEqualsObject()
+    ' ------------------------------------------------- Object
 
     Dim s As New TestCase("1", Me)
     Dim s2 As Object
 
     s2 = s
-    Test.Plan(1)
+
     Assert.Equals(s2, s, "Equal Objects")
 
 End
 
-Public Sub AssertEqualsString()
-
-    Dim s1, s2 As String
-
-    s1 = "blaahhh"
-    s2 = "blaahhh"
-    Test.Plan(1)
-    Assert.StringEquals(s1, s2, "Equal Strings")
-
-End
-
-Public Sub AssertNotNull()
-
-    Test.Plan(2)
-    Assert.NotNull("" & Null & 1, "String is not Null")
-    Assert.NotNull(Me, "Object is not Null")
-
-End
-
-Public Sub AssertError()
+Public Sub Error()
 
     Dim r As Float
+
     Test.Plan(1)
     Try r = 2 / 0
 
@@ -91,42 +57,310 @@ Public Sub AssertError()
 
 End
 
-Public Sub AssertErrorCode()
+Public Sub ErrorCode()
 
     Dim r As Float
+
     Test.Plan(1)
     Try r = 2 / 0
     Assert.ErrorCode(26, "Test error with code")
 
 End
 
-Public Sub TodoErrorCode()
+Public Sub Fail()
 
-    Dim r As Float
-    Test.Plan(2)
-    
-    Try r = 2 / 1
-    Test.Todo("See automatic diagnostics 1/2")
-    Assert.ErrorCode(26, "Division by zero?")
-
-    Try r = 2 / 0
-    Test.Todo("See automatic diagnostics 2/2")
-    Assert.ErrorCode(25, "Division by zero?")
+    Test.Plan(1)
+    Test.IntendedFailure()
+    Assert.Fail()
 
 End
 
-Public Sub Note()
+Public Sub Greater()
 
-    Test.Plan(0)
-    Test.Note("The next note is Null and that's alright:")
-    Test.Note(Null)
-    Test.SkipAll("This doesn't actually assert anything")
+    Dim small, great As Variant
+
+    Test.Plan(4)
+
+    ' ------------------------------------------------- String
+    small = "a"
+    great = "z"
+    Assert.Greater(great, small)
+
+    ' ------------------------------------------------- Integer
+
+    small = -1
+    great = 0
+    Assert.Greater(great, small)
+
+    ' ------------------------------------------------- Float
+
+    small = 0.1
+    great = 10000000000000000.5
+    Assert.Greater(great, small)
+
+    ' ------------------------------------------------- Date
+
+    small = Date(Year(Now), Month(Now), Day(Now))
+    great = Date(Year(Now) + 1, Month(Now), Day(Now))
+    Assert.Greater(great, small)
+
+End
+
+Public Sub GreaterEqual()
+
+    Dim small, great As Variant
+
+    Test.Plan(8)
+
+    ' ------------------------------------------------- String
+    small = "a"
+    great = "z"
+    Assert.GreaterEqual(great, small)
+    Assert.GreaterEqual(great, great)
+
+    ' ------------------------------------------------- Integer
+
+    small = -1
+    great = 0
+    Assert.GreaterEqual(great, small)
+    Assert.GreaterEqual(great, great)
+
+    ' ------------------------------------------------- Float
+
+    small = 0.1
+    great = 10000000000000000.5
+    Assert.GreaterEqual(great, small)
+    Assert.GreaterEqual(great, great)
+
+    ' ------------------------------------------------- Date
+
+    small = Date(Year(Now), Month(Now), Day(Now))
+    great = Date(Year(Now) + 1, Month(Now), Day(Now))
+    Assert.GreaterEqual(great, small)
+    Assert.GreaterEqual(great, great)
+
+End
+
+Public Sub IsType()
+
+    Dim thing As Variant
+    
+    Test.Plan(7)
+    
+    ' ------------------------------------------------- Boolean
+    thing = True
+    Assert.IsType(thing, gb.Boolean)
+    ' ------------------------------------------------- Integer
+    thing = 456548812
+    Assert.IsType(thing, gb.Integer)
+
+    thing = 4565488121245
+    Assert.IsType(thing, gb.Long)
+
+    ' ------------------------------------------------- Float
+    thing = 456548812124513564879.123456789134698797987987
+    Assert.IsType(thing, gb.Float)
+
+    ' ------------------------------------------------- string
+    thing = "i bi a sdring"
+    Assert.IsType(thing, gb.String)
+    
+    ' ------------------------------------------------- Date
+    thing = Now()
+    Assert.IsType(thing, gb.Date)
+    
+    ' ------------------------------------------------- Object
+    thing = Class.Load("TAllAsserts")
+    Assert.IsType(thing, gb.Object)
+
+End
+
+Public Sub Less()
+
+    Dim small, great As Variant
+
+    Test.Plan(4)
+
+    ' ------------------------------------------------- String
+    small = "a"
+    great = "z"
+    Assert.Less(small, great)
+
+    ' ------------------------------------------------- Integer
+
+    small = -1
+    great = 0
+    Assert.Less(small, great)
+
+    ' ------------------------------------------------- Long
+
+    small = 0.1
+    great = 1
+    Assert.Less(small, great)
+
+    ' ------------------------------------------------- Date
+
+    small = Date(Year(Now), Month(Now), Day(Now))
+    great = Date(Year(Now) + 1, Month(Now), Day(Now))
+    Assert.Less(small, great)
+
+
+End
+
+Public Sub LessEqual()
+
+    Dim small, great As Variant
+
+    Test.Plan(8)
+
+    ' ------------------------------------------------- String
+    small = "a"
+    great = "z"
+    Assert.LessEqual(small, great)
+    Assert.GreaterEqual(great, great)
+
+    ' ------------------------------------------------- Integer
+
+    small = -1
+    great = 0
+    Assert.LessEqual(small, great)
+    Assert.GreaterEqual(great, great)
+
+    ' ------------------------------------------------- Float
+
+    small = 0.1
+    great = 10000000000000000.5
+    Assert.LessEqual(small, great)
+    Assert.GreaterEqual(great, great)
+
+    ' ------------------------------------------------- Date
+
+    small = Date(Year(Now), Month(Now), Day(Now))
+    great = Date(Year(Now) + 1, Month(Now), Day(Now))
+    Assert.LessEqual(small, great)
+    Assert.GreaterEqual(great, great)
 
 End
 
 Public Sub Like()
+
     Test.Plan(2)
     Assert.Like("Gambas", "G*", "Gambas like G*")
     Assert.Like("Gambas", "?[Aa]*", "Gambas Like \"?[Aa]*\"")
+
+End
+
+Public Sub Match()
+
+    Test.Plan(1)
+    Test.Todo()
+    Assert.Match("No idea..", "..how to test this")
+
+End
+
+Public Sub NotNull()
+
+    Test.Plan(2)
+    Assert.NotNull("" & Null & 1, "String is not Null")
+    Assert.NotNull(Me, "Object is not Null")
+
+End
+
+Public Sub NotOk()
+
+    Test.Plan(1)
+    Assert.NotOk(False)
+
+End
+
+Public Sub Notequals()
+
+    Dim small, great As Variant
+
+    Test.Plan(5)
+
+    ' ------------------------------------------------- String
+    small = "a"
+    great = "z"
+    Assert.Notequals(great, small)
+
+    ' ------------------------------------------------- Integer
+
+    small = -1
+    great = 0
+    Assert.Notequals(great, small)
+
+    ' ------------------------------------------------- Float
+
+    small = 0.1
+    great = 10000000000000000.5
+    Assert.Notequals(great, small)
+
+    ' ------------------------------------------------- Date
+
+    small = Date(Year(Now), Month(Now), Day(Now))
+    great = Date(Year(Now) + 1, Month(Now), Day(Now))
+    Assert.Notequals(great, small)
+
+    ' ------------------------------------------------- Object
+
+    Dim s As New TestCase("1", Me)
+    Dim s2 As New TestCase("2", Me)
+
+    Assert.Notequals(s2, s)
+
+End
+
+Public Sub Noterror()
+
+    Dim x As Variant
+    Try x = 2 / 0
+
+    Test.Plan(1)
+
+    'btw we can test Error.Clear 
+    Error.Clear()
+    Assert.Noterror()
+
+End
+
+Public Sub Null()
+
+    Test.Plan(2)
+    Assert.Null("", "Empty with \"\"")
+    Assert.Null(Null, "Empty with Null")
+
+End
+
+Public Sub Ok()
+
+    Test.Plan(1)
+    Assert.Ok(True, "Testing True")
+
+End
+
+Public Sub Pass()
+
+    Test.Plan(1)
+    Assert.Pass("Should report ok")
+
+End
+
+Public Sub RelativeApproximate()
+
+    Test.Todo
+    Test.Plan(1)
+    Assert.RelativeApproximate(0, 0, 0)
+
+End
+
+Public Sub StringEquals()
+
+    Dim s1, s2 As String
+
+    s1 = "blaahhh"
+    s2 = "blaahhh"
+    Test.Plan(1)
+    Assert.StringEquals(s1, s2, "Equal Strings")
 
 End
