@@ -13,10 +13,10 @@
 ## Work
 
 - Document Approximate and RelativeApproximate
-- TestAllAssertion must test all assertions
 
 ## Done
 
+- TestAllAssertion must test all assertions
 - Decide where Skip, SkipAll, Todo reside
     > SkipAll is in Test, Skip in Assert, Todo in Assert. This is inconsistent, We have to decide where they should be. Chris: I am for Test.
 - Install gbt3 at Gambas installation
