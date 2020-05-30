@@ -63,7 +63,7 @@ Public Sub Main(Optional Tests As String)
     If Tests Begins "@" Then
         'a test suite was called by name
         sTestsuite = Tests
-        Tests = MTest.GetTestSuiteByName(Tests)
+        Tests = Helper.GetTestSuiteByName(Tests)
     Endif
 
     ' run tests
@@ -216,22 +216,21 @@ Private Function GetAllTestModules() As Class[]
 
     Dim TestClass As Class
     Dim TestModules As New Class[]
-    Dim sNames As New String[]
+    Dim aNames As New String[]
     Dim sName As String
-    Dim hStat As ClassStat
 
     Component.Load("gb.util")
 
     For Each sName In Dir(".../.gambas")
-        hStat = Class.Stat("..." &/ sName)
-        If hStat.Test Then sNames.Add(hStat.Name)
+        sName = Helper.CheckTestModule(sName)
+        If sName Then aNames.Add(sName)
     Next
 
-    Assert sNames
+    Assert aNames
 
-    sNames.Sort
+    aNames.Sort
 
-    For Each sName In sNames
+    For Each sName In aNames
         TestClass = __Test.Load(sName)
         If Not TestClass Then Error.Raise(Subst$(("Could not load test module '&1'"), sName))
         TestModules.Add(TestClass)
@@ -408,14 +407,13 @@ End
 Private Sub PrintAllTestModules()
 
     Dim sName As String
-    Dim hStat As ClassStat
     Dim aTest As New String[]
 
     Component.Load("gb.util")
 
     For Each sName In Dir(".../.gambas")
-        hStat = Class.Stat("..." &/ sName)
-        If hStat.Test Then aTest.Add(hStat.Name)
+        sName = Helper.CheckTestModule(sName)
+        If sName Then aTest.Add(sName)
     Next
 
     Print aTest.Join();
@@ -447,3 +445,4 @@ Private Sub FromString(Tests As String)
     Next
 
 End
+

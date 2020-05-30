@@ -131,6 +131,6 @@ Public Sub FindTestSuiteByName()
 
     Dim sName As String = "Keep this test suite, it is necessary for testing gb.test."
 
-    Assert.Equals(MTest.GetTestSuiteByName(sName), "TInternals.FindTestSuiteByName")
+    Assert.Equals(Helper.GetTestSuiteByName(sName), "TInternals.FindTestSuiteByName")
 
 End
