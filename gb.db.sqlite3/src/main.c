@@ -803,11 +803,14 @@ static int exec_query(DB_DATABASE *db, const char *query, DB_RESULT *result, con
 static int64_t get_last_insert_id(DB_DATABASE *db)
 {
 	SQLITE_RESULT *res;
+	int64_t id;
 
 	if (do_query(db, "Unable to retrieve last insert id", &res, "select last_insert_rowid();", 0))
 		return -1;
 
-	return atoll(sqlite_query_get_string(res, 0, 0));
+	id = atoll(sqlite_query_get_string(res, 0, 0));
+	sqlite_query_free(res);
+	return id;
 }
 
 
