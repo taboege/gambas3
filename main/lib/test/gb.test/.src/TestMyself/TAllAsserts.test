@@ -252,9 +252,12 @@ End
 
 Public Sub Match()
 
-    Test.Plan(1)
-    Test.Todo()
-    Assert.Match("No idea..", "..how to test this")
+    Test.Plan(4)
+    Assert.Match("25724689346a625b5", "^\\d+a\\d+?(\\d)b\\1$", "Match with a frugal quantifier and backreference")
+    Assert.Match("25724689346a625b5", "^\\d+a\\d+(\\d)b\\1$", "Match with a normal quantifier (backtracking) and backreference")
+    Test.IntendedFailure
+    Assert.Match("25724689346a625b5", "^\\d+a\\d++(\\d)b\\1$", "Non-match with a possessive quantifier and backreference")
+    Assert.Match(Format$(Now, "yyyy-mm-dd"), "^\\d{4}-\\d{2}-\\d{2}$", "Date pattern match")
 
 End
 
@@ -348,7 +351,6 @@ End
 
 Public Sub RelativeApproximate()
 
-    Test.Todo
     Test.Plan(1)
     Assert.RelativeApproximate(0, 0, 0)
 

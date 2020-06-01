@@ -11,7 +11,6 @@
 
 ## Work
 
-- Document Approximate and RelativeApproximate
 
 ## Done
 
@@ -50,3 +49,4 @@
 - Parser parse subtests
 - Skip all
     > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
+- Document Approximate and RelativeApproximate
