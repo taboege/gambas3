@@ -66,7 +66,6 @@ Public Sub ParseLine({Line} As String)
     Endif
     If $iLine = 0 Then Raise Version(12)
 
-    ' TODO: This cannot parse SkipAll tests.
     If sLine Match "^\\d+..\\d+" Then
         bResult = ParsePlan(sLine, ByRef iStart, ByRef iEnd, ByRef bSkipAll)
         If Not bResult Then Error.Raise(Subst$(("Couldn't extract test plan from '&1'"), sLine))
