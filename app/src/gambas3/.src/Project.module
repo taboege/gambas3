@@ -44,7 +44,7 @@ Public (Components) As String[]
 Public Libraries As String[]
 Public ExtraReferences As String[]
 Public Arguments As String[][]
-Public CurrentArgument As Integer
+Public CurrentArgument As String[]
 Public Environment As String[]
 Public KeepDebugInfo As Boolean
 Public CreateShortcut As Boolean
@@ -3182,7 +3182,7 @@ Public Sub ReadProject(Optional bConvert As Boolean)
   Title = ""
   TabSize = Settings["/DefaultTabSize", 2]
   Arguments = New String[][]
-  CurrentArgument = 0
+  CurrentArgument = New String[]
   Environment = New String[]
   MajorVersion = 0
   MinorVersion = 0
@@ -3301,7 +3301,7 @@ Public Sub ReadProject(Optional bConvert As Boolean)
         Endif
         
       Case "currentargument"
-        CurrentArgument = CInt(sVal)
+        If Left(sVal) = "[" Then CurrentArgument = Settings.FromString(sVal)
 
       Case "environment"
         Environment = Split(UnQuote(sVal), "\n")
@@ -3669,7 +3669,7 @@ Public Sub WriteProject(Optional bComponentDoNotChange As Boolean, Optional bMak
 
   If Arguments.Count Then 
     Print #hFic, "Arguments="; Settings.ToString(Arguments)
-    Print #hFic, "CurrentArgument="; CurrentArgument
+    If CurrentArgument And If CurrentArgument.Count Then Print #hFic, "CurrentArgument="; Settings.ToString(CurrentArgument)
   Endif
   If Environment.Count Then Print #hFic, "Environment="; Quote(Environment.Join("\n"))
 

@@ -1135,6 +1135,8 @@ Private Sub GetCurrentProc(Optional iLine As Integer = $hEditor.Line) As String
     
   Wend
   
+Finally
+  
   If Not sProc Then sProc = ("(Declarations)")
   Return sProc
   

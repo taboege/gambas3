@@ -6,27 +6,39 @@ Static Public Sub Run() As Boolean
   
 End
 
+Private Sub FromArgs(aArg As String[]) As String
+
+  Dim I As Integer
+  Dim sArg As String
+  
+  If Not aArg Then Return
+  
+  aArg = aArg.Copy()
+  For I = 0 To aArg.Max
+    sArg = aArg[I]
+    If InStr(sArg, " ") Or If InStr(sArg, "\"") Or If Not sArg Then aArg[I] = Quote(sArg)
+  Next
+  
+  Return aArg.Join(" ")
+  
+End
+
+
 Public Sub Form_Open()
 
   Project.SetEditorFont(lstArg)
   FillList
+  lstArg.Text = FromArgs(Project.CurrentArgument)
   
 End
 
 Private Sub FillList()
 
   Dim aArg As String[]
-  Dim sArg As String
-  Dim I As Integer
 
   lstArg.Clear
   For Each aArg In Project.Arguments
-    aArg = aArg.Copy()
-    For I = 0 To aArg.Max
-      sArg = aArg[I]
-      If InStr(sArg, " ") Or If InStr(sArg, "\"") Or If Not sArg Then aArg[I] = Quote(sArg)
-    Next
-    lstArg.Add(aArg.Join(" "))
+    lstArg.Add(FromArgs(aArg))
   Next
   
   lstArg.SetFocus()
@@ -105,14 +117,15 @@ Private Sub SaveArgs()
   Next
   
   Project.Arguments = aArgs
+  Project.CurrentArgument = ToArgs(lstArg.Text)
   Project.WriteProject(True)
 
 End
 
 Public Sub btnRun_Click()
 
-  Dim hTextBox As TextBox = lstArg.Editor
-  Design.Arguments = ToArgs(hTextBox.Text)
+  'Dim hTextBox As TextBox = lstArg.Editor
+  'Design.Arguments = ToArgs(hTextBox.Text)
   Me.Close(True)
 
 End

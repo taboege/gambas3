@@ -1,7 +1,6 @@
 ' Gambas module file
 
 Public Startup As String
-Public Arguments As String[]
 
 Private Const STATE_LAST As Integer = -1
 Private Const STATE_STOP As Integer = 0
@@ -1016,10 +1015,9 @@ Private Sub Start(sCmd As String)
     
     aExec.Add(File.Dir(SConv(Project.Path)))
     
-    If Arguments Then
+    If Project.CurrentArgument Then
       aExec.Add("--")
-      aExec.Insert(Arguments)
-      Arguments = Null
+      aExec.Insert(Project.CurrentArgument)
     Endif
     
     ' If Project.Arguments.Count Then
