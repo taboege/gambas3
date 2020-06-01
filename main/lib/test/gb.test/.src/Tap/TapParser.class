@@ -11,7 +11,7 @@
 
 Event Version(Version As Integer)
 
-Event Plan(Start As Integer, {End} As Integer)
+Event Plan(Start As Integer, {End} As Integer, SkipAll As Boolean)
 Event Assert(Ok As Boolean, Id As Long, Description As String, Directive As Integer, Comment As String)
 Event BailOut(Comment As String)
 Event Diagnostic(Comment As String)
@@ -40,6 +40,8 @@ Public Sub ParseLine({Line} As String)
 
     Dim bResult As Boolean
     Dim iId As Long
+    Dim iStart, iEnd As Integer
+    Dim bSkipAll As Boolean
     Dim sDescription As String
     Dim iDirective As Integer
     Dim sComment As String
@@ -66,10 +68,9 @@ Public Sub ParseLine({Line} As String)
 
     ' TODO: This cannot parse SkipAll tests.
     If sLine Match "^\\d+..\\d+" Then
-        With Scan(sLine, "*..*")
-            If Not IsLong(.[0]) Or If Not IsLong(.[1]) Then Error.Raise(Subst$(("Couldn't extract test plan from '&1'"), sLine))
-            Raise Plan(CLong(.[0]), CLong(.[1]))
-        End With
+        bResult = ParsePlan(sLine, ByRef iStart, ByRef iEnd, ByRef bSkipAll)
+        If Not bResult Then Error.Raise(Subst$(("Couldn't extract test plan from '&1'"), sLine))
+        Raise Plan(iStart, iEnd, bSkipAll)
 
     Else If sLine Begins "ok" Or If sLine Begins "not ok" Then
         bResult = ParseTest(sLine, ByRef iId, ByRef sDescription, ByRef iDirective, ByRef sComment)
@@ -90,6 +91,33 @@ Public Sub ParseLine({Line} As String)
     Endif
 
     Inc $iLine
+
+End
+
+Private Function ParsePlan(sLine As String, ByRef Start As Integer, ByRef {End} As Integer, ByRef SkipAll As Boolean) As Boolean
+
+    Dim sComment As String
+
+    SkipAll = False
+    With Scan(sLine, "*..*")
+        If Not IsInteger(.[0]) Then Return False
+        Start = CInt(.[0])
+        If IsInteger(.[1]) Then
+            {End} = CInt(.[1])
+        Else If .[1] Match "^\\d+\\s*#"
+            With Scan(.[1], "*#*")
+                {End} = CInt(Trim$(.[0]))
+                sComment = Trim$(.[1])
+                If Upper$(sComment) Begins "SKIP" Then
+                    SkipAll = True
+                Endif
+            End With
+        Else
+            Return False
+        Endif
+    End With
+
+    Return True
 
 End
 

@@ -1,8 +1,35 @@
 ' Gambas test file
 
-'' TODO: Test parsing of SkipAll plans
+Private $aSkipAllEvents As New String[]
+
+'' Test parsing of SkipAll plans
 Public Sub SkipAll()
-    Test.SkipAll("Not yet implemented")
+    Dim sTAP As String = ""
+"1..2\n"
+"Test Run\n"
+"  1..1\n"
+"  ok 1\n"
+"ok 1\n"
+"Test Skip\n"
+"  1..0 # skipped\n"
+"ok 2\n"
+    Dim hTAP As Stream
+    Dim hParser As New TapParser As "SkipAllParser"
+
+    hTAP = Open String sTAP For Read
+    hParser.Parse(hTAP)
+
+    Test.Plan(3 + 1)
+    Assert.Equals($aSkipAllEvents.Count, 3, "Event count is correct")
+    Assert.Equals($aSkipAllEvents[0], "Plan 1..2")
+    Assert.Equals($aSkipAllEvents[1], "Plan 1..1")
+    Assert.Equals($aSkipAllEvents[2], "Skip")
+
+    Close #hTAP
+End
+
+Public Sub SkipAllParser_Plan((Start) As Integer, (End) As Integer, (SkipAll) As Boolean)
+    $aSkipAllEvents.Add(IIf(SkipAll, "Skip", Subst$("Plan &1..&2", Start, {End})))
 End
 
 Private $aSubtestEvents As New String[]
@@ -50,7 +77,7 @@ Public Sub Subtests()
     Close #hTAP
 End
 
-Public Sub SubtestsParser_Plan((Start) As Integer, (End) As Integer)
+Public Sub SubtestsParser_Plan((Start) As Integer, (End) As Integer, (SkipAll) As Boolean)
     $aSubtestEvents.Push("Plan")
 End
 

@@ -4,8 +4,6 @@
     > If a plan failes it has to be reported in the TAP output as well as in the summary which is not the case at the moment. There is no plan for testmodules which counts the testmethods.
     * [ ] Plan for testmodules (as a constant?)
     * [ ] Plan failure must be reported in TAP output and in summary (there has to be reported where it fails).
-- Skip all
-    > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
 - Plan selftests
     > gb.test: Every subtest in all tests must plan the own assertion count
 - Event handlers are not test methods
@@ -50,3 +48,5 @@
     * [x] New method Test.ShowTodos
     * [x] New method Test.ShowSkips
 - Parser parse subtests
+- Skip all
+    > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
