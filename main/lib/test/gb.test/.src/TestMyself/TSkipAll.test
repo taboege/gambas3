@@ -2,8 +2,6 @@
 
 Public Sub SkipAll()
 
-  Test.Todo("SkipAll has to be finished.")
-  Assert.Ok(False)
-  'Test.SkipAll()
+  Test.SkipAll()
 
 End
