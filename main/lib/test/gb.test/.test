@@ -1,5 +1,5 @@
 [TestSuites]
-Count=5
+Count=6
 TestWith=4
 Default="TElse.TestNoteGotAndExpected"
 
@@ -22,4 +22,8 @@ Tests="TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;
 [TestSuites/5]
 Name="Keep this test suite, it is necessary for testing gb.test."
 Tests="TInternals.FindTestSuiteByName"
+
+[TestSuites/6]
+Name="TAP Parser"
+Tests="TParser.Runner;SkipAll;Subtests"
 

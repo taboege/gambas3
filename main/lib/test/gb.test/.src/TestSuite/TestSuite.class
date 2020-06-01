@@ -37,7 +37,6 @@ Public Sub Run()
         Endif
 
         Test._Print(Null) 'better readability for humans
-        Test._Print(Subst$(("Test &1:&2"), oTest.TestModule.Name, oTest.Name))
         Test._Subtest(Subst$("&1:&2", oTest.TestModule.Name, oTest.Name))
         'Debug oTest.Name
         oTest.Run()
