@@ -27,6 +27,8 @@ Public Version As Integer
 Public Planned As Integer
 '' Test range
 Public Plan As Integer[]
+'' Whether the entire test was skipped
+Public SkippedAll As Boolean
 '' Number of successful tests (not accounting for Todo or Skipped ones)
 Public Passed As Integer
 '' Number of failed tests (not accounting for Todo or Skipped ones)

@@ -29,6 +29,7 @@ End
 
 Public Sub Subtest(Description As String, Optional Tests As Integer, Optional Comment As String)
 
+    Print(Subst$("Test &1", Description))
     $aSubtests.Push($hCurrent)
     With $hCurrent = New TapContext
         .Summary.Description = Description
@@ -111,9 +112,9 @@ Public Sub Assert(Assertion As TestAssertion) As TestAssertion
         If .Description Match "^[0-9]+(\\s|$)" Then
             Error Subst$(("Warning: Description '&1' should not start with a number"), .Description)
         Endif
-        If .Description Like "*#*" Then
-            Error.Raise(Subst$(("Description '&1' may not contain a '#' character"), .Description))
-        Endif
+        ' If .Description Like "*#*" Then
+        '     Error.Raise(Subst$(("Description '&1' may not contain a '#' character"), .Description))
+        ' Endif
 
         Inc $hCurrent.TestsRun
         If Not .Id Then .Id = $hCurrent.TestsRun
@@ -184,8 +185,6 @@ Public Sub Print({Line} As String)
     $sLine = {Line}
     bCancel = Raise Filter
     If bCancel Then Return
-    '    Print #$hOutput, String$($aSubtests.Count, "\t"); $sLine
-    
     Print #$hOutput, String$($aSubtests.Count, "  "); $sLine
     Flush #$hOutput
 

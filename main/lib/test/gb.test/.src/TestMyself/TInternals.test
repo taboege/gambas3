@@ -74,18 +74,20 @@ Public Sub ReflectTest()
 
     Dim tests As Collection
 
-    Test.Plan(7)
+    Test.Plan(8)
 
     tests = Test.AllTestsCollection()
 
     'count of all testmodules, if it fails we created a new one and we have to count new
-    Assert.Equals(tests.Count, 11, "number of all testmodules")
+    Assert.Equals(tests.Count, 12, "number of all testmodules")
     Assert.Equals(tests["TAllAsserts"].Count, 21, "count of all testmethods in TAllAsserts")
     Assert.Equals(tests["TBailout"].Count, 1, "count of all testmethods in TBailout")
     Assert.Equals(tests["TCrashes"].Count, 2, "count of all testmethods in TCrashes")
     Assert.Equals(tests["TElse"].Count, 4, "count of all testmethods in TElse")
     Assert.Equals(tests["TEmpty"].Count, 0, "count of all testmethods in TEmpty")
     Assert.Equals(tests["TInternals"].Count, 6, "count of all testmethods in TInternals")
+    Test.Todo("Event handlers are counted as test methods")
+    Assert.Equals(tests["TParser"].Count, 3, "count of all testmethods in TParser")
 
 End
 
@@ -100,6 +102,7 @@ Public Sub ReflectTestsString()
 
     want = "TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;IsType;Less;LessEqual;Like;Match;NotNull;NotOk;Notequals;Noterror;Null;Ok;Pass;RelativeApproximate;StringEquals,TBailout.Bailout,TCrashes.DoACrash;ErrorTwo,TElse.NoMessage;NoMessageInbetween;Note;TestNoteGotAndExpected,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSkipAll.SkipAll,TSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo;TodoErrorCode,TWrongPlan.IHaveAWrongPlan"
     got = Test.AllTests()
+    Test.Todo("Event handlers are counted as test methods")
     Assert.Equals(got, want, "All Test names as string")
 
     want = Test.AllTests()

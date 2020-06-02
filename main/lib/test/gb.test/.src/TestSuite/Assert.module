@@ -46,8 +46,8 @@ Public Sub NotOk(Result As Boolean, Optional Description As String) As Boolean
     Return Ok(Not Result, Description)
 
 End
-'' Assert that Got = Expected
 
+'' Assert that Got = Expected
 Public Sub Equals(Got As Variant, Expected As Variant, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -61,14 +61,13 @@ Public Sub Equals(Got As Variant, Expected As Variant, Optional Description As S
 End
 
 '' Assert that Got <> Expected
-
 Public Sub Notequals(Got As Variant, UnExpected As Variant, Optional Description As String) As Boolean
 
     Return Ok(Got <> UnExpected, Description)
 
 End
-'' Assert that Got <= Bound
 
+'' Assert that Got <= Bound
 Public Sub LessEqual(Got As Variant, Bound As Variant, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -93,8 +92,8 @@ Public Sub Less(Got As Variant, Bound As Variant, Optional Description As String
     Return bRes
 
 End
-'' Assert that Got >= Bound
 
+'' Assert that Got >= Bound
 Public Sub GreaterEqual(Got As Variant, Bound As Variant, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -106,8 +105,8 @@ Public Sub GreaterEqual(Got As Variant, Bound As Variant, Optional Description A
     Return bRes
 
 End
-'' Assert that Got > Bound
 
+'' Assert that Got > Bound
 Public Sub Greater(Got As Variant, Bound As Variant, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -120,40 +119,50 @@ Public Sub Greater(Got As Variant, Bound As Variant, Optional Description As Str
 
 End
 
+'' Asserts that _Got_ has an absolute error to _Expected_ of at most _Precision_.
 Public Sub Approximate(Got As Float, Expected As Float, Precision As Float, Optional Description As String) As Boolean
 
     Return LessEqual(Abs(Got - Expected), Precision, Description)
 
 End
 
+'' Asserts that _Got_ has a relative error to _Expected_ of at most _RelPrecision_.
+'' _Expected_ may not be zero, unless _Got_ is also zero in which case the test succeeds.
 Public Sub RelativeApproximate(Got As Float, Expected As Float, RelPrecision As Float, Optional Description As String) As Boolean
 
+    Dim bRes As Boolean
+
+    If Abs(Expected) = 0.0 Then
+        bRes = Ok(Abs(Got) = 0.0, Description)
+        Test.Note(("Expected value in RelativeApproximate is 0.0"))
+        Return bRes
+    Endif
     Return LessEqual(Abs((Got - Expected) / Expected), RelPrecision, Description)
 
 End
-'' Assert that Got is of the type Type
 
+'' Assert that Got is of the type Type
 Public Sub IsType(Got As Variant, Type As Integer, Optional Description As String) As Boolean
 
     Return Equals(TypeOf(Got), Type, Description)
 
 End
-'' Assert that Got = Null
 
+'' Assert that Got = Null
 Public Sub Null(Got As Variant, Optional Description As String) As Boolean
 
     Return Equals(Got, Null, Description)
 
 End
-'' Assert that Got <> Null
 
+'' Assert that Got <> Null
 Public Sub NotNull(Got As Variant, Optional Description As String) As Boolean
 
     Return Notequals(Got, Null, Description)
 
 End
-'' Assert that Got Like Pattern. See also the Like string operator.
 
+'' Assert that Got Like Pattern. See also the Like string operator.
 Public Sub Like(Got As String, Pattern As String, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -165,8 +174,8 @@ Public Sub Like(Got As String, Pattern As String, Optional Description As String
     Return bRes
 
 End
-'' Assert that Got Match Pattern. See also the Match string operator.
 
+'' Assert that Got Match Pattern. See also the Match string operator.
 Public Sub Match(Got As String, Pattern As String, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -198,12 +207,12 @@ Public Sub StringEquals(Got As String, Expected As String, Optional Description 
     Return bRes
 
 End
+
 '' Assert that an error happened. Reports not ok if no error happened.
 ''
 '' Example:
 '' Try 2/0
 '' Assert.Error("division by zero")
-
 Public Sub Error(Optional Description As String) As Boolean
 
     Return Ok( Error , Description)
@@ -216,7 +225,6 @@ End
 '' Example:
 '' Try Print 2 / 0
 '' Assert.ErrorCode(26, "division by zero with code 26")
-
 Public Sub ErrorCode(Code As Integer, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
@@ -242,7 +250,6 @@ End
 ''
 ''Try Print 2 / 2
 ''Assert.Noterror("Division ok")
-
 Public Sub Noterror(Optional Description As String) As Boolean
 
     Dim bRes As Boolean
