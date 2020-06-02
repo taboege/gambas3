@@ -96,7 +96,7 @@ Static Public Function GetTestsFromTestModule(TestModule As Class) As String[]
     Assert TestModule
 
     For Each sSymbol In TestModule.Symbols
-        If Not NoTestSymbols.Exist(sSymbol, gb.IgnoreCase) Then
+        If Not NoTestSymbols.Exist(sSymbol, gb.IgnoreCase) And If InStr(sSymbol, "_") = 0 Then
             asTests.Add(sSymbol)
         Endif
     Next

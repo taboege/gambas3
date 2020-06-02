@@ -86,7 +86,6 @@ Public Sub ReflectTest()
     Assert.Equals(tests["TElse"].Count, 4, "count of all testmethods in TElse")
     Assert.Equals(tests["TEmpty"].Count, 0, "count of all testmethods in TEmpty")
     Assert.Equals(tests["TInternals"].Count, 6, "count of all testmethods in TInternals")
-    Test.Todo("Event handlers are counted as test methods")
     Assert.Equals(tests["TParser"].Count, 3, "count of all testmethods in TParser")
 
 End
@@ -96,13 +95,12 @@ Public Sub ReflectTestsString()
 
     ' These have to be adjusted when tests change
     ' If tests are updated, get them with
-    ' Dim easy As String = Test.AllTests()
+    'Dim easy As String = Test.AllTests()
 
     Dim got, want As String
 
-    want = "TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;IsType;Less;LessEqual;Like;Match;NotNull;NotOk;Notequals;Noterror;Null;Ok;Pass;RelativeApproximate;StringEquals,TBailout.Bailout,TCrashes.DoACrash;ErrorTwo,TElse.NoMessage;NoMessageInbetween;Note;TestNoteGotAndExpected,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSkipAll.SkipAll,TSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo;TodoErrorCode,TWrongPlan.IHaveAWrongPlan"
+    want = "TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;IsType;Less;LessEqual;Like;Match;NotNull;NotOk;Notequals;Noterror;Null;Ok;Pass;RelativeApproximate;StringEquals,TBailout.Bailout,TCrashes.DoACrash;ErrorTwo,TElse.NoMessage;NoMessageInbetween;Note;TestNoteGotAndExpected,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TParser.Runner;SkipAll;Subtests,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSkipAll.SkipAll,TSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo;TodoErrorCode,TWrongPlan.IHaveAWrongPlan"
     got = Test.AllTests()
-    Test.Todo("Event handlers are counted as test methods")
     Assert.Equals(got, want, "All Test names as string")
 
     want = Test.AllTests()
