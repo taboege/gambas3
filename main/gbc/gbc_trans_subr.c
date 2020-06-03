@@ -436,11 +436,11 @@ static void TRANS_open_null(void)
 
 static void TRANS_open_string(void)
 {
-	int mode = TS_MODE_READ;
+	int mode = TS_MODE_READ | TS_MODE_DIRECT;
 
 	// file name
 
-	if (!PATTERN_is(*JOB->current, RS_FOR))
+	if (!PATTERN_is(*JOB->current, RS_FOR) && !PATTERN_is_newline(*JOB->current))
 		TRANS_expression(FALSE);
 	else
 		CODE_push_null();
