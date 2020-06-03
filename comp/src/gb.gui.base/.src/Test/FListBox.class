@@ -20,3 +20,15 @@ Public Sub Button2_Click()
   ListBox1.Border = Not ListBox1.Border
 
 End
+
+Public Sub Button3_Click()
+
+  Try ListBox1.Index = 3
+
+End
+
+Public Sub ListBox1_Click()
+
+  Debug
+
+End
