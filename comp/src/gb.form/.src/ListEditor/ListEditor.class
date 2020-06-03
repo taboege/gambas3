@@ -16,6 +16,7 @@ Property Moveable As Boolean
 Property ReadOnly As Boolean
 Property Read Editor As Control
 Property Unique As Boolean
+Property Index As Integer
 
 Event Select
 Event Change
@@ -120,9 +121,9 @@ Public Sub Add(Text As String)
   
 End
 
-Public Sub Exist(Text As String) As Boolean
+Public Sub Remove(Index As Integer, Optional Length As Integer = 1)
   
-  Return $hForm.Exist(Text)
+  $hForm.Remove(Index, Length)
   
 End
 
@@ -148,4 +149,22 @@ Private Sub Unique_Write(Value As Boolean)
 
   $hForm.SetUnique(Value)
 
+End
+
+Private Function Index_Read() As Integer
+
+  Return $hForm.GetIndex()
+
+End
+
+Private Sub Index_Write(Value As Integer)
+
+  $hForm.SetIndex(Value)
+
+End
+
+Public Sub Find(Text As String, Optional Mode As Integer) As Integer
+  
+  Return $hForm.Find(Text, Mode)
+  
 End

@@ -176,18 +176,14 @@ End
 ' 
 Public Sub GetText() As String
   
-  If lstData.Index >= 0 Then Return lstData.Text
+  Return txtData.Text
   
 End
 
 Public Sub SetText(sText As String)
   
-  If Not sText Then Return
-  If lstData.Index >= 0 Then 
-    lstData.Current.Text = sText
-    GetParent()._RaiseChange
-  Endif
-
+  txtData.Text = sText
+  
 End
 
 Public Sub GetMoveable() As Boolean
@@ -272,12 +268,6 @@ Public Sub SetReadOnly(bReadOnly As Boolean)
   
 End
 
-Public Sub Exist(Text As String) As Boolean
-  
-  Return lstData.Find(Text) >= 0
-  
-End
-
 Public Sub lstData_Activate()
 
   GetParent()._RaiseActivate
@@ -322,4 +312,30 @@ Public Sub SetUnique(bUnique As Boolean)
   $bUnique = bUnique
   CheckUnique
 
+End
+
+Public Sub GetIndex() As Integer
+  
+  Return lstData.Index
+  
+End
+
+Public Sub SetIndex(Value As Integer)
+  
+  lstData.Index = Value
+  
+End
+
+Public Sub Find(Text As String, Mode As Integer) As Integer
+  
+  Return lstData.Find(Text, Mode)
+  
+End
+
+Public Sub Remove(Index As Integer, Length As Integer)
+  
+  lstData.Remove(Index, Length)
+  lstData.Index = -1
+  txtData.Clear
+  
 End
