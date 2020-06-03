@@ -1339,7 +1339,7 @@ Public Sub IsWordChar(sCar As String) As Boolean
   
   If Len(sCar) = 1 And If Asc(sCar) <= 32 Then Return False
   If IsDigit(sCar) Then Return True
-  If InStr("_", sCar) Then Return True
+  If InStr("_-", sCar) Then Return True
   If IsLetter(String.RemoveDiacritics(sCar)) Then Return True
   'Return InStr("&~\"#'{([|`\\^@)]°=+}€$£%*!§:/;.,?<>¢«»¥·©®¬¿×·÷¡ø", sCar) = 0
   

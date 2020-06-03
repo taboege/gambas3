@@ -182,7 +182,7 @@ Public Sub DrawingArea_Draw()
     If $bSelected Or If $bHighlight Then
       iBg = Color.Gradient(Color.LightBackground, Color.TextBackground)
     Else
-      iBg = Color.Merge(Color.TextForeground, Color.TextBackground, 0.97)
+      iBg = Color.TextBackground 'Color.Merge(Color.TextForeground, Color.TextBackground, 0.97)
     Endif
     Paint.Background = iBg
     Paint.Fill(True)

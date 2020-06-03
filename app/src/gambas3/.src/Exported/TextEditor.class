@@ -15,8 +15,8 @@ Private $hObserver As Observer
 
 Private $bLabelBottom As Boolean
 
-Static Private $sFindPrefix As String
-Static Private $aFind As Integer[]
+Private $sFindPrefix As String
+Private $aFind As Integer[]
 
 Private $iLastLine As Integer
 Private $iLastLineOffset As Integer
@@ -276,7 +276,6 @@ End
 
 Public Sub Editor_GotFocus()
   
-  '$iLastLine = -1
   $aFind = Null
   $sFindPrefix = ""
   
@@ -310,9 +309,9 @@ Public Sub HideMessageLabel()
   
 End
 
-Public Sub IsSameFindStrings(sPrefix As String) As String
+Public Sub IsSameFindStrings((sPrefix) As String) As Boolean
   
-  Return sPrefix = $sFindPrefix
+  'Return sPrefix = $sFindPrefix
   
 End
 
@@ -321,7 +320,7 @@ Public Sub FindStrings(sPrefix As String) As Integer[]
   
   Dim iLine As Integer
   
-  If sPrefix = $sFindPrefix Then Return $aFind
+  'If sPrefix = $sFindPrefix Then Return $aFind
   
   $sFindPrefix = sPrefix
   $aFind = New Integer[]

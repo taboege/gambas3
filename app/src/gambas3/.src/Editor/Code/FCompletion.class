@@ -527,11 +527,11 @@ Private Sub FillWithIdent(sWord As String)
   Dim iLine As Integer
   Dim aKeywords As String[]
   Dim aFind As Integer[]
-  Dim fTimer As Float
   Dim sSearchLine As String
   Dim sSearchWord As String
   Dim aSearchWord As String[]
   Dim aResultWord As String[]
+  'Dim fTimer As Float
 
   ClearRows
 
@@ -589,14 +589,14 @@ Private Sub FillWithIdent(sWord As String)
     Next
   Endif
   
-  If Not $hEditor.IsSameFindStrings(String.Left(sWord, 3)) Then
+  'fTimer = Timer
   
-    fTimer = Timer
+  If Not $hEditor.IsSameFindStrings(String.Left(sWord, 3)) Then
   
     $cFindStrings = New Collection
     aFind = $hEditor.FindStrings(String.Left(sWord, 3))
     
-    fTimer = Timer
+    sSearchWord = LCase(String.RemoveDiacritics(sWord))
     
     For Each iLine In aFind
     
@@ -608,7 +608,6 @@ Private Sub FillWithIdent(sWord As String)
       'Endif
       
       sSearchLine = String.RemoveDiacritics(sLine)
-      sSearchWord = LCase(String.RemoveDiacritics(sWord))
       
       aSearchWord = Split(sSearchLine, $sWordSeparators, "", True)
       aResultWord = Split(sLine, $sWordSeparators, "", True)
@@ -656,6 +655,8 @@ Private Sub FillWithIdent(sWord As String)
     aResult.Add(sCar & " " & MHelp.TYPE_SYMBOL)
     cKey[sCar] = True
   Next
+  
+  'Debug Timer - fTimer
 
   If $bGambas Then
     

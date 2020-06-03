@@ -454,6 +454,8 @@ Public Sub ApplyFilter(sFilter As String)
   Dim hProjectItem As ProjectBox
   Dim bShowEnd As Boolean
 
+  If Len(sFilter) And If Len(sFilter) < 3 Then Return
+
   $hList.Arrangement = Arrange.None
   
   If $bNoFilter Or If Not sFilter Then

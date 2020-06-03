@@ -254,7 +254,7 @@ End
 
 Private Sub ResetIfModified()
 
-  If Not $bModify Then Return
+  'If Not $bModify Then Return
   If $iScanTimeStamp = Project.TimeStamp Then Return
   
   ResetProcList
