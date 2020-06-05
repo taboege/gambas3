@@ -69,7 +69,7 @@
     }
     { mnuSelect Menu
       Text = ("Select")
-      Picture = Picture["img/16/select.png"]
+      Picture = Picture["icon:/small/select"]
     }
     { mnuSelectAll Menu
       Action = ".select-all"
@@ -710,15 +710,6 @@
       Background = Color.Background
     }
   }
-  { dwgBackground DrawingArea
-    MoveScaled(76,26,12,9)
-    Background = Color.LightForeground
-    Ignore = True
-  }
-  { dwgInfo DrawingArea
-    MoveScaled(65,45,20,6)
-    Ignore = True
-  }
   { panDiff Panel
     MoveScaled(100,27,27,25)
     Visible = False
@@ -729,6 +720,15 @@
       MoveScaled(0,0,24,23)
       Wrap = True
     }
+  }
+  { dwgInfo DrawingArea
+    MoveScaled(65,45,20,6)
+    Ignore = True
+  }
+  { dwgBackground DrawingArea
+    MoveScaled(76,26,12,9)
+    Background = Color.LightForeground
+    Ignore = True
   }
   { timMoveInfo #Timer
     #MoveScaled(108,16)

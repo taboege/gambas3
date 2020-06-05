@@ -3,7 +3,6 @@
 { Form Form
   MoveScaled(0,0,62,82)
   Text = ("Properties")
-  Icon = Picture["img/16/grid.png"]
   Persistent = True
   Arrangement = Arrange.Vertical
   { mnuProperty Menu

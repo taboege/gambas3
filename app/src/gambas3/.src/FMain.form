@@ -174,7 +174,7 @@
       }
       { mnuPatchProject Menu
         Text = Shortcut(("Apply"), "A") & "..."
-        Picture = Picture["icon:/small/pen"]
+        Picture = Picture["icon:/small/apply"]
       }
     }
     { mnuVersionControl Menu
@@ -678,7 +678,7 @@
     { mnuRenameFile Menu
       Action = "rename"
       Text = Shortcut(("Rename"), "R") & "..."
-      Picture = Picture["img/16/rename.png"]
+      Picture = Picture["icon:/small/rename"]
       Shortcut = "F2"
     }
     { mnuDeleteFile Menu
@@ -1725,7 +1725,7 @@
   { Action rename
     Text = "Rename"
     Shortcut = "F2"
-    Picture = "img/16/rename.png"
+    Picture = "icon:/small/rename"
   }
   { Action return
     Text = "Finish"
