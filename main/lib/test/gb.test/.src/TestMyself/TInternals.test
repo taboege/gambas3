@@ -40,7 +40,7 @@ Public Sub ParseTestCommands()
     iGot = Commands[1].Methods.Count
     Assert.Equals(iGot, 0, "FromString: Greedy testmodule Bong")
 
-    'Programmer was a little tipsy but got it all except Bung which only wants testmethod U
+    'Programmer was a little tipsy but got it all except Bung which only wants test U
     sCommand = "Bong, Bong.A, Bing, Bing, Bing, Bing, Bing, Bing, Bong.A, Bung.U, Bong.B, Bong.C, Bing, Bing, Bing, Bong, Bong"
     Commands = TestCommand.FromString(sCommand)
     'Methods name sort
@@ -80,13 +80,13 @@ Public Sub ReflectTest()
 
     'count of all testmodules, if it fails we created a new one and we have to count new
     Assert.Equals(tests.Count, 12, "number of all testmodules")
-    Assert.Equals(tests["TAllAsserts"].Count, 21, "count of all testmethods in TAllAsserts")
-    Assert.Equals(tests["TBailout"].Count, 1, "count of all testmethods in TBailout")
-    Assert.Equals(tests["TCrashes"].Count, 2, "count of all testmethods in TCrashes")
-    Assert.Equals(tests["TElse"].Count, 4, "count of all testmethods in TElse")
-    Assert.Equals(tests["TEmpty"].Count, 0, "count of all testmethods in TEmpty")
-    Assert.Equals(tests["TInternals"].Count, 6, "count of all testmethods in TInternals")
-    Assert.Equals(tests["TParser"].Count, 3, "count of all testmethods in TParser")
+    Assert.Equals(tests["TAllAsserts"].Count, 21, "count of all tests in TAllAsserts")
+    Assert.Equals(tests["TBailout"].Count, 1, "count of all tests in TBailout")
+    Assert.Equals(tests["TCrashes"].Count, 2, "count of all tests in TCrashes")
+    Assert.Equals(tests["TElse"].Count, 4, "count of all tests in TElse")
+    Assert.Equals(tests["TEmpty"].Count, 0, "count of all tests in TEmpty")
+    Assert.Equals(tests["TInternals"].Count, 6, "count of all tests in TInternals")
+    Assert.Equals(tests["TParser"].Count, 3, "count of all tests in TParser")
 
 End
 

@@ -1,6 +1,7 @@
 ' Gambas class file
 
-''' TestCommand stores the name of a testmodule and testmethods to be executed.
+''' The class TestCommand stores the names of a testmodule and optional tests to be executed.
+''' It also contains methods to translate testcommands to string and vice versa.
 
 Export
 Create Static
@@ -8,7 +9,7 @@ Create Static
 '' Name of the testmodule to be called
 Public ModuleName As String
 
-'' Name of testmethods in a testmodule to be called. If empty, all will be called.
+'' Name of tests in a testmodule to be called. If empty, all will be called.
 Public Methods As New String[]
 
 '' Finds the Command for the TestModule with name TestModuleName
@@ -24,7 +25,7 @@ Static Public Function _Find(Commands As TestCommand[], TestModuleName As String
 
 End
 
-'' Creates a string from an array of TestCommands
+'' Creates a string from an array of testcommands
 Static Public Function ToString(Commands As TestCommand[]) As String
 
     Dim Command As TestCommand

@@ -4,6 +4,10 @@ Export
 
 Class __Test
 
+''' The class Test is the central class which orchestrates 
+''' the execution of tests and also gives a couple of tools to 
+''' manipulate running tests.
+
 '' Special value for unspecified test plan
 Public Const NO_PLAN As Integer = -1
 
@@ -19,26 +23,34 @@ Private $Suite As TestSuite
 '' Used to trigger Test.Main to print all tests as comma separated string.
 Public Const _TRIGGER_GET_ALLTESTS As String = "#GetAllTests"
 
-'' The static procedure Test.Main() starts tests. By default it runs all testmethods in all
-'' testmodules ordered by name and prints the result to the console.
+'' The static procedure Test.Main() runs tests. By default it runs all tests (aka testmethods) in all
+'' testmodules of a project ordered by name and prints the result to stdout.
+'' 
+'' A testmodule is a special class with the ending test. It must contain at minimum one test.
 ''
-'' The optional string Tests ca be used to define a TestSuite which can be used to choose any
-'' combination of testmodule and testmethod, separated by comma.
+'' A test is a public sub in a testmodule whose name does not contain an underscore.
+'' 
+'' On the command line the interpreter is commanded with this line to execute Test.Main():
+'' 
+'' gbx3 -T "*" /path/to/project
 ''
-'' A testmodule is a special class with the ending test. It must contain at minimum one testmethod.
+'' The optional argument ca be used to create a testsuite which chooses any
+'' combination of testmodule and test(s). The format of the string is like so: Testmodules 
+'' are separated by a comma. If not all tests of a testmodule should be called then the 
+'' name of the testmodule is followed by a dot and a string containing the tests separated 
+'' by a semikolon. For example:
+'' 
+'' gbx3 -T "testmodule1,testmodule2.test1;test2,testmodule3" /path/to/project
 ''
-'' A testmethod is a public sub in a testmodule whose name is not
-'' "_Setup", "_Teardown", "_SetupEach" or "_TeardownEach".
+'' In the Gambas IDE one is able to define testsuites and store them with a individual name 
+'' in a file named ".test" in the project's path.
+'' 
+'' A test suite stored like that can be called by it's name with a preceeding "@", for example:
+'' 
+'' gbx3 -T "$My production testsuite1" /path/to/project
 ''
-'' A testmodule can be choosen by it's name, a testmethod by it's testmodules'
-'' name followed by a dot and the name of the testmethod.
-''
-'' Example: Test.Main("TestWWW, TestMail.Send, TestMail.Receive")
-''
-'' runs all testmethods in TestWWW and the testmethods Send and Receive of the testmodule TestMail.
-''
-'' Public methods called "_Setup", "_Teardown", "_SetupEach" or "_TeardownEach" can be used to create a testfixture,
-'' which defines a special environment for the tests.
+'' Public methods called "_Setup", "_Teardown", "_SetupEach" or "_TeardownEach" inside a testmodule 
+'' can be used to create a testfixture, which defines a special environment for the tests.
 
 Public Sub Main(Optional Tests As String)
 
@@ -243,8 +255,8 @@ Catch
 
 End
 
-'' Returns an collection of the testmodules and their testmethods.
-'' Key is the name of the testmodule, Value is a string array with the names of the testmethods it contains
+'' Returns an collection of all the testmodules and their tests of the project.
+'' Key is the name of the testmodule, Value is a string array with the names of the tests it contains
 
 Public Function AllTestsCollection() As Collection
 
@@ -262,7 +274,7 @@ Public Function AllTestsCollection() As Collection
 
 End
 
-'' Returns a comma separated string with all tests in the same way Test.Main() wants it.
+'' Returns a comma separated string with all tests of the project in the same way Test.Main() wants it.
 
 Public Function AllTests() As String
 
@@ -289,15 +301,15 @@ End
 
 ' ------------------------------------------------- Test controls
 
-'' Prints "Bail out!" and stops all testing immediately.
+'' Prints "Bail out!" to Stdout and stops all testing immediately.
 Public Sub BailOut(Optional Comment As String)
 
     $hPrinter.BailOut(Comment)
     Quit 1
 
 End
-'' Synonym for Note, prints Comment with leading #
 
+'' Synonym for Note, prints Comment with leading #
 Public Sub Diagnostic(Comment As String)
 
     $hPrinter.Diagnostic(Comment)
@@ -307,7 +319,6 @@ End
 '' If the next assertion is a failure it reports ok.
 '' In other words: Reverses the result of the following assertion.
 '' "not ok" will be "ok" and vice versa.
-
 Public Sub IntendedFailure()
 
     Assert._IntendedFailure = True
@@ -315,14 +326,15 @@ Public Sub IntendedFailure()
 End
 
 '' Synonym for Diagnostic, prints Comment with leading #
-
 Public Sub Note(Comment As String)
 
     $hPrinter.Note(Comment)
 
 End
 
-'' Tell the testing system that the next assertion is a TODO. Even if it fails it reports ok, but will be reported as Todo.
+'' Tell the testing system that the next assertion is a TODO. 
+'' Even if it fails it reports ok, but will be reported as Todo.
+'' If the next assertion does not fail, it will be reported as bonus.
 Public Sub Todo(Optional Comment As String)
 
     Test._Next.Directive = TestAssertion.TODO
@@ -340,7 +352,6 @@ Public Sub Skip(Optional Comment As String)
 End
 
 '' Prints Line to Stdout
-
 Public Sub _Print({Line} As String)
 
     $hPrinter.Print({Line})
@@ -386,11 +397,15 @@ Public Sub _Subtest(Description As String, Optional Tests As Integer, Optional C
 
 End
 
+'' Plan the number of assertions within a test method. 
+'' If the number is not correct, the test fails.
 Public Sub Plan(Tests As Integer, Optional Comment As String)
 
     Test._Printer.Plan(Tests, Comment)
 
 End
+
+'' Skip the current test.
 
 Public Sub SkipAll(Optional Comment As String)
 
