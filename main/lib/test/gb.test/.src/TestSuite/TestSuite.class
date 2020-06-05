@@ -1,10 +1,6 @@
 ' Gambas class file
 
-''' The TestSuite class represents a suite of different tests to be run.  The TestSuite contains
-''' a part-whole hierarchy of objects that implement the ITest interface --
-''' including TestCase objects and other TestSuite objects.  Executing the Run method for the
-''' TestSuite will execute all test cases that it contains.  The TestSuite class also provides
-''' methods for add all test cases contained in a TestModule object into the suite.
+''' The TestSuite class represents a suite of different testcases to be run. 
 
 Property Read Tests As TestCase[]
 Private $Tests As New TestCase[]
@@ -105,7 +101,7 @@ Static Public Function GetTestsFromTestModule(TestModule As Class) As String[]
 
 End
 
-'' Create all test cases that are contained in the specified TestModule and add them to the suite.
+'' Create all test cases that are contained in the specified testmodule and add them to the suite.
 Public Function AddAllTestCases(TestModule As Class)
 
     Dim asTests As String[]
