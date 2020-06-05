@@ -157,7 +157,7 @@ Private Sub SelectPrinter(Optional sName As String)
     txtFile.Hide
     panResolution.Hide
     panRectoVerso.Show
-    btnPrinter.Picture = Picture["icon:/small/printer"]
+    btnPrinter.Picture = Picture["icon:/small/print"]
     btnPrinter.Text = sName
   Endif
   
