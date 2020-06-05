@@ -3878,7 +3878,7 @@ End
 
 Public Sub Form_Open()
 
-  Action[".wrap", Me].Value = Settings["/Editor/WrapTextByDefault", False]
+  Action[".wrap", Me].Value = Settings["/Editor/WrapTextByDefault", True]
   'Action[".tab-indent", Me].Value = Settings["/Editor/TabIndentByDefault", False]
 
 End

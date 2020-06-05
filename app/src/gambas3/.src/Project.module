@@ -126,7 +126,7 @@ Public Const ACTION_MAGIC As String = "# Gambas Action File 3.0"
 Public Const CONNECTION_MAGIC As String = "# Gambas Connection File 3.0"
 Public Const TEMPLATE_MAGIC As String = "# Gambas Database Template File 3.0"
 
-Public DEFAULT_FONT As String = "Monospace,9"
+Public DEFAULT_FONT As String
 Public DESKTOP_FONT As String
 
 Public Const DEFAULT_URL As String = "http://www.endoftheinternet.com/"
@@ -338,7 +338,7 @@ Public Sub Main()
   If Not Settings["/ShowMenus", True] Then Env["APPMENU_DISPLAY_BOTH"] = "1"
   Env["QT_LOGGING_RULES"] = "*.debug=false"
 
-  Application.Theme = Settings["/Theme"]
+  Application.Theme = Settings["/Theme", "gambas"]
   DESKTOP_FONT = Application.Font.ToString()
 
   Try Application.Font = Font[Settings["/Font"]]
@@ -383,11 +383,14 @@ Public Sub Main()
   Endif
 
   If Fonts.Exist("Gambas") Then
-    DEFAULT_FONT = "Gambas,9"
+    DEFAULT_FONT = "Gambas,"
   Else If Fonts.Exist("Terminus") Then
-    DEFAULT_FONT = "Terminus,9"
+    DEFAULT_FONT = "Terminus,"
+  Else
+    DEFAULT_FONT = "Monospace,"
   Endif
-
+  DEFAULT_FONT &= CStr(Application.Font.Size)
+  
   InitVersion
   InitWebView
   ShowFileInTitle = Settings["/ShowFileInTitle", True]
@@ -5775,7 +5778,7 @@ End
 
 Public Sub SetConsoleFont(hCtrl As Control)
   
-  hCtrl.Font = Font[Settings["/ConsoleFont", Project.DEFAULT_FONT]]
+  hCtrl.Font = Font[Settings["/ConsoleFont", DEFAULT_FONT]]
   
 End
 
@@ -5829,7 +5832,7 @@ End
 
 Public Sub GetBackgroundColor() As Integer
   
-  Return FColorChooser.FromString(Settings["/Background/Color", "LightForeground"])
+  Return FColorChooser.FromString(Settings["/Background/Color", "#404040"])
   
 End
 
@@ -5910,7 +5913,7 @@ End
 
 Public Sub GetBackgroundBrightness() As Integer
   
-  Return Settings["/Background/Brightness", 0]
+  Return Settings["/Background/Brightness", 160]
   
 End
 
