@@ -161,6 +161,7 @@ red                     #
 redo                    actions/edit-redo
 refresh                 actions/view-refresh
 remove                  actions/list-remove
+rename                  actions/edit-rename
 replace                 actions/edit-find-replace
 resize                  actions/transform-scale
 revert                  actions/document-revert
