@@ -8,7 +8,8 @@ Component=gb.gui
 Arguments=[["-style=oxygen"],["-style=qtcurve"]]
 Environment="GB_JIT_DEBUG=1\nGB_GUI=gb.qt5\nLIBOVERLAY_SCROLLBAR=0"
 TabSize=2
-Language=fr
+Translate=1
+Language=en
 Type=Component
 Packager=1
 DoNotTranslate=".src/Test"
