@@ -259,7 +259,7 @@ Public Sub SetReadOnly(bReadOnly As Boolean)
   txtData.Visible = Not bReadOnly
   
   If bReadOnly Then
-    btnAdd.Text = ("Insert") & "..."
+    btnAdd.Text = ("Add") & "..."
     btnRemove.Text = ("Remove")
   Else
     btnAdd.Text = ""

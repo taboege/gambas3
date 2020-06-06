@@ -4,10 +4,9 @@
   MoveScaled(0,0,64,64)
   Arrangement = Arrange.Fill
   { FileView1 FileView
-    MoveScaled(3,5,58,53)
+    MoveScaled(2,5,58,53)
     Mode = Select.Multiple
     ShowDetailed = True
     ShowDirectory = True
-    ShowCheck = True
   }
 }
