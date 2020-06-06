@@ -99,7 +99,9 @@ Public Sub ReflectTestsString()
 
     Dim got, want As String
 
-    want = "TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;IsType;Less;LessEqual;Like;Match;NotNull;NotOk;Notequals;Noterror;Null;Ok;Pass;RelativeApproximate;StringEquals,TBailout.Bailout,TCrashes.DoACrash;ErrorTwo,TElse.NoMessage;NoMessageInbetween;Note;TestNoteGotAndExpected,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TParser.Runner;SkipAll;Subtests,TSetup.NameOfMethodDoesNotStartWithTest;TestFirst,TSkipAll.SkipAll,TSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo;TodoErrorCode,TWrongPlan.IHaveAWrongPlan"
+    Test.Plan(2)
+
+    want = "TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;IsType;Less;LessEqual;Like;Match;NotNull;NotOk;Notequals;Noterror;Null;Ok;Pass;RelativeApproximate;StringEquals,TBailout.Bailout,TCrashes.DoACrash;ErrorTwo,TElse.NoMessage;NoMessageInbetween;Note;TestNoteGotAndExpected,TFailures.EqualsFailure;Error;LongFailure;LongTypeMismatchFailure;StringFailure,TInternals.CommandsToString;FindTestSuiteByName;InterpreterInterface;ParseTestCommands;ReflectTest;ReflectTestsString,TParser.Runner;SkipAll;Subtests,TSetup.A;B,TSkipAll.SkipAll,TSummary.DoOneFailure;DoSkip;DoSomeAsserts;DoTodo;TodoErrorCode,TWrongPlan.IHaveAWrongPlan"
     got = Test.AllTests()
     Assert.Equals(got, want, "All Test names as string")
 
@@ -115,6 +117,7 @@ Public Sub InterpreterInterface()
     Dim Commands As TestCommand[]
     Dim Tests As String = "TestAllAsserts.TestAssertEqualsDate;TestAssertEmpty;TestAssert,TestElse"
 
+    Test.Plan(4)
     Test.Note("Tests the testsuite as string as it is run by the interpreter")
 
     Commands = TestCommand.FromString(Tests)
@@ -132,6 +135,7 @@ Public Sub FindTestSuiteByName()
 
     Dim sName As String = "Keep this test suite, it is necessary for testing gb.test."
 
+    Test.Plan(1)
     Assert.Equals(Helper.GetTestSuiteByName(sName), "TInternals.FindTestSuiteByName")
 
 End

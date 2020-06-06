@@ -14,8 +14,14 @@ Public Sub Ok(Result As Boolean, Optional Description As String) As Boolean
 
     Dim bRes As Boolean
 
+    If Test._InSetup = True Then
+        Test.BailOut(("Failure: Assertion forbidden inside _Setup or _Teardown."))
+    Endif
+
     If _IntendedFailure Then Result = Not Result
     _IntendedFailure = False
+
+DAWAI:
 
     Test._Next.Ok = Result
     Test._Next.Description = Description

@@ -1,19 +1,17 @@
 ## To Do
 
-- Write Documentation
-    * [ ] Test.Main overall doc what is does and how tests are run.
 
 ## Work
 
 - Plan
-    > If a plan failes it has to be reported in the TAP output as well as in the summary which is not the case at the moment. There is no plan for testmodules which counts the testmethods.
-    * [ ] Plan for testmodules (as a constant?)
-    * [ ] Plan failure must be reported in TAP output and in summary (there has to be reported where it fails).
-- Plan selftests
-    > gb.test: Every subtest in all tests must plan the own assertion count
+    > If a plan failes it has to be reported in the TAP output as well as in the summary which is not the case at the moment.
 
 ## Done
 
+- Plan selftests
+    > gb.test: Every subtest in all tests must plan the own assertion count
+- Write Documentation
+    * [ ] Test.Main overall doc what is does and how tests are run.
 - Event handlers are not test methods
     > Some test modules test object which emit events, but the event handlers are Public Subs which get picked up as test methods by gb.test. What can we do about it?
 - TestAllAssertion must test all assertions

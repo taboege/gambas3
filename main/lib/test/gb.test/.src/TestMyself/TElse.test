@@ -2,13 +2,15 @@
 
 Public Sub NoMessage()
 
-    'There is no message whicht
+    'There is no message
+    Test.Plan(1)
     Assert.Ok(True)
 
 End
 
 Public Sub NoMessageInbetween()
 
+    Test.Plan(4)
     Assert.Ok(True, "TestNoMessageInbetween Assert 1 description defined")
     Assert.Ok(True)
     Assert.Ok(True, "Assert 3 description defined")
@@ -32,6 +34,8 @@ Public Sub TestNoteGotAndExpected()
     'This test must fail to see what happens
     
     Dim Expected, Got As String
+
+    Test.Plan(1)
 
     Got = "<ol class='ulist'>" & gb.Lf &
         "    <li>Zum 15.12. in die Wintermischung 2</li> " & gb.Lf &
