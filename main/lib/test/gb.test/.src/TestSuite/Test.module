@@ -14,6 +14,7 @@ Public Const NO_PLAN As Integer = -1
 Property Read _Printer As TapPrinter
 Property Read _Finished As Boolean
 Property _Next As TestAssertion
+Public _InSetup As Boolean
 
 Private $hPrinter As New TapPrinter
 Private $hNext As TestAssertion

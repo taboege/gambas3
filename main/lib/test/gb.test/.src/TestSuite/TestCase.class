@@ -40,7 +40,9 @@ Public Sub Run()
 
     '$MyTestModule._SetupEach
     If $MyTestModule.Symbols.Exist("_SetupEach") Then
+        Test._InSetup = True
         Object.Call($MyTestModule, "_SetupEach")
+        Test._InSetup = False
     Endif
 
     Try Object.Call($MyTestModule, Me.name)
@@ -49,7 +51,9 @@ Public Sub Run()
     Endif
 
     If $MyTestModule.Symbols.Exist("_TeardownEach") Then
+        Test._InSetup = True
         Object.Call($MyTestModule, "_TeardownEach")
+        Test._InSetup = False
     Endif
 
 Catch

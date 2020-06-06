@@ -53,7 +53,9 @@ End Sub
 Private Sub StartTestModule(TestModule As Class)
 
     If TestModule.Symbols.Exist("_Setup") Then
+        Test._InSetup = True
         Object.Call(TestModule, "_Setup")
+        Test._InSetup = False
     Endif
 
 End
@@ -61,7 +63,9 @@ End
 Private Sub StopTestModule(TestModule As Class)
 
     If TestModule.Symbols.Exist("_Teardown") Then
+        Test._InSetup = True
         Object.Call(TestModule, "_Teardown")
+        Test._InSetup = False
     Endif
 
 End

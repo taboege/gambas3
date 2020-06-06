@@ -2,52 +2,50 @@
 
 'Plan is one more because Test in _TeardownEach is counted twice!
 
-Private $SetupIsDone As Boolean
-Private $EachSetupIsDone As Boolean
+Private $Done As New String[]
+
 
 Public Sub _Setup()
 
-    $SetupIsDone = True
-    Test.Note("Setup TestModule")
-
-End
-
-Public Sub _Teardown()
-
-    If Not $SetupIsDone Then
-        ' will bail out if Test_Setup failed
-        Error.Raise("Test_Setup failed: _Setup was not executed correctly.")
-    Endif
-    Test.Note("Teardown TestModule")
+    $Done.Add("Setup")
 
 End
 
 Public Sub _SetupEach()
 
-    Assert.NotOk($EachSetupIsDone, "Check if each was not setup.")
-    $EachSetupIsDone = True
-    Test.Note("Setup Each")
+    $Done.Add("SetupEach")
 
 End
 
 Public Sub _TeardownEach()
 
-    Assert.Ok($EachSetupIsDone, "Each setup done")
-    Test.Note("Teardown Each")
-    $EachSetupIsDone = False
+    $Done.Add("TeardownEach")
+    
+End
+
+Public Sub A()
+
+    $Done.Add("A")
+    Test.Plan(1)
+    
+    Assert.Equals($Done.Join(), "Setup,SetupEach,A")
 
 End
 
-Public Sub TestFirst()
+Public Sub B()
 
-    Assert.Ok($SetupIsDone, "Check if setup was successful.")
-    Assert.Ok($EachSetupIsDone, "Check if setup each was successful.")
-    Assert.StringEquals("ja", "ja", "Fake test")
+    Test.Plan(1)
+    $Done.Add("B")
+
+    Assert.Equals($Done.Join(), "Setup,SetupEach,A,TeardownEach,SetupEach,B")
 
 End
 
-Public Sub NameOfMethodDoesNotStartWithTest()
+Public Sub _Teardown()
 
-    Assert.StringEquals("no", "no", "Fake test")
-
+    $Done.Add("Teardown")
+    If $Done.Join() <> "Setup,SetupEach,A,TeardownEach,SetupEach,B,TeardownEach,Teardown" Then
+        Test.BailOut("_Teardown failed")
+    Endif
+    
 End
