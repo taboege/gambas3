@@ -392,10 +392,14 @@ Public Sub mnuPopup_Show()
   Dim sRoot As String
   Dim bLink As Boolean
   Dim sPath As String
+  Dim bIsDir As Boolean
+  Dim bIsSpecial As Boolean
   
   sCurrent = GetCurrent()
   bCurrent = sCurrent
   sRoot = GetRootKey($sKey)
+  bIsSpecial = $sKey Begins "$"
+  bIsDir = IsDir(sCurrent)
   
   If sCurrent Then 
     Try bLink = Stat(sCurrent).Type = gb.Link
@@ -406,7 +410,7 @@ Public Sub mnuPopup_Show()
   
   If sCurrent And If Project.IsReadOnly(sCurrent) Then
     'mnuNew.Visible = False
-    If Not IsDir(sCurrent) Or If Not bLink Then
+    If Not bIsDir Or If Not bLink Then
       mnuCut.Visible = False
       mnuCopy.Visible = False
       mnuPaste.Visible = False
@@ -435,7 +439,7 @@ Public Sub mnuPopup_Show()
     mnuRunThat.Visible = mnuStartup.Visible
     mnuRunThat.Enabled = mnuStartup.Enabled
   
-    If sCurrent And If Left(sCurrent) <> "$" Then
+    If sCurrent And If Not bIsSpecial Then
       mnuDoNotTranslate.Show
       mnuDoNotTranslate.Checked = Not Project.ShouldTranslate(sCurrent)
     Else
@@ -498,7 +502,7 @@ Public Sub mnuPopup_Show()
     mnuRenameFile.Visible = mnuRenameFile.Visible And bCurrent
     mnuDeleteFile.Visible = mnuDeleteFile.Visible And CanDelete(sCurrent)
     
-    If $sKey = Project.KEY_MISC Or If IsDir(sCurrent) And bProject Then
+    If $sKey = Project.KEY_MISC Or If bIsDir And bProject Then
       If MCompressFile.CanCompress(If($sKey = Project.KEY_MISC, Project.Dir, sCurrent), True) Then
         mnuCompressAll.Show
         mnuUncompressAll.Show
@@ -564,7 +568,7 @@ Public Sub mnuPopup_Show()
   
   mnuOpenInProject.Hide
   mnuOpenWithFileManager.Show
-  If IsDir(sCurrent) Or If Left($sKey) = "$" Then
+  If bIsDir Or If bIsSpecial Then
   Else
     If bLink Then
       sPath = Project.GetAbsoluteLink(sCurrent, Stat(sCurrent).Link)
@@ -591,6 +595,12 @@ Public Sub mnuPopup_Show()
   Else
     mnuFilter.Hide
     mnuAddVersionAll.Hide
+  Endif
+  
+  If VersionControl.Enabled And If Not bIsDir And If Not bIsSpecial Then
+    mnuInfoVC.Show
+  Else
+    mnuInfoVC.Hide
   Endif
    
   UpdateRecentFile(mnuOpenRecentFile)
@@ -1498,6 +1508,9 @@ Public Sub Action_Activate((Key) As String) As Boolean
       Else
         FFileProperty.Run(tvwProject.Key)
       Endif
+      
+    Case "info-vc"
+      FFileInfoVC.Run(tvwProject.Key)
       
     Case "go-back"
       CPosition.MovePrevious

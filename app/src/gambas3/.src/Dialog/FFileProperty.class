@@ -4,11 +4,6 @@ Class DesktopMime
 
 Static Private $sPath As String
 
-Private $iTabHistory As Integer
-Private $iTabChanges As Integer
-Private $bVersion As Boolean
-Private $bHideUndoButton As Boolean
-
 'Private $bStat As Boolean
 
 Public Sub Run(sPath As String) As Boolean
@@ -85,24 +80,12 @@ Public Sub Form_Open()
  
   Me.Title = Subst(("'&1' properties"), File.Name(sPath))
   
-  If VersionControl.Enabled And Not IsDir($sPath) Then
-    $iTabChanges = fprInfo.Add(panVersion, ("Changes"))
-    $iTabHistory = fprInfo.Add(panHistory, ("History"))
-    edtChange.Clear
-    edtChange.ReadConfig
-    edtHistory.Clear
-    edtHistory.ReadConfig
-    $bVersion = False
-  Endif
-  
   ' If (sPath &/ "/") = (Project.SourceDir &/ "/") Then    
   '   fprInfo.Add(panStat, ("Statistics"))
   ' Endif
   
   btnClose.SetFocus
   
-  UpdateUndoButton
-
 End
 
 Public Sub btnClose_Click()
@@ -111,114 +94,3 @@ Public Sub btnClose_Click()
 
 End
 
-Private Sub LoadVersionControlInfo()
-
-  Dim sDiff As String
-  
-  edtChange.SetFocus
-  
-  If $bVersion Then Return
-
-  Inc Application.Busy
-
-  $bHideUndoButton = False
-  edtChange.Font = Font[Settings["/Editor/Font", Project.DEFAULT_FONT]]
-  sDiff = VersionControl.Diff($sPath)
-  If Project.IsFormPath($sPath) Then
-    sDiff &= "\n" & VersionControl.Diff(File.SetExt($sPath, "class"))
-  Endif
-  sDiff = Trim(sDiff)
-  If sDiff Then
-    edtChange.Highlight = "Diff"
-    edtChange.Text = sDiff
-    edtChange.Show
-    lblVersioning.Hide
-  Else
-    edtChange.Hide
-    If Project.IsLocked($sPath) Then
-      lblVersioning.Text = ("This file is locked, and will be deleted on the next commit.")
-    Else If Project.IsAdded($sPath) Then
-      lblVersioning.Text = ("This file is not versioned, and must be added to the repository.")
-      $bHideUndoButton = True
-    Else
-      lblVersioning.Text = ("This file has not been modified since the last commit.")
-      $bHideUndoButton = True
-    Endif
-    lblVersioning.Show
-  Endif
-  
-  UpdateUndoButton
-  
-  Dec Application.Busy
-  
-  $bVersion = True
-
-End
-
-Public Sub btnRevert_Click()
-
-  If Message.Warning(("You are going to cancel your changes!"), ("Continue"), ("Cancel")) = 2 Then Return
-
-  Project.RevertFile($sPath)
-  $bVersion = False
-  LoadVersionControlInfo
-
-End
-
-
-' Public Sub panStat_Arrange()
-' 
-'   Dim hModule As CModule
-' 
-'   If $bStat Then Return
-' 
-'   Inc Application.Busy
-' 
-'   gvwStat.Columns.Count = 2
-'   
-'   AddStat(("Modules"), Project.GetCount("module"))
-'   If Project.HasTest Then AddStat(("Test modules"), Project.GetCount("test"))
-'   AddStat(("Classes"), Project.GetCount("class"))
-'   For Each hModule In CModule.All
-'     If hModule.Used Then AddStat(hModule.NamePlural, Project.GetCount(hModule.Key))
-'   Next
-'   AddStat(("Lines of code"), Format(Project.GetLinesOfCode(), ",#"))
-'   
-'   gvwStat.Rows.H = Desktop.Scale * 4
-'   gvwStat.Columns[0].Width = Desktop.Scale * 16
-' 
-'   Dec Application.Busy
-' 
-'   $bStat = True
-' 
-' End
-
-Private Sub UpdateUndoButton()
-
-  btnRevert.Visible = fprInfo.Index = $iTabChanges And Not $bHideUndoButton
-
-End
-
-Public Sub fprInfo_Click()
-
-  Select Case fprInfo.Index
-    
-    Case $iTabChanges
-      
-      LoadVersionControlInfo
-    
-    Case $iTabHistory 
-    
-      edtHistory.FillWithHistory($sPath)
-    
-  End Select
-  
-  UpdateUndoButton
-
-End
-
-Public Sub edtHistory_Highlight(Text As String)
-
-  VersionControl.HighlightHistory(Text)
-
-End

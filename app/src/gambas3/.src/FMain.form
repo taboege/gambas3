@@ -748,6 +748,13 @@
       Picture = Picture["img/32/do-not-translate.png"]
       Toggle = True
     }
+    { Menu46 Menu
+    }
+    { mnuInfoVC Menu
+      Action = "info-vc"
+      Text = ("Version control") & "..."
+      Picture = Picture["icon:/small/record"]
+    }
     { mnuInformation Menu
       Action = "info"
       Text = Shortcut(("Properties"), "P") & "..."
@@ -1316,19 +1323,19 @@
               MoveScaled(86,8,0,9)
               Visible = False
             }
-            { btnWorkspaceProject ToolButton
-              MoveScaled(22,1,4,4)
-              Visible = False
-              ToolTip = ("Show project tree")
-              Ignore = True
-              Picture = Picture["icon:/small/view-tree"]
-            }
             { btnWorkspaceProperty ToolButton
               MoveScaled(27,1,4,4)
               Visible = False
               ToolTip = ("Show properties sheet")
               Ignore = True
               Picture = Picture["icon:/small/properties"]
+            }
+            { btnWorkspaceProject ToolButton
+              MoveScaled(22,1,4,4)
+              Visible = False
+              ToolTip = ("Show project tree")
+              Ignore = True
+              Picture = Picture["icon:/small/view-tree"]
             }
           }
           { panDebug SidePanel
@@ -1384,19 +1391,19 @@
               Text = ("Hierarchy")
               Index = 0
             }
-            { btnPropertyToolbar ToolButton
-              MoveScaled(0,0,4,4)
-              Visible = False
-              ToolTip = ("Show controls")
-              Ignore = True
-              Picture = Picture["img/16/control.png"]
-            }
             { btnPropertyHelp ToolButton
               MoveScaled(4,0,4,4)
               Visible = False
               ToolTip = ("Show property help")
               Ignore = True
               Picture = Picture["icon:/small/help"]
+            }
+            { btnPropertyToolbar ToolButton
+              MoveScaled(0,0,4,4)
+              Visible = False
+              ToolTip = ("Show controls")
+              Ignore = True
+              Picture = Picture["img/16/control.png"]
             }
           }
           { panTool SidePanel
@@ -1588,6 +1595,11 @@
     Text = "Properties"
     Shortcut = "Ctrl+Shift+I"
     Picture = "icon:/small/info"
+  }
+  { Action info-vc
+    Text = "Version control"
+    Shortcut = ""
+    Picture = "icon:/small/record"
   }
   { Action install
     Text = "Installation package"
