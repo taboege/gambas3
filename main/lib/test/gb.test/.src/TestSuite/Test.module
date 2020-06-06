@@ -116,7 +116,10 @@ Private Sub PrintSummary()
         ShowTestCollection(("&1 todo:"), FindTodos(.Summary.Subtests, ""))
         ShowTestCollection(("&1 bonus:"), FindBonus(.Summary.Subtests, ""))
 
-        If Not .Summary.Success Then ShowTestCollection(("&1 tests failed:"), FindFailures(.Summary.Subtests, ""))
+        If Not .Summary.Success Then
+            ShowTestCollection(("&1 test plans failed:"), FindBadPlans(.Summary.Subtests, ""))
+            ShowTestCollection(("&1 tests failed:"), FindFailures(.Summary.Subtests, ""))
+        Endif
         Test.Note(IIf(.Summary.Success, "PASSED", "FAILED"))
     End With
 
@@ -138,10 +141,32 @@ Private Sub ShowTestCollection(Description As String, TestCollection As Collecti
         Test.Note(Subst$(Description, TestCollection.Count))
         For Each cTest In TestCollection
             Dim hTest As TestAssertion = cTest!Assertion
-            Test.Note(Subst$(("&2: &1 -- &3 &4"), cTest["Path"], hTest.Id, hTest.Description, IIf(hTest.Comment, "# " & hTest.Comment, "")))
+            Dim sName, sNote As String
+            sName = hTest.Description
+            If cTest["Note"] Then
+                sNote = Subst$((": &1"), cTest["Note"])
+            Else If hTest.Comment Then
+                sNote = Subst$(("# &1"), hTest.Comment)
+            Endif
+            Test.Note(Subst$(("&2: &1 -- &3&4"), cTest["Path"], hTest.Id, sName, IIf(sNote, " " & sNote, "")))
         Next
         Test.Note(gb.Lf)
     Endif
+
+End
+
+Private Function FindBadPlans(Tests As TestAssertion[], Prefix As String) As Collection[]
+
+    Dim hTest As TestAssertion
+    Dim sName As String
+    Dim aRet As New Collection[]
+
+    For Each hTest In Tests
+        sName = Prefix &/ hTest.Description
+        If hTest.Subtests.Count <> hTest.SubPlanned Then aRet.Add(["Path": Prefix, "Assertion": hTest, "Note": Subst$(("Planned &1 but ran &2"), hTest.SubPlanned, hTest.Subtests.Count)])
+        aRet.Insert(FindBadPlans(hTest.Subtests, sName))
+    Next
+    Return aRet
 
 End
 

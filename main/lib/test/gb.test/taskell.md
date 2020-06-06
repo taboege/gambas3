@@ -3,8 +3,6 @@
 
 ## Work
 
-- Plan
-    > If a plan failes it has to be reported in the TAP output as well as in the summary which is not the case at the moment.
 
 ## Done
 
@@ -50,3 +48,5 @@
 - Skip all
     > Parse `1..0 # SKIP` style TAPs indicating that a whole test was skipped.
 - Document Approximate and RelativeApproximate
+- Plan
+    > If a plan failes it has to be reported in the TAP output as well as in the summary which is not the case at the moment.

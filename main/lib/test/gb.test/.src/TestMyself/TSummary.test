@@ -48,6 +48,15 @@ End
 '' Will fail
 Public Sub DoOneFailure()
 
-  Assert.Ok(False, "Intentional failure")
+    Test.IntendedFailure()
+    Assert.Ok(False, "Intentional failure")
+
+End
+
+Public Sub DoBadPlan()
+
+    Test._Subtest("Bad plan will appear in the summary", 2)
+        Assert.Ok(True)
+    Test._Finish()
 
 End

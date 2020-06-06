@@ -1,5 +1,5 @@
 [TestSuites]
-Count=6
+Count=7
 TestWith=4
 Default="TSetup.A;B"
 
@@ -24,6 +24,10 @@ Name="Keep this test suite, it is necessary for testing gb.test."
 Tests="TInternals.FindTestSuiteByName"
 
 [TestSuites/6]
+Name="Summary"
+Tests="TAllAsserts.Approximate;Equals;Error;ErrorCode;Fail;Greater;GreaterEqual;IsType;Less;LessEqual;Like;Match;NotNull;NotOk;Notequals;Noterror;Null;Ok;Pass;RelativeApproximate;StringEquals,TSummary.DoBadPlan;DoOneFailure;DoSkip;DoSomeAsserts;DoTodo;TodoErrorCode,TWrongPlan.IHaveAWrongPlan"
+
+[TestSuites/7]
 Name="TAP Parser"
 Tests="TParser.Runner;SkipAll;Subtests"
 

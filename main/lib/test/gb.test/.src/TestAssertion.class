@@ -40,7 +40,7 @@ Private Function SubSuccess_Read() As Boolean
 
     If Not subtests.Count Then Return Me.Success
 
-    Dim bRes As Boolean = Not (Subtests.Count <> SubPlanned)
+    Dim bRes As Boolean = (Subtests.Count = SubPlanned)
     Dim iInd As Integer = 0
 
     While bRes And (iInd < Subtests.Count)

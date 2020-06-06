@@ -81,6 +81,8 @@ Public Sub Finish()
 
         ' Sum up this subtest
         .Finished = True
+        .Summary.SubPlanned = .Plan
+        .Summary.SubSkippedAll = .SkipAll
         .Summary.Ok = (.Plan > 0 Or .SkipAll) And (.TestsRun = .Plan)
         For Each hTest In .Summary.Subtests
             .Summary.Ok = .Summary.Ok And hTest.Success
