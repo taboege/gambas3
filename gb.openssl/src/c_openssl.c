@@ -149,7 +149,8 @@ BEGIN_METHOD(OpenSSL_Scrypt, GB_STRING password; GB_STRING salt; GB_LONG N; GB_L
 		GB.Error("Invalid Parameter: N must be greater than 1");
 		return;
 	}
-	if (ceil(log2(lN)) != floor(log2(lN))) {
+	/* Bitwise power of 2 test */
+	if (lN == 0 || (lN & (lN - 1)) != 0) {
 		GB.Error("Invalid Parameter: N must be a power of 2");
 		return;
 	}
