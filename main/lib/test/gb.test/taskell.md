@@ -3,6 +3,8 @@
 
 ## Work
 
+- IDE: Reliability of Tab 'Unit tests'.
+    > When hit F4 with a newly opened project with tabs the tab just flickers but does not show up. After it is opened by hand with the mouse, the next F4 shows the tail of the TAP output, which is right. But if then the tab is resized with the mouse the next F4 shows the output anywhere in the middle and not the tail. The last one cannot reproduced always.
 
 ## Done
 
