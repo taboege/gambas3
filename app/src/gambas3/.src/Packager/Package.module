@@ -347,6 +347,13 @@ Private Sub ComponentToPackageName(sComp As String) As String
 
 End
 
+Private Sub IsRuntimeComponent(sComp As String) As Boolean
+  
+  If sComp = "gb.debug" Or If sComp = "gb.eval" Or If sComp = "gb.test" Then Return True
+  If sComp = "gb.gui" Or If sComp Begins "gb.gui." Then Return True
+  
+End
+
 Private Function GetDependencies(Optional aComp As String[]) As String
   
   Dim sRes As String
@@ -365,8 +372,8 @@ Private Function GetDependencies(Optional aComp As String[]) As String
       sComp = Left(sComp, iPos - 1)
     Endif
     
-    If sComp = "gb.debug" Or If sComp = "gb.eval" Then Continue 
-    If sComp = "gb.gui" Or If sComp Begins "gb.gui." Then Continue
+    If IsRuntimeComponent(sComp) Then Continue
+    
     sRes &= GetDependency(sComp)
     'If sComp = "gb.form" Then sRes &= GetDependency("gb.form.stock")
   Next
