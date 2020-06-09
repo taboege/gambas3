@@ -72,17 +72,33 @@ Public Sub GetBranches(ByRef sCurrent As String) As String[]
   Dim sResult As String
   Dim sBranch As String
   Dim aBranches As New String[]
+  Dim bCurrent As Boolean
   
-  sResult = RunShell("git branch", True) 
+  sResult = RunShell("git branch -a", True) 
   
   For Each sBranch In Split(Trim(sResult), "\n")
+    
     sBranch = Trim(sBranch)
     If sBranch Begins "*" Then
+    
       sBranch = Trim(Mid$(sBranch, 2))
-      sCurrent = sBranch
+      bCurrent = True
+    Else
+      bCurrent = False      
     Endif
-    aBranches.Add(sBranch)
+    
+    If sBranch Begins "remotes/origin/" Then
+      sBranch = Mid$(sBranch, 16)
+      If InStr(sBranch, " -> ") Then Continue
+    Endif
+    
+    If bCurrent Then sCurrent = sBranch 
+    
+    If Not aBranches.Exist(sBranch) Then aBranches.Add(sBranch)
+    
   Next
+  
+  aBranches.Sort(gb.Natural)
   
   Return aBranches
   
@@ -180,6 +196,8 @@ Public Sub Update() As Integer
   
   aEnv = VersionControl.LANG_ENV.Copy()
   aEnv.Add("PWD=" & Project.Dir)
+
+  VersionControl.Run(["git", "remote", "update", "origin", "--prune"], True, True, aEnv)
 
   Return VersionControl.Run(["git", "pull", "-q"], True, True, aEnv)
 
