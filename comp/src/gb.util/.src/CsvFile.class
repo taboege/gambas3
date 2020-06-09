@@ -143,6 +143,16 @@ Public Sub Close()
   
 End
 
+Static Public Sub Quote(Value As String, Optional Separator As String = ",", Optional Escape As String = "\"") As String
+  
+  If InStr(Value, Separator) Or If InStr(Value, "\n") Or If InStr(Value, " ") Or If InStr(Value, Escape) Then
+    Return Escape & Replace(Replace(Value, "\r", ""), Escape, Escape & Escape) & Escape
+  Else
+    Return Value
+  Endif
+  
+End
+
 Private Sub Print(sVal As String, Optional bNoSep As Boolean)
   
   If Not bNoSep Then Print #$hFile, ",";
