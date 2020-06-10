@@ -46,8 +46,8 @@
 #include "gbc_output.h"
 
 
-/*#define DEBUG*/
-/*#define DEBUG_MORE*/
+//#define DEBUG
+//#define DEBUG_MORE
 
 static CLASS *_class;
 
@@ -651,7 +651,7 @@ static void output_static(void)
 		/* type */
 		write_type(var->type);
 		/* addr */
-		write_int(var->pos);
+		write_int(0);
 	}
 
 	end_section();
@@ -674,7 +674,7 @@ static void output_dynamic(void)
 		/* type */
 		write_type(var->type);
 		/* addr */
-		write_int(var->pos);
+		write_int(0);
 	}
 
 	end_section();

@@ -67,14 +67,13 @@ typedef
 		unsigned declared : 1;             // ?
 		unsigned nobreak : 1;              // no breakpoint
 		unsigned exported : 1;             // there are some exported class
-		unsigned all : 1;                  // compile everything
 		unsigned swap : 1;                 // endianness must be swapped
 		unsigned public_module : 1;        // modules symbols are public by default
 		unsigned trans_error : 1;          // display error messages in a translatable form
 		unsigned no_old_read_syntax : 1;   // do not compile the old read syntax
 		unsigned exec : 1;                 // we are compiling for an executable
 		unsigned warnings : 1;             // if warnings must be printed
-		unsigned _reserved : 14;           // reserved
+		unsigned _reserved : 15;           // reserved
 		char *output;                      // output file
 		PATTERN *pattern;                  // lexical analyze
 		int pattern_count;                 // number of patterns

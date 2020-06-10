@@ -62,8 +62,6 @@ typedef
 	struct {
 		TYPE type;
 		int index;
-		int pos;
-		int size;
 		}
 	VARIABLE;
 

@@ -733,10 +733,6 @@ void CLASS_add_declaration(CLASS *class, TRANS_DECL *decl)
 
 		var->type = decl->type;
 		var->index = decl->index;
-		//var->pos = class->size_stat;
-		//var->size = TYPE_sizeof(var->type);
-
-		//class->size_stat += var->size;
 
 		CLASS_begin_init_function(class, FUNC_INIT_STATIC);
 
@@ -760,11 +756,7 @@ void CLASS_add_declaration(CLASS *class, TRANS_DECL *decl)
 
 		var->type = decl->type;
 		var->index = decl->index;
-		//var->pos = class->size_dyn;
-		//var->size = TYPE_sizeof(var->type);
 
-		//class->size_dyn += var->size;
-		
 		CLASS_begin_init_function(class, FUNC_INIT_DYNAMIC);
 
 		if (TRANS_has_init_var(decl))
@@ -776,52 +768,6 @@ void CLASS_add_declaration(CLASS *class, TRANS_DECL *decl)
 		}
 	}
 }
-
-#if 0
-static void reorder_decl(CLASS *class, VARIABLE *tvar, const char *desc)
-{
-	int count;
-	int pos;
-	VARIABLE *var;
-	int i, j;
-	int n;
-
-	/* variables statiques */
-
-	count = ARRAY_count(tvar);
-	if (count > 1)
-	{
-		if (COMP_verbose)
-			printf("Reordering %s variables:", desc);
-
-		pos = 0;
-		for (i = 0; i < 3; i++)
-		{
-			for (j = 0; j < count; j++)
-			{
-				var = &tvar[j];
-				n = var->size & 3;
-
-				switch (i)
-				{
-					case 0: if (n != 0) continue; else break;
-					case 1: if (n != 2) continue; else break;
-					case 2: if (n != 1 && n != 3) continue; else break;
-				}
-
-				var->pos = pos;
-				pos += var->size;
-
-				if (COMP_verbose)
-					printf(" %s (%d) ", TABLE_get_symbol_name(class->table, var->index), var->pos);
-			}
-		}
-
-		if (COMP_verbose)
-			printf("\n");
-	}
-}
-#endif
 
 // Don't do that! The order of variables must be kept.
 

@@ -293,7 +293,6 @@ static void compile_file(const char *file)
 		}
 	}
 
-	JOB->all = main_compile_all;
 	JOB->exec = main_exec;
 	JOB->warnings = main_warnings;
 	JOB->swap = main_swap;
