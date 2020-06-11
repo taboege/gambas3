@@ -785,8 +785,6 @@ _INIT_AGAIN:
     Endif
   Endif
 
-  GoSub _STOP_CONVERT
-
   ' The .lang/.pot file must not be on version control
   
   If Localize And If VersionControl.Enabled Then 
@@ -800,7 +798,7 @@ _INIT_AGAIN:
   RecentFiles = New String[]
   CPosition.Clear
 
-  Dec Application.Busy
+  GoSub _STOP_CONVERT
 
   If ReadOnly Then 
     FMain.ShowWarning(("This project is read-only."))
