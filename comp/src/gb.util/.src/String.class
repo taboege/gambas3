@@ -156,6 +156,9 @@ READ_MARKUP_END:
   sMarkup = LCase(sMarkup)
   If sMarkup Begins "/" Then
     sMarkup = Mid$(sMarkup, 2)
+    If sMarkup = "li" Then
+      sResult &= "\n"
+    Endif
     If aMarkup.Count Then
       If aMarkup[aMarkup.Max] = sMarkup Then aMarkup.Pop()
     Endif
@@ -164,6 +167,10 @@ READ_MARKUP_END:
       aMarkup.Push(sMarkup)
     Else If sMarkup = "br" Then
       sResult &= "\n"
+    Else If sMarkup = "ul" Or If sMarkup = "ol" Or If sMarkup = "p" Then
+      If Right(sResult) <> "\n" Then sResult &= "\n"
+    Else If sMarkup = "li" Then
+      sResult &= "- "
     Endif
   Endif
   sMarkup = ""
