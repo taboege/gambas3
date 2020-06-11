@@ -464,7 +464,7 @@ Public Sub CheckDuplicates() As String[]
   Dim sName As String
   Dim sDup As String
   
-  For Each sPath In RDir($sSourceDir, "*", gb.File + gb.Directory, True)
+  For Each sPath In RDir($sSourceDir, "*", gb.File, True)
     sName = File.Name(sPath)
     sDup = cName[sName]
     If Not sDup Then
