@@ -605,7 +605,6 @@ Public Function Open(sDir As String, Optional bInAnotherWindow As Boolean, sOpen
   If Right(sDir) = "/" Then sDir = Left(sDir, -1)
   
   Project.Dir = sDir
-  Bookmarks.Add(sDir, ("Current project"), "icon:/small/gambas")
 
   If bConvert Then
 
@@ -817,6 +816,9 @@ _INIT_AGAIN:
   Endif
 
   Application.Restart = ["gambas3", Project.Dir]
+  
+  Bookmarks.Add(sDir, ("Current project"), "icon:/small/gambas")
+  
   'SetMessage(("OK"))
   Return
 
