@@ -527,6 +527,8 @@ Public Function Open(sDir As String, Optional bInAnotherWindow As Boolean, sOpen
   Dim sPath As String
   Dim sStatus As String
   Dim bIsFake As Boolean
+  Dim aClass As String[]
+  Dim I As Integer
 
   sPath = FindProjectPath(sDir)
 
@@ -671,10 +673,7 @@ _INIT_AGAIN:
     MakeDirectoryIcon
     If ConvertProject() Then Goto _CANCEL
 
-    If bStopConvert Then
-      FConvert.Stop
-      bStopConvert = False
-    Endif
+    GoSub _STOP_CONVERT
 
     FConvert.SetMessage(("Applying conversion..."))
     Shell "rm -rf " & Shell$(sDir & "~") Wait
@@ -721,6 +720,15 @@ _INIT_AGAIN:
   CLibraryInfo.Clear
   ' Component loading needs to know which classes are declared by the project, in the case of a component project that uses itself
   RefreshSources
+  aClass = Tree.CheckDuplicates()
+  If aClass Then
+    GoSub _STOP_CONVERT
+    For I = 0 To aClass.Max
+      aClass[I] = "<li><tt>" & Html(aClass[I]) & "</tt></li>"
+    Next
+    Message.Error(("Cannot open project file :") & "\n" & sDir & "\n\n" & ("This project has duplicated class files!") & "<ul>" & aClass.Join("") & "</ul>")
+    Goto _CANCEL
+  Endif
   
   If Not $bTesting
     If Not bIsFake Then
@@ -777,7 +785,7 @@ _INIT_AGAIN:
     Endif
   Endif
 
-  If bStopConvert Then FConvert.Stop
+  GoSub _STOP_CONVERT
 
   ' The .lang/.pot file must not be on version control
   
@@ -816,9 +824,7 @@ _INIT_AGAIN:
 
 Catch
 
-  If bStopConvert Then FConvert.Stop
-
-  Application.Busy = 0
+  GoSub _STOP_CONVERT
 
   If Error.Text Then
     Message.Error(("Cannot open project file :") & "\n" & sDir & "\n\n<tt>" & Error.Text & "\n" & Error.Backtrace.Join(" ") & "</tt>")
@@ -837,6 +843,16 @@ _CANCEL:
   UpdateTitle
 
   Return True
+  
+_STOP_CONVERT:
+
+  If bStopConvert Then 
+    FConvert.Stop
+    bStopConvert = False
+  Endif
+  Application.Busy = 0
+  
+  Return
 
 End
 
@@ -1608,12 +1624,12 @@ Private Sub OnRefreshSources()
   
 End
 
-Private Sub RefreshSources()
+Private Sub RefreshSources() As Boolean
 
   Dim hForm As Object
   Dim sPath As String
 
-  Tree.RefreshSources
+  Tree.RefreshSources()
 
   For Each hForm In Files.Copy()
     If IsSourcePath(hForm.Path) Then

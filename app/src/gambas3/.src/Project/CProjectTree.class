@@ -443,16 +443,45 @@ End
 Public Sub RefreshSources()
 
   Dim sPath As String
+  Dim sName As String
   
   Sources = New Collection(gb.IgnoreCase)
   
   For Each sPath In RDir($sSourceDir, "*", gb.File + gb.Directory, True)
     If CModule.Ext.Exist(File.Ext(sPath)) Then
-      Sources[File.Name(sPath)] = $sSourceDir &/ sPath
+      sName = File.Name(sPath)
+      Sources[sName] = $sSourceDir &/ sPath
     Endif
   Next
   
 End
+
+Public Sub CheckDuplicates() As String[]
+
+  Dim sPath As String
+  Dim cName As New Collection
+  Dim aList As New String[]
+  Dim sName As String
+  Dim sDup As String
+  
+  For Each sPath In RDir($sSourceDir, "*", gb.File + gb.Directory, True)
+    sName = File.Name(sPath)
+    sDup = cName[sName]
+    If Not sDup Then
+      cName[sName] = sPath
+    Else
+      If sDup <> "*" Then
+        aList.Add(sDup)
+        cName[sName] = "*"
+      Endif
+      aList.Add(sPath)
+    Endif
+  Next
+  
+  If aList.Count Then Return aList
+  
+End
+
 
 Private Sub IsConnectionPath(sPath As String) As Boolean
   
