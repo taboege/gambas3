@@ -1,0 +1,32 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: gb.form.terminal 3.14.90\n"
+"PO-Revision-Date: 2020-06-12 00:38 UTC\n"
+"Last-Translator: Gen Braga <gen.braga1@gmail.com>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# gb-ignore
+#: .project:1
+msgid "Gambas Terminal control"
+msgstr ""
+
+#: TerminalView.class:1422
+msgid "Copy"
+msgstr "Copiar"
+
+#: TerminalView.class:1427
+msgid "Paste"
+msgstr "Colar"
+
+#: TerminalView.class:1434
+msgid "Select all"
+msgstr "Selecionar tudo"
+
+#: TerminalView.class:1439
+msgid "Clear"
+msgstr "Limpar"
+
