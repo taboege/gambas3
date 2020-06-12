@@ -88,7 +88,7 @@ Public Sub TestHeadlineThree()
 
   md = "#dingdong"
   Try got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Error("Markdown headline error")
   'Assert.Note("I got:" & gb.lf & got)
 
@@ -112,7 +112,7 @@ Public Sub TestHlAndLineAndParagraph()
   md = "# headline" & gb.lf & "---" & gb.lf & "blub"
   expect = "<h1>headline</h1>" & gb.lf & "<hr>" & gb.lf & "<p>blub</p>"
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown headline and paragraph")
   ' Assert.Note("I got:" & gb.lf & got)
 
@@ -130,7 +130,7 @@ Public Sub TestHtmlTagIntegrity()
     "<img src='test' blah='test' />"
 
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown TestHtmlTagIntegrity")
   'Assert.Note("I got:" & gb.lf & got)
 
@@ -153,7 +153,7 @@ Public Sub TestHtmlTagIntegrityTwo()
     "</small></div>"
 
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown headline and paragraph")
   'Assert.Note("I got:" & gb.lf & got)
 
@@ -180,7 +180,7 @@ Public Sub TestUL()
     "</ul>"
 
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown UL")
   ' Assert.Note("I got:" & gb.lf & got)
 
@@ -207,7 +207,7 @@ Public Sub TestOL()
     "</ol>"
 
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown OL")
 
 End
@@ -233,7 +233,7 @@ Public Sub TestOLWithImage()
     "</ol>"
 
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown OL with image")
   ' Assert.Note("I expected:" & gb.lf & expect)
   'Assert.Note("I got:" & gb.lf & got)
@@ -249,7 +249,7 @@ Public Sub TestHtmlTags()
   expect = "<img src='test' title='test' />"
 
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown image")
 
   ' Assert.Note("I expected:" & gb.lf & expect)
@@ -300,7 +300,7 @@ Public Sub TestTable()
     "</table>"
 
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown preserve table")
   'Assert.Note(got)
 
@@ -349,7 +349,7 @@ Public Sub TestParInTable()
     "</table>"
 
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown preserve p in table")
   'Assert.Note(got)
 
@@ -376,7 +376,7 @@ Public Sub TestPreserverUL()
     "</ul>"
 
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown preserve ul")
   'Assert.Note(got)
 
@@ -403,7 +403,7 @@ Public Sub TestPreserverOL()
     "</ol>"
 
   got = Markdown.ToHTML(md)
-  Assert.Todo()
+  Test.Todo()
   Assert.Equals(got, expect, "Markdown preserve ol")
   'Assert.Note(got)
 
