@@ -361,7 +361,13 @@ Private Function GetDependencies(Optional aComp As String[]) As String
   Dim iPos As Integer
   Dim sTest As String
   
-  If Not aComp Then aComp = Project.Components
+  If Not aComp Then 
+    If Project.Type = Project.TYPE_COMPONENT Then
+      aComp = Project.ReadComponentFile()["Require"]
+    Else
+      aComp = Project.Components
+    Endif
+  Endif
   
   For Each sComp In aComp
     
@@ -1058,10 +1064,8 @@ Private Function MakeDebPackage(sSys As String)
   Print #hFile, "Architecture: all"
   Print #hFile, "Depends: gambas"; System.Version; "-runtime (>= "; MIN_VERSION; "), gambas"; System.Version; "-runtime (<< "; MAX_VERSION; ")";
   
-  If Project.Type <> Project.TYPE_COMPONENT Then
-    Print #hFile, GetDependencies();
-    Print #hFile, GetExtraDependencies(sSys);
-  Endif 
+  Print #hFile, GetDependencies();
+  Print #hFile, GetExtraDependencies(sSys);
   Print #hFile
 
   Print #hFile, GetShortDesc("Description: " & $sDescription, 80)
@@ -1520,12 +1524,8 @@ Private Function MakeRpmPackage(sSys As String)
 
   Print #hFile, "Requires: gambas"; System.Version; "-runtime >= "; MIN_VERSION; ",gambas"; System.Version; "-runtime < "; MAX_VERSION;
 
-  If Project.Type <> Project.TYPE_COMPONENT Then 
-  
-    Print #hFile, GetDependencies();
-    Print #hFile, GetExtraDependencies(sSys);
-  
-  Endif
+  Print #hFile, GetDependencies();
+  Print #hFile, GetExtraDependencies(sSys);
 
   Print #hFile
 
@@ -2138,12 +2138,8 @@ Private Sub MakeTgzPackage(sSys As String)
   Print #hFile, "gambas"; System.Version; " >= "; MIN_VERSION
   Print #hFile, "gambas"; System.Version; " < "; MAX_VERSION
 
-  If Project.Type <> Project.TYPE_COMPONENT Then
-
-    Print #hFile, GetDependencies();
-    Print #hFile, GetExtraDependencies(sSys);
-
-  Endif
+  Print #hFile, GetDependencies();
+  Print #hFile, GetExtraDependencies(sSys);
   
   Close #hFile
   
