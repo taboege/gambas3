@@ -311,7 +311,7 @@ Private Sub CalcSizes()
   '$hFontBold = $hView.Font.Copy()
   '$hFontBold.Bold = True
   
-  $LH = $hFont.Height + 1
+  $LH = $hFont.Height + 2
   CalcBoldWidth
   $hRows.Height = $LH
   
@@ -326,7 +326,7 @@ Private Sub CalcSizes()
   
   $hFontNumber.Size *= $LH / $hFontNumber.Height
   
-  $iAscent = $hFont.Ascent
+  $iAscent = $hFont.Ascent + 1
   $iLargestLine = -1
   $iSpaceWidth = $hFont.TextWidth(" ")
   $iTabWidth = $hFont.TextWidth("m") * $iTabSize
@@ -468,8 +468,10 @@ Private Sub UpdateMargin()
   Endif
   If $bShowModified Then
     $iWidthModified = $hFont.H \ 2
-    MW += $iWidthModified
+  Else
+    $iWidthModified = 2
   Endif
+  MW += $iWidthModified
   
   If MW <> $MW Then
     $MW = MW
@@ -526,7 +528,7 @@ Private Sub DrawText(sText As String, SX As Integer, X As Integer, Y As Integer)
       YY = $hTabImage.H / 2
       
       Paint.LineWidth = $fTabSymbolSize / 4
-      Paint.Background = Color.SetAlpha(Color.TextForeground, 192)
+      Paint.Background = $iMarginColor
       Paint.MoveTo(XX - $fTabSymbolSize, YY - $fTabSymbolSize)
       Paint.LineTo(XX, YY)
       Paint.LineTo(XX - $fTabSymbolSize, YY + $fTabSymbolSize)
@@ -927,7 +929,7 @@ Private Sub DrawLine(X As Integer, Y As Integer, Width As Integer, Height As Int
   Dim XY As Point
   Dim HH As Integer
   Dim aDiffLayout As Integer[][]
-  Dim aText As Variant
+  Dim aText As String[]
   
   H = $LH
 
@@ -956,9 +958,6 @@ Private Sub DrawLine(X As Integer, Y As Integer, Width As Integer, Height As Int
   
   If Row = $iStopLine Then
     Paint.FillRect(X, Y, Width, HH, $hStyles[Highlight.Current].Color)
-  Else If $bShowCurrent And If Row = $Y Then
-    'Paint.FillRect(X, Y + $XY.Y, Width, H, $hStyles[Highlight.CurrentLine].Color)
-    Paint.FillRect(X, Y, Width, HH, $hStyles[Highlight.CurrentLine].Color)
   Endif
   
   If $hDoc.DiffAdded And If $hDoc.IsDiffAdded(Row) Then Paint.FillRect(X, Y, Width, HH, Color.SetAlpha($hStyles[Highlight.Added].Color, 224))
@@ -1344,12 +1343,12 @@ Private Sub DrawMargin(X As Integer, Y As Integer, Width As Integer, Height As I
         ' Paint.Stroke
         X1 = X + $MW - $LH / 2 - $iWidthModified
         X2 = X + $MW - $iWidthModified
-        Paint.MoveTo(X, Y)
-        Paint.LineTo(X1, Y)
+        Paint.MoveTo(X, Y + 2)
+        Paint.LineTo(X1, Y + 2)
         Paint.LineTo(X2, Y + Height / 2)
-        Paint.LineTo(X1, Y + Height)
-        Paint.LineTo(X, Y + Height)
-        Paint.LineTo(X, Y)
+        Paint.LineTo(X1, Y + Height - 2)
+        Paint.LineTo(X, Y + Height - 2)
+        Paint.LineTo(X, Y + 2)
         Paint.Background = $hStyles[Highlight.Selection].Color
         Paint.Fill
       Endif
@@ -1404,7 +1403,7 @@ Private Sub DrawMargin(X As Integer, Y As Integer, Width As Integer, Height As I
     Endif
   Endif
   
-  If YL >= 0 Then Paint.FillRect(X, YL, Width, 1, $iLimitColor)
+  If YL >= 0 Then Paint.FillRect(X, YL, Width, 1, Color.SetAlpha($iMatchColor, 64))
   
   If YL < 0 Or If YL = Y Then
     If $bShowLineNumber Then
@@ -2127,7 +2126,7 @@ Public Sub View_MouseDown()
   
   If Y >= 0 Then
     MW = $MW
-    If $bShowModified Then MW -= $iWidthModified
+    MW -= $iWidthModified
     If Mouse.X < MW And If Mouse.X >= $iPosIcon Then
       If Mouse.Left Then
         Goto(0, Y, Mouse.Shift)
@@ -3102,6 +3101,8 @@ Public Sub View_Draw()
   'Dim hImage As Image
   Dim hPict As Picture
   Dim iCount As Integer
+  Dim YR As Integer
+  Dim HR As Integer
   
   If Not $bUpdateHeightAllowed Then
     $bUpdateHeightAllowed = True
@@ -3116,7 +3117,7 @@ Public Sub View_Draw()
     $iIndentColor = Color.SetAlpha($iLimitColor, 160)
     $iMatchColor = $hStyles[Highlight.Highlight].Color
     '$iIndentColor = Color.Gradient($iBackground, $iForeground)
-    $iMarginColor = Color.Merge($iLimitColor, $iBackground, 0.8)
+    $iMarginColor = Color.SetAlpha($iForeground, 192)
     CalcBoldWidth
     $bStyleChanged = False
   Endif
@@ -3168,6 +3169,11 @@ Public Sub View_Draw()
     If iRow >= iCount Then Break
     
     H = $hRows._GetRowHeight(iRow)
+    
+    If $bShowCurrent And If iRow = $Y Then
+      YR = Y
+      HR = H
+    Endif
   
     If H >= $hView.ClientH Or If $bRemoteDisplay Then
       Paint.Save
@@ -3202,8 +3208,8 @@ Public Sub View_Draw()
   Next
   
   W = $MW
-  If $bShowModified Then W -= $iWidthModified
-  If W > 0 Then Paint.FillRect(XX + $hView.ScrollX, hClip.Y, W, hClip.H, $iMarginColor)
+  W -= $iWidthModified
+  'If W > 0 Then Paint.FillRect(XX + $hView.ScrollX, hClip.Y, W, hClip.H, $iMarginColor)
   
   If $MW Then
     
@@ -3230,6 +3236,14 @@ Public Sub View_Draw()
       
     Next
     
+    Paint.FillRect(XX + $hView.ScrollX + W - 1, hClip.Y, 1, hClip.H, $iMarginColor)
+    
+  Endif
+  
+  If HR Then
+    XX += $MW - $iWidthModified
+    Paint.FillRect(XX, YR, $iWidth, 1, $iMarginColor)
+    Paint.FillRect(XX, YR + HR - 1, $iWidth, 1, $iMarginColor)
   Endif
   
   $hTimerCacheLine.Stop
@@ -5475,7 +5489,7 @@ Private Sub DrawBarImage3()
     bModified = False
     bSaved = False
 
-    Paint.FillRect(0, Y, 4, 1, $iMarginColor)
+    'Paint.FillRect(0, Y, 4, 1, $iMarginColor)
     
     For J = I To Min(N, I + F - 1)
     
