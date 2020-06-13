@@ -108,6 +108,7 @@ Public Sub dwgWelcome_Draw()
   Dim J As Integer
   Dim bDraw As Boolean
   Dim DYT As Float
+  Dim iLum As Integer
    
   If Not $hLogo Then 
     
@@ -175,7 +176,7 @@ Public Sub dwgWelcome_Draw()
       Paint.Begin($hTear)
       Paint.Translate(112, 87)
       
-      Debug $aTears.Count
+      'Debug $aTears.Count
       
       I = 0
       While I < $aTears.Count
@@ -186,10 +187,10 @@ Public Sub dwgWelcome_Draw()
         
         Randomize hTear.Seed
         
-        XT = 0.0
+        XT = Rnd(-4, 4)
         YT = 0.0
         
-        DXT = Rnd(-8, 8)
+        DXT = Rnd(-2, 2)
         DYT = 0.1
         
         For J = 0 To hTear.Age
@@ -198,18 +199,19 @@ Public Sub dwgWelcome_Draw()
           XT += DXT + Rnd(-0.1, 0.1)
           YT += DYT
           
-          If Color[$hLogo[XT + 112, YT + 87]].Luminance < 24 Then
+          iLum = Color[$hLogo[XT + 112, YT + 87]].Luminance
+          If iLum < 24 And If DYT > 0.5 Then
             DYT = 0.1
           Else
             DYT = Max(0.5, DYT + 0.025)
           Endif
-          DXT /= 2
+          DXT *= 0.8
           
           If iAge < 128 And If (YT - R) < (Paint.H - 87) Then
             
             R = Max(0.5, 3 - Sqr(iAge) / 4)
             Paint.Ellipse(XT - R, YT - R, R * 2, R * 2)
-            Paint.Background = Color.RGB(240, 240, 255) ', 255 + (iAge \ 8) - 16)
+            Paint.Background = Color.RGB(220, 230, 255, 192) ', 255 + (iAge \ 8) - 16)
             Paint.Fill
             bDraw = True
             

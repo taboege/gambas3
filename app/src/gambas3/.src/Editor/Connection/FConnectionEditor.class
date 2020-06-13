@@ -1659,6 +1659,7 @@ Public Sub btnNewTable_Click()
   sName = FNewTable.TableName
   
   If MConnection.CreateTable($hConn, sName, FNewTable.TableType) Then Return
+  UpdateDefinition
   
   lvwTable.Add("T" & sName, sName, Picture["icon:/16/table"])
   'lvwTable["T" & sName].Selected = True
@@ -1709,6 +1710,7 @@ Public Sub btnKill_Click()
   If CheckCurrent() Then Return
   
   $hConn.Tables.Remove($sTable)
+  UpdateDefinition
   'UpdateDefinition($sTable)
   lvwTable.Remove("T" & $sTable)
   datData.Reset
@@ -1743,6 +1745,8 @@ Public Sub btnRename_Click()
     Return
   Endif
   
+  UpdateDefinition
+  
   'Try $hConn.DeleteTable(sOldName)
   LoadList($sTable)
   
@@ -1753,6 +1757,7 @@ Public Sub btnImport_Click()
   If SaveTable() Then Return
   
   FImportTable.Run($hConn, GetTableList()) 
+  UpdateDefinition
   If FImportTable.Table Then
     LoadList(FImportTable.Table)
   Else

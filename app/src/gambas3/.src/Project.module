@@ -3482,7 +3482,7 @@ Public Sub ReadProject(Optional bConvert As Boolean)
 
       Case "packagenamewithmajor"
         PackageNameWithMajor = CInt(sVal) <> 0
-
+        
       Case "maintainer"
         Maintainer = sVal
 
@@ -3613,7 +3613,7 @@ End
 
 Public Sub WriteProject(Optional bComponentDoNotChange As Boolean, Optional bMakeShortcut As Boolean)
 
-  Dim hFic As File
+  Dim hFile As File
   Dim sSys As String
   Dim sPath As String
   Dim sVal As String
@@ -3644,22 +3644,22 @@ Public Sub WriteProject(Optional bComponentDoNotChange As Boolean, Optional bMak
 
   sPath = Path
   Try Kill sPath & ".tmp"
-  hFic = Open sPath & ".tmp" For Create
+  hFile = Open sPath & ".tmp" For Create
 
-  Print #hFic, PROJECT_MAGIC
+  Print #hFile, PROJECT_MAGIC
   'Print #hFic, "# Compiled with Gambas "; FullVersion
   'PRINT #hFic, "Project="; Name
 
-  If Title Then Print #hFic, "Title="; Title
-  If Startup Then Print #hFic, "Startup="; Startup
+  If Title Then Print #hFile, "Title="; Title
+  If Startup Then Print #hFile, "Startup="; Startup
   'If Stack Then Print #hFic, "Stack="; Stack
   'If StackTrace Then Print #hFic, "StackTrace=1"
-  If UseTerminal Then Print #hFic, "UseTerminal=1"
-  If RedirectStderr Then Print #hFic, "RedirectStderr=1"
-  If UseHttpServer Then Print #hFic, "UseHttpServer=1"
-  If Profiling Then Print #hFic, "Profiling=1"
+  If UseTerminal Then Print #hFile, "UseTerminal=1"
+  If RedirectStderr Then Print #hFile, "RedirectStderr=1"
+  If UseHttpServer Then Print #hFile, "UseHttpServer=1"
+  If Profiling Then Print #hFile, "Profiling=1"
   'If BreakOnError Then Print #hFic, "BreakOnError=1"
-  If Icon Then Print #hFic, "Icon="; Icon
+  If Icon Then Print #hFile, "Icon="; Icon
 
   GetVersion()
   sVer = FormatVersion()
@@ -3668,93 +3668,94 @@ Public Sub WriteProject(Optional bComponentDoNotChange As Boolean, Optional bMak
     If sBranch Then sVer &= " (" & sBranch & ")"
   Endif
   
-  Print #hFic, "Version="; sVer
-  If VersionFile Then Print #hFic, "VersionFile=1"
-  If VersionAddBranch Then Print #hFic, "VersionAddBranch=1"
+  Print #hFile, "Version="; sVer
+  If VersionFile Then Print #hFile, "VersionFile=1"
+  If VersionAddBranch Then Print #hFile, "VersionAddBranch=1"
 
   For Each hComp In Documentation.Components
     If Components.Find(hComp.Key) >= 0 Then
-      Print #hFic, "Component="; hComp.Key
+      Print #hFile, "Component="; hComp.Key
     Endif
   Next
 
-  If LibraryPath Then Print #hFic, "LibraryPath="; LibraryPath
+  If LibraryPath Then Print #hFile, "LibraryPath="; LibraryPath
   For Each sVal In Libraries
-    Print #hFic, "Library="; sVal
+    Print #hFile, "Library="; sVal
   Next
 
-  If Description Then Print #hFic, "Description="; Quote(Description)
-  If Authors Then Print #hFic, "Authors="; Quote(Authors)
+  If Description Then Print #hFile, "Description="; Quote(Description)
+  If Authors Then Print #hFile, "Authors="; Quote(Authors)
 
   If Arguments.Count Then 
-    Print #hFic, "Arguments="; Settings.ToString(Arguments)
-    If CurrentArgument And If CurrentArgument.Count Then Print #hFic, "CurrentArgument="; Settings.ToString(CurrentArgument)
+    Print #hFile, "Arguments="; Settings.ToString(Arguments)
+    If CurrentArgument And If CurrentArgument.Count Then Print #hFile, "CurrentArgument="; Settings.ToString(CurrentArgument)
   Endif
-  If Environment.Count Then Print #hFic, "Environment="; Quote(Environment.Join("\n"))
+  If Environment.Count Then Print #hFile, "Environment="; Quote(Environment.Join("\n"))
 
-  Print #hFic, "TabSize="; CStr(TabSize)
-  If Localize Then Print #hFic, "Translate=1"
-  If DefaultLanguage Then Print #hFic, "Language="; DefaultLanguage
-  If Not KeepDebugInfo Then Print #hFic, "KeepDebugInfo=0"
-  If CreateShortcut Then Print #hFic, "CreateShortcut=1"
-  If RunAfterMakingExec Then Print #hFic, "RunAfter="; RunAfterMakingExec
+  Print #hFile, "TabSize="; CStr(TabSize)
+  If Localize Then Print #hFile, "Translate=1"
+  If DefaultLanguage Then Print #hFile, "Language="; DefaultLanguage
+  If Not KeepDebugInfo Then Print #hFile, "KeepDebugInfo=0"
+  If CreateShortcut Then Print #hFile, "CreateShortcut=1"
+  If RunAfterMakingExec Then Print #hFile, "RunAfter="; RunAfterMakingExec
   Select Case Type
     Case TYPE_LIBRARY
-      Print #hFic, "Type=Library"
+      Print #hFile, "Type=Library"
     Case TYPE_COMPONENT
-      Print #hFic, "Type=Component"
+      Print #hFile, "Type=Component"
   End Select
-  If ControlPublic Then Print #hFic, "ControlPublic=1"
-  If ModulePublic Then Print #hFic, "ModulePublic=1"
-  If ShowDeprecated Then Print #hFic, "ShowDeprecated=1"
-  If Not Warnings Then Print #hFic, "Warnings=0"
-  If SourcePath Then Print #hFic, "SourcePath="; SourcePath
+  If ControlPublic Then Print #hFile, "ControlPublic=1"
+  If ModulePublic Then Print #hFile, "ModulePublic=1"
+  If ShowDeprecated Then Print #hFile, "ShowDeprecated=1"
+  If Not Warnings Then Print #hFile, "Warnings=0"
+  If SourcePath Then Print #hFile, "SourcePath="; SourcePath
 
-  If Maintainer Then Print #hFic, "Maintainer="; Maintainer
-  If Vendor Then Print #hFic, "Vendor="; Vendor
-  If VendorPrefix Then Print #hFic, "VendorPrefix="; VendorPrefix
-  If Address Then Print #hFic, "Address="; Address
-  If Url And If Url <> DEFAULT_URL Then Print #hFic, "Url="; Url
-  If License Then Print #hFic, "License="; License
-  If Prefix Then Print #hFic, "Prefix=1"
-  If PackageName Then Print #hFic, "PackageName="; PackageName
-  If PackageVersion > 1 Then Print #hFic, "PackageVersion="; PackageVersion
-  If PackageSignature Then Print #hFic, "PackageSignature=1"
-  If PackageNameWithMajor Then Print #hFic, "PackageNameWithMajor=1"
-  If CreateEachDirectory Then Print #hFic, "CreateEachDirectory=1"
-  If MimeTypes.Count Then Print #hFic, "MimeTypes="; MimeTypes.Join(",", Chr$(34))
-  If ExtraDesktop Then Print #hFic, "ExtraDesktop=" & Quote(ExtraDesktop)
-  If RuntimeVersion Then Print #hFic, "RuntimeVersion=" & Quote(RuntimeVersion)
+  If Maintainer Then Print #hFile, "Maintainer="; Maintainer
+  If Vendor Then Print #hFile, "Vendor="; Vendor
+  If VendorPrefix Then Print #hFile, "VendorPrefix="; VendorPrefix
+  If Address Then Print #hFile, "Address="; Address
+  If Url And If Url <> DEFAULT_URL Then Print #hFile, "Url="; Url
+  If License Then Print #hFile, "License="; License
+  If Prefix Then Print #hFile, "Prefix=1"
+  If PackageName Then Print #hFile, "PackageName="; PackageName
+  If PackageVersion > 1 Then Print #hFile, "PackageVersion="; PackageVersion
+  If PackageSignature Then Print #hFile, "PackageSignature=1"
+  If PackageNameWithMajor Then Print #hFile, "PackageNameWithMajor=1"
 
-  Print #hFic, "Packager=1"
-  If Systems.Count Then Print #hFic, "Systems="; Systems.Join(",")
-  If SameDependencies Then Print #hFic, "SameDependencies=1"
-  If SameFiles Then Print #hFic, "SameFiles=1"
-  If ExtraAutoconfTest Then Print #hFic, "ExtraAutoconfTest=" & Quote(ExtraAutoconfTest)
+  If CreateEachDirectory Then Print #hFile, "CreateEachDirectory=1"
+  If MimeTypes.Count Then Print #hFile, "MimeTypes="; MimeTypes.Join(",", Chr$(34))
+  If ExtraDesktop Then Print #hFile, "ExtraDesktop=" & Quote(ExtraDesktop)
+  If RuntimeVersion Then Print #hFile, "RuntimeVersion=" & Quote(RuntimeVersion)
+
+  Print #hFile, "Packager=1"
+  If Systems.Count Then Print #hFile, "Systems="; Systems.Join(",")
+  If SameDependencies Then Print #hFile, "SameDependencies=1"
+  If SameFiles Then Print #hFile, "SameFiles=1"
+  If ExtraAutoconfTest Then Print #hFile, "ExtraAutoconfTest=" & Quote(ExtraAutoconfTest)
 
   For Each sSys In $aSystems
-    If Menus[sSys] Then Print #hFic, "Menus="; sSys; ":"; Quote(Menus[sSys])
-    If Categories[sSys] Then Print #hFic, "Categories="; sSys; ":"; Quote(Categories[sSys])
-    If Groups[sSys] Then Print #hFic, "Groups="; sSys; ":"; Quote(Groups[sSys])
-    If ExtraDependencies[sSys] Then Print #hFic, "ExtraDependencies="; sSys; ":"; Quote(ExtraDependencies[sSys])
-    If ExtraFiles[sSys] Then Print #hFic, "ExtraFiles="; sSys; ":"; Quote(ExtraFiles[sSys])
+    If Menus[sSys] Then Print #hFile, "Menus="; sSys; ":"; Quote(Menus[sSys])
+    If Categories[sSys] Then Print #hFile, "Categories="; sSys; ":"; Quote(Categories[sSys])
+    If Groups[sSys] Then Print #hFile, "Groups="; sSys; ":"; Quote(Groups[sSys])
+    If ExtraDependencies[sSys] Then Print #hFile, "ExtraDependencies="; sSys; ":"; Quote(ExtraDependencies[sSys])
+    If ExtraFiles[sSys] Then Print #hFile, "ExtraFiles="; sSys; ":"; Quote(ExtraFiles[sSys])
   Next
 
-  If PublishTags And If PublishTags.Count Then Print #hFic, "Tags="; PublishTags.Join(",")
-  If PublishDependencies And If PublishDependencies.Count Then Print #hFic, "Dependencies="; PublishDependencies.Join(",")
-  If PublishGambasVersion Then Print #hFic, "GambasVersion="; PublishGambasVersion
-  If PublishWebSite Then Print #hFic, "WebSite="; PublishWebSite
-  If PublishCreateMenu Then Print #hFic, "CreateMenu=1"
+  If PublishTags And If PublishTags.Count Then Print #hFile, "Tags="; PublishTags.Join(",")
+  If PublishDependencies And If PublishDependencies.Count Then Print #hFile, "Dependencies="; PublishDependencies.Join(",")
+  If PublishGambasVersion Then Print #hFile, "GambasVersion="; PublishGambasVersion
+  If PublishWebSite Then Print #hFile, "WebSite="; PublishWebSite
+  If PublishCreateMenu Then Print #hFile, "CreateMenu=1"
   
-  If DoNotTranslate.Count Then Print #hFic, "DoNotTranslate="; DoNotTranslate.Join(",", Chr$(34))
+  If DoNotTranslate.Count Then Print #hFile, "DoNotTranslate="; DoNotTranslate.Join(",", Chr$(34))
   
   If ExtraReferences Then
     For Each sVal In ExtraReferences
-      Print #hFic, "Reference="; sVal
+      Print #hFile, "Reference="; sVal
     Next
   Endif
 
-  Close #hFic
+  Close #hFile
 
   Try Kill sPath
   Move sPath & ".tmp" To sPath

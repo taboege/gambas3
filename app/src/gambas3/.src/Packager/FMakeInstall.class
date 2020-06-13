@@ -495,7 +495,8 @@ Public Sub wizInstall_BeforeChange()
         Stop Event 
         Return 
       Endif
-      Settings["/FMakeInstall/PackagePath"] = Package.Dir
+      
+      Project.Config["/Package/Dir"] = Project.TildePath(Package.Dir)
       
     Case TAB_CREATE
       
@@ -566,8 +567,8 @@ Public Sub wizInstall_Change()
       'cmbFile_Click
       
     Case TAB_DIR
-      dchInstall.SelectedPath = Settings["/FMakeInstall/PackagePath", System.User.Home]
-      
+      dchInstall.SelectedPath = Project.UntildePath(Project.Config["/Package/Dir", Settings["/FMakeInstall/PackagePath", "~"]])
+
     Case TAB_CREATE
       chkSignature.Value = Settings["/FMakeInstall/SignPackage", False]
       panError.Hide

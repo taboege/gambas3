@@ -113,7 +113,8 @@ Private Sub PlaySound() As Boolean
   Dim sTemp As String
   
   dNow = Date(Now)
-  iYear = Year(Now)
+  'dNow = Date(2020, 8, 15)
+  iYear = Year(dNow)
   dEaster = Date.EasterDay(iYear)
   
   If dNow = Date(iYear, 12, 25) Then
