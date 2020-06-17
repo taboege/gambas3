@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,67,59)
+  MoveScaled(0,0,67,16)
   Arrangement = Arrange.Vertical
   Spacing = True
   Margin = True
@@ -18,17 +18,17 @@
       Expand = True
     }
   }
+  { Panel2 Panel
+    MoveScaled(33,17,4,1)
+  }
   { trmDetail TerminalView
-    MoveScaled(10,15,45,29)
+    MoveScaled(6,10,45,24)
     Visible = False
     Expand = True
     ReadOnly = True
   }
-  { Panel2 Panel
-    MoveScaled(31,49,4,1)
-  }
   { HBox1 HBox
-    MoveScaled(0,54,57,4)
+    MoveScaled(2,20,57,4)
     Spacing = True
     { Panel1 Panel
       MoveScaled(4,0,4,4)
