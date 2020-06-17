@@ -706,13 +706,17 @@ Private Sub DoStructControlCompletion(iLine As Integer, sLine As String, aSymbol
   Dim iPos, iInd As Integer
   Dim iIndent As Integer
   Dim sIndent As String
+  Dim sAdd As String
 
   If aSymbol.Count >= 1 Then
-    If aSymbol[0] = "IF" And If aSymbol[aSymbol.Max] = "THEN" Then
-      bIndent = True
-      bUnindent = False
-      sClose = "Endif"
-      sClose2 = "Else"
+    If aSymbol[0] = "IF" Then
+      If aSymbol[aSymbol.Max] = "THEN" Or If Not aSymbol.Exist("THEN") Then
+        bIndent = True
+        bUnindent = False
+        If aSymbol[aSymbol.Max] <> "THEN" Then sAdd = " Then"
+        sClose = "Endif"
+        sClose2 = "Else"
+      Endif
     Else If SymbolBegins(aSymbol, "Public Struct") Or If aSymbol[0] = "STRUCT" Then
       bIndent = True
       bUnindent = False
@@ -751,6 +755,7 @@ Private Sub DoStructControlCompletion(iLine As Integer, sLine As String, aSymbol
     Endif
 
     $hEditor.Begin
+    
     If bUnindent And If Not Key.Shift Then
       If IsSpace(Left(sLine, Project.TabSize)) Then
         sLine = Mid$(sLine, Project.TabSize + 1)
@@ -758,15 +763,19 @@ Private Sub DoStructControlCompletion(iLine As Integer, sLine As String, aSymbol
         iIndent -= Project.TabSize
       Endif
     Endif
+    
     sIndent = Space$(iIndent)
-    $hEditor.Insert("\n" & Space$(Project.TabSize) & sIndent)
+    $hEditor.Insert(sAdd & "\n" & Space$(Project.TabSize) & sIndent)
     If StructControlCompletion Then
       If Not bUnindent And If sClose And If Not Key.Shift Then $hEditor.Insert("\n" & sIndent & sClose)
     Endif
+    
     $hEditor.End
     $hEditor.Goto(Project.TabSize + Len(sIndent), iLine + 1)
+    
     Stop Event
     Return True
+    
   Endif
 
 End

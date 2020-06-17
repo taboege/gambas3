@@ -117,6 +117,7 @@ Static Private Sub InitComponentNames()
   $cName["gb.openssl"] = ("OpenSSL library routines")
   $cName["gb.option"] = ("GNU command option parser")
   $cName["gb.pcre"] = ("Perl-compatible Regular Expression Matching")
+  $cName["gb.poppler"] = ("PDF renderer based on Poppler library")
   $cName["gb.pdf"] = ("PDF renderer based on Poppler library")
   $cName["gb.qt4"] = ("QT4 toolkit")
   $cName["gb.qt4.ext"] = ("QT4 toolkit extension")
@@ -293,7 +294,8 @@ Private Sub InitComponent(sFile As String, Optional sKey As String)
   
 Catch 
   
-  Debug "Unable to read component file:";; sFile
+  Error "gambas"; System.Version; ": Unable to read component file:";; sFile
+  Error Error.Where; ":";; Error.Text
   
 End
 
