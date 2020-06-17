@@ -225,6 +225,8 @@ BEGIN_PROPERTY(Application_Busy)
 	else
 	{
 		busy = VPROP(GB_INTEGER);
+		if (busy < 0)
+			busy = 0;
 
 		if (screen_busy == 0 && busy > 0)
 			qApp->setOverrideCursor(Qt::WaitCursor);

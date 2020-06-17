@@ -199,6 +199,8 @@ BEGIN_PROPERTY(Application_Busy)
 	else
 	{
 		busy = VPROP(GB_INTEGER);
+		if (busy < 0)
+			busy = 0;
 
 		if (_busy == 0 && busy != 0)
 			gApplication::setBusy(true);
