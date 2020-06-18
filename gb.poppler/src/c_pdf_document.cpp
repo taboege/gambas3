@@ -43,7 +43,7 @@ struct _PopplerPage
 struct _PopplerDocument
 {
   GObject parent_instance;
-  std::unique_ptr<GlobalParamsIniter> initer;
+  void *initer;
   PDFDoc *doc;
 
   GList *layers;
