@@ -26,10 +26,8 @@
 #ifndef __C_PDF_DOCUMENT_H
 #define __C_PDF_DOCUMENT_H
 
-#include "poppler/cpp/poppler-document.h"
-#include "poppler/cpp/poppler-page.h"
-#include "poppler/cpp/poppler-page-renderer.h"
-#include "poppler/cpp/poppler-image.h"
+#include <SplashOutputDev.h>
+#include "glib/poppler.h"
 #include "main.h"
 
 #ifndef __C_PDF_DOCUMENT_CPP
@@ -40,10 +38,12 @@ extern GB_DESC PdfPageDesc[];
 typedef
 	struct {
 		GB_BASE ob;
-		poppler::document *doc;
-		poppler::page **pages;
-		poppler::page *current;
-		poppler::page_renderer *renderer;
+		char *buffer;
+		int length;
+		PopplerDocument *doc;
+		PopplerPage **pages;
+		PopplerPage *current;
+		SplashOutputDev *renderer;
 		double resolution;
 		int rotation;
 	}

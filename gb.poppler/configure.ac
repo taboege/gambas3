@@ -9,6 +9,6 @@ GB_COMPONENT_PKG_CONFIG(
   POPPLER,
   gb.poppler,
   [src],
-  poppler-cpp poppler-splash)
+  poppler poppler-splash poppler-glib)
 AC_OUTPUT( Makefile src/Makefile )
 GB_PRINT_MESSAGES

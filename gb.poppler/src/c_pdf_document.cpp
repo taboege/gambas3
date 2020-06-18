@@ -25,20 +25,20 @@
 
 #define __C_PDF_DOCUMENT_CPP
 
-#include "poppler/cpp/poppler-global.h"
+#include <Page.h>
+
 #include "c_pdf_document.h"
 
-static void return_ustring(poppler::ustring str)
+struct _PopplerPage
 {
-	poppler::byte_array utf8 = str.to_utf8();
-	int len = utf8.size();
-	if (len >= 1)
-		GB.ReturnNewString(utf8.data(), len);
-	else
-		GB.ReturnVoidString();
-}
+  GObject parent_instance;
+  PopplerDocument *document;
+  Page *page;
+  int index;
+  void *text;
+};
 
-static poppler::rotation_enum conv_rotation(int angle)
+/*static poppler::rotation_enum conv_rotation(int angle)
 {
 	if (angle < 0)
 		angle = 360 - (-angle) % 360;
@@ -53,10 +53,11 @@ static poppler::rotation_enum conv_rotation(int angle)
 		case 270: return poppler::rotate_270;
 		default: return poppler::rotate_0;
 	}
-}
+}*/
 
 //--------------------------------------------------------------------------
 
+#if 0
 static void free_image(GB_IMG *img, void *image)
 {
 	delete (poppler::image *)image;
@@ -97,28 +98,34 @@ static void return_image(poppler::image *image)
 	
 	GB.ReturnObject(img);
 }
+#endif
 	
 //--------------------------------------------------------------------------
 
-BEGIN_METHOD(PdfDocument_new, GB_STRING path; GB_STRING owner; GB_STRING password)
+BEGIN_METHOD(PdfDocument_new, GB_STRING path; GB_STRING password)
 
-	char *buf;
-	int len;
-	std::string owner;
-	std::string password;
+	const char *password;
+	GError *error;
+	SplashColor paper = { 0xFF, 0xFF, 0xFF };
 
-	if (GB.LoadFile(STRING(path), LENGTH(path), &buf, &len))
+	if (GB.LoadFile(STRING(path), LENGTH(path), &THIS->buffer, &THIS->length))
 		return;
 
-	if (!MISSING(owner))
-		owner = std::string(STRING(owner), LENGTH(owner));
+	if (MISSING(password))
+		password = NULL;
+	else
+		password = GB.ToZeroString(ARG(password));
 	
-	if (!MISSING(password))
-		password = std::string(STRING(password), LENGTH(password));
+	THIS->doc = poppler_document_new_from_data(THIS->buffer, THIS->length, password, &error);
+	if (!THIS->doc)
+	{
+		GB.Error(error->message);
+		return;
+	}
 	
-	THIS->doc = poppler::document::load_from_raw_data(buf, len, owner, password);
-	THIS->renderer = new poppler::page_renderer;
 	THIS->resolution = 300.0;
+	
+	THIS->renderer = new SplashOutputDev(splashModeRGB8, 3, false, paper);
 
 END_METHOD
 
@@ -128,49 +135,54 @@ BEGIN_METHOD_VOID(PdfDocument_free)
 	
 	if (THIS->pages)
 	{
-		for (i = 0; i < THIS->doc->pages(); i++)
-			delete THIS->pages[i];
+		for (i = 0; i < poppler_document_get_n_pages(THIS->doc); i++)
+		{
+			if (THIS->pages[i])
+				g_object_unref(THIS->pages[i]);
+		}
 		
 		GB.Free(POINTER(&THIS->pages));
 	}
 
 	delete THIS->renderer;
-	delete THIS->doc;
+	g_object_unref(THIS->doc);
+	
+	GB.ReleaseFile(THIS->buffer, THIS->length);
 	
 END_METHOD
 
 BEGIN_PROPERTY(PdfDocument_Count)
 
-	GB.ReturnInteger(THIS->doc->pages());
+	GB.ReturnInteger(poppler_document_get_n_pages(THIS->doc));
 
 END_PROPERTY
 
 #define IMPLEMENT_DOC_PROP(_name, _func) \
 BEGIN_PROPERTY(PdfDocument_##_name) \
-	return_ustring(THIS->doc->_func()); \
+	GB.ReturnNewZeroString(poppler_document_get_##_func(THIS->doc)); \
 END_PROPERTY
 
-IMPLEMENT_DOC_PROP(Author, get_author)
-IMPLEMENT_DOC_PROP(Creator, get_creator)
-IMPLEMENT_DOC_PROP(Producer, get_producer)
-IMPLEMENT_DOC_PROP(Subject, get_subject)
-IMPLEMENT_DOC_PROP(Title, get_title)
+IMPLEMENT_DOC_PROP(Author, author)
+IMPLEMENT_DOC_PROP(Creator, creator)
+IMPLEMENT_DOC_PROP(Producer, producer)
+IMPLEMENT_DOC_PROP(Subject, subject)
+IMPLEMENT_DOC_PROP(Title, title)
 
 BEGIN_METHOD(PdfDocument_get, GB_INTEGER index)
 
 	int index = VARG(index);
 	
-	if (index < 0 || index >= THIS->doc->pages())
+	if (index < 0 || index >= poppler_document_get_n_pages(THIS->doc))
 	{
 		GB.Error(GB_ERR_BOUND);
 		return;
 	}
 
 	if (!THIS->pages)
-		GB.AllocZero(POINTER(&THIS->pages), sizeof(void *) * THIS->doc->pages());
+		GB.AllocZero(POINTER(&THIS->pages), sizeof(void *) * poppler_document_get_n_pages(THIS->doc));
 	
 	if (!THIS->pages[index])
-		THIS->pages[index] = THIS->doc->create_page(index);
+		THIS->pages[index] = poppler_document_get_page(THIS->doc, index);
 	
 	THIS->current = THIS->pages[index];
 	
@@ -205,25 +217,13 @@ BEGIN_PROPERTY(PdfDocument_Rotation)
 
 END_PROPERTY
 
-#define IMPLEMENT_HINT_PROP(_name, _const) \
-BEGIN_PROPERTY(PdfDocument_##_name) \
-	if (READ_PROPERTY) \
-		GB.ReturnBoolean(THIS->renderer->render_hints() & poppler::page_renderer::_const); \
-	else \
-		THIS->renderer->set_render_hint(poppler::page_renderer::_const, VPROP(GB_BOOLEAN)); \
-END_PROPERTY
-
-IMPLEMENT_HINT_PROP(Antialiasing, antialiasing)
-IMPLEMENT_HINT_PROP(TextAntialiasing, text_antialiasing)
-IMPLEMENT_HINT_PROP(TextHinting, text_hinting)
-
 //--------------------------------------------------------------------------
 
-BEGIN_PROPERTY(PdfPage_Orientation)
+/*BEGIN_PROPERTY(PdfPage_Orientation)
 
 	GB.ReturnInteger(THIS->current->orientation());
 
-END_PROPERTY
+END_PROPERTY*/
 
 BEGIN_METHOD(PdfPage_Render, GB_INTEGER x; GB_INTEGER y; GB_INTEGER width; GB_INTEGER height; GB_INTEGER rotation; GB_FLOAT res)
 
@@ -234,11 +234,9 @@ BEGIN_METHOD(PdfPage_Render, GB_INTEGER x; GB_INTEGER y; GB_INTEGER width; GB_IN
 	int w = VARGOPT(width, -1);
 	int h = VARGOPT(height, -1);
 	
-	poppler::image *image = new poppler::image;
-
-	*image = THIS->renderer->render_page(THIS->current, res, res, x, y, w, h, conv_rotation(rotation));
+	/**image = THIS->renderer->render_page(THIS->current, res, res, x, y, w, h, conv_rotation(rotation));
 	
-	return_image(image);
+	return_image(image);*/
 
 END_METHOD
 
@@ -248,7 +246,7 @@ GB_DESC PdfPageDesc[] =
 {
 	GB_DECLARE_VIRTUAL(".PdfPage"),
 	
-	GB_PROPERTY_READ("Orientation", "i", PdfPage_Orientation),
+	//GB_PROPERTY_READ("Orientation", "i", PdfPage_Orientation),
 	
 	GB_METHOD("Render", "Image", PdfPage_Render, "[(X)i(Y)i(Width)i(Height)i(Rotation)i(Resolution)f]"),
 	
@@ -294,14 +292,14 @@ GB_DESC PdfDocumentDesc[] =
 	
 	GB_PROPERTY("Resolution", "f", PdfDocument_Resolution),
 	GB_PROPERTY("Rotation", "i", PdfDocument_Rotation),
-	GB_PROPERTY("Antialiasing", "b", PdfDocument_Antialiasing),
+	/*GB_PROPERTY("Antialiasing", "b", PdfDocument_Antialiasing),
 	GB_PROPERTY("TextAntialiasing", "b", PdfDocument_TextAntialiasing),
-	GB_PROPERTY("TextHinting", "b", PdfDocument_TextHinting),
+	GB_PROPERTY("TextHinting", "b", PdfDocument_TextHinting),*/
 	
 	GB_END_DECLARE
 };
 
-GB_DESC PdfDesc[] = 
+/*GB_DESC PdfDesc[] = 
 {
 	GB_DECLARE_STATIC("Pdf"),
 	
@@ -311,4 +309,4 @@ GB_DESC PdfDesc[] =
 	GB_CONSTANT("UpsideDown", "i", poppler::page::upside_down),
 
 	GB_END_DECLARE
-};
+};*/
