@@ -38,6 +38,21 @@ struct _PopplerPage
   void *text;
 };
 
+#define GET_CURRENT_PAGE() (((_PopplerPage *)THIS->current)->page)
+
+struct _PopplerDocument
+{
+  GObject parent_instance;
+  std::unique_ptr<GlobalParamsIniter> initer;
+  PDFDoc *doc;
+
+  GList *layers;
+  GList *layers_rbgroups;
+  void *output_dev;
+};
+
+#define GET_DOCUMENT() (((_PopplerDocument *)THIS->doc)->doc)
+
 /*static poppler::rotation_enum conv_rotation(int angle)
 {
 	if (angle < 0)
@@ -126,6 +141,7 @@ BEGIN_METHOD(PdfDocument_new, GB_STRING path; GB_STRING password)
 	THIS->resolution = 300.0;
 	
 	THIS->renderer = new SplashOutputDev(splashModeRGB8, 3, false, paper);
+	THIS->renderer->startDoc(GET_DOCUMENT());
 
 END_METHOD
 
@@ -227,17 +243,61 @@ END_PROPERTY*/
 
 BEGIN_METHOD(PdfPage_Render, GB_INTEGER x; GB_INTEGER y; GB_INTEGER width; GB_INTEGER height; GB_INTEGER rotation; GB_FLOAT res)
 
-	int rotation = VARGOPT(rotation, THIS->rotation);
-	double res = VARGOPT(res, THIS->resolution);
-	int x = VARGOPT(x, -1);
-	int y = VARGOPT(y, -1);
-	int w = VARGOPT(width, -1);
-	int h = VARGOPT(height, -1);
-	
-	/**image = THIS->renderer->render_page(THIS->current, res, res, x, y, w, h, conv_rotation(rotation));
-	
-	return_image(image);*/
+	Page *page = GET_CURRENT_PAGE();
+	SplashBitmap *map;
+	unsigned char *data = NULL;
 
+	int rotation = VARGOPT(rotation, THIS->rotation);
+	int orientation;
+	double res = VARGOPT(res, THIS->resolution);
+	int width, height;
+	int x, y, w, h;
+	
+	orientation = (rotation + page->getRotate() + 720) % 360;
+	
+	if (orientation % 180)
+	{
+		width = (int)(page->getMediaHeight() * res / 72.0);
+		height = (int)(page->getMediaWidth() * res / 72.0);
+	}
+	else
+	{
+		width = (int)(page->getMediaWidth() * res / 72.0);
+		height = (int)(page->getMediaHeight() * res / 72.0);
+	}
+	
+	x = VARGOPT(x, 0);
+	y = VARGOPT(y, 0);
+	w = VARGOPT(width, width);
+	h = VARGOPT(height, height);
+	
+	if (x < 0)
+	{
+		w += x;
+		x = 0;
+	}
+	
+	if (y < 0)
+	{
+		h += y;
+		y = 0;
+	}
+	
+	if ((x + w) > width)
+		w = width - x;
+
+	if ((y + h) > height)
+		h = height - y;
+	
+	if (w > 0 && h > 0)
+	{
+		page->displaySlice(THIS->renderer, res, res, rotation, false, true, x, y, w, h, false);
+		map = THIS->renderer->getBitmap();
+		data = (unsigned char *)map->getDataPtr();
+	}
+
+	GB.ReturnObject(IMAGE.Create(w, h, GB_IMAGE_RGB, (unsigned char *)data));
+		
 END_METHOD
 
 //--------------------------------------------------------------------------

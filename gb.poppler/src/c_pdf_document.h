@@ -27,6 +27,7 @@
 #define __C_PDF_DOCUMENT_H
 
 #include <SplashOutputDev.h>
+#include "splash/SplashBitmap.h"
 #include "glib/poppler.h"
 #include "main.h"
 
