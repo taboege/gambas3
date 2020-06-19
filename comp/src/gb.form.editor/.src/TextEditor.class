@@ -864,39 +864,46 @@ Private Sub GetTabSizeAround(Row As Integer) As Integer
   
 End
 
-Private Sub PaintMultiLine(X As Integer, Y As Integer, Width As Integer, Height As Integer, bStart As Boolean, bEnd As Boolean)
+Private Sub PaintMultiLine(X As Integer, Y As Integer, Width As Integer, Height As Integer, (bStart) As Boolean, bEnd As Boolean)
 
-  Dim D As Float
-  Dim LW As Integer
+  ' Dim D As Float
+  ' Dim LW As Integer
   
   If Not Wrap_Read() Then Return
 
-  Paint.Save
-  Paint.AntiAlias = False
-
-  D = Height / 2
-  LW = CInt((Height + 23) / 24)
-  X += Width - Height
-
-  If bStart Then
-    Paint.MoveTo(X, Y + LW * 2)
-    Paint.RelLineTo(D, 0)
-    Paint.RelLineTo(0, Height - LW * 2)
-  Else If bEnd Then
-    Paint.MoveTo(X, Y + Height - LW * 2)
-    Paint.RelLineTo(D, 0)
-    Paint.RelLineTo(0, -Height + LW * 2)
-  Else
-    Paint.MoveTo(X + D, Y)
-    Paint.RelLineTo(0, Height)
+  If Not bEnd Then
+    X += Width - Height \ 2
+    Paint.Arrow(X, Y, Height \ 3, Height, Align.Right)
+    Paint.Background = $iForeground
+    Paint.LineWidth = $LH / 24
+    Paint.Stroke
   Endif
-
-  Paint.LineWidth = LW
-  Paint.Background = Color.SetAlpha(Color.TextForeground, 128)
-  Paint.LineJoin = Paint.LineJoinMiter
-  Paint.Stroke
   
-  Paint.Restore
+  ' Paint.Save
+  ' Paint.AntiAlias = False
+  ' 
+  ' D = Height / 3
+  ' LW = CInt((Height + 23) / 24)
+  ' 
+  ' If bStart Then
+  '   Paint.MoveTo(X, Y + LW * 2)
+  '   Paint.RelLineTo(D, 0)
+  '   Paint.RelLineTo(0, Height - LW * 2)
+  ' Else If bEnd Then
+  '   Paint.MoveTo(X, Y + Height - LW * 2 - 1)
+  '   Paint.RelLineTo(D, 0)
+  '   Paint.RelLineTo(0, -Height + LW * 2 - 1)
+  ' Else
+  '   Paint.MoveTo(X + D, Y)
+  '   Paint.RelLineTo(0, Height)
+  ' Endif
+  ' 
+  ' Paint.LineWidth = LW
+  ' Paint.Background = Color.SetAlpha(Color.TextForeground, 128)
+  ' Paint.LineJoin = Paint.LineJoinMiter
+  ' Paint.Stroke
+  ' 
+  ' Paint.Restore
 
 End
 
@@ -1739,7 +1746,7 @@ Public Sub View_KeyPress()
         X = $X0 + $MW - $hView.ScrollX
         Y = $Y
         GotoXY(X, $hRows._GetRowY($Y) - $hView.ScrollY + $XY.Y + $hRows.H, Key.Shift)
-        If $Y = Y Then GotoXY(X, $hRows._GetRowY($Y + 1) - $hView.ScrollY, Key.Shift)
+        ' ?? If $Y = Y Then GotoXY(X, $hRows._GetRowY($Y + 1) - $hView.ScrollY, Key.Shift)
       Endif
       
     Case Key.Home
@@ -5131,7 +5138,7 @@ Public Sub _UpdateLineHeight(Y As Integer)
   If Not $cLineLayout And If Not $cDiffLayout Then Return
 
   H = 1
-  WMax = $hView.ClientW - $MW - $LH
+  WMax = $hView.ClientW - $MW - $LH \ 2
   
   If $cLineLayout Then 
   

@@ -58,6 +58,7 @@
       ShowSpaces = True
       ShowIndent = True
       CloseBraces = True
+      CloseStrings = True
     }
   }
   { Timer1 #Timer
