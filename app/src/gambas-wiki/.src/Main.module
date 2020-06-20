@@ -481,6 +481,11 @@ Public Sub Main()
       Next
       Return
       
+    Case "-package-table"
+      Print GetPackageTable().Join("\n")
+      CComponent.Exit
+      Return
+      
   End Select
   
   Try Mkdir Root

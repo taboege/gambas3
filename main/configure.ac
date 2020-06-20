@@ -114,6 +114,7 @@ dnl ---- Create makefiles
 AC_CONFIG_FILES([\
 Makefile \
 share/Makefile \
+man/Makefile \
 gbc/Makefile \
 gbx/Makefile \
 lib/Makefile \

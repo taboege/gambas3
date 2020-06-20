@@ -34,6 +34,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <sys/types.h>
+#include <sys/time.h>
 
 /* Gambas API Version */
 
@@ -1072,7 +1073,7 @@ typedef
 
 		GB_DATE_SERIAL *(*SplitDate)(GB_DATE *);
 		bool (*MakeDate)(GB_DATE_SERIAL *, GB_DATE *);
-		void (*MakeDateFromTime)(int, int, GB_DATE *);
+		void (*MakeDateFromTime)(time_t, int, GB_DATE *);
 		bool (*GetTime)(double *, int);
 
 		void (*Watch)(int, int, void *, intptr_t);
