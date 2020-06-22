@@ -338,7 +338,7 @@ Public Sub Main()
   If Not Settings["/ShowMenus", True] Then Env["APPMENU_DISPLAY_BOTH"] = "1"
   Env["QT_LOGGING_RULES"] = "*.debug=false"
 
-  Application.Theme = Settings["/Theme", "gambas"]
+  Application.Theme = Settings["/Theme"]
   DESKTOP_FONT = Application.Font.ToString()
 
   Try Application.Font = Font[Settings["/Font"]]
