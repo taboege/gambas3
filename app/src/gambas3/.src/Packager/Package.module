@@ -880,6 +880,7 @@ Private Function MakeDebPackage(sSys As String)
   Dim sPath As String
   Dim W As Integer
   Dim H As Integer
+  Dim sExec As String
       
   Inc Application.Busy
   
@@ -1103,13 +1104,13 @@ Private Function MakeDebPackage(sSys As String)
   
   Select Case Project.Type
     Case Project.TYPE_COMPONENT
-      Print Shell$("src" &/ $sName &/ $sComponentName & ".gambas");
+      sExec = "src" &/ $sName &/ $sComponentName & ".gambas"
     Case Project.TYPE_LIBRARY
-      Print Shell$("src" &/ $sName &/ $sLibraryName & ".gambas");
+      sExec = "src" &/ $sName &/ $sLibraryName & ".gambas"
     Case Project.TYPE_NORMAL
-      Print Shell$("src" &/ $sName &/ $sName);
+      sExec = "src" &/ $sName &/ $sName
   End Select
-  Print " src" &/ $sName
+  Print Shell(sExec); " src" &/ $sName
   
   ' If Project.Type = Project.TYPE_COMPONENT 
   '   If $sName <> $sComponentName Then
@@ -1123,8 +1124,8 @@ Private Function MakeDebPackage(sSys As String)
   Print "clean:"
   Print "\tdh_testdir"
   Print "\tdh_testroot"
-  Print "\trm -Rf `find . -name \".gambas\"`"  
-  Print "\trm -Rf `find . -name \"*.gambas\"`"
+  Print "\trm -Rf "; Shell("src" &/ $sName &/ ".gambas")  
+  Print "\trm -f "; Shell(sExec)
   Print "\trm -f build-stamp install-stamp"
   Print "\tdh_clean"
   Print

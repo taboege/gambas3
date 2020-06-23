@@ -2414,7 +2414,12 @@ Public Function GetCompileCommand(bAll As Boolean, bNoDebug As Boolean, bMakeExe
 
   Dim sExec As String
 
-  sExec = System.Path &/ "bin/gbc" & System.Version & " -e "
+  If bIDE Then
+    sExec = System.Path &/ "bin/gbc" & System.Version
+  Else
+    sExec = "gbc" & System.Version
+  Endif
+  sExec &= " -e "
   If bAll Then sExec &= "-a "
   If Not bNoDebug Then sExec &= "-g "
   If Localize Then sExec &= "-t "
@@ -4577,8 +4582,6 @@ Public Sub MakeSourcePackageTo(sPath As String)
   MakeSourcePackageFromTo(Project.Dir, sPath)
 
 End
-
-
 
 Public Sub GetDefaultArchiveBaseName() As String
 
