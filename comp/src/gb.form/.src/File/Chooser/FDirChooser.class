@@ -1502,6 +1502,7 @@ End
 Public Sub SetBorder(bBorder As Boolean)
   
   panBorder.Border = If(bBorder, Border.Plain, Border.None)
+  sepNoBorder.Visible = Not bBorder
   
 End
 

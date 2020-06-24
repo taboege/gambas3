@@ -9,7 +9,7 @@ Component=gb.form
 Component=gb.settings
 Component=gb.form.stock
 Authors="Benoît Minisini"
-Environment="GB_GUI=gb.qt5"
+Environment="GB_GUI=gb.qt5\nGB_STOCK_DEBUG=1"
 TabSize=2
 Translate=1
 Language=en
