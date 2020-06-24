@@ -34,7 +34,31 @@
 #ifndef __C_PDF_DOCUMENT_CPP
 extern GB_DESC PdfDocumentDesc[];
 extern GB_DESC PdfPageDesc[];
+extern GB_DESC PdfDocumentIndexDesc[];
+extern GB_DESC PdfIndexDesc[];
+extern GB_DESC PdfActionDesc[];
+extern GB_DESC PdfActionGotoDesc[];
+extern GB_DESC PdfActionLaunchDesc[];
+extern GB_DESC PdfActionURIDesc[];
 #endif
+
+typedef
+  struct {
+		GB_BASE ob;
+		PopplerAction *action;
+	}
+	CPDFACTION;
+
+typedef
+	struct {
+		GB_BASE ob;
+		CPDFACTION *action;
+		int index;
+		int parent;
+		int children;
+		unsigned opened : 1;
+	}
+	CPDFINDEX;
 
 typedef
 	struct {
@@ -47,9 +71,14 @@ typedef
 		SplashOutputDev *renderer;
 		double resolution;
 		int rotation;
+		CPDFINDEX **index;
 	}
 	CPDFDOCUMENT;
-	
+
+
 #define THIS ((CPDFDOCUMENT *)_object)
+#define THIS_INDEX ((CPDFINDEX *)_object)
+#define THIS_ACTION ((CPDFACTION *)_object)
+#define ACTION (THIS_ACTION->action)
 	
 #endif /* __C_PDF_DOCUMENT_H */

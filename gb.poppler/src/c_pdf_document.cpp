@@ -138,7 +138,7 @@ BEGIN_METHOD(PdfDocument_new, GB_STRING path; GB_STRING password)
 		return;
 	}
 	
-	THIS->resolution = 300.0;
+	THIS->resolution = 72.0;
 	
 	THIS->renderer = new SplashOutputDev(splashModeRGB8, 3, false, paper);
 	THIS->renderer->startDoc(GET_DOCUMENT());
@@ -159,6 +159,14 @@ BEGIN_METHOD_VOID(PdfDocument_free)
 		
 		GB.Free(POINTER(&THIS->pages));
 	}
+	
+	if (THIS->index)
+	{
+		for (i = 0; i < GB.Count(THIS->index); i++)
+			GB.Unref(POINTER(&THIS->index[i]));
+		
+		GB.FreeArray(POINTER(&THIS->index));
+	}
 
 	delete THIS->renderer;
 	g_object_unref(THIS->doc);
@@ -173,16 +181,52 @@ BEGIN_PROPERTY(PdfDocument_Count)
 
 END_PROPERTY
 
-#define IMPLEMENT_DOC_PROP(_name, _func) \
+BEGIN_PROPERTY(PdfDocument_Max)
+
+	GB.ReturnInteger(poppler_document_get_n_pages(THIS->doc) - 1);
+
+END_PROPERTY
+
+#define IMPLEMENT_DOC_STRING_PROP(_name, _func) \
 BEGIN_PROPERTY(PdfDocument_##_name) \
 	GB.ReturnNewZeroString(poppler_document_get_##_func(THIS->doc)); \
 END_PROPERTY
 
-IMPLEMENT_DOC_PROP(Author, author)
-IMPLEMENT_DOC_PROP(Creator, creator)
-IMPLEMENT_DOC_PROP(Producer, producer)
-IMPLEMENT_DOC_PROP(Subject, subject)
-IMPLEMENT_DOC_PROP(Title, title)
+IMPLEMENT_DOC_STRING_PROP(Author, author)
+IMPLEMENT_DOC_STRING_PROP(Creator, creator)
+IMPLEMENT_DOC_STRING_PROP(Producer, producer)
+IMPLEMENT_DOC_STRING_PROP(Subject, subject)
+IMPLEMENT_DOC_STRING_PROP(Title, title)
+IMPLEMENT_DOC_STRING_PROP(Keywords, keywords)
+
+#define IMPLEMENT_DOC_DATE_PROP(_name, _func) \
+BEGIN_PROPERTY(PdfDocument_##_name) \
+	GB_DATE date; \
+	GB.MakeDateFromTime(poppler_document_get_##_func(THIS->doc), 0, &date); \
+	GB.ReturnDate(&date); \
+END_PROPERTY
+
+IMPLEMENT_DOC_DATE_PROP(CreationDate, creation_date)
+IMPLEMENT_DOC_DATE_PROP(ModificationDate, modification_date)
+
+BEGIN_PROPERTY(PdfDocument_Version)
+
+	guint major, minor;
+	char buf[32];
+	int len;
+	
+	poppler_document_get_pdf_version(THIS->doc, &major, &minor);
+
+	len = snprintf(buf, sizeof(buf), "%d.%d", major, minor);
+	GB.ReturnNewString(buf, len);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfDocument_Linearized)
+
+	GB.ReturnBoolean(poppler_document_is_linearized(THIS->doc));
+
+END_PROPERTY
 
 BEGIN_METHOD(PdfDocument_get, GB_INTEGER index)
 
@@ -230,6 +274,62 @@ BEGIN_PROPERTY(PdfDocument_Rotation)
 		GB.ReturnInteger(THIS->rotation);
 	else
 		THIS->rotation = VPROP(GB_INTEGER);
+
+END_PROPERTY
+
+static int fill_index(void *_object, PopplerIndexIter *iter, int parent)
+{
+	PopplerIndexIter *child;
+	CPDFACTION *action;
+	int n = 0;
+	GB_CLASS class_action = GB.FindClass("PdfAction");
+	
+  do
+    {
+			CPDFINDEX *item = (CPDFINDEX *)GB.New(GB.FindClass("PdfIndex"), NULL, NULL);
+
+			item->index = GB.Count(THIS->index);
+			item->parent = parent;
+			item->opened = poppler_index_iter_is_open(iter);
+			
+			action = (CPDFACTION *)GB.New(class_action, NULL, NULL);
+			action->action = poppler_index_iter_get_action(iter);
+			GB.Ref(action);
+			item->action = action;
+			
+			*(void **)GB.Add(&THIS->index) = item;
+			GB.Ref(item);
+			n++;
+			
+      child = poppler_index_iter_get_child(iter);
+      if (child)
+			{
+        item->children = fill_index(_object, child, item->index);
+				poppler_index_iter_free(child);
+			}
+			
+    }
+  while (poppler_index_iter_next(iter));
+	
+	return n;
+}
+
+BEGIN_PROPERTY(PdfDocument_Index)
+
+	PopplerIndexIter *iter;
+
+	if (!THIS->index)
+	{
+		GB.NewArray(&THIS->index, sizeof(void *), 0);
+		iter = poppler_index_iter_new(THIS->doc);
+		if (iter)
+		{
+			fill_index(THIS, iter, -1);
+			poppler_index_iter_free(iter);
+		}
+	}
+
+	RETURN_SELF();
 
 END_PROPERTY
 
@@ -300,7 +400,268 @@ BEGIN_METHOD(PdfPage_Render, GB_INTEGER x; GB_INTEGER y; GB_INTEGER width; GB_IN
 		
 END_METHOD
 
+/*BEGIN_PROPERTY(PdfPage_Text)
+
+	GB.ReturnNewZeroString(
+
+END_PROPERTY*/
+
 //--------------------------------------------------------------------------
+
+BEGIN_PROPERTY(PdfDocumentIndex_Count)
+
+	GB.ReturnInteger(GB.Count(THIS->index));
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfDocumentIndex_Max)
+
+	GB.ReturnInteger(GB.Count(THIS->index) - 1);
+
+END_PROPERTY
+
+BEGIN_METHOD(PdfDocumentIndex_get, GB_INTEGER index)
+
+	int index = VARG(index);
+	
+	if (index < 0 || index >= GB.Count(THIS->index))
+	{
+		GB.Error(GB_ERR_BOUND);
+		return;
+	}
+	
+	GB.ReturnObject(THIS->index[index]);
+
+END_PROPERTY
+
+//--------------------------------------------------------------------------
+
+BEGIN_METHOD_VOID(PdfIndex_free)
+
+	GB.Unref(POINTER(&THIS_INDEX->action));
+
+END_METHOD
+
+BEGIN_PROPERTY(PdfIndex_Parent)
+
+	GB.ReturnInteger(THIS_INDEX->parent);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfIndex_Children)
+
+	GB.ReturnInteger(THIS_INDEX->children);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfIndex_Opened)
+
+	GB.ReturnBoolean(THIS_INDEX->opened);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfIndex_Action)
+
+	GB.ReturnObject(THIS_INDEX->action);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfIndex_Text)
+
+	GB.ReturnNewZeroString(THIS_INDEX->action->action->any.title);
+
+END_PROPERTY
+
+
+//--------------------------------------------------------------------------
+
+BEGIN_METHOD_VOID(PdfAction_free)
+
+	poppler_action_free(ACTION);
+
+END_METHOD
+
+BEGIN_PROPERTY(PdfAction_Type)
+
+	const char *type;
+
+	switch(ACTION->type)
+	{
+		case POPPLER_ACTION_NONE: type = "None"; break;
+		case POPPLER_ACTION_GOTO_DEST: type = "GotoDest"; break;
+		case POPPLER_ACTION_GOTO_REMOTE: type = "GotoRemote"; break;
+		case POPPLER_ACTION_LAUNCH: type = "Launch"; break;
+		case POPPLER_ACTION_URI: type = "URI"; break;
+		case POPPLER_ACTION_NAMED: type = "Named"; break;
+		case POPPLER_ACTION_MOVIE: type = "Movie"; break;
+		case POPPLER_ACTION_RENDITION: type = "Rendition"; break;
+		case POPPLER_ACTION_OCG_STATE: type = "OGCState"; break;
+		case POPPLER_ACTION_JAVASCRIPT: type =" Javascript"; break;
+		default: type = NULL;
+	}
+
+	GB.ReturnConstZeroString(type);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfAction_Text)
+
+	GB.ReturnNewZeroString(ACTION->any.title);
+
+END_PROPERTY
+
+static PopplerDest *get_dest(PopplerAction *action)
+{
+	switch(action->type)
+	{
+		case POPPLER_ACTION_GOTO_DEST: return action->goto_dest.dest;
+		case POPPLER_ACTION_GOTO_REMOTE: return action->goto_remote.dest;
+		default: return NULL;
+	}
+}
+
+BEGIN_PROPERTY(PdfAction_Page)
+
+	PopplerDest *dest = get_dest(ACTION);
+	
+	if (dest)
+		GB.ReturnInteger(dest->page_num);
+	else
+		GB.ReturnInteger(-1);
+	
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfAction_Zoom)
+
+	PopplerDest *dest = get_dest(ACTION);
+	
+	if (dest)
+		GB.ReturnFloat(dest->zoom);
+	else
+		GB.ReturnFloat(0);
+	
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfAction_Rect)
+
+	PopplerDest *dest = get_dest(ACTION);
+	
+	if (dest)
+	{
+		GEOM_RECTF *rect = GEOM.CreateRectF();
+		rect->x = dest->left;
+		rect->y = dest->top;
+		rect->w = dest->right - dest->left;
+		rect->h = dest->bottom - dest->top;
+		GB.ReturnObject(rect);
+	}
+	else
+		GB.ReturnNull();
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfAction_Target)
+
+	const char *target;
+
+	switch(ACTION->type)
+	{
+		case POPPLER_ACTION_GOTO_REMOTE: target = ACTION->goto_remote.file_name; break;
+		case POPPLER_ACTION_LAUNCH: target = ACTION->launch.file_name; break;
+		case POPPLER_ACTION_URI: target = ACTION->uri.uri; break;
+		case POPPLER_ACTION_NAMED: target = ACTION->named.named_dest; break;
+		default: target = NULL;
+	}
+	
+	GB.ReturnNewZeroString(target);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfAction_Arguments)
+
+	const char *args;
+
+	switch(ACTION->type)
+	{
+		case POPPLER_ACTION_LAUNCH: args = ACTION->launch.params; break;
+		default: args = NULL;
+	}
+
+	GB.ReturnNewZeroString(args);
+
+END_PROPERTY
+
+//--------------------------------------------------------------------------
+
+GB_DESC PdfActionDesc[] = 
+{
+	GB_DECLARE("PdfAction", sizeof(CPDFACTION)),
+	
+	GB_METHOD("_free", NULL, PdfAction_free, NULL),
+	GB_PROPERTY_READ("Type", "s", PdfAction_Type),
+	GB_PROPERTY_READ("Text", "s", PdfAction_Text),
+	GB_PROPERTY_SELF("Goto", ".PdfActionGoto"),
+	GB_PROPERTY_SELF("Launch", ".PdfActionLaunch"),
+	GB_PROPERTY_SELF("URI", ".PdfActionURI"),
+	
+	GB_END_DECLARE
+};
+
+GB_DESC PdfActionGotoDesc[] = 
+{
+	GB_DECLARE_VIRTUAL(".PdfActionGoto"),
+	
+	GB_PROPERTY_READ("Page", "i", PdfAction_Page),
+	GB_PROPERTY_READ("Zoom", "f", PdfAction_Zoom),
+	GB_PROPERTY_READ("Rect", "RectF", PdfAction_Rect),
+	GB_PROPERTY_READ("Target", "s", PdfAction_Target),
+						 
+	GB_END_DECLARE
+};
+
+GB_DESC PdfActionLaunchDesc[] = 
+{
+	GB_DECLARE_VIRTUAL(".PdfActionLaunch"),
+	
+	GB_PROPERTY_READ("Target", "s", PdfAction_Target),
+	GB_PROPERTY_READ("Arguments", "s", PdfAction_Arguments),
+						 
+	GB_END_DECLARE
+};
+
+GB_DESC PdfActionURIDesc[] = 
+{
+	GB_DECLARE_VIRTUAL(".PdfActionURI"),
+	
+	GB_PROPERTY_READ("Target", "s", PdfAction_Target),
+						 
+	GB_END_DECLARE
+};
+
+GB_DESC PdfIndexDesc[] = 
+{
+	GB_DECLARE("PdfIndex", sizeof(CPDFINDEX)),
+	
+	GB_METHOD("_free", NULL, PdfIndex_free, NULL),
+	GB_PROPERTY_READ("Action", "PdfAction", PdfIndex_Action),
+	GB_PROPERTY_READ("Text", "s", PdfIndex_Text),
+	GB_PROPERTY_READ("Parent", "i", PdfIndex_Parent),
+	GB_PROPERTY_READ("Children", "i", PdfIndex_Children),
+	GB_PROPERTY_READ("Opened", "b", PdfIndex_Opened),
+	
+	GB_END_DECLARE
+};
+
+GB_DESC PdfDocumentIndexDesc[] =
+{
+	GB_DECLARE_VIRTUAL(".PdfDocumentIndex"),
+	
+	GB_PROPERTY_READ("Count", "i", PdfDocumentIndex_Count),
+	GB_PROPERTY_READ("Max", "i", PdfDocumentIndex_Max),
+	GB_METHOD("_get", "PdfIndex", PdfDocumentIndex_get, "(Index)i"),
+	
+	GB_END_DECLARE
+};
 
 GB_DESC PdfPageDesc[] =
 {
@@ -309,6 +670,7 @@ GB_DESC PdfPageDesc[] =
 	//GB_PROPERTY_READ("Orientation", "i", PdfPage_Orientation),
 	
 	GB_METHOD("Render", "Image", PdfPage_Render, "[(X)i(Y)i(Width)i(Height)i(Rotation)i(Resolution)f]"),
+	//GB_PROPERTY_READ("Text", "s", PdfPage_Text),
 	
 	GB_END_DECLARE
 };
@@ -340,6 +702,7 @@ GB_DESC PdfDocumentDesc[] =
 
 	//GB_PROPERTY_READ("Ready","b",PDFDOCUMENT_ready),
 	GB_PROPERTY_READ("Count","i",PdfDocument_Count),
+	GB_PROPERTY_READ("Max","i",PdfDocument_Max),
 	//GB_PROPERTY_READ("HasIndex","b",PDFDOCUMENT_has_index),
 	//GB_PROPERTY_READ("Index",".PdfDocument.Index",PDFDOCUMENT_index),
 	//GB_PROPERTY_READ("Info",".PdfDocument.Info",PDFDOCUMENT_info),
@@ -349,6 +712,13 @@ GB_DESC PdfDocumentDesc[] =
 	GB_PROPERTY_READ("Producer", "s", PdfDocument_Producer),
 	GB_PROPERTY_READ("Subject", "s", PdfDocument_Subject),
 	GB_PROPERTY_READ("Title", "s", PdfDocument_Title),
+	GB_PROPERTY_READ("Keywords", "s", PdfDocument_Keywords),
+
+	GB_PROPERTY_READ("CreationDate", "d", PdfDocument_CreationDate),
+	GB_PROPERTY_READ("ModificationDate", "d", PdfDocument_ModificationDate),
+
+	GB_PROPERTY_READ("Version", "s", PdfDocument_Version),
+	GB_PROPERTY_READ("Linearized", "b", PdfDocument_Linearized),
 	
 	GB_PROPERTY("Resolution", "f", PdfDocument_Resolution),
 	GB_PROPERTY("Rotation", "i", PdfDocument_Rotation),
@@ -356,17 +726,21 @@ GB_DESC PdfDocumentDesc[] =
 	GB_PROPERTY("TextAntialiasing", "b", PdfDocument_TextAntialiasing),
 	GB_PROPERTY("TextHinting", "b", PdfDocument_TextHinting),*/
 	
+	GB_PROPERTY_READ("Index", ".PdfDocumentIndex", PdfDocument_Index),
+	
 	GB_END_DECLARE
 };
 
-/*GB_DESC PdfDesc[] = 
+GB_DESC PdfDesc[] = 
 {
 	GB_DECLARE_STATIC("Pdf"),
 	
-	GB_CONSTANT("Landscape", "i", poppler::page::landscape),
+	/*GB_CONSTANT("Landscape", "i", poppler::page::landscape),
 	GB_CONSTANT("Portrait", "i", poppler::page::portrait),
 	GB_CONSTANT("Seascape", "i", poppler::page::seascape),
-	GB_CONSTANT("UpsideDown", "i", poppler::page::upside_down),
+	GB_CONSTANT("UpsideDown", "i", poppler::page::upside_down),*/
+
+	//GB_CONSTANT("ActionResetForm", "i", POPPLER_ACTION_RESET_FORM),
 
 	GB_END_DECLARE
-};*/
+};

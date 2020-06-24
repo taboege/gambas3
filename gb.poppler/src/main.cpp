@@ -31,17 +31,28 @@
 extern "C"
 {
 GB_INTERFACE GB EXPORT;
+GEOM_INTERFACE GEOM EXPORT;
 IMAGE_INTERFACE IMAGE EXPORT;
 
 GB_DESC *GB_CLASSES[] EXPORT =
 {
+	PdfActionDesc,
+	PdfActionGotoDesc,
+	PdfActionLaunchDesc,
+	PdfActionURIDesc,
+	PdfIndexDesc,
 	PdfPageDesc,
+	PdfDocumentIndexDesc,
 	PdfDocumentDesc,
 	NULL
 };
 
+const char *GB_INCLUDE EXPORT = "gb.geom";
+
 int EXPORT GB_INIT(void)
 {
+	GB.Component.Load("gb.geom");
+  GB.GetInterface("gb.geom", GEOM_INTERFACE_VERSION, &GEOM);
 	GB.GetInterface("gb.image", IMAGE_INTERFACE_VERSION, &IMAGE);
 	
 	return 0;

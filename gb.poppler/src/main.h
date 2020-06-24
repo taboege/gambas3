@@ -28,10 +28,12 @@
 
 #include "gb_common.h"
 #include "gambas.h"
+#include "gb.geom.h"
 #include "gb.image.h"
 
 #ifndef __MAIN_CPP
 extern GB_INTERFACE GB;
+extern GEOM_INTERFACE GEOM;
 extern IMAGE_INTERFACE IMAGE;
 #endif
 
