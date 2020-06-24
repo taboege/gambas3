@@ -72,51 +72,6 @@ struct _PopplerDocument
 
 //--------------------------------------------------------------------------
 
-#if 0
-static void free_image(GB_IMG *img, void *image)
-{
-	delete (poppler::image *)image;
-}
-
-static void *temp_image(GB_IMG *img)
-{
-	poppler::image *image;
-
-	if (!img->data)
-		image = new poppler::image(0, 0, poppler::image::format_argb32);
-	else
-		image = new poppler::image((char *)img->data, img->width, img->height, poppler::image::format_argb32);
-	
-	return image;
-}
-
-static GB_IMG_OWNER _image_owner = {
-	"gb.poppler",
-	GB_IMAGE_BGRA,
-	free_image,
-	free_image,
-	temp_image,
-	NULL,
-	};
-
-static void return_image(poppler::image *image)
-{
-	GB_IMG *img;
-	static GB_CLASS class_id = 0;
-
-	if (!class_id)
-		class_id = GB.FindClass("Image");
-
-	img = (GB_IMG *)GB.New(class_id, NULL, NULL);
-	
-	IMAGE.Take(img, &_image_owner, image, image->width(), image->height(), (uchar *)image->const_data());	
-	
-	GB.ReturnObject(img);
-}
-#endif
-	
-//--------------------------------------------------------------------------
-
 BEGIN_METHOD(PdfDocument_new, GB_STRING path; GB_STRING password)
 
 	const char *password;
@@ -434,6 +389,21 @@ BEGIN_METHOD(PdfDocumentIndex_get, GB_INTEGER index)
 
 END_PROPERTY
 
+BEGIN_METHOD_VOID(PdfDocumentIndex_next)
+
+	int *index = (int *)GB.GetEnum();
+
+	if (*index >= GB.Count(THIS->index))
+		GB.StopEnum();
+	else
+	{
+		GB.ReturnObject(THIS->index[*index]);
+		(*index)++;
+	}
+
+END_METHOD
+
+
 //--------------------------------------------------------------------------
 
 BEGIN_METHOD_VOID(PdfIndex_free)
@@ -643,6 +613,7 @@ GB_DESC PdfIndexDesc[] =
 	GB_DECLARE("PdfIndex", sizeof(CPDFINDEX)),
 	
 	GB_METHOD("_free", NULL, PdfIndex_free, NULL),
+	
 	GB_PROPERTY_READ("Action", "PdfAction", PdfIndex_Action),
 	GB_PROPERTY_READ("Text", "s", PdfIndex_Text),
 	GB_PROPERTY_READ("Parent", "i", PdfIndex_Parent),
@@ -659,6 +630,7 @@ GB_DESC PdfDocumentIndexDesc[] =
 	GB_PROPERTY_READ("Count", "i", PdfDocumentIndex_Count),
 	GB_PROPERTY_READ("Max", "i", PdfDocumentIndex_Max),
 	GB_METHOD("_get", "PdfIndex", PdfDocumentIndex_get, "(Index)i"),
+	GB_METHOD("_next", "PdfIndex", PdfDocumentIndex_next, NULL),
 	
 	GB_END_DECLARE
 };
@@ -731,16 +703,16 @@ GB_DESC PdfDocumentDesc[] =
 	GB_END_DECLARE
 };
 
-GB_DESC PdfDesc[] = 
+/*GB_DESC PdfDesc[] = 
 {
 	GB_DECLARE_STATIC("Pdf"),
 	
-	/*GB_CONSTANT("Landscape", "i", poppler::page::landscape),
+	GB_CONSTANT("Landscape", "i", poppler::page::landscape),
 	GB_CONSTANT("Portrait", "i", poppler::page::portrait),
 	GB_CONSTANT("Seascape", "i", poppler::page::seascape),
-	GB_CONSTANT("UpsideDown", "i", poppler::page::upside_down),*/
+	GB_CONSTANT("UpsideDown", "i", poppler::page::upside_down),
 
 	//GB_CONSTANT("ActionResetForm", "i", POPPLER_ACTION_RESET_FORM),
 
 	GB_END_DECLARE
-};
+};*/
