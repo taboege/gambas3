@@ -413,7 +413,7 @@ BEGIN_METHOD(PdfPage_GetText, GB_FLOAT x; GB_FLOAT y; GB_FLOAT w; GB_FLOAT h)
 	rect.x2 = rect.x1 + VARG(w);
 	rect.y2 = rect.y1 + VARG(h);
 	
-	GB.ReturnNewZeroString(poppler_page_get_text_for_area(THIS->current, &rect));
+	GB.ReturnNewZeroString(poppler_page_get_selected_text(THIS->current, POPPLER_SELECTION_GLYPH, &rect));
 
 END_METHOD
 
