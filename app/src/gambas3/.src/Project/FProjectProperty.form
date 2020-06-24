@@ -136,7 +136,7 @@
           { Label28 Label
             MoveScaled(0,0,16,4)
             Font = Font["Bold"]
-            Text = ("Project name")
+            Text = ("Name")
           }
           { lblName Label
             MoveScaled(18,0,24,4)
@@ -171,7 +171,7 @@
         { Label16 Label
           MoveScaled(0,0,16,4)
           Font = Font["Bold"]
-          Text = ("Project type")
+          Text = ("Type")
         }
         { Panel7 Panel
           MoveScaled(18,0,61,4)
@@ -588,7 +588,6 @@
       { Label8 Label
         MoveScaled(0,14,84,3)
         Font = Font["Bold"]
-        Expand = True
         Text = ("Compilation")
         Alignment = Align.BottomNormal
       }
@@ -634,7 +633,6 @@
       { Label19 Label
         MoveScaled(0,33,84,3)
         Font = Font["Bold"]
-        Expand = True
         Text = ("Translation")
         Alignment = Align.BottomNormal
       }
@@ -669,7 +667,6 @@
       { Label27 Label
         MoveScaled(0,47,84,3)
         Font = Font["Bold"]
-        Expand = True
         Text = ("Version control")
         Alignment = Align.BottomNormal
       }

@@ -3367,7 +3367,7 @@ Public Sub SetPosition(hResult As CSearchResult, Optional bJustCheck As Boolean)
   
   If bJustCheck And If Not bResult Then
     sWhere = GetProcAt(hResult.Line)
-    If Not sWhere Then sWhere = ("Declarations")
+    If Not sWhere Then sWhere = ("(Declarations)")
     hResult.Location = sWhere
   Endif
   

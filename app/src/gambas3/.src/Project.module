@@ -178,6 +178,7 @@ Private $aOldRefreshComponents As New String[]
 Public ExampleTitle As New Collection
 
 Public TimeStamp As Integer
+Public ExecTimeStamp As Integer
 Public Config As Settings
 
 Public RestoringFiles As Boolean
@@ -3032,6 +3033,7 @@ Public Function MakeExecutable(Optional bDoNotIncVersion As Boolean, Optional bS
   Dim hProcess As Process
   Dim hTerminal As TerminalView
   Dim sCommand As String
+  Dim sPath As String
 
   If CheckStartupClass() Then Return True
 
@@ -3068,6 +3070,13 @@ Public Function MakeExecutable(Optional bDoNotIncVersion As Boolean, Optional bS
 
   bDoNotIncVersion = bDoNotIncVersion Or Project.Config["/Executable/DoNotIncrementVersion", False]
 
+  If Not bDoNotIncVersion And If Project.TimeStamp = Project.ExecTimeStamp Then
+    If Message.Warning(("No change has been detected.") & "\n\n" & ("Do you really want to increment the project version and make the executable again?"), ("Make executable"), ("Cancel")) = 2 Then 
+      EnableRefresh
+      Return True
+    Endif
+  Endif
+
   Exec ["rm", "-rf", Project.Dir &/ ".gambas.save"] Wait
   'Exec ["cp", "-rf", Project.Dir &/ ".gambas", Project.Dir &/ ".gambas.save"] Wait
   Move Project.Dir &/ ".gambas" To Project.Dir &/ ".gambas.save"
@@ -3079,6 +3088,14 @@ Public Function MakeExecutable(Optional bDoNotIncVersion As Boolean, Optional bS
 
     ' Save project before making the executable
     WriteProject(True)
+
+    If Config["/Executable/NoTestModule"] Then
+      
+      For Each sPath In Project.Tree.GetTestModules()
+        Try Kill Project.Dir &/ ".gambas" &/ UCase(File.BaseName(sPath))
+      Next
+      
+    Endif
 
     sExec = System.Path &/ "bin/gba" & System.Version & " -o " & Shell$(sExecPath) & " " & Shell$(Project.Dir) & " > " & OUTPUT_FILE & " 2>&1"
     Shell sExec Wait
@@ -3113,6 +3130,9 @@ Public Function MakeExecutable(Optional bDoNotIncVersion As Boolean, Optional bS
   Move Project.Dir &/ ".gambas.save" To Project.Dir &/ ".gambas"
   
   EnableRefresh
+  
+  ExecTimeStamp = TimeStamp
+  
   Return Not bOK
 
 Catch
