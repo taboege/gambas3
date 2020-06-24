@@ -70,6 +70,16 @@ struct _PopplerDocument
 	}
 }*/
 
+static GEOM_RECTF *make_rect(PopplerRectangle *rect)
+{
+	GEOM_RECTF *ob = GEOM.CreateRectF();
+	ob->x = rect->x1;
+	ob->y = rect->y1;
+	ob->w = rect->x2 - rect->x1;
+	ob->h = rect->y2 - rect->y1;
+	return ob;
+}
+
 //--------------------------------------------------------------------------
 
 BEGIN_METHOD(PdfDocument_new, GB_STRING path; GB_STRING password)
@@ -288,6 +298,17 @@ BEGIN_PROPERTY(PdfDocument_Index)
 
 END_PROPERTY
 
+BEGIN_METHOD(PdfDocument_Find, GB_STRING label)
+
+	PopplerPage *page = poppler_document_get_page_by_label(THIS->doc, GB.ToZeroString(ARG(label)));
+
+	if (!page)
+		GB.ReturnInteger(-1);
+	else
+		GB.ReturnInteger(poppler_page_get_index(page));
+	
+END_METHOD
+
 //--------------------------------------------------------------------------
 
 /*BEGIN_PROPERTY(PdfPage_Orientation)
@@ -355,11 +376,86 @@ BEGIN_METHOD(PdfPage_Render, GB_INTEGER x; GB_INTEGER y; GB_INTEGER width; GB_IN
 		
 END_METHOD
 
-/*BEGIN_PROPERTY(PdfPage_Text)
+BEGIN_PROPERTY(PdfPage_Thumbnail)
 
-	GB.ReturnNewZeroString(
+	Page *page = GET_CURRENT_PAGE();
+	unsigned char *data;
+	int width, height;
 
-END_PROPERTY*/
+	if (!page->loadThumb(&data, &width, &height, NULL))
+	{
+    GB.ReturnNull();
+		return;
+	}
+	
+	GB.ReturnObject(IMAGE.Create(width, height, GB_IMAGE_RGB, (unsigned char *)data));
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfPage_Label)
+
+	GB.ReturnNewZeroString(poppler_page_get_label(THIS->current));
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfPage_Text)
+
+	GB.ReturnNewZeroString(poppler_page_get_text(THIS->current));
+
+END_METHOD
+
+BEGIN_METHOD(PdfPage_GetText, GB_FLOAT x; GB_FLOAT y; GB_FLOAT w; GB_FLOAT h)
+
+	PopplerRectangle rect;
+	
+	rect.x1 = VARG(x);
+	rect.y1 = VARG(y);
+	rect.x2 = rect.x1 + VARG(w);
+	rect.y2 = rect.y1 + VARG(h);
+	
+	GB.ReturnNewZeroString(poppler_page_get_text_for_area(THIS->current, &rect));
+
+END_METHOD
+
+BEGIN_PROPERTY(PdfPage_Width)
+
+	double w;
+	poppler_page_get_size(THIS->current, &w, NULL);
+	GB.ReturnFloat(w);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(PdfPage_Height)
+
+	double h;
+	poppler_page_get_size(THIS->current, NULL, &h);
+	GB.ReturnFloat(h);
+
+END_PROPERTY
+
+BEGIN_METHOD(PdfPage_FindText, GB_STRING search; GB_INTEGER options)
+
+	GList *rects, *r;
+	GB_ARRAY result;
+	GEOM_RECTF *rect;
+	
+	rects = r =poppler_page_find_text_with_options(THIS->current, GB.ToZeroString(ARG(search)), (PopplerFindFlags)VARGOPT(options, POPPLER_FIND_DEFAULT));
+	
+	GB.Array.New(&result, GB.FindClass("RectF"), 0);
+	
+	while (r)
+	{
+		rect = make_rect((PopplerRectangle *)r->data);
+		GB.Ref(rect);
+		*(GEOM_RECTF **)GB.Array.Add(result) = rect;
+		r = r->next;
+	}
+	
+	g_list_free(rects);
+	
+	GB.ReturnObject(result);
+
+END_METHOD
 
 //--------------------------------------------------------------------------
 
@@ -402,7 +498,6 @@ BEGIN_METHOD_VOID(PdfDocumentIndex_next)
 	}
 
 END_METHOD
-
 
 //--------------------------------------------------------------------------
 
@@ -642,7 +737,15 @@ GB_DESC PdfPageDesc[] =
 	//GB_PROPERTY_READ("Orientation", "i", PdfPage_Orientation),
 	
 	GB_METHOD("Render", "Image", PdfPage_Render, "[(X)i(Y)i(Width)i(Height)i(Rotation)i(Resolution)f]"),
-	//GB_PROPERTY_READ("Text", "s", PdfPage_Text),
+	GB_PROPERTY_READ("Label", "s", PdfPage_Label),
+	GB_PROPERTY_READ("Text", "s", PdfPage_Text),
+	GB_METHOD("GetText", "s", PdfPage_GetText,"(X)f(Y)f(Width)f(Height)f"),
+	GB_PROPERTY_READ("Width", "f", PdfPage_Width),
+	GB_PROPERTY_READ("Height", "f", PdfPage_Height),
+	GB_PROPERTY_READ("W", "f", PdfPage_Width),
+	GB_PROPERTY_READ("H", "f", PdfPage_Height),
+	GB_METHOD("FindText", "RectF[]", PdfPage_FindText, "(Search)s[(Options)i]"),
+	GB_PROPERTY_READ("Thumbnail", "Image", PdfPage_Thumbnail),
 	
 	GB_END_DECLARE
 };
@@ -668,6 +771,7 @@ GB_DESC PdfDocumentDesc[] =
 	GB_METHOD("_free", 0, PdfDocument_free, 0),
 
 	GB_METHOD("_get", ".PdfPage", PdfDocument_get, "(Index)i"),
+	GB_METHOD("Find", "i", PdfDocument_Find, "(Label)s"),
 
 	//GB_PROPERTY("Zoom", "f", PDFDOCUMENT_scale),
 	//GB_PROPERTY("Orientation", "i", PDFDOCUMENT_rotation),
@@ -703,16 +807,19 @@ GB_DESC PdfDocumentDesc[] =
 	GB_END_DECLARE
 };
 
-/*GB_DESC PdfDesc[] = 
+GB_DESC PdfDesc[] = 
 {
 	GB_DECLARE_STATIC("Pdf"),
 	
-	GB_CONSTANT("Landscape", "i", poppler::page::landscape),
+	/*GB_CONSTANT("Landscape", "i", poppler::page::landscape),
 	GB_CONSTANT("Portrait", "i", poppler::page::portrait),
 	GB_CONSTANT("Seascape", "i", poppler::page::seascape),
-	GB_CONSTANT("UpsideDown", "i", poppler::page::upside_down),
+	GB_CONSTANT("UpsideDown", "i", poppler::page::upside_down),*/
 
-	//GB_CONSTANT("ActionResetForm", "i", POPPLER_ACTION_RESET_FORM),
+	GB_CONSTANT("CaseSensitive", "i", POPPLER_FIND_CASE_SENSITIVE),
+	GB_CONSTANT("Backwards", "i", POPPLER_FIND_BACKWARDS),
+	GB_CONSTANT("WholeWordsOnly", "i", POPPLER_FIND_WHOLE_WORDS_ONLY),
+	GB_CONSTANT("IgnoreDiacrititcs", "i", POPPLER_FIND_IGNORE_DIACRITICS),
 
 	GB_END_DECLARE
-};*/
+};

@@ -32,6 +32,7 @@
 #include "main.h"
 
 #ifndef __C_PDF_DOCUMENT_CPP
+extern GB_DESC PdfDesc[];
 extern GB_DESC PdfDocumentDesc[];
 extern GB_DESC PdfPageDesc[];
 extern GB_DESC PdfDocumentIndexDesc[];

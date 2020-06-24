@@ -36,6 +36,7 @@ IMAGE_INTERFACE IMAGE EXPORT;
 
 GB_DESC *GB_CLASSES[] EXPORT =
 {
+	PdfDesc,
 	PdfActionDesc,
 	PdfActionGotoDesc,
 	PdfActionLaunchDesc,
