@@ -91,7 +91,7 @@
       Picture = Picture["icon:/small/save"]
     }
     { Menu40 Menu
-      Action = ".save-as"
+      Action = "_save-as"
       Text = ("Save as") & "..."
       Picture = Picture["icon:/small/save-as"]
       Shortcut = "Ctrl+Alt+S"
@@ -1030,19 +1030,19 @@
       Picture = Picture["icon:/small/play"]
     }
     { btnPause ToolButton
-      MoveScaled(79,0,4,4)
+      MoveScaled(78,0,4,4)
       ToolTip = ("Pause")
       Action = "pause"
       Picture = Picture["icon:/small/pause"]
     }
     { btnStop ToolButton
-      MoveScaled(82,0,4,4)
+      MoveScaled(81,0,4,4)
       ToolTip = ("Stop")
       Action = "stop"
       Picture = Picture["icon:/small/stop"]
     }
     { btnStep ToolButton
-      MoveScaled(85,0,4,4)
+      MoveScaled(84,0,4,4)
       ToolTip = ("Step")
       Action = "step"
       Picture = Picture["icon:/small/end"]
@@ -1054,14 +1054,14 @@
       Picture = Picture["icon:/small/forward"]
     }
     { btnFrom ToolButton
-      MoveScaled(90,0,4,4)
+      MoveScaled(91,0,4,4)
       ToolTip = ("Finish current function")
       Action = "return"
       Picture = Picture["icon:/small/eject"]
     }
     { btnUntil ToolButton mnuUntil
       Name = "btnUntil"
-      MoveScaled(93,0,4,4)
+      MoveScaled(95,0,4,4)
       ToolTip = ("Run until current line")
       Action = "until"
       Picture = Picture["icon:/small/jump"]
@@ -1314,7 +1314,7 @@
               Visible = False
             }
             { wrkProject Workspace
-              MoveScaled(3,3,81,29)
+              MoveScaled(3,2,81,29)
               Background = Color.LightForeground
               Expand = True
               Border = False
@@ -1449,6 +1449,11 @@
     Text = "Save"
     Shortcut = ""
     Picture = "icon:/small/save"
+  }
+  { Action _save-as
+    Text = "Save as"
+    Shortcut = "Ctrl+Alt+S"
+    Picture = "icon:/small/save-as"
   }
   { Action about
     Text = "About Gambas"
@@ -1753,11 +1758,6 @@
     Text = "Run with"
     Shortcut = ""
     Picture = "icon:/small/play"
-  }
-  { Action save-as
-    Text = "Save as"
-    Shortcut = "Ctrl+Alt+S"
-    Picture = "icon:/small/save-as"
   }
   { Action save-project
     Text = "Save project"

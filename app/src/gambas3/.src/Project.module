@@ -6159,9 +6159,6 @@ Public Sub ReadComponentFile() As Collection
   Dim sGroup As String
   Dim iPos As Integer
   Dim sKey As String
-  Dim aNeed As String[]
-  Dim aRequire As String[]
-  Dim aImplement As String[]
   Dim cComp As New Collection
   
   If Type = TYPE_NORMAL Then Return
@@ -6170,9 +6167,11 @@ Public Sub ReadComponentFile() As Collection
   
   If Not Exist(sPath) Then Return cComp
   
-  aNeed = New String[]
-  aRequire = New String[]
-  aImplement = New String[]
+  ' cComp["Need"] = New String[]
+  ' cComp["Require"] = New String[]
+  ' cComp["Exclude"] = New String[]
+  ' cComp["Implement"] = New String[]
+  ' cComp["Include"] = New String[]
   
   hFile = Open sPath
   
@@ -6698,5 +6697,27 @@ End
 Public Sub HasTest() As Boolean
   
   Return Tree.HasTest()
+  
+End
+
+Public Sub SaveAsExtern()
+
+  Dim hForm As Object
+  Dim sPath As String
+  
+  hForm = ActiveForm
+  If Not hForm Then Return
+  
+  Dialog.Key = "SaveAsExtern"
+  Dialog.Title = ("Save as")
+  If Dialog.SaveFile() Then Return
+  
+  sPath = Dialog.Path
+
+  Files[hForm.Path] = Null
+  hForm.Rename(File.Name(sPath), sPath)
+  Files[hForm.Path] = hForm
+  
+  hForm.Save(True)
   
 End

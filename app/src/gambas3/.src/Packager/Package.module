@@ -369,20 +369,22 @@ Private Function GetDependencies(Optional aComp As String[]) As String
     Endif
   Endif
   
-  For Each sComp In aComp
-    
-    iPos = InStr(sComp, ":")
-    If iPos Then
-      sTest = Mid$(sComp, iPos + 1)
-      If Not Project.Components.Exist(sTest) Then Continue
-      sComp = Left(sComp, iPos - 1)
-    Endif
-    
-    If IsRuntimeComponent(sComp) Then Continue
-    
-    sRes &= GetDependency(sComp)
-    'If sComp = "gb.form" Then sRes &= GetDependency("gb.form.stock")
-  Next
+  If aComp Then
+    For Each sComp In aComp
+      
+      iPos = InStr(sComp, ":")
+      If iPos Then
+        sTest = Mid$(sComp, iPos + 1)
+        If Not Project.Components.Exist(sTest) Then Continue
+        sComp = Left(sComp, iPos - 1)
+      Endif
+      
+      If IsRuntimeComponent(sComp) Then Continue
+      
+      sRes &= GetDependency(sComp)
+      'If sComp = "gb.form" Then sRes &= GetDependency("gb.form.stock")
+    Next
+  Endif
   
   For Each sComp In Project.Libraries
     sRes &= GetDependency(sComp)

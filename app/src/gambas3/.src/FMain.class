@@ -1603,9 +1603,12 @@ Public Sub Action_Activate((Key) As String) As Boolean
       Endif
     Next
     
-    If Key = "_close" Then
-      Project.ActiveForm.Close
-    Endif
+    Select Case Key
+      Case "_save-as"
+        Project.SaveAsExtern()
+      Case "_close"
+        Project.ActiveForm.Close
+    End Select
     
   Endif
   
