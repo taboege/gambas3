@@ -456,13 +456,12 @@ static void analyze_classes(GB_DESC **desc)
 	FREE(&sort);
 }
 
-static bool analyze_native_component(const char *path)
+static bool analyze_native_component(const char *path, bool for_include)
 {
 	lt_dlhandle lib;
 	GB_DESC **desc;
 	GB_DESC **desc_opt;
 	char **include;
-	bool ret = FALSE;
 
 	if (_verbose)
 		fprintf(stderr, "Loading native component: %s\n", path);
@@ -472,7 +471,8 @@ static bool analyze_native_component(const char *path)
 	lib = lt_dlopenext(path);
 	if (!lib)
 	{
-		error(FALSE, "Cannot load shared library: %s", lt_dlerror());
+		if (!for_include || _verbose)
+			error(FALSE, "Cannot load shared library: %s", lt_dlerror());
 		return TRUE;
 	}
 
@@ -500,7 +500,7 @@ static bool analyze_native_component(const char *path)
 	lt_dlclose(lib);
 	#endif
 
-	return ret;
+	return FALSE;
 }
 
 
@@ -645,7 +645,7 @@ static bool analyze(const char *comp, bool include)
 	{
 		snprintf(_buffer, sizeof(_buffer), LIB_PATTERN, _lib_path, name);
 
-		if (analyze_native_component(_buffer))
+		if (analyze_native_component(_buffer, include))
 			ok = FALSE;
 	}
 
@@ -682,7 +682,7 @@ static bool analyze(const char *comp, bool include)
 	
 	STR_free(name);
 	
-	return FALSE;
+	return !ok;
 }
 
 static void run_myself(const char *path, const char *name)
@@ -904,6 +904,7 @@ int main(int argc, char **argv)
 		}
 		else
 		{
+#if 0
 			if (!getenv("GB_PRELOAD"))
 			{
 				for (ind = optind; ind < argc; ind++)
@@ -915,6 +916,7 @@ int main(int argc, char **argv)
 						preload(argv, "libqt-mt.so.3");*/
 				}
 			}
+#endif
 		
 			for (ind = optind; ind < argc; ind++)
 			{
