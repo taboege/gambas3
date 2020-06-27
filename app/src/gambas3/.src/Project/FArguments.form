@@ -4,19 +4,16 @@
   MoveScaled(0,0,112,38)
   Text = ("Run with arguments")
   Arrangement = Arrange.Vertical
+  Spacing = True
+  Margin = True
   { lstArg ListEditor
     MoveScaled(1,2,73,25)
     Expand = True
-    Border = False
     Unique = True
   }
-  { Separator1 Separator
-    MoveScaled(53,28,13,0)
-  }
   { HBox1 HBox
-    MoveScaled(10,30,64,6)
+    MoveScaled(10,30,64,4)
     Spacing = True
-    Margin = True
     { btnUndo Button
       MoveScaled(1,0,16,4)
       Text = ("Reset")

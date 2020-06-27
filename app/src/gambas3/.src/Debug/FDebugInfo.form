@@ -206,6 +206,7 @@
       Border = False
       Limit = 65536
       Blink = True
+      ShowScrollBar = True
       ReadOnly = True
     }
     Index = 6

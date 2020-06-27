@@ -72,6 +72,7 @@ Public Sub dchProject_Change()
     $sLast = ""
     panProject.Hide
     dchProject.FileView.Show
+    dchProject.ShowToolbar = True
 
   Else
 
@@ -83,6 +84,7 @@ Public Sub dchProject_Change()
     
     panProject.Show
     dchProject.FileView.Hide
+    dchProject.ShowToolbar = False
     
   Endif
   

@@ -1885,7 +1885,7 @@ Private Sub UpdateCompressAction()
   Action[".compress", Me].Value = Exist(sPath)
   $bIgnoreCompress = False
   If Exist(sPath) Then
-    btnCompress.Tooltip = Subst(("Compressed at &1"), Format(Stat(sPath).Size / Stat(Path).Size, "0%"))
+    btnCompress.Tooltip = Subst(("Compressed at &1"), Format(Stat(Path).Size / Stat(sPath).Size, "0%"))
   Else
     btnCompress.Tooltip = ""
   Endif
