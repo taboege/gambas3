@@ -50,6 +50,8 @@ Private $sSortDir As String
 Private $iSort As Integer
 Private $bAsc As Boolean = True
 
+Private $hVoidView As TextLabel
+
 Private $aFilter As String[]
 Private $hPict As Picture
 Private $hRefresh As Timer
@@ -150,6 +152,13 @@ Public Sub _new()
     .Sorted = True
     .Resizable = True
   End With
+  
+  $hVoidView = New TextLabel(Me)
+  $hVoidView.Alignment = Align.Center
+  $hVoidView.Text = ("No file in this folder.")
+  $hVoidView.Font.Grade = 2
+  $hVoidView.Foreground = Color.LightForeground
+  $hVoidView.Visible = False
   
   Me.Proxy = GetView()
   
@@ -342,6 +351,7 @@ Private Sub RefreshView()
   Dim sKey As String
   Dim aPreview As New String[]
   Dim sExt As String
+  Dim bVoid As Boolean
 
   Inc Application.Busy
   
@@ -464,6 +474,7 @@ Private Sub RefreshView()
         
       End With
     Next
+    bVoid = aDir.Count = 0
     
     hCache.Unlock
     
@@ -492,6 +503,14 @@ Finally
     $hIconView._End
   Endif
   Try GetView().Scroll(SX, SY)
+  
+  If bVoid Then
+    $hVoidView.Show
+    $hVoidView.Raise
+  Else
+    $hVoidView.Hide
+  Endif
+  
   Dec Application.Busy
   
 Catch 

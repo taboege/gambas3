@@ -913,6 +913,8 @@ Public Sub UpdateFilterPanel()
     Endif
   Endif
   
+  UpdateSeparator
+  
   Object.Unlock(panFilter)
 
 End
@@ -1499,10 +1501,16 @@ End
 ' 
 ' End
 
+Private Sub UpdateSeparator()
+
+  sepNoBorder.Visible = Not HasBorder() And panFilter.Visible
+
+End
+
 Public Sub SetBorder(bBorder As Boolean)
   
   panBorder.Border = If(bBorder, Border.Plain, Border.None)
-  sepNoBorder.Visible = Not bBorder
+  UpdateSeparator
   
 End
 
@@ -1653,4 +1661,16 @@ Public Sub btnBookmark_Menu()
   dvwChoose.Current = dvwChoose.Root
   dvwChoose_Menu
 
+End
+
+Public Sub GetShowToolbar() As Boolean
+  
+  Return panTool.Visible
+  
+End
+
+Public Sub SetShowToolbar(bShow As Boolean)
+  
+  panTool.Visible = bShow
+  
 End
