@@ -136,6 +136,11 @@ Public Sub Save()
 
   If Not $bModify Then Return
 
+  If Not IsDir(File.Dir($sPath)) Then 
+    Error "gb.settings: warning: unable to save settings: directory does not exist: "; File.Dir($sPath)
+    Return
+  Endif
+
   'Debug $sPath
 
   $bModify = False
