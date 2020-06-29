@@ -562,7 +562,7 @@ static bool do_close(CWINDOW *_object, int ret, bool destroyed = false)
 {
 	bool closed;
 
-	#if 1 //DEBUG_WINDOW
+	#if DEBUG_WINDOW
 	qDebug("do_close: (%s %p) %d %d", GB.GetClassName(THIS), THIS, THIS->closing, CWIDGET_test_flag(THIS, WF_CLOSED));
 	#endif
 
