@@ -58,8 +58,10 @@ End
 
 Public Sub Clear()
 
+  'Object.Lock(Me)
   $aText.Clear
   $hView.Rows.Count = 0
+  'Object.Unlock(Me)
   
 End
 
