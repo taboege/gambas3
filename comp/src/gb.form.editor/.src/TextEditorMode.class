@@ -31,7 +31,11 @@ Public Sub IsIdentCar(sCar As String) As Boolean
   
 End
 
-Private Sub IsSpacePunctCar(sCar As String) As Boolean
+Private Sub IsSpacePunctCar(sText As String, iPos As Integer) As Boolean
+
+  Dim sCar As String
+  
+  Try sCar = String.Mid$(sText, iPos, 1)
   
   If Not sCar Then Return True
   If Len(sCar) > 1 Then Return
@@ -252,7 +256,7 @@ Public Sub OnKeyPress(hEditor As TextEditor) As Boolean
       
       If Not InsideString(hEditor) Then
         
-        If IsSpacePunctCar(String.Mid$(hEditor.Current.Text, hEditor.Column, 1)) And If IsSpacePunctCar(String.Mid$(hEditor.Current.Text, hEditor.Column + 1, 1)) Then
+        If IsSpacePunctCar(hEditor.Current.Text, hEditor.Column) And If IsSpacePunctCar(hEditor.Current.Text, hEditor.Column + 1) Then
           hEditor.SaveCursor()
           hEditor.Insert(sText & sText)
           hEditor.RestoreCursor()
