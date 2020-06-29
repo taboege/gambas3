@@ -84,6 +84,7 @@ Public Sub dchProject_Change()
     
     panProject.Show
     dchProject.FileView.Hide
+    
     dchProject.ShowToolbar = False
     
   Endif

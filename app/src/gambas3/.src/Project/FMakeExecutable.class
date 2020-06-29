@@ -24,6 +24,7 @@ Public Sub Form_Open()
   chkIncVersion.Value = Not Project.Config["/Executable/DoNotIncrementVersion", False]
   chkIncVersion.Visible = Not Project.VersionFile
 
+  chkNoTest.Visible = Project.HasTest()
   chkNoTest.Value = Project.Config["/Executable/NoTestModule", False]
 
   ' If Project.CreateComponent Then 
