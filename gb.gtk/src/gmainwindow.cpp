@@ -882,6 +882,8 @@ void gMainWindow::showPopup(int x, int y)
 	
   move(x, y);
 	gtk_window_resize(GTK_WINDOW(border), bufW, bufH);
+	raise();
+	setFocus();
 	
 	//reparent(NULL, x, y, GTK_WINDOW_POPUP);
 
