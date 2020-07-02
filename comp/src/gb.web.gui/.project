@@ -10,7 +10,6 @@ Component=gb.signal
 Component=gb.util.web
 Component=gb.web
 Arguments=[["","TEST"]]
-CurrentArgument=0
 TabSize=2
 Translate=1
 Language=en_US

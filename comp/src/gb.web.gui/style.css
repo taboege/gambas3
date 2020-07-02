@@ -158,6 +158,10 @@ P:first-child,UL:first-child,OL:first-child {
   align-items: center;
 }
 
+.gw-disabled {
+  pointer-events: none;
+}
+
 .gw-checkbox.gw-disabled > .gw-checkbox-label {
   opacity: 0.5;
 }
