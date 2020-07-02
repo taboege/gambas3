@@ -15,6 +15,7 @@ Static Private $iPos As Integer
 
 Property Read Keys As _Settings_Keys
 Property Read Path As String
+Property Read Count As Integer
 
 Private $sPath As String
 Private $sTitle As String
@@ -241,6 +242,20 @@ Public Function _get(Key As String, Optional {Default} As Variant) As Variant
 
   Return {Default}
 
+End
+
+Public Sub Exist(Key As String) As Boolean
+  
+  Dim hSlot As Collection
+  Dim sSlot As String
+  'Dim dDate As Date
+
+  sSlot = GetSlot(Key)
+  Key = File.Name(Key)
+  
+  hSlot = $cSlot[sSlot]
+  If hSlot And If hSlot.Exist(Key) Then Return True
+  
 End
 
 Private Sub SameSetting(vOld As Variant, vNew As Variant) As Boolean
@@ -854,5 +869,18 @@ Static Public Sub FromString(Value As String) As Variant
   vVal = ReadValue(True)
   $sStr = ""
   Return vVal
+  
+End
+
+Private Function Count_Read() As Integer
+
+  Dim cCol As Collection
+  Dim iCount As Integer
+
+  For Each cCol In $cSlot
+    iCount += cCol.Count
+  Next
+
+  Return iCount
   
 End
