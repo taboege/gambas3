@@ -210,3 +210,10 @@ Public Sub WebButton8_Click()
   WebTextBox1.SetFocus(True)
 
 End
+
+Public Sub WebButton9_Click()
+
+  Message("WebComboBox1.Index = " & WebComboBox1.Index)
+  WebComboBox1.Index = 0
+
+End

@@ -5,7 +5,7 @@
 Export
 Inherits WebControl
 
-Public Const _Properties As String = "*,Border=True,List,ReadOnly=True,PlaceHolder,Text"
+Public Const _Properties As String = "*,Border=True,ReadOnly=True,PlaceHolder,Text,List"
 Public Const _DrawWith As String = "ComboBox"
 Public Const _DefaultSize As String = "24,4"
 Public Const _Similar As String = "WebTextBox"
@@ -31,7 +31,7 @@ Property ReadOnly As Boolean
 '' Return or set the placeholder text displayed when the editable combo-box is empty.
 Property PlaceHolder As String
 
-Private $iIndex As Integer
+Private $iIndex As Integer = -1
 Private $sText As String
 Private $aList As New String[]
 Private $bReadOnly As Boolean = True
@@ -146,13 +146,9 @@ Private Function List_Read() As String[]
 End
 
 Private Sub CheckIndex()
-
+  
   If $iIndex < 0 Or If $iIndex >= $aList.Count Then
-    If $aList.Count = 0 Then
-      Index_Write(-1)
-    Else
-      Index_Write(0)
-    Endif
+    Index_Write(-1)
   Endif
 
 End
@@ -164,7 +160,13 @@ Private Sub List_Write(Value As String[])
   Else
     $aList = New String[]
   Endif
-  CheckIndex
+  If $bReadOnly Then
+    If $aList.Count >= 1 Then
+      Index_Write(0)
+    Else
+      Index_Write(-1)
+    Endif
+  Endif
   Me.Refresh
 
 End
@@ -192,6 +194,7 @@ Private Sub ReadOnly_Write(Value As Boolean)
     Me._Proxy = ""
   Else
     Me._Proxy = ":entry"
+    If $iIndex >= 0 Then $sText = $aList[$iIndex]
   Endif
   Me.Refresh
 
