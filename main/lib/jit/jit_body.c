@@ -905,11 +905,12 @@ static void push_unknown(int index)
 		{
 			desc = class->table[index].desc;
 			class = desc->method.class;
-			utype = JIT_ctype_to_type(class, desc->variable.ctype);
 			
 			switch (CLASS_DESC_get_type(desc))
 			{
 				case CD_STATIC_VARIABLE:
+					
+					utype = JIT_ctype_to_type(class, desc->variable.ctype);
 					
 					pop_stack(1);
 					
@@ -930,6 +931,8 @@ static void push_unknown(int index)
 				case CD_VARIABLE:
 					
 					// TODO: automatic class
+					
+					utype = JIT_ctype_to_type(class, desc->variable.ctype);
 					
 					expr = peek(-1, (TYPE)class);
 					
@@ -1042,11 +1045,12 @@ static void pop_unknown(int index)
 		if (index != NO_SYMBOL)
 		{
 			desc = class->table[index].desc;
-			utype = JIT_ctype_to_type(class, desc->variable.ctype);
 
 			switch (CLASS_DESC_get_type(desc))
 			{
 				case CD_STATIC_VARIABLE:
+					
+					utype = JIT_ctype_to_type(class, desc->variable.ctype);
 					
 					pop_stack(1);
 					
@@ -1062,6 +1066,8 @@ static void pop_unknown(int index)
 				case CD_VARIABLE:
 					
 					// TODO: automatic class
+					
+					utype = JIT_ctype_to_type(class, desc->variable.ctype);
 					
 					expr = peek(-1, (TYPE)class);
 					
