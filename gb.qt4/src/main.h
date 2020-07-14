@@ -44,7 +44,6 @@
 extern "C" const GB_INTERFACE *GB_PTR;
 extern "C" IMAGE_INTERFACE IMAGE;
 extern "C" GEOM_INTERFACE GEOM;
-extern "C" QT_PLATFORM_INTERFACE PLATFORM;
 
 extern int MAIN_in_wait;
 extern int MAIN_in_message_box;
@@ -56,6 +55,9 @@ extern bool MAIN_key_debug;
 extern bool MAIN_right_to_left;
 #ifndef NO_X_WINDOW
 extern int MAIN_x11_last_key_code;
+#define MAIN_platform "x11"
+#else
+#define MAIN_platform ""
 #endif
 
 extern GB_CLASS CLASS_Control;

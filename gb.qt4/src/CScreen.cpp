@@ -175,6 +175,12 @@ BEGIN_PROPERTY(Desktop_Type)
 
 END_PROPERTY
 
+BEGIN_PROPERTY(Desktop_Platform)
+
+	GB.ReturnConstZeroString(MAIN_platform);
+
+END_PROPERTY
+
 //-------------------------------------------------------------------------
 
 BEGIN_METHOD_VOID(Application_exit)
@@ -520,6 +526,7 @@ GB_DESC DesktopDesc[] =
 	GB_STATIC_METHOD("Screenshot", "Picture", Desktop_Screenshot, "[(X)i(Y)i(Width)i(Height)i]"),
 	
 	GB_STATIC_PROPERTY_READ("Type", "s", Desktop_Type),
+	GB_STATIC_PROPERTY_READ("Platform", "s", Desktop_Platform),
 
 	GB_END_DECLARE
 };

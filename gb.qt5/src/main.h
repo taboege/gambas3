@@ -55,6 +55,7 @@ extern bool MAIN_debug_busy;
 extern bool MAIN_init;
 extern bool MAIN_key_debug;
 extern bool MAIN_right_to_left;
+extern const char *MAIN_platform;
 
 extern GB_CLASS CLASS_Control;
 extern GB_CLASS CLASS_Container;

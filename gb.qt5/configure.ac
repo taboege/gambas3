@@ -21,6 +21,11 @@ GB_COMPONENT_PKG_CONFIG(
 )
 
 GB_COMPONENT_PKG_CONFIG(
+  qt5wayland, QT5WAYLAND, gb.qt5.wayland, [wayland],
+  'Qt5Core >= 5.3.0' Qt5Gui Qt5Widgets
+)
+
+GB_COMPONENT_PKG_CONFIG(
   qt5webkit, QT5WEBKIT, gb.qt5.webkit, [webkit],
   'Qt5Core >= 5.3.0' Qt5Gui Qt5Widgets Qt5Network Qt5Xml Qt5WebKit Qt5WebKitWidgets Qt5PrintSupport x11
 )
@@ -51,6 +56,7 @@ AC_OUTPUT( \
 Makefile \
 src/Makefile \
 src/x11/Makefile \
+src/wayland/Makefile \
 src/webkit/Makefile \
 src/opengl/Makefile \
 src/ext/Makefile \

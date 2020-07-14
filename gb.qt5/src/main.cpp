@@ -54,7 +54,6 @@
 #include <QLibraryInfo>
 
 #include "gb.image.h"
-#include "gb.qt.h"
 #include "gb.form.font.h"
 
 #include "CFont.h"
@@ -116,6 +115,7 @@ bool MAIN_debug_busy = false;
 bool MAIN_init = false;
 bool MAIN_key_debug = false;
 bool MAIN_right_to_left = false;
+const char *MAIN_platform = NULL;
 
 GB_CLASS CLASS_Control;
 GB_CLASS CLASS_Container;
@@ -1118,6 +1118,8 @@ const char *GB_INCLUDE EXPORT = "gb.draw,gb.gui.base";
 int EXPORT GB_INIT(void)
 {
 	char *env;
+	QString platform;
+	bool wayland;
 
 	// Do not disable GLib support
 
@@ -1128,7 +1130,7 @@ int EXPORT GB_INIT(void)
 	env = getenv("GB_GUI_BUSY");
 	if (env && atoi(env))
 		MAIN_debug_busy = true;
-
+	
 	//putenv((char *)"QT_SLOW_TOPLEVEL_RESIZE=1");
 
 	_old_hook_main = GB.Hook(GB_HOOK_MAIN, (void *)hook_main);
@@ -1142,10 +1144,23 @@ int EXPORT GB_INIT(void)
 	GB.Component.Load("gb.gui.base");
 	
 	GB.GetInterface("gb.geom", GEOM_INTERFACE_VERSION, &GEOM);
+
 	GB.GetInterface("gb.image", IMAGE_INTERFACE_VERSION, &IMAGE);
-	GB.GetInterface("gb.qt5.x11", QT_PLATFORM_INTERFACE_VERSION, &PLATFORM);
-	
   IMAGE.SetDefaultFormat(GB_IMAGE_BGRP);
+
+	platform = qApp->platformName();
+	if (platform == "wayland")
+		wayland = TRUE;
+	else if (platform == "xcb")
+		wayland = FALSE;
+	else
+	{
+		fprintf(stderr, QT_NAME ": error: unsupported platform: %s\n", TO_UTF8(qApp->platformName()));
+		::abort();
+	}
+	
+	MAIN_platform = wayland ? "wayland" : "x11";
+	GB.GetInterface(wayland ? "gb.qt5.wayland" : "gb.qt5.x11", QT_PLATFORM_INTERFACE_VERSION, &PLATFORM);
 	
 	DRAW_init();
 
