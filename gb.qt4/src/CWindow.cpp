@@ -48,6 +48,7 @@
 #include <QTimer>
 
 #include "main.h"
+#include "gambas.h"
 
 #ifndef NO_X_WINDOW
 #ifndef QT5
@@ -62,8 +63,6 @@
 #ifdef QT5
 #include <QWindow>
 #endif
-
-#include "gambas.h"
 
 #include "CWidget.h"
 #include "CMenu.h"
