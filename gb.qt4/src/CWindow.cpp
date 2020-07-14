@@ -63,8 +63,6 @@
 #include <QWindow>
 #endif
 
-#include "gambas.h"
-
 #include "CWidget.h"
 #include "CMenu.h"
 #include "CKey.h"
