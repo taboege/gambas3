@@ -49,11 +49,13 @@
 #include <QPen>
 #include <QBrush>
 
+#include "main.h"
+
 #ifndef NO_X_WINDOW
+#ifndef QT5
 #include <QX11Info>
 #endif
-
-#include "gambas.h"
+#endif
 
 #include "CConst.h"
 #include "CFont.h"

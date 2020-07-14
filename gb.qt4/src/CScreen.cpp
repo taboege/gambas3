@@ -42,8 +42,11 @@
 #include "CDrawingArea.h"
 #include "CScreen.h"
 
+#ifndef QT5
 #include <QX11Info>
 #include "x11.h"
+#endif
+
 #include "desktop.h"
 
 #ifdef QT5
@@ -130,11 +133,15 @@ END_PROPERTY
 
 BEGIN_PROPERTY(Desktop_Resolution)
 
+#ifdef QT5
+	GB.ReturnInteger(PLATFORM.Desktop.GetResolutionY());
+#else
 	#ifdef NO_X_WINDOW
 		GB.ReturnInteger(72);
 	#else
 		GB.ReturnInteger(QX11Info::appDpiY());
 	#endif
+#endif
 
 END_PROPERTY
 
@@ -287,7 +294,11 @@ BEGIN_PROPERTY(Application_MainWindow)
 		if (CWINDOW_Main && CWINDOW_MainDesktop >= 0)
 		{
 			MyMainWindow *win = (MyMainWindow *)CWINDOW_Main->widget.widget;
+#ifdef QT5
+			PLATFORM.Window.SetVirtualDesktop(win, win->isVisible(), CWINDOW_MainDesktop);
+#else
 			X11_window_set_desktop(win->winId(), win->isVisible(), CWINDOW_MainDesktop);
+#endif
 			CWINDOW_MainDesktop = -1;
 		}
 	}

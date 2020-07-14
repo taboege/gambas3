@@ -27,7 +27,6 @@
 #include <QPaintEvent>
 #include <QPixmap>
 #include <QPainter>
-#include <QX11Info>
 #include <QColormap>
 #include <QTimer>
 #include <QEvent>
@@ -37,8 +36,8 @@
 #include "CColor.h"
 #include "CDrawingArea.h"
 
-#ifndef QT5
 #ifndef NO_X_WINDOW
+#ifndef QT5
 #include <QX11Info>
 #include <X11/Xlib.h>
 #endif

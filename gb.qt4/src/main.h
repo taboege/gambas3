@@ -44,6 +44,7 @@
 extern "C" const GB_INTERFACE *GB_PTR;
 extern "C" IMAGE_INTERFACE IMAGE;
 extern "C" GEOM_INTERFACE GEOM;
+extern "C" QT_PLATFORM_INTERFACE PLATFORM;
 
 extern int MAIN_in_wait;
 extern int MAIN_in_message_box;

@@ -12,7 +12,12 @@ AM_CONDITIONAL(XWINDOW, test x"$have_x" = xyes)
 
 GB_COMPONENT_PKG_CONFIG(
   qt5, QT5, gb.qt5, [src],
-  'Qt5Core >= 5.3.0' Qt5Gui Qt5Widgets Qt5Svg Qt5PrintSupport Qt5X11Extras x11
+  'Qt5Core >= 5.3.0' Qt5Gui Qt5Widgets Qt5Svg Qt5PrintSupport
+)
+
+GB_COMPONENT_PKG_CONFIG(
+  qt5x11, QT5X11, gb.qt5.x11, [x11],
+  'Qt5Core >= 5.3.0' Qt5Gui Qt5Widgets Qt5X11Extras x11
 )
 
 GB_COMPONENT_PKG_CONFIG(
@@ -45,6 +50,7 @@ AC_SUBST(MOC)
 AC_OUTPUT( \
 Makefile \
 src/Makefile \
+src/x11/Makefile \
 src/webkit/Makefile \
 src/opengl/Makefile \
 src/ext/Makefile \

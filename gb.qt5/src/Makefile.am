@@ -2,7 +2,7 @@ COMPONENT = gb.qt5
 include $(top_srcdir)/component.am
 include $(top_srcdir)/gb.qt.am
 
-SUBDIRS = . @QT5WEBKIT_DIR@ @QT5OPENGL_DIR@ @QT5EXT_DIR@
+SUBDIRS = . @QT5X11_DIR@ @QT5WEBKIT_DIR@ @QT5OPENGL_DIR@ @QT5EXT_DIR@
 
 gblib_LTLIBRARIES = gb.qt5.la
 
@@ -12,7 +12,6 @@ gb_qt5_la_CXXFLAGS = @THREAD_INC@ -DGB_QT_COMPONENT $(AM_CXXFLAGS) -std=c++11
 gb_qt5_la_CPPFLAGS = @QT5_INC@ -I$(top_srcdir)/share/
 
 gb_qt5_la_SOURCES = \
- x11.h x11.c \
  desktop.h desktop.c \
  gb.qt.h main.h main_moc.cpp main.cpp \
  CFont.h CFont.cpp \

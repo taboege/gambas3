@@ -3036,14 +3036,21 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 		CKEY_info.release = type == QEvent::KeyRelease;
 		
 		#ifndef NO_X_WINDOW
-		if (type == QEvent::KeyPress && CKEY_info.code)
-			_x11_to_qt_keycode.insert(MAIN_x11_last_key_code, CKEY_info.code);
-		else if (type == QEvent::KeyRelease && CKEY_info.code == 0)
 		{
-			if (_x11_to_qt_keycode.contains(MAIN_x11_last_key_code))
+			#ifdef QT5
+				int last = PLATFORM.GetLastKeyCode();
+			#else
+				int last = MAIN_x11_last_key_code;
+			#endif
+			if (type == QEvent::KeyPress && CKEY_info.code)
+				_x11_to_qt_keycode.insert(last, CKEY_info.code);
+			else if (type == QEvent::KeyRelease && CKEY_info.code == 0)
 			{
-				CKEY_info.code = _x11_to_qt_keycode[MAIN_x11_last_key_code];
-				_x11_to_qt_keycode.remove(MAIN_x11_last_key_code);
+				if (_x11_to_qt_keycode.contains(last))
+				{
+					CKEY_info.code = _x11_to_qt_keycode[last];
+					_x11_to_qt_keycode.remove(last);
+				}
 			}
 		}
 		#endif
