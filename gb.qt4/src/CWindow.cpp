@@ -48,7 +48,6 @@
 #include <QTimer>
 
 #include "main.h"
-#include "gambas.h"
 
 #ifndef NO_X_WINDOW
 #ifndef QT5
