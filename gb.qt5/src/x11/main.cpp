@@ -231,6 +231,7 @@ static void platform_init(void)
 
 static void platform_exit(void)
 {
+	X11_exit();
 }
 
 //-------------------------------------------------------------------------
@@ -366,7 +367,7 @@ static void x11_set_event_filter(int (*filter)(XEvent *))
 
 extern "C" {
 
-GB_INTERFACE GB EXPORT;
+const GB_INTERFACE *GB_PTR EXPORT;
 
 void *GB_QT5_X11_1[] EXPORT = {
 

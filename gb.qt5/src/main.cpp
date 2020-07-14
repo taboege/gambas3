@@ -716,8 +716,32 @@ static void *_old_hook_main;
 
 static void hook_main(int *argc, char ***argv)
 {
+	QString platform;
+	const char *comp;
+	
 	new MyApplication(*argc, *argv);
-
+	
+	platform = qApp->platformName();
+	fprintf(stderr, "platform = %s\n", TO_UTF8(platform));
+	if (platform == "wayland")
+	{
+		comp = "gb.qt5.wayland";
+		MAIN_platform = "wayland";
+	}
+	else if (platform == "xcb")
+	{
+		comp = "gb.qt5.x11";
+		MAIN_platform = "x11";
+	}
+	else
+	{
+		fprintf(stderr, QT_NAME ": error: unsupported platform: %s\n", TO_UTF8(qApp->platformName()));
+		::abort();
+	}
+	
+	GB.Component.Load(comp);
+	GB.GetInterface(comp, QT_PLATFORM_INTERFACE_VERSION, &PLATFORM);
+	
 	QT_Init();
 	init_lang(GB.System.Language(), GB.System.IsRightToLeft());
 
@@ -1118,8 +1142,6 @@ const char *GB_INCLUDE EXPORT = "gb.draw,gb.gui.base";
 int EXPORT GB_INIT(void)
 {
 	char *env;
-	QString platform;
-	bool wayland;
 
 	// Do not disable GLib support
 
@@ -1140,28 +1162,13 @@ int EXPORT GB_INIT(void)
 
 	GB.Component.Load("gb.draw");
 	GB.Component.Load("gb.image");
-	GB.Component.Load("gb.qt5.x11");
 	GB.Component.Load("gb.gui.base");
 	
 	GB.GetInterface("gb.geom", GEOM_INTERFACE_VERSION, &GEOM);
 
 	GB.GetInterface("gb.image", IMAGE_INTERFACE_VERSION, &IMAGE);
-  IMAGE.SetDefaultFormat(GB_IMAGE_BGRP);
+	IMAGE.SetDefaultFormat(GB_IMAGE_BGRP);
 
-	platform = qApp->platformName();
-	if (platform == "wayland")
-		wayland = TRUE;
-	else if (platform == "xcb")
-		wayland = FALSE;
-	else
-	{
-		fprintf(stderr, QT_NAME ": error: unsupported platform: %s\n", TO_UTF8(qApp->platformName()));
-		::abort();
-	}
-	
-	MAIN_platform = wayland ? "wayland" : "x11";
-	GB.GetInterface(wayland ? "gb.qt5.wayland" : "gb.qt5.x11", QT_PLATFORM_INTERFACE_VERSION, &PLATFORM);
-	
 	DRAW_init();
 
 	CLASS_Control = GB.FindClass("Control");

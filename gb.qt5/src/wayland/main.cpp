@@ -168,9 +168,9 @@ static void window_set_transient_for(QWidget *window, QWidget *parent)
 
 extern "C" {
 
-GB_INTERFACE GB EXPORT;
+const GB_INTERFACE *GB_PTR EXPORT;
 
-void *GB_QT5_X11_1[] EXPORT = {
+void *GB_QT5_WAYLAND_1[] EXPORT = {
 
   (void *)QT_PLATFORM_INTERFACE_VERSION,
   
