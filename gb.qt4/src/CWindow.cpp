@@ -51,8 +51,6 @@
 
 #ifndef NO_X_WINDOW
 #ifndef QT5
-#include "x11.h"
-#undef FontChange
 #include <QX11Info>
 #include <QX11EmbedWidget>
 #include <QX11EmbedContainer>
@@ -63,11 +61,20 @@
 #include <QWindow>
 #endif
 
+#include "gambas.h"
+
 #include "CWidget.h"
 #include "CMenu.h"
 #include "CKey.h"
 #include "CDraw.h"
 #include "CWindow.h"
+
+#ifndef NO_X_WINDOW
+	#ifndef QT5
+#include "x11.h"
+#undef FontChange
+	#endif
+#endif
 
 #ifdef NO_X_WINDOW
 enum
