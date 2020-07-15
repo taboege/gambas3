@@ -27,7 +27,6 @@
 #include <QMenu>
 #include <QKeyEvent>
 #include <QActionGroup>
-#include <QWindow>
 
 #include "gambas.h"
 #include "gb_common.h"
@@ -35,6 +34,12 @@
 #include "CWidget.h"
 #include "CWindow.h"
 #include "CMenu.h"
+
+#include "main.h"
+#ifdef QT5
+#include <QWindow>
+#endif
+
 
 //#define DEBUG_MENU 1
 
