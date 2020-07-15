@@ -27,6 +27,7 @@
 #include <QMenu>
 #include <QKeyEvent>
 #include <QActionGroup>
+#include <QWindow>
 
 #include "gambas.h"
 #include "gb_common.h"
@@ -1029,6 +1030,19 @@ void CMenu::slotShown(void)
 	//qDebug("slotShown: sender = %p  menuAction = %p", sender(), ((QMenu *)sender())->menuAction());
 	GET_MENU_SENDER(menu);
 	HANDLE_PROXY(menu);
+	
+	#ifdef QT5
+	if (menu->menu->windowHandle())
+	{
+		QWidget *parent = qApp->activePopupWidget();
+		if (!parent) parent = qApp->activeWindow();
+		if (parent)
+		{
+			//fprintf(stderr, "set menu transient to %p\n", parent->windowHandle());
+			menu->menu->windowHandle()->setTransientParent(parent->windowHandle());
+		}
+	}
+	#endif
 	
 	GB.Ref(menu);
 	
