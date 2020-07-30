@@ -1,4 +1,4 @@
 public sub WriteSomething()
-  print "Write Something"
+print "Write Something"
 end
 INCLUDE "TestAppInclude2"

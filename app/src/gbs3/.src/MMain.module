@@ -569,7 +569,7 @@ Public Sub GenerateFiles(Path As String)
       Continue
     Endif
 
-    If aSym.Count = 5 And If aSym[0] = "PUBLIC" And If (aSym[1] = "SUB" Or aSym[1] = "PROCEDURE") And If aSym[2] = "Main" And If aSym[3] = "(" And If aSym[4] = ")" Then
+    If aSym.Count = 5 And If aSym[0] = "PUBLIC" And If (aSym[1] = "SUB" Or aSym[1] = "PROCEDURE") And If Upper(aSym[2]) = "MAIN" And If aSym[3] = "(" And If aSym[4] = ")" Then
       If $bVerbose Then Print "gbs:";; ("Main procedure already defined")
       bAutoMain = False
     Else If aSym.Count > 3 And If aSym[0] = "PUBLIC" And If Not (bInClass Or bInStruct) And If aSym[2] = "AS" Then 

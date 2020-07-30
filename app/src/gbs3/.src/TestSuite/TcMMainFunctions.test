@@ -96,3 +96,21 @@ Public Sub FullReadCompileCheck()
   Assert.Equals(TSR.CompareStringArray(CompiledResult, ShouldBeFile), True, "Test a Basic App with all supported types")
   
 End
+
+Public Sub FullReadCompileCheckWithMain()
+  Dim workdir As String
+  Dim ShouldBefile As String[] = Split(File.Load("TestAppWithMainCompiled"), "\n")
+  MMain._ResetAll()
+  CComponent._init()
+  
+  MMain.$bBuildOnly = True
+  
+  workdir = Temp()
+  Mkdir workdir
+  Try Copy "TestAppWithMain" To workdir &/ "TestAppWithMain"
+  Mmain.$sPath = workdir &/ "TestAppWithMain"
+  Dim CompiledResult As String[] = Split(TSR.PrintErrOut(MMain, "MakeVirtualProject"), "\n", "", True)
+  File.save(User.home &/ "Desktop/maincompiled", CompiledResult.Join("\n"))
+  Assert.Equals(TSR.CompareStringArray(CompiledResult, ShouldBeFile), True, "Test a Basic App with all supported types")
+  
+End
