@@ -749,7 +749,7 @@ Public Sub ToConsole(Text As String, Optional Styles As TextHighlighterStyle[]) 
       sHtml = String.Mid$(sLine, P, iLen)
       P += iLen
       
-      If hStyle.Bold Then sHtml = "\x1b[1m" & sHtml & "\x1b[22m" ' "\x1b[21m" some terminal don't regognize this
+      If hStyle.Bold Then sHtml = "\x1b[1m" & sHtml & "\x1b[22m" ' "\x1b[21m" some terminal don't regognize [21 so use more generic [22 
       If hStyle.Underline Then sHtml = "\x1b[4m" & sHtml & "\x1b[24m"
       
       sStyle = ""
