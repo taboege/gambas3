@@ -1,0 +1,147 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: gbs3 3.15.90\n"
+"POT-Creation-Date: 2020-07-26 15:37 UTC\n"
+"PO-Revision-Date: 2020-07-23 21:05 UTC\n"
+"Last-Translator: brian <brian@westwoodsvcs.com>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .project:1
+msgid "gbs3"
+msgstr ""
+
+#: .project:2
+msgid "Gambas Script"
+msgstr "Gambas Script"
+
+#: CComponent.class:53
+msgid "Warning: cannot read"
+msgstr "Warning: cannot read"
+
+#: MMain.module:119
+msgid "no input file specified"
+msgstr "no input file specified"
+
+#: MMain.module:120
+msgid "Type "
+msgstr "Type "
+
+#: MMain.module:120
+msgid "for more information"
+msgstr "for more information"
+
+#: MMain.module:133
+msgid "input file does not exist"
+msgstr "input file does not exist"
+
+#: MMain.module:172
+msgid "compiling server page"
+msgstr "compiling server page"
+
+#: MMain.module:217
+msgid "Segmentation fault"
+msgstr "Segmentation fault"
+
+#: MMain.module:259
+msgid "GAMBAS Scripter version"
+msgstr "GAMBAS Scripter version"
+
+#: MMain.module:261
+msgid "GAMBAS Webpage Scripter version"
+msgstr "GAMBAS Webpage Scripter version"
+
+#: MMain.module:291
+msgid "Option Is Not supported For WebPages"
+msgstr "Option Is Not supported For WebPages"
+
+#: MMain.module:332
+msgid "Unknown option"
+msgstr "Unknown option"
+
+#: MMain.module:362
+msgid "Create project"
+msgstr "Create project"
+
+#: MMain.module:450
+msgid "process file"
+msgstr "process file"
+
+#: MMain.module:475
+msgid "include script file"
+msgstr "include script file"
+
+#: MMain.module:502
+msgid "Unexpected CLASS declaration"
+msgstr "Unexpected CLASS declaration"
+
+#: MMain.module:506
+msgid "Class name missing"
+msgstr "Class name missing"
+
+#: MMain.module:509
+msgid "create class"
+msgstr "create class"
+
+#: MMain.module:523
+msgid "Unexpected Structure declaration"
+msgstr "Unexpected Structure declaration"
+
+#: MMain.module:528
+msgid "Structure name missing"
+msgstr "Structure name missing"
+
+#: MMain.module:532
+msgid "Struct Defined outside main"
+msgstr "Struct Defined outside main"
+
+#: MMain.module:546
+msgid "use library"
+msgstr "use library"
+
+#: MMain.module:550
+msgid "use component"
+msgstr "use component"
+
+#: MMain.module:557
+msgid "Comma missing"
+msgstr "Comma missing"
+
+#: MMain.module:565
+msgid "Main procedure already defined"
+msgstr "Main procedure already defined"
+
+#: MMain.module:587
+msgid "missing"
+msgstr "missing"
+
+#: MMain.module:591
+msgid "procedure not defined, creating it"
+msgstr "procedure not defined, creating it"
+
+#: MMain.module:606 TbCommandLinePrograms.test:35
+msgid "Unknown component"
+msgstr "Unknown component"
+
+#: MMain.module:646 TcMMainFunctions.test:51
+msgid "Unknown Library"
+msgstr "Unknown Library"
+
+#: MMain.module:648
+msgid "use Library Path"
+msgstr "use Library Path"
+
+#: MMain.module:816 TbCommandLinePrograms.test:23
+msgid "From"
+msgstr "From"
+
+#: MMain.module:816 TbCommandLinePrograms.test:23
+msgid "Not Allowed"
+msgstr "Not Allowed"
+
+#: MMain.module:816 TbCommandLinePrograms.test:23
+msgid "Redefinition of variable"
+msgstr "Redefinition of variable"

@@ -1,15 +1,24 @@
 
 Compile and execute a Gambas script.
 
-Usage: gbs3 [options] [<script file>]
+Usage: gbs3 [options][--] [<script file> | - ]
 
 Options:
+  -b --buildonly  process and compile script do not execute
   -c --nocache    force the script compilation (do not check cache)
   -e              execute the source code provided by the command line ( ':' separator )
+     -p           preCompile - enable Short form Data Types({i} = integer etc) 
+                  For use with -e option only  May not be supported in future versions
+  -g --debug      add debugging information to application
   -f --fast       use just-in-time compiler
   -h --help       display this help
   -L --license    display license
-  -u              force components loading ('comp1,comp2...')
+  -t --trace      turns on tracing option during execution
+  -u --use        force component loading ('comp1,comp2...')
+  -U --unsafe     turn off all checks for address validation
   -v --verbose    be verbose
-  -w --warnings   display warning during compile
-  -V --version    display version
+  -V --version    display Scripter version
+  -w --warnings   display warnings during compilation
+  
+  - if set as script name then gbs will read the script from stdin
+  -- Stops any further option processing
