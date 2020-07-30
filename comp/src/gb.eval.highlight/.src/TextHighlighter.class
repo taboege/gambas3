@@ -688,7 +688,7 @@ End
 ' End
 ' 
 ' 
-' 
+'' Writes program text to the cosole in correctly highlighted colors
 Public Sub ToConsole(Text As String, Optional Styles As TextHighlighterStyle[]) As String
 
   Dim aResult As New String[]
