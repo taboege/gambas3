@@ -113,7 +113,7 @@ Public Sub Main() As Integer
 
   If IsNull($sPath) Then
 
-    $sPath = Read Lof(File.In)           ' I dont understand this
+    $sPath = Read Lof(File.In)           ' This is invoked when cmd line is like  ' gbs3 -e < filename'
     
     If Not $sPath Then
       Error File.Name(Args[0]) & ": " & ("no input file specified")
@@ -121,6 +121,8 @@ Public Sub Main() As Integer
       Return 1
     Else
       $bExecuteFromArgs = True
+      If $bVerbose Then Print "gbs:Execute from command line {";; $sPath;; "}"
+      sname = File.Name($sPath)
     Endif
 
   Endif
@@ -144,7 +146,7 @@ Public Sub Main() As Integer
      
   Endif
   
-  If $sMd5 = "" Then    ' when there is no path or the source in inside the archive then this returns nil
+  If $sMd5 = "" Then    ' when there is no path or the source inside the archive then this returns nil
     bCompile = True
   Else
       $sMd5 = Scan($sMd5, "* *")[0]
@@ -547,7 +549,7 @@ Public Sub GenerateFiles(Path As String)
     If aSym.Count >= 2 And If aSym[0] == "USE" Then
       
       For iInd = 1 To aSym.Max Step 2
-        If Highlight.Types[iInd] <> Highlight.String Then CompileError(Path, iLine, "Syntax error")
+        If Highlight.Types[iInd] <> Highlight.String Then CompileError(Path, iLine, ("Syntax error"))
         s = Mid$(aSym[iInd], 2, -1)
         
         If s Like "*:*" Or s Like "/*" Then 

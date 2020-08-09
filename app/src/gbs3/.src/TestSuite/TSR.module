@@ -122,6 +122,50 @@ Public Sub CompareStringArray(sA As String[], sB As String[]) As Boolean
   
 End
 
+Public Sub CompareStringContent(sA As String[], sB As String[]) As Boolean
+  Dim bResult As Boolean = True
+  Dim bFinalResult As Boolean = True
+  Dim sPrintLine As String
+  If sA.count <> sB.count Then 
+    bFinalResult = False
+  Else
+    For i As Integer = 0 To sA.max
+      Try bResult = sB.Exist(sA[i])
+      If Error Then 
+         bResult = False
+         Error.Clear()
+      Endif
+    
+      If Not bResult Then bFinalResult = False
+    Next 
+  Endif
+  
+ If bFinalResult = False Then
+  Test.Note(Subst("Compare size a=&1, b=&2", sA.count, sB.count))
+  For i As Integer = 0 To IIf(sA.max > sB.max, sA.max, sB.max)
+    Try bResult = (sA[i] = sB[i])
+    If Error Then 
+         bResult = False
+         Error.Clear()
+    Endif
+    
+    sPrintLine = Format(i + 1, "000#") & IIf(bResult = True, " = ", " - ")
+    If i <= sA.max Then
+      sPrintLine &= Mid(Replace(Quote(sA[i]), " ", ".") & Space(38), 1, 38) & " | "
+    Else
+      sPrintLine &= Space(25) & " | "
+    Endif
+    If i <= sB.max Then
+      sPrintLine &= Mid(Replace(Quote(sB[i]), " ", ".") & Space(38), 1, 38)
+    Endif
+   Test.Note(sPrintLine)
+  Next
+ Endif
+ 
+ Return bFinalResult
+  
+End
+
 Public Sub Printoutput(mObject As Object, func As String, ...) As String ' to capture a printed string from function and list of parameters
   
   Dim buffer As New Byte[1000000]

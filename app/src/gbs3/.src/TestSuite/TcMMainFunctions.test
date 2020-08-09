@@ -111,6 +111,6 @@ Public Sub FullReadCompileCheckWithMain()
   Mmain.$sPath = workdir &/ "TestAppWithMain"
   Dim CompiledResult As String[] = Split(TSR.PrintErrOut(MMain, "MakeVirtualProject"), "\n", "", True)
   File.save(User.home &/ "Desktop/maincompiled", CompiledResult.Join("\n"))
-  Assert.Equals(TSR.CompareStringArray(CompiledResult, ShouldBeFile), True, "Test a Basic App with all supported types")
+  Assert.Equals(TSR.CompareStringContent(ShouldBeFile, CompiledResult), True, "Test a Basic App with all supported types")
   
 End
