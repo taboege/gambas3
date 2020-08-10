@@ -1,5 +1,7 @@
 ' Gambas module file
 
+' This module is only used for testing and need not be included in the final executable
+
 Public $bTestDebug As Boolean = False
 Private gbsver As String = "gambas" & System.version
 Private ShellScript As String = "#!/bin/bash\n"
