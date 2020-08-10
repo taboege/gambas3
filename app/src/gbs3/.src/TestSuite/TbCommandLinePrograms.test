@@ -20,7 +20,7 @@ Public Sub Precompile()
   Assert.equals(MMain.$aVarsDecl["Acar"], "Dim Acar As Integer", "Test precompile short forms I")
   Assert.equals(MMain.$aVarsDecl["Bcar"], "Dim Bcar As Float", "Test precompile short forms F")
   Assert.equals(MMain.$aVarsDecl["Ccar"], "Dim Ccar As Long", "Test precompile short forms L")
-  Dim expected As String = "gbs3: {l}Acar=45.1: " & ("Redefinition of variable") & " Dim Acar As Long " & ("From") & " Dim Acar As Integer " & ("Not Allowed")
+  Dim expected As String = "gbs" & System.version & ": \"{l}Acar=45\".1: " & ("Redefinition of variable") & " Dim Acar As Long " & ("From") & " Dim Acar As Integer " & ("Not Allowed")
   Assert.Equals(TSR.ErrorMsgOut(Mmain, "PrecompileLine", "{l}Acar=45"), expected, "Test For Error")
   MMain.$aVarsDecl.Clear()
 End
@@ -29,17 +29,20 @@ End
 Public Sub CreateProgramFromCommandLineArgs()
 
   MMain._ResetAll()
-  
+  MMain.$bExecuteFromArgs = True
   MMain.$sUse = "gb.eval.highlight,gb.pcre,gb.inotifyt"
-  Dim sResult As String = TSR.ErrorMsgOut(Mmain, "GenerateFilesFromArgs", "Dim i as integer:Print i:inc i")
-  Dim sExpect As String = "gbs3: Dim i as integer:Print i:inc i.0: " & ("Unknown component") & ": gb.inotifyt"
+  Dim sResult As String = TSR.ErrorMsgOut(Mmain, "GenerateFilesFromArgs", "Dim I As Integer:Print I:Inc I")
+  Dim sExpect As String = "gbs" & System.Version & ": \"Dim I As Integer:Print I:Inc I\".0:" & (" Unknown component") & ": gb.inotifyt"
   Assert.Equals(sResult, sExpect, "Test For bad Component ")
-  Test.note(sResult)
-  Test.Note(sExpect)
+  If TSR.$bTestDebug Then
+    Test.note(sResult)
+    Test.Note(sExpect)
+  Endif
   
   MMain.$sFinalProgram = ""
   MMain.$bPrecompiler = True
-  MMain.$sUse = "gb.eval.highlight,gb.pcre,gb.inotify"
+  MMain.$bExecuteFromArgs = True
+  MMain.$sUse = "gb.eval.highlight,gb.pcre,gb.web"
   MMain.GenerateFilesFromArgs("{i}i=9:Print i:inc i")
   Assert.Equals(TSR.CompareStringArray(Split(Mmain.$sFinalProgram, "\n", "", True), Split("Public Sub Main()\nDim i As Integer\ni=9\nPrint i\ninc i\n\nEnd\n", "\n", "", True)), True, "Verify program is formatted Correctly from command Line")
 End ' Gambas test file

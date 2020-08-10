@@ -113,7 +113,7 @@ Public Sub Main() As Integer
 
   If IsNull($sPath) Then
 
-    $sPath = Read Lof(File.In)           ' This is invoked when cmd line is like  ' gbs3 -e < filename'
+    $sPath = Read Lof(File.In)           ' This is invoked when cmd line is like  ' gbs -e < filename'
     
     If Not $sPath Then
       Error File.Name(Args[0]) & ": " & ("no input file specified")
@@ -429,7 +429,7 @@ Public Sub MakeVirtualProject()
 End
 
 Public Sub CompileError(sPath As String, iLine As Integer, sMessage As String)
-
+  If $bExecuteFromArgs Then sPath = Quote(sPath)
   Error.Raise(File.Name(Args[0]) & ": " & sPath & "." & iLine & ": " & sMessage)
 
 End

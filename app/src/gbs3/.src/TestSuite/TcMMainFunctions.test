@@ -48,7 +48,7 @@ Public Sub CheckProcessLibrary()
   
   MMain._ResetAll()
   
-  Assert.Equals(TSR.ErrorMsgOut(MMain, "ProcessLibrary", "DummyLibName", 1, "~/projects"), "gbs3: ~/projects.1: " & ("Unknown Library") & ": DummyLibName", "Verify that error is generated when not found")
+  Assert.Equals(TSR.ErrorMsgOut(MMain, "ProcessLibrary", "DummyLibName", 1, "~/projects"), "gbs" & System.Version & ": ~/projects.1: " & ("Unknown Library") & ": DummyLibName", "Verify that error is generated when not found")
   
   MMain.ProcessLibrary($sTestRoot &/ "libtest/libe:2", 1, "~/projects")
   Assert.equals(MMain.$cLibraries[mMain.$cLibraries.first], $sTestRoot &/ "libtest/libe:2.2.3.gambas", "Test for absolute path in library name")

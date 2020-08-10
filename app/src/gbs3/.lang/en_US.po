@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gbs3 3.15.90\n"
-"POT-Creation-Date: 2020-07-26 15:37 UTC\n"
+"POT-Creation-Date: 2020-08-10 17:48 UTC\n"
 "PO-Revision-Date: 2020-07-23 21:05 UTC\n"
 "Last-Translator: brian <brian@westwoodsvcs.com>\n"
 "Language: en_US\n"
@@ -27,121 +27,126 @@ msgid "no input file specified"
 msgstr "no input file specified"
 
 #: MMain.module:120
-msgid "Type "
+#, fuzzy
+msgid "Type"
 msgstr "Type "
 
 #: MMain.module:120
 msgid "for more information"
 msgstr "for more information"
 
-#: MMain.module:133
+#: MMain.module:135
 msgid "input file does not exist"
 msgstr "input file does not exist"
 
-#: MMain.module:172
+#: MMain.module:174
 msgid "compiling server page"
 msgstr "compiling server page"
 
-#: MMain.module:217
+#: MMain.module:219
 msgid "Segmentation fault"
 msgstr "Segmentation fault"
 
-#: MMain.module:259
+#: MMain.module:269
 msgid "GAMBAS Scripter version"
 msgstr "GAMBAS Scripter version"
 
-#: MMain.module:261
+#: MMain.module:271
 msgid "GAMBAS Webpage Scripter version"
 msgstr "GAMBAS Webpage Scripter version"
 
-#: MMain.module:291
+#: MMain.module:301
 msgid "Option Is Not supported For WebPages"
 msgstr "Option Is Not supported For WebPages"
 
-#: MMain.module:332
+#: MMain.module:342
 msgid "Unknown option"
 msgstr "Unknown option"
 
-#: MMain.module:362
+#: MMain.module:372
 msgid "Create project"
 msgstr "Create project"
 
-#: MMain.module:450
+#: MMain.module:460
 msgid "process file"
 msgstr "process file"
 
-#: MMain.module:475
+#: MMain.module:485
 msgid "include script file"
 msgstr "include script file"
 
-#: MMain.module:502
+#: MMain.module:512
 msgid "Unexpected CLASS declaration"
 msgstr "Unexpected CLASS declaration"
 
-#: MMain.module:506
+#: MMain.module:516
 msgid "Class name missing"
 msgstr "Class name missing"
 
-#: MMain.module:509
+#: MMain.module:519
 msgid "create class"
 msgstr "create class"
 
-#: MMain.module:523
+#: MMain.module:533
 msgid "Unexpected Structure declaration"
 msgstr "Unexpected Structure declaration"
 
-#: MMain.module:528
+#: MMain.module:538
 msgid "Structure name missing"
 msgstr "Structure name missing"
 
-#: MMain.module:532
+#: MMain.module:542
 msgid "Struct Defined outside main"
 msgstr "Struct Defined outside main"
 
-#: MMain.module:546
+#: MMain.module:552
+msgid "Syntax error"
+msgstr ""
+
+#: MMain.module:556
 msgid "use library"
 msgstr "use library"
 
-#: MMain.module:550
+#: MMain.module:560
 msgid "use component"
 msgstr "use component"
 
-#: MMain.module:557
+#: MMain.module:567
 msgid "Comma missing"
 msgstr "Comma missing"
 
-#: MMain.module:565
+#: MMain.module:575
 msgid "Main procedure already defined"
 msgstr "Main procedure already defined"
 
-#: MMain.module:587
+#: MMain.module:597
 msgid "missing"
 msgstr "missing"
 
-#: MMain.module:591
+#: MMain.module:601
 msgid "procedure not defined, creating it"
 msgstr "procedure not defined, creating it"
 
-#: MMain.module:606 TbCommandLinePrograms.test:35
+#: MMain.module:616 TbCommandLinePrograms.test:35
 msgid "Unknown component"
 msgstr "Unknown component"
 
-#: MMain.module:646 TcMMainFunctions.test:51
+#: MMain.module:656 TcMMainFunctions.test:51
 msgid "Unknown Library"
 msgstr "Unknown Library"
 
-#: MMain.module:648
+#: MMain.module:658
 msgid "use Library Path"
 msgstr "use Library Path"
 
-#: MMain.module:816 TbCommandLinePrograms.test:23
+#: MMain.module:826 TbCommandLinePrograms.test:23
 msgid "From"
 msgstr "From"
 
-#: MMain.module:816 TbCommandLinePrograms.test:23
+#: MMain.module:826 TbCommandLinePrograms.test:23
 msgid "Not Allowed"
 msgstr "Not Allowed"
 
-#: MMain.module:816 TbCommandLinePrograms.test:23
+#: MMain.module:826 TbCommandLinePrograms.test:23
 msgid "Redefinition of variable"
 msgstr "Redefinition of variable"
