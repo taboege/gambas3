@@ -22,7 +22,7 @@ Public Sub CreateTestEnvironment()
   Mmain._ResetAll()
   MMain.$bTestmode = True
   CComponent._init()
-  
+  MMain.ConfigureLibraries()
  
    
   If Not Exist("/usr/lib" &/ gbsVer &/ "biz1") Then

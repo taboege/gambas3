@@ -2,6 +2,7 @@
 
 Public $bTestMode As Boolean = False               ' used to test the application from the test suite
 Public $sTestModeCapture As String                 ' Used to capture executed program output in test mode
+Private gbsver As String = "gambas" & System.version ' Version name of the current program
 
 Public $sMd5 As String                             ' Project md5 string to check if needs to rebuild or just execute
 Public $sPrjPath As String                         ' Path to temporary directory where project is built
@@ -47,8 +48,8 @@ Public $bTrace As Boolean                          ' Turns on tracing in the com
 Public $cNativeTypes As Collection = ["i": "Integer", "s": "String", "f": "Float", "d": "Date", "b": "Boolean", "v": "Variant", "o": "Object", "l": "Long", "p": "Pointer"]
 
 ' Search local directory then system directory for libraries
-Public $aLibraryPaths As String[] = [User.home &/ "/.local/share/gambas" & System.version &/ "lib", "/usr/lib/gambas" & System.version]
-Public $sLibraryNoVendor As String = User.home &/ "/.local/share/gambas" & System.version &/ "lib/(unknown)"
+Public $aLibraryPaths As String[] = [User.home &/ "/.local/share/" &/ gbsver &/ "lib", "/usr/lib" &/ gbsver]
+Public $sLibraryNoVendor As String = User.home &/ "/.local/share/" &/ gbsver &/ "lib/(unknown)"
 
 '' Reset all internal tables and conditions
 '' Used for Test harness
@@ -91,6 +92,45 @@ $bUnsafe = False
 
 $bDebug = False
 $bTrace = False
+
+End
+
+'' This function looks for XDG-DATA-HOME and XDG-DATA-DIRS and replaces
+'' Entries in the $aLibraryPaths config array as needed
+Public Sub ConfigureLibraries() 
+  Dim aDataPaths As String[]
+  
+  If Env["XDG_DATA_HOME"] <> "" Then
+    $aLibraryPaths[0] = Env["XDG_DATA_HOME"] &/ gbsver &/ "lib"
+  Endif
+  
+  If Exist("usr/lib/" &/ System.Architecture) Then
+    $aLibraryPaths.Add("usr/lib/" &/ System.Architecture &/ gbsver)
+  Endif
+  
+  ' As an optional extra use the LD_LIBRARY_PATH to look for shared libraries as well
+  If Env["LD_LIBRARY_PATH"] <> "" Then
+    aDataPaths = Split(Env["LD_LIBRARY_PATH"], ":", "", True)
+    For iI As Integer = 0 To aDataPaths.Max
+      aDataPaths[iI] &= "/" & gbsver
+    Next
+    $aLibraryPaths.Insert(aDataPaths, 1)
+  Endif
+  
+  ' look in all the directories specified by the XDG_DATA paths
+  If Env["XDG_DATA_DIRS"] <> "" Then
+    aDataPaths = Split(Env["XDG_DATA_DIRS"], ":", "", True)
+    For iI As Integer = 0 To aDataPaths.Max
+      aDataPaths[iI] &= "/" & gbsver &/ "lib"
+    Next
+    $aLibraryPaths.Insert(aDataPaths, 1)
+  Endif
+  
+  ' For backward compatibility look for an executable of the provided name
+  If Env["PATH"] <> "" Then
+    aDataPaths = Split(Env["PATH"], ":", "", True)
+    $aLibraryPaths.Insert(aDataPaths)
+  Endif
   
 End
 
@@ -126,7 +166,9 @@ Public Sub Main() As Integer
     Endif
 
   Endif
-
+  
+  ConfigureLibraries()
+  
   If Not $bExecuteFromArgs And If Not $bScriptSourceStdIn Then
     
     If Not Exist($sPath) Then
@@ -227,16 +269,21 @@ Public Sub Main() As Integer
       
   Endif
   
-Finally
-     If $bTestMode Then
+  If $bTestMode Then
          Return 0
      Else
          Quit 0
      Endif
-  
-Catch 
-  Error Error.Text
 
+Catch 
+  
+  Error Error.Text
+  
+  If $bTestMode Then
+         Return 0
+     Else
+         Quit 0
+     Endif
 End
 
 Public Function ParseArgs() As String
