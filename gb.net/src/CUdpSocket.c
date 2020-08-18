@@ -65,6 +65,7 @@ void CUdpSocket_post_data(intptr_t Param)
 	GB.Raise(t_obj,EVENT_Read,0);
 	GB.Unref(POINTER(&t_obj));
 }
+
 void CUdpSocket_post_error(intptr_t Param)
 {
 	CUDPSOCKET *t_obj;
@@ -331,13 +332,17 @@ static bool update_multicast_ttl(CUDPSOCKET *_object)
 		"Cannot set multicast ttl socket option: &1");
 }
 
-static void fill_in_addr(struct in_addr *addr, const char *str)
+static bool fill_in_addr(struct in_addr *addr, const char *str)
 {
-	addr->sin_family = PF_INET;
 	if (!str || !*str)
-		addr->sin_addr.s_addr = htonl(INADDR_ANY);
-	else
-		addr->sin_addr.s_addr = inet_addr(str);
+		addr->s_addr = htonl(INADDR_ANY);
+	else if (inet_aton(str, addr) == 0)
+	{
+		GB.Error("Incorrect address");
+		return TRUE;
+	}
+	
+	return FALSE;
 }
 
 static void dgram_start(CUDPSOCKET *_object)
@@ -346,6 +351,7 @@ static void dgram_start(CUDPSOCKET *_object)
 	size_t size;
 	struct stat info;
 	struct sockaddr *addr;
+	struct in_addr mc_interface_addr;
 
 	if (SOCKET->status > NET_INACTIVE)
 	{
@@ -386,14 +392,9 @@ static void dgram_start(CUDPSOCKET *_object)
 	}
 	else
 	{
-		struct in_addr mc_interface_addr;
-
 		THIS->addr.in.sin_family = domain;
-		if (!THIS->host)
-			THIS->addr.in.sin_addr.s_addr = htonl(INADDR_ANY);
-		else
-			//THIS->addr.in.sin_addr.s_addr = inet_addr(THIS->host);
-			inet_aton(THIS->hist, &THIS->addr.in.sin_addr));
+		if (fill_in_addr(&THIS->addr.in.sin_addr, THIS->host))
+			goto CANNOT_CREATE_SOCKET;
 
 		THIS->addr.in.sin_port = htons(THIS->port);
 		size = sizeof(struct sockaddr_in);
@@ -402,11 +403,8 @@ static void dgram_start(CUDPSOCKET *_object)
 		if (update_multicast_loop(THIS) || update_multicast_ttl(THIS))
 			goto CANNOT_CREATE_SOCKET;
 		
-		
-		if (THIS->mc_interface && *THIS->mc_interface)
-			inet_aton(THIS->mc_interface, &mc_interface_addr));
-		else
-			mc_interface_addr.s_addr = htonl(INADDR_ANY);
+		if (fill_in_addr(&mc_interface_addr, THIS->mc_interface))
+			goto CANNOT_CREATE_SOCKET;
 		
 		setsockopt(SOCKET->socket, IPPROTO_IP, IP_MULTICAST_IF, &mc_interface_addr, sizeof(mc_interface_addr));	
 	}
@@ -720,11 +718,8 @@ static void handle_multicast_membership(CUDPSOCKET *_object, bool add, GB_STRING
 		return;
 	}
 	
-	membership.imr_multiaddr.s_addr = inet_addr(GB.ToZeroString(group));
-	if (interface)
-		membership.imr_interface.s_addr = inet_addr(GB.ToZeroString(interface));
-	else
-		membership.imr_interface.s_addr = htonl(INADDR_ANY);
+	if (fill_in_addr(&membership.imr_multiaddr, interface ? GB.ToZeroString(group) : NULL))
+		return;
 	
 	if (setsockopt(SOCKET->socket, IPPROTO_IP, add ? IP_ADD_MEMBERSHIP : IP_DROP_MEMBERSHIP, &membership, sizeof(membership)))
 		GB.Error(add ? "Cannot join multicast group: &1" : "Cannot leave multicast group: &1", strerror(errno));
