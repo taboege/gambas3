@@ -46,15 +46,18 @@ typedef
 		CSOCKET_COMMON common;
 		NET_ADDRESS addr;
 		char *thost;
-		int tport;
 		char *tpath;
-		int broadcast;
 		char *buffer;
 		int buffer_pos;
 		int buffer_len;
 		char *path;
 		char *host;
-		int port;
+		char *mc_interface;
+		unsigned short tport;
+		unsigned short port;
+		unsigned char mc_loop;
+		unsigned char mc_ttl;
+		unsigned broadcast : 1;
 	} 
 	CUDPSOCKET;
 
