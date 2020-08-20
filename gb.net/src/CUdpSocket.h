@@ -31,6 +31,7 @@
 #ifndef __CUDPSOCKET_C
 
 extern GB_DESC CUdpSocketDesc[];
+extern GB_DESC CUdpSocketMulticastDesc[];
 extern GB_STREAM_DESC UdpSocketStream;
 
 #else

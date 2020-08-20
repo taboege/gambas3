@@ -44,6 +44,7 @@ GB_DESC *GB_CLASSES[] EXPORT =
   CDnsClientDesc,
   CSocketDesc,
   CServerSocketDesc,
+	CUdpSocketMulticastDesc,
   CUdpSocketDesc,
   CSerialPortDesc,
   CNetDesc,
