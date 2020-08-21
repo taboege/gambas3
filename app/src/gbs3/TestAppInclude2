@@ -1,0 +1,3 @@
+public sub MoreFunctions() as string
+print "More stuff as string"
+end

@@ -1,0 +1,32 @@
+Class Testit Defined {
+public a as integer
+public sub GetA() as integer
+return a
+end
+}
+Project file {
+# Gambas Project File 3.0
+Title=Gambas Script
+Startup=MMain
+Component=gb.eval
+Component=gb.eval.highlight
+Component=gb.pcre
+}
+' Gambas module file
+Public x as string = "hello"
+public struct testStruct
+H as string 
+g as integer
+f as variant
+end struct
+public sub WriteSomething()
+print "Write Something"
+end
+public sub MoreFunctions() as string
+print "More stuff as string"
+end
+Public Sub Main()
+for i as integer = 0 to 20
+print x;;i
+next
+End

@@ -688,7 +688,6 @@ End
 ' End
 ' 
 ' 
-' 
 
 Public Sub Paint(Text As String, X As Float, Y As Float, Optional Styles As TextHighlighterStyle[]) As String
   
