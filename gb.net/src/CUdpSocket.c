@@ -708,7 +708,10 @@ static void handle_multicast_membership(CUDPSOCKET *_object, bool add, GB_STRING
 		return;
 	}
 	
-	if (fill_in_addr(&membership.imr_multiaddr, interface ? GB.ToZeroString(group) : NULL))
+	if (fill_in_addr(&membership.imr_multiaddr, GB.ToZeroString(group)))
+		return;
+	
+	if (fill_in_addr(&membership.imr_interface, interface ? GB.ToZeroString(interface) : NULL))
 		return;
 	
 	if (setsockopt(SOCKET->socket, IPPROTO_IP, add ? IP_ADD_MEMBERSHIP : IP_DROP_MEMBERSHIP, &membership, sizeof(membership)))
@@ -740,8 +743,8 @@ GB_DESC CUdpSocketMulticastDesc[] =
 	GB_PROPERTY("Ttl", "i", UdpSocketMulticast_Ttl),
 	GB_PROPERTY("Interface", "s", UdpSocketMulticast_Interface),
 
-	GB_METHOD("Join", NULL, UdpSocketMulticast_Join, "(Group)s[(Interface)s])"),
-	GB_METHOD("Leave", NULL, UdpSocketMulticast_Leave, "(Group)s[(Interface)s])"),
+	GB_METHOD("Join", NULL, UdpSocketMulticast_Join, "(Group)s[(Interface)s]"),
+	GB_METHOD("Leave", NULL, UdpSocketMulticast_Leave, "(Group)s[(Interface)s]"),
 	
 	GB_END_DECLARE
 };
