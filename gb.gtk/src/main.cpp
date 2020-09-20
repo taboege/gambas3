@@ -90,6 +90,7 @@ static void hook_post(void);
 static int hook_loop();
 static void hook_watch(int fd, int type, void *callback, intptr_t param);
 
+static void GTK_CreateControl(void *_object, void *parent, GtkWidget *widget);
 static GtkWidget *GTK_CreateGLArea(void *_object, void *parent, void (*init)(GtkWidget *));
 
 static bool _post_check = false;
@@ -189,9 +190,14 @@ GB_DESC *GB_CLASSES[] EXPORT =
 	NULL
 };
 
+#ifdef GTK3
+void *GB_GTK3_1[] EXPORT =
+#else
 void *GB_GTK_1[] EXPORT =
+#endif
 {
 	(void *)GTK_INTERFACE_VERSION,
+	(void *)GTK_CreateControl,
 	(void *)GTK_CreateGLArea,
 	NULL
 };
@@ -601,10 +607,19 @@ void MAIN_do_iteration(bool do_not_block)
 	gControl::cleanRemovedControls();
 }
 
+static void GTK_CreateControl(void *_object, void *parent, GtkWidget *widget)
+{
+	gControl *ctrl = new gControl(CONTAINER(parent));
+	ctrl->border = ctrl->widget = widget;
+	InitControl(ctrl, (CWIDGET*)_object);
+	ctrl->realize(false);
+	ctrl->_has_input_method = TRUE;
+}
+
 static GtkWidget *GTK_CreateGLArea(void *_object, void *parent, void (*init)(GtkWidget *))
 {
 	gControl *ctrl = new gGLArea(CONTAINER(parent), init);
-	InitControl(ctrl, (CWIDGET*)_object);
+	InitControl(ctrl, (CWIDGET *)_object);
 	//WIDGET->onExpose = Darea_Expose;
 	return ctrl->widget;
 }

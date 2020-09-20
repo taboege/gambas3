@@ -1,8 +1,8 @@
 /***************************************************************************
 
-  gb.gtk.h
+  main.h
 
-  (c) 2004-2006 - Daniel Campos Fernández <dcamposf@gmail.com>
+  (c) Benoît Minisini <g4mba5@gmail.com>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,45 +21,21 @@
 
 ***************************************************************************/
 
-#ifndef GB_GTK_H
-#define GB_GTK_H
+#ifndef __MAIN_H
+#define __MAIN_H
 
+#include "gb_common.h"
 #include "gambas.h"
-#include <gdk/gdk.h>
-#include <gtk/gtk.h>
+#include "../gb.qt.h"
 
-#ifndef GDK_WINDOWING_X11
-#define NO_X_WINDOW 1
+#include <QUrl>
+
+#ifndef __MAIN_CPP
+extern "C" GB_INTERFACE GB;
+extern "C" QT_INTERFACE QT;
+extern GB_CLASS CLASS_WebView;
 #endif
 
-#define GTK_INTERFACE_VERSION 1
-
-#ifdef GTK3
-#define GTK_NAME "gb.gtk3"
-#else
-#define GTK_NAME "gb.gtk"
-#endif
-
-typedef
-	struct 
-	{
-		intptr_t version;
-		void (*CreateControl)(void *control, void *parent, GtkWidget *widget);
-		GtkWidget *(*CreateGLArea)(void *control, void *parent, void (*init)(GtkWidget *));
-		void *_null;
-	}  
-	GTK_INTERFACE;
-
-typedef  
-	struct {
-	  GB_BASE ob;
-	  void *widget;
-		GB_VARIANT_VALUE tag;
-		void *font;
-		void *cursor;
-		char *popup;
-		char *action;
-	}  
-	GTK_CONTROL;
+void MAIN_return_qvariant(const QVariant &result);
 
 #endif

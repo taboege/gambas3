@@ -14,9 +14,15 @@ GB_COMPONENT_PKG_CONFIG(
   'gtk+-3.0 >= 3.4' 'librsvg-2.0 >= 2.14.3' 'cairo >= 1.6.0' 'cairo-ft >= 1.6.0' 'gtk+-unix-print-3.0 >= 3.4' sm ice x11
 )
 
+GB_COMPONENT_PKG_CONFIG(
+  gtk3webview, GTK3WEBVIEW, gb.gtk3.webview, [webview],
+  'gtk+-3.0 >= 3.4' 'webkit2gtk-4.0 >= 2.28'
+)
+
 AC_OUTPUT( \
 Makefile \
 src/Makefile \
+src/webview/Makefile
 )
 
 GB_PRINT_MESSAGES

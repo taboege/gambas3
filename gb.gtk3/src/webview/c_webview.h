@@ -1,8 +1,8 @@
 /***************************************************************************
 
-  gb.gtk.h
+  c_webview.h
 
-  (c) 2004-2006 - Daniel Campos Fernández <dcamposf@gmail.com>
+  (c) Benoît Minisini <g4mba5@gmail.com>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,45 +21,27 @@
 
 ***************************************************************************/
 
-#ifndef GB_GTK_H
-#define GB_GTK_H
+#ifndef __C_WEBVIEW_H
+#define __C_WEBVIEW_H
 
-#include "gambas.h"
-#include <gdk/gdk.h>
-#include <gtk/gtk.h>
-
-#ifndef GDK_WINDOWING_X11
-#define NO_X_WINDOW 1
-#endif
-
-#define GTK_INTERFACE_VERSION 1
-
-#ifdef GTK3
-#define GTK_NAME "gb.gtk3"
-#else
-#define GTK_NAME "gb.gtk"
-#endif
+#include "main.h"
 
 typedef
-	struct 
-	{
-		intptr_t version;
-		void (*CreateControl)(void *control, void *parent, GtkWidget *widget);
-		GtkWidget *(*CreateGLArea)(void *control, void *parent, void (*init)(GtkWidget *));
-		void *_null;
-	}  
-	GTK_INTERFACE;
+  struct {
+    GTK_CONTROL control;
+		GtkWidget *widget;
+   }
+  CWEBVIEW;
 
-typedef  
-	struct {
-	  GB_BASE ob;
-	  void *widget;
-		GB_VARIANT_VALUE tag;
-		void *font;
-		void *cursor;
-		char *popup;
-		char *action;
-	}  
-	GTK_CONTROL;
+#ifndef __C_WEBVIEW_C
+extern GB_DESC WebViewDesc[];
+#else
+
+#define THIS    ((CWEBVIEW *)_object)
+#define WIDGET  (WEBKIT_WEB_VIEW(THIS->widget))
+
+//#define CGLAREA_PROPERTIES QT_WIDGET_PROPERTIES
+
+#endif /* __CGLAREA_CPP */
 
 #endif

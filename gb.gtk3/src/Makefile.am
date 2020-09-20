@@ -1,7 +1,7 @@
 COMPONENT = gb.gtk3
 include $(top_srcdir)/component.am
 
-##SUBDIRS = . @GTKOPENGL_DIR@
+SUBDIRS = . @GTK3WEBVIEW_DIR@
 
 gblib_LTLIBRARIES = gb.gtk3.la
 

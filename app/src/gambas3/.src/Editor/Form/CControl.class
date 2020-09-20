@@ -938,7 +938,7 @@ Public Sub UpdateName()
   
   If Virtual Then Return
   
-  Select Case Object.Type(Control)
+  Select Case Kind
 
     Case "ListBox"
       Control[0].Text = Name
