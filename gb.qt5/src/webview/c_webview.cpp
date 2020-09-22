@@ -292,6 +292,47 @@ BEGIN_PROPERTY(WebView_Url)
 
 END_PROPERTY
 
+BEGIN_METHOD(WebView_SetHtml, GB_STRING html; GB_STRING root)
+
+	if (!MISSING(root))
+	{
+		QUrl url(QSTRING_ARG(root));
+		WIDGET->setHtml(QSTRING_ARG(html), url);
+	}
+	else
+		WIDGET->setHtml(QSTRING_ARG(html));
+
+END_METHOD
+
+BEGIN_METHOD_VOID(WebView_Back)
+
+	WIDGET->back();
+
+END_METHOD
+
+BEGIN_METHOD_VOID(WebView_Forward)
+
+	WIDGET->forward();
+
+END_METHOD
+
+BEGIN_METHOD(WebView_Reload, GB_BOOLEAN bypass)
+
+	bool bypass = VARGOPT(bypass, false);
+	//stop_view(THIS);
+	if (bypass)
+		WIDGET->page()->triggerAction(QWebEnginePage::ReloadAndBypassCache);
+	else
+		WIDGET->reload();
+
+END_METHOD
+
+BEGIN_METHOD_VOID(WebView_Stop)
+
+	WIDGET->stop();
+
+END_METHOD
+
 #if 0
 BEGIN_PROPERTY(WebView_HTML)
 
@@ -359,35 +400,6 @@ BEGIN_PROPERTY(WebView_Title)
 	RETURN_NEW_STRING(WIDGET->title());
 
 END_PROPERTY
-
-BEGIN_METHOD_VOID(WebView_Back)
-
-	WIDGET->back();
-
-END_METHOD
-
-BEGIN_METHOD_VOID(WebView_Forward)
-
-	WIDGET->forward();
-
-END_METHOD
-
-BEGIN_METHOD(WebView_Reload, GB_BOOLEAN bypass)
-
-	bool bypass = VARGOPT(bypass, false);
-	stop_view(THIS);
-	if (bypass)
-		WIDGET->page()->triggerAction(QWebPage::ReloadAndBypassCache);
-	else
-		WIDGET->reload();
-
-END_METHOD
-
-BEGIN_METHOD_VOID(WebView_Stop)
-
-	stop_view(THIS);
-
-END_METHOD
 
 BEGIN_PROPERTY(WebView_NewView)
 
@@ -727,11 +739,6 @@ GB_DESC WebViewDesc[] =
 	GB_PROPERTY_SELF("Auth", ".WebView.Auth"),
 	GB_PROPERTY_SELF("History", ".WebView.History"),
 
-	GB_METHOD("Back", NULL, WebView_Back, NULL),
-	GB_METHOD("Forward", NULL, WebView_Forward, NULL),
-	GB_METHOD("Reload", NULL, WebView_Reload, "[(BypassCache)b]"),
-	GB_METHOD("Stop", NULL, WebView_Stop, NULL),
-
 	GB_PROPERTY("NewView", "WebView", WebView_NewView),
 
 	GB_PROPERTY("Cookies", "Cookie[]", WebView_Cookies),
@@ -775,6 +782,13 @@ GB_DESC WebViewDesc[] =
 
 	GB_PROPERTY("Url", "s", WebView_Url),
 	
+	GB_METHOD("SetHtml", NULL, WebView_SetHtml, "(Html)s[(Root)s]"),
+	
+	GB_METHOD("Back", NULL, WebView_Back, NULL),
+	GB_METHOD("Forward", NULL, WebView_Forward, NULL),
+	GB_METHOD("Reload", NULL, WebView_Reload, "[(BypassCache)b]"),
+	GB_METHOD("Stop", NULL, WebView_Stop, NULL),
+
 	GB_CONSTANT("_Properties", "s", "*,Url"),
 	GB_CONSTANT("_Group", "s", "View"),
 

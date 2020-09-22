@@ -53,6 +53,39 @@ BEGIN_PROPERTY(WebView_Url)
 
 END_PROPERTY
 
+BEGIN_METHOD(WebView_SetHtml, GB_STRING html; GB_STRING root)
+
+	webkit_web_view_load_html(WIDGET, GB.ToZeroString(ARG(html)), MISSING(root) ? NULL : GB.ToZeroString(ARG(root)));
+
+END_METHOD
+
+BEGIN_METHOD_VOID(WebView_Back)
+
+	webkit_web_view_go_back(WIDGET);
+
+END_METHOD
+
+BEGIN_METHOD_VOID(WebView_Forward)
+
+	webkit_web_view_go_forward(WIDGET);
+
+END_METHOD
+
+BEGIN_METHOD(WebView_Reload, GB_BOOLEAN bypass)
+
+	if (VARGOPT(bypass, FALSE))
+		webkit_web_view_reload_bypass_cache(WIDGET);
+	else
+		webkit_web_view_reload(WIDGET);
+
+END_METHOD
+
+BEGIN_METHOD_VOID(WebView_Stop)
+
+	webkit_web_view_stop_loading(WIDGET);
+
+END_METHOD
+
 //---------------------------------------------------------------------------
 
 GB_DESC WebViewDesc[] =
@@ -63,14 +96,17 @@ GB_DESC WebViewDesc[] =
 
   GB_METHOD("_new", NULL, WebView_new, "(Parent)Container;"),
   //GB_METHOD("_free", NULL, GLArea_free, NULL),
-  //GB_METHOD("Update", NULL, GLArea_update, NULL),
-  //GB_METHOD("Refresh", NULL, GLArea_Refresh, NULL),
-  //GB_METHOD("Select", NULL, CGLAREA_select, NULL),
-  //GB_METHOD("Text", NULL, CGLAREA_text, "(Text)s(X)i(Y)i"),
   
   GB_PROPERTY("Url", "s", WebView_Url),
 
-  GB_CONSTANT("_Properties", "s", "*,Url"),
+	GB_METHOD("SetHtml", NULL, WebView_SetHtml, "(Html)s[(Root)s]"),
+
+	GB_METHOD("Back", NULL, WebView_Back, NULL),
+	GB_METHOD("Forward", NULL, WebView_Forward, NULL),
+	GB_METHOD("Reload", NULL, WebView_Reload, "[(BypassCache)b]"),
+	GB_METHOD("Stop", NULL, WebView_Stop, NULL),
+
+	GB_CONSTANT("_Properties", "s", "*,Url"),
   GB_CONSTANT("_Group", "s", "View"),
 
   //GB_EVENT("Open", NULL, NULL, &EVENT_Open),
