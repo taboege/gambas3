@@ -45,6 +45,8 @@ GB_DESC *GB_CLASSES[] EXPORT =
 
 char *GB_INCLUDE EXPORT = "gb.qt4|gb.qt5|gb.gtk|gb.gtk3";
 
+static bool _debug = FALSE;
+
 
 const char *get_name(int use)
 {
@@ -66,6 +68,8 @@ int EXPORT GB_INIT(void)
 	char *env;
 	const char *comp;
 	int i;
+	const char *fail;
+	char not_found[32];
 
 	env = getenv("GB_GUI");
 	if (env)
@@ -79,6 +83,10 @@ int EXPORT GB_INIT(void)
 		else if (strcmp(env, "gb.gtk3") == 0)
 			use = USE_GB_GTK3;
 	}
+	
+	env = getenv("GB_GUI_DEBUG");
+	if (env && strcmp(env, "0")) 
+		_debug = TRUE;
 	
 	if (use == USE_NOTHING)
 	{
@@ -98,13 +106,21 @@ int EXPORT GB_INIT(void)
 			}
 		}
 	}
-
-	if (!GUI_can_use(use))
+	
+	if (_debug)
+		fprintf(stderr, "gb.gui: checking %s...\n", get_name(use));
+	
+	fail = GUI_can_use(use);
+	if (fail)
 	{
+		strcpy(not_found, fail);
 		use_other = USE_NOTHING;
 		for (i = 0; i <= 2; i++)
 		{
-			if (GUI_can_use(use_list[use - 1][i]))
+			if (_debug)
+				fprintf(stderr, "gb.gui: checking %s...\n", get_name(use_list[use - 1][i]));
+			
+			if (!GUI_can_use(use_list[use - 1][i]))
 			{
 				use_other = use_list[use - 1][i];
 				break;
@@ -113,12 +129,12 @@ int EXPORT GB_INIT(void)
 		
 		if (use_other)
 		{
-			fprintf(stderr, "gb.gui: warning: '%s' component not found, using '%s' instead\n", get_name(use), get_name(use_other));
+			fprintf(stderr, "gb.gui: warning: '%s' component not found, using '%s' instead\n", not_found, get_name(use_other));
 			use = use_other;
 		}
 		else
 		{
-			fprintf(stderr, "gb.gui: error: unable to find any GUI component\n");
+			fprintf(stderr, "gb.gui: error: '%s' component not found, unable to find any GUI replacement component\n", not_found);
 			exit(1);
 		}
 	}
@@ -132,8 +148,7 @@ int EXPORT GB_INIT(void)
 	}
 	else
 	{
-		env = getenv("GB_GUI_DEBUG");
-		if (env && !strcmp(env, "0")) 
+		if (_debug)
 			fprintf(stderr, "gb.gui: loading '%s'\n", comp);
 	}
   

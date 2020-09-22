@@ -34,9 +34,10 @@
 #ifndef __C_WEBVIEW_CPP
 
 /*extern GB_DESC WebViewAuthDesc[];
-extern GB_DESC WebViewHistoryDesc[];
 extern GB_DESC WebViewDownloadsDesc[];*/
 extern GB_DESC WebViewDesc[];
+extern GB_DESC WebViewHistoryDesc[];
+extern GB_DESC WebViewHistoryItemDesc[];
 
 #else
 
@@ -62,13 +63,11 @@ typedef
 	struct 
 	{
 		QT_WIDGET widget;
-		void *new_view;
-		double progress;
-		char *status;
 		QT_PICTURE icon;
 		//QNetworkReply *reply;
 		//QAuthenticator *authenticator;
 		char *userAgent;
+		int history;
 		unsigned stopping : 1;
 	}
 	CWEBVIEW;

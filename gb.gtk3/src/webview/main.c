@@ -32,6 +32,8 @@ GTK_INTERFACE GTK;
 
 GB_DESC *GB_CLASSES[] EXPORT =
 {
+	WebViewHistoryItemDesc,
+	WebViewHistoryDesc,
 	WebViewDesc,
 	NULL
 };

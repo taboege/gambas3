@@ -1,6 +1,6 @@
 /***************************************************************************
 
-  c_webview.h
+  main.h
 
   (c) Benoît Minisini <g4mba5@gmail.com>
 
@@ -21,31 +21,14 @@
 
 ***************************************************************************/
 
-#ifndef __C_WEBVIEW_H
-#define __C_WEBVIEW_H
+#ifndef __MAIN_H
+#define __MAIN_H
 
-#include <webkit2/webkit2.h>
-#include "main.h"
+#include "gambas.h"
+#include "gb_common.h"
 
-typedef
-  struct {
-    GTK_CONTROL control;
-		GtkWidget *widget;
-		WebKitBackForwardListItem *item;
-   }
-  CWEBVIEW;
-
-#ifndef __C_WEBVIEW_C
-extern GB_DESC WebViewDesc[];
-extern GB_DESC WebViewHistoryDesc[];
-extern GB_DESC WebViewHistoryItemDesc[];
-#else
-
-#define THIS    ((CWEBVIEW *)_object)
-#define WIDGET  (WEBKIT_WEB_VIEW(THIS->widget))
-
-//#define CGLAREA_PROPERTIES QT_WIDGET_PROPERTIES
-
-#endif /* __CGLAREA_CPP */
+#ifndef __MAIN_C
+extern GB_INTERFACE GB;
+#endif
 
 #endif

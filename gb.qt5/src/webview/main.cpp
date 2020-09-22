@@ -62,8 +62,9 @@ GB_DESC *GB_CLASSES[] EXPORT =
 	WebFrameChildrenDesc,
 	WebFrameDesc,
 	WebViewSettingsDesc,
-	WebViewAuthDesc,
-	WebViewHistoryDesc,*/
+	WebViewAuthDesc,*/
+	WebViewHistoryItemDesc,
+	WebViewHistoryDesc,
 	WebViewDesc,
 	NULL
 };

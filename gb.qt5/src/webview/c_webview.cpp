@@ -29,6 +29,7 @@
 #include <QWebPage>
 #include <QWebFrame>
 #include <QWebHistory>*/
+#include <QWebEngineHistory>
 
 /*#include "ccookiejar.h"
 #include "cwebsettings.h"
@@ -36,6 +37,9 @@
 #include "cwebframe.h"
 #include "cwebhittest.h"*/
 #include "c_webview.h"
+
+#define HISTORY (WIDGET->history())
+
 
 /*typedef
 	struct {
@@ -58,7 +62,6 @@ DECLARE_EVENT(EVENT_NEW_FRAME);
 DECLARE_EVENT(EVENT_AUTH);
 DECLARE_EVENT(EVENT_DOWNLOAD);
 
-#define HISTORY (WIDGET->history())
 
 
 static QNetworkAccessManager *_network_access_manager = 0;
@@ -217,6 +220,8 @@ BEGIN_METHOD(WebView_new, GB_OBJECT parent)
 	}*/
 
   MyWebEngineView *wid = new MyWebEngineView(QT.GetContainer(VARG(parent)));
+
+	wid->setAttribute(Qt::WA_NativeWindow, true);
 	
 	/*if (!_ignore_png_warnings)
 	{
@@ -262,7 +267,6 @@ BEGIN_METHOD_VOID(WebView_free)
 	/*if (_network_access_manager_view == THIS)
 		_network_access_manager_view = 0;*/
 	
-	GB.FreeString(&THIS->status);
 	GB.FreeString(&THIS->userAgent);
 	GB.Unref(POINTER(&THIS->icon));
 
@@ -289,6 +293,12 @@ BEGIN_PROPERTY(WebView_Url)
 		//stop_view(THIS);
 		WIDGET->setUrl(QSTRING_PROP());
 	}
+
+END_PROPERTY
+
+BEGIN_PROPERTY(WebView_Title)
+
+	RETURN_NEW_STRING(WIDGET->title());
 
 END_PROPERTY
 
@@ -332,6 +342,16 @@ BEGIN_METHOD_VOID(WebView_Stop)
 	WIDGET->stop();
 
 END_METHOD
+
+BEGIN_PROPERTY(WebView_Zoom)
+
+	if (READ_PROPERTY)
+		GB.ReturnFloat(WIDGET->zoomFactor());
+	else
+		WIDGET->setZoomFactor(VPROP(GB_FLOAT));
+
+END_PROPERTY
+
 
 #if 0
 BEGIN_PROPERTY(WebView_HTML)
@@ -392,12 +412,6 @@ BEGIN_PROPERTY(WebView_TextZoom)
 		GB.ReturnFloat(WIDGET->textSizeMultiplier());
 	else
 		WIDGET->setTextSizeMultiplier(VPROP(GB_FLOAT));
-
-END_PROPERTY
-
-BEGIN_PROPERTY(WebView_Title)
-
-	RETURN_NEW_STRING(WIDGET->title());
 
 END_PROPERTY
 
@@ -628,55 +642,92 @@ BEGIN_PROPERTY(WebView_Document)
 	GB.ReturnObject(CWEBELEMENT_create(WIDGET->page()->mainFrame()->documentElement()));
 
 END_PROPERTY
+#endif
 
 //-------------------------------------------------------------------------
 
-BEGIN_PROPERTY(WebViewHistory_Count)
-
-	GB.ReturnInteger(HISTORY->count());
-
-END_PROPERTY
-
-BEGIN_PROPERTY(WebViewHistory_Max)
-
-	GB.ReturnInteger(HISTORY->count() - 1);
-
-END_PROPERTY
-
-BEGIN_PROPERTY(WebViewHistory_Index)
-
-	if (READ_PROPERTY)
-		GB.ReturnInteger(HISTORY->currentItemIndex());
+static QWebEngineHistoryItem get_item(QWebEngineHistory *history, int index)
+{
+	if (index == 0)
+		return history->currentItem();
+	
+	QList<QWebEngineHistoryItem> list;
+	
+	if (index > 0)
+		list = history->forwardItems(history->count());
 	else
 	{
-		int index = VPROP(GB_INTEGER);
-		if (index < 0 || index >= HISTORY->count())
-		{
-			GB.Error(GB_ERR_ARG);
-			return;
-		}
-		HISTORY->goToItem(HISTORY->itemAt(index));
+		list = history->backItems(history->count());
+		index = (-index);
 	}
+	
+	return list.at(index);
+}
 
-END_PROPERTY
+BEGIN_PROPERTY(WebViewHistoryItem_Title)
 
-BEGIN_PROPERTY(WebViewHistory_MaxSize)
-
-	if (READ_PROPERTY)
-		GB.ReturnInteger(HISTORY->maximumItemCount());
+	QWebEngineHistoryItem item = get_item(HISTORY, THIS->history);
+	
+	if (item.isValid())
+		RETURN_NEW_STRING(item.title());
 	else
-		HISTORY->setMaximumItemCount(VPROP(GB_INTEGER));
+		GB.ReturnNull();
 
 END_PROPERTY
+
+BEGIN_PROPERTY(WebViewHistoryItem_Url)
+
+	QWebEngineHistoryItem item = get_item(HISTORY, THIS->history);
+	
+	if (item.isValid())
+		RETURN_NEW_STRING(item.url().toString());
+	else
+		GB.ReturnNull();
+
+END_PROPERTY
+
+BEGIN_METHOD_VOID(WebViewHistoryItem_GoTo)
+
+	QWebEngineHistoryItem item = get_item(HISTORY, THIS->history);
+	
+	if (item.isValid())
+		HISTORY->goToItem(item);
+
+END_METHOD
 
 BEGIN_METHOD_VOID(WebViewHistory_Clear)
 
-	int max = HISTORY->maximumItemCount();
-	HISTORY->setMaximumItemCount(0);
-	HISTORY->setMaximumItemCount(max);
+	HISTORY->clear();
 
 END_METHOD
-#endif
+
+BEGIN_METHOD(WebViewHistory_get, GB_INTEGER index)
+
+	int index = VARG(index);
+	
+	if (index > 0 && index > HISTORY->forwardItems(HISTORY->count()).count())
+		GB.ReturnNull();
+	else if (index < 0 && (-index) > HISTORY->backItems(HISTORY->count()).count())
+		GB.ReturnNull();
+	else
+	{
+		THIS->history = index;
+		RETURN_SELF();
+	}
+
+END_METHOD
+
+BEGIN_PROPERTY(WebViewHistory_CanGoBack)
+
+	GB.ReturnBoolean(HISTORY->canGoBack());
+
+END_PROPERTY
+
+BEGIN_PROPERTY(WebViewHistory_CanGoForward)
+
+	GB.ReturnBoolean(HISTORY->canGoForward());
+
+END_PROPERTY
 
 //-------------------------------------------------------------------------
 
@@ -693,19 +744,6 @@ GB_DESC WebViewAuthDesc[] =
 	GB_END_DECLARE
 };
 
-GB_DESC WebViewHistoryDesc[] =
-{
-	GB_DECLARE_VIRTUAL(".WebView.History"),
-
-	GB_PROPERTY_READ("Count", "i", WebViewHistory_Count),
-	GB_PROPERTY_READ("Max", "i", WebViewHistory_Max),
-	GB_PROPERTY("Index", "i", WebViewHistory_Index),
-	GB_PROPERTY("MaxSize", "i", WebViewHistory_MaxSize),
-	GB_METHOD("Clear", NULL, WebViewHistory_Clear, NULL),
-
-	GB_END_DECLARE
-};
-
 GB_DESC WebViewDesc[] =
 {
   GB_DECLARE("WebView", sizeof(CWEBVIEW)), GB_INHERITS("Control"),
@@ -715,11 +753,8 @@ GB_DESC WebViewDesc[] =
   GB_METHOD("_init", NULL, WebView_init, NULL),
   GB_METHOD("_exit", NULL, WebView_exit, NULL),
 
-	GB_PROPERTY("Url", "s", WebView_Url),
 	GB_PROPERTY("Status", "s", WebView_Status),
 
-	GB_PROPERTY("HTML", "s", WebView_HTML),
-	GB_PROPERTY_READ("Text", "s", WebView_Text),
 	GB_PROPERTY_READ("Icon", "Picture", WebView_Icon),
 	GB_PROPERTY_READ("SelectedText", "s", WebView_SelectedText),
 	GB_PROPERTY_READ("Progress", "f", WebView_Progress),
@@ -774,6 +809,29 @@ GB_DESC WebViewDesc[] =
 };
 #endif
 
+GB_DESC WebViewHistoryItemDesc[] = 
+{
+	GB_DECLARE_VIRTUAL(".WebView.History.Item"),
+	
+	GB_PROPERTY_READ("Title", "s", WebViewHistoryItem_Title),
+	GB_PROPERTY_READ("Url", "s", WebViewHistoryItem_Url),
+	GB_METHOD("GoTo", NULL, WebViewHistoryItem_GoTo, NULL),
+	
+	GB_END_DECLARE
+};
+
+GB_DESC WebViewHistoryDesc[] =
+{
+	GB_DECLARE_VIRTUAL(".WebView.History"),
+
+	GB_METHOD("Clear", NULL, WebViewHistory_Clear, NULL),
+	GB_METHOD("_get", ".WebView.History.Item", WebViewHistory_get, "(Index)i"),
+	GB_PROPERTY_READ("CanGoBack", "b", WebViewHistory_CanGoBack),
+	GB_PROPERTY_READ("CanGoForward", "b", WebViewHistory_CanGoForward),
+
+	GB_END_DECLARE
+};
+
 GB_DESC WebViewDesc[] =
 {
   GB_DECLARE("WebView", sizeof(CWEBVIEW)), GB_INHERITS("Control"),
@@ -781,6 +839,8 @@ GB_DESC WebViewDesc[] =
   GB_METHOD("_new", NULL, WebView_new, "(Parent)Container;"),
 
 	GB_PROPERTY("Url", "s", WebView_Url),
+	GB_PROPERTY("Title", "s", WebView_Title),
+	GB_PROPERTY("Zoom", "f", WebView_Zoom),
 	
 	GB_METHOD("SetHtml", NULL, WebView_SetHtml, "(Html)s[(Root)s]"),
 	
@@ -789,7 +849,7 @@ GB_DESC WebViewDesc[] =
 	GB_METHOD("Reload", NULL, WebView_Reload, "[(BypassCache)b]"),
 	GB_METHOD("Stop", NULL, WebView_Stop, NULL),
 
-	GB_CONSTANT("_Properties", "s", "*,Url"),
+	GB_CONSTANT("_Properties", "s", "*,Url,Zoom=1"),
 	GB_CONSTANT("_Group", "s", "View"),
 
 	GB_END_DECLARE

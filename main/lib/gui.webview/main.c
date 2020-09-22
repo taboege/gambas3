@@ -2,7 +2,7 @@
 
   main.c
 
-  (c) 2000-2017 Benoît Minisini <g4mba5@gmail.com>
+  (c) Benoît Minisini <g4mba5@gmail.com>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ GB_DESC *GB_CLASSES[] EXPORT =
   NULL
 };
 
-char *GB_INCLUDE EXPORT = "gb.qt4.opengl|gb.qt5.opengl|gb.gtk.opengl";
+char *GB_INCLUDE EXPORT = "gb.qt5.webview|gb.gtk3.webview";
 
 int EXPORT GB_INIT(void)
 {
@@ -42,26 +42,24 @@ int EXPORT GB_INIT(void)
 	env = getenv("GB_GUI");
 	if (env)
 	{
-		if (strcmp(env, "gb.qt4") == 0)
-			comp = "gb.qt4.opengl";
-		else if (strcmp(env, "gb.qt5") == 0)
-			comp = "gb.qt5.opengl";
-		else if (strcmp(env, "gb.gtk") == 0)
-			comp = "gb.gtk.opengl";
+		if (strcmp(env, "gb.qt5") == 0)
+			comp = "gb.qt5.webview";
+		else if (strcmp(env, "gb.gtk3") == 0)
+			comp = "gb.gtk3.webview";
 	}
 	
 	if (!comp)
 	{
 		// GB_GUI should be set by gb.gui
 		if (!env)
-			fprintf(stderr, "gb.gui.opengl: error: no component specified in GB_GUI environment variable\n");
+			fprintf(stderr, "gb.gui.webview: error: no component specified in GB_GUI environment variable\n");
 		else
-			fprintf(stderr, "gb.gui.opengl: error: unsupported component specified in GB_GUI environment variable\n");
+			fprintf(stderr, "gb.gui.webview: error: unsupported component specified in GB_GUI environment variable\n");
 		exit(1);
 	}
 		
 	if (GB.Component.Load(comp))
-		fprintf(stderr, "gb.gui.opengl: unable to load '%s' component\n", comp);
+		fprintf(stderr, "gb.gui.webview: unable to load '%s' component\n", comp);
   
   return 0;
 }

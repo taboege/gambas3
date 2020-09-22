@@ -31,24 +31,31 @@ static char *make_name(const char *prefix, const char *suffix)
 	return buffer;
 }
 
-static bool GUI_can_use(int use)
+static const char *GUI_can_use(int use)
 {
-	static const char *ext[] = { "ext", "webkit", "opengl", NULL };
+	static const char *ext[] = { "ext", "webkit", "opengl", "webview", NULL };
 	const char **pext;
 	const char *name;
+	char *child;
 	
 	name = get_name(use);
 	
 	if (!GB.Component.CanLoadLibrary(name))
-		return FALSE;
+		return name;
 
 	for (pext = ext; *pext; pext++)
 	{
-		if (GB.Component.Exist(make_name("gb.gui", *pext)) && !GB.Component.CanLoadLibrary(make_name(name, *pext)))
-			return FALSE;
+		if (!GB.Component.Exist(make_name("gb.gui", *pext)))
+			continue;
+		
+		child = make_name(name, *pext);
+		if (!GB.Component.CanLoadLibrary(child))
+			return child;
+		if (_debug)
+			fprintf(stderr, "  %s OK\n", child);
 	}
 	
-	return TRUE;
+	return NULL;
 }
 
 
