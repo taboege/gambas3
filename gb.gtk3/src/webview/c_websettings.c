@@ -288,6 +288,18 @@ GB_DESC WebSettingsFontsDesc[] =
 	GB_END_DECLARE
 };
 
+GB_DESC WebViewSettingsDesc[] =
+{
+  GB_DECLARE_VIRTUAL(".WebView.Settings"),
+	
+	GB_METHOD("_get", "b", WebSettings_get, "(Flag)i"),
+	GB_METHOD("_put", NULL, WebSettings_put, "(Value)b(Flag)i"),
+	
+	GB_PROPERTY_SELF("Fonts", ".WebSettings.Fonts"),
+
+	GB_END_DECLARE
+};
+
 GB_DESC WebSettingsDesc[] =
 {
   GB_DECLARE("WebSettings", sizeof(CWEBSETTINGS)), GB_AUTO_CREATABLE(), GB_NOT_CREATABLE(),
