@@ -60,7 +60,7 @@ build:debian-oldstable:
        qtwebengine5-dev libwebkit2gtk-4.0-dev git libssl-dev
   script:
     - ./reconf-all
-    - GAMBAS_CONFIG_FAILURE=1 ./configure -C
+    - GAMBAS_CONFIG_FAILURE=1 ./configure -C --disable-gtk3webview
     - make -j$(nproc)
     - make install
 
@@ -159,7 +159,7 @@ build:ubuntu-xenial:
 
   script:
     - ./reconf-all
-    - GAMBAS_CONFIG_FAILURE=1 ./configure -C --disable-gtk3webview
+    - GAMBAS_CONFIG_FAILURE=1 ./configure -C --disable-gtk3webview --disable-qt5webview
     - make -j$(nproc)
     - make install
 
