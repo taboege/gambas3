@@ -25,6 +25,7 @@
 
 #include "main.h"
 
+#include "c_websettings.h"
 #include "c_webview.h"
 
 GB_INTERFACE GB EXPORT;
@@ -32,6 +33,9 @@ GTK_INTERFACE GTK;
 
 GB_DESC *GB_CLASSES[] EXPORT =
 {
+	WebSettingsFontsDesc,
+	WebSettingsDesc,
+	WebViewSettingsDesc,
 	WebViewHistoryItemDesc,
 	WebViewHistoryDesc,
 	WebViewDesc,

@@ -22,7 +22,7 @@ GB_COMPONENT_PKG_CONFIG(
 
 GB_COMPONENT_PKG_CONFIG(
   qt5webview, QT5WEBVIEW, gb.qt5.webview, [webview],
-  'Qt5Core >= 5.3.0' Qt5WebEngineWidgets
+  'Qt5Core >= 5.5.0' Qt5WebEngineWidgets
 )
 
 pkg-config --atleast-version 5.4.0 Qt5Core

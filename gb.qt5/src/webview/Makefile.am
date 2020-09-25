@@ -10,4 +10,5 @@ gb_qt5_webview_la_CPPFLAGS = @QT5WEBVIEW_INC@ -I$(top_srcdir)/share -I$(top_srcd
 
 gb_qt5_webview_la_SOURCES = \
  main.h main.cpp \
- c_webview.h c_webview.cpp c_webview_moc.cpp
+ c_webview.h c_webview.cpp c_webview_moc.cpp \
+ c_websettings.h c_websettings.cpp

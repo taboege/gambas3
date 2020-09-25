@@ -1,6 +1,6 @@
 /***************************************************************************
 
-  c_webview.h
+  cwebsettings.h
 
   (c) Benoît Minisini <g4mba5@gmail.com>
 
@@ -21,32 +21,36 @@
 
 ***************************************************************************/
 
-#ifndef __C_WEBVIEW_H
-#define __C_WEBVIEW_H
+#ifndef __C_WEBSETTINGS_H
+#define __C_WEBSETTINGS_H
 
-#include <webkit2/webkit2.h>
 #include "main.h"
+
+#include <QUrl>
+#include <QWebEngineView>
+#include <QWebEngineSettings>
 
 typedef
   struct {
-    GTK_CONTROL control;
-		GtkWidget *widget;
-		WebKitBackForwardListItem *item;
+    GB_BASE ob;
    }
-  CWEBVIEW;
+  CWEBSETTINGS;
 
-#ifndef __C_WEBVIEW_C
-extern WebKitSettings *WEBVIEW_default_settings;
-extern GB_DESC WebViewDesc[];
-extern GB_DESC WebViewHistoryDesc[];
-extern GB_DESC WebViewHistoryItemDesc[];
+#ifndef __C_WEBSETTINGS_CPP
+
+/*extern GB_DESC WebSettingsIconDatabaseDesc[];
+extern GB_DESC WebSettingsCacheDesc[];
+extern GB_DESC WebSettingsProxyDesc[];*/
+extern GB_DESC WebViewSettingsDesc[];
+extern GB_DESC WebSettingsDesc[];
+extern GB_DESC WebSettingsFontsDesc[];
+
 #else
 
-#define THIS    ((CWEBVIEW *)_object)
-#define WIDGET  (WEBKIT_WEB_VIEW(THIS->widget))
+#define WEBVIEW ((QWebEngineView *)((QT_WIDGET *)_object)->widget)
 
-//#define CGLAREA_PROPERTIES QT_WIDGET_PROPERTIES
+#endif
 
-#endif /* __CGLAREA_CPP */
+//void WEBSETTINGS_set_cache(QWebView *view, bool on);
 
 #endif

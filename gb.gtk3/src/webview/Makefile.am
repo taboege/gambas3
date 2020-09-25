@@ -9,5 +9,6 @@ gb_gtk3_webview_la_CPPFLAGS = @GTK3_INC@ @GTK3WEBVIEW_INC@
 
 gb_gtk3_webview_la_SOURCES = \
  main.h main.c \
- c_webview.h c_webview.c
+ c_webview.h c_webview.c \
+ c_websettings.h c_websettings.c
 

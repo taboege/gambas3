@@ -32,10 +32,10 @@
 
 /*#include "ccookiejar.h"
 #include "cwebhittest.h"
-#include "cwebsettings.h"
 #include "cwebelement.h"
 #include "cwebframe.h"
 #include "cwebdownload.h"*/
+#include "c_websettings.h"
 #include "c_webview.h"
 #include "main.h"
 
@@ -54,15 +54,16 @@ GB_DESC *GB_CLASSES[] EXPORT =
 	CookieDesc,
 	WebSettingsIconDatabaseDesc,
 	WebSettingsCacheDesc,
-	WebSettingsFontsDesc,
 	WebSettingsProxyDesc,
 	WebSettingsDesc,
 	WebElementStyleDesc,
 	WebElementDesc,
 	WebFrameChildrenDesc,
 	WebFrameDesc,
-	WebViewSettingsDesc,
 	WebViewAuthDesc,*/
+	WebSettingsFontsDesc,
+	WebSettingsDesc,
+	WebViewSettingsDesc,
 	WebViewHistoryItemDesc,
 	WebViewHistoryDesc,
 	WebViewDesc,

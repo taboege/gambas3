@@ -23,7 +23,11 @@
 
 #define __C_WEBVIEW_C
 
+#include "c_websettings.h"
 #include "c_webview.h"
+
+WebKitSettings *WEBVIEW_default_settings = NULL;
+
 
 #define HISTORY (webkit_web_view_get_back_forward_list(WIDGET))
 
@@ -33,10 +37,23 @@
 
 //---------------------------------------------------------------------------
 
+BEGIN_METHOD_VOID(WebView_exit)
+
+	if (WEBVIEW_default_settings)
+		g_object_unref(WEBVIEW_default_settings);
+
+END_METHOD
+
 BEGIN_METHOD(WebView_new, GB_OBJECT parent)
 
 	THIS->widget = webkit_web_view_new();
-
+	
+	if (!WEBVIEW_default_settings)
+	{
+		WEBVIEW_default_settings = g_object_ref(webkit_web_view_get_settings(WIDGET));
+		//webkit_web_context_set_use_system_appearance_for_scrollbars(webkit_web_context_get_default(), TRUE);
+	}
+	
 	GTK.CreateControl(THIS, VARG(parent), THIS->widget);
 	
 	//webkit_web_view_load_uri(WIDGET, "http://google.fr/");	
@@ -183,7 +200,7 @@ GB_DESC WebViewDesc[] =
 {
   GB_DECLARE("WebView", sizeof(CWEBVIEW)), GB_INHERITS("Control"),
 
-  //GB_STATIC_METHOD("_exit", NULL, GLArea_exit, NULL),
+  GB_STATIC_METHOD("_exit", NULL, WebView_exit, NULL),
 
   GB_METHOD("_new", NULL, WebView_new, "(Parent)Container;"),
   //GB_METHOD("_free", NULL, GLArea_free, NULL),
@@ -200,6 +217,7 @@ GB_DESC WebViewDesc[] =
 	GB_METHOD("Stop", NULL, WebView_Stop, NULL),
 	
 	GB_PROPERTY_SELF("History", ".WebView.History"),
+	GB_PROPERTY_SELF("Settings", "WebView.Settings"),
 
 	GB_CONSTANT("_Properties", "s", "*,Url,Zoom=1"),
   GB_CONSTANT("_Group", "s", "View"),
