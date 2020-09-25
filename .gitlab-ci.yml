@@ -57,7 +57,7 @@ build:debian-oldstable:
        libgtk-3-dev libsdl2-dev libsdl2-mixer-dev libsdl2-ttf-dev 
        libsdl2-image-dev sane-utils libdumb1-dev libqt5opengl5-dev 
        libqt5svg5-dev libqt5webkit5-dev libqt5x11extras5-dev qtbase5-dev 
-       qtwebengine5-dev libwebkit2gtk-3.0-dev git libssl-dev
+       qtwebengine5-dev libwebkit2gtk-4.0-dev git libssl-dev
   script:
     - ./reconf-all
     - GAMBAS_CONFIG_FAILURE=1 ./configure -C
@@ -159,7 +159,7 @@ build:ubuntu-xenial:
 
   script:
     - ./reconf-all
-    - GAMBAS_CONFIG_FAILURE=1 ./configure -C --disable-qt5-webview
+    - GAMBAS_CONFIG_FAILURE=1 ./configure -C --disable-qt5-webview --disable-gtk3-webview
     - make -j$(nproc)
     - make install
 
@@ -171,7 +171,7 @@ build:ubuntu-trusty:
 
   script:
     - ./reconf-all
-    - GAMBAS_CONFIG_FAILURE=1 ./configure -C --disable-qt5
+    - GAMBAS_CONFIG_FAILURE=1 ./configure -C --disable-qt5 --disable-gtk3-webview
     - make -j$(nproc)
     - make install
 
@@ -184,8 +184,9 @@ build:alpine:
        glew-dev glib-dev gmime-dev gsl-dev gst-plugins-base-dev gstreamer-dev gtk+2.0-dev gtk+3.0-dev
        imlib2-dev gettext-dev libffi-dev mesa-dev libgnome-keyring-dev mariadb-dev librsvg-dev
        libsm-dev libxcursor-dev libxml2-dev libxslt-dev libxtst-dev make ncurses-dev pcre-dev pkgconf
-       poppler-dev postgresql-dev qt5-qtsvg-dev qt5-qtwebkit-dev qt5-qtx11extras-dev sdl2-dev sdl2_image-dev
-       sdl2_mixer-dev sdl2_ttf-dev sdl_mixer-dev sqlite-dev unixodbc-dev xdg-utils zlib-dev
+       poppler-dev postgresql-dev qt5-qtsvg-dev qt5-qtwebkit-dev qt5-qtx11extras-dev qt5-qtwebengine-dev 
+       sdl2-dev sdl2_image-dev sdl2_mixer-dev sdl2_ttf-dev sdl_mixer-dev sqlite-dev unixodbc-dev xdg-utils 
+       zlib-dev
   script:
     - ./reconf-all
     - GAMBAS_CONFIG_FAILURE=1 ./configure -C --disable-openal --disable-qt4 --disable-sdl --disable-sqlite2 --disable-v4l --disable-gtkopengl
