@@ -64,42 +64,40 @@ typedef
 	{
 		QT_WIDGET widget;
 		QT_PICTURE icon;
-		//QNetworkReply *reply;
-		//QAuthenticator *authenticator;
-		char *userAgent;
 		int history;
+		int progress;
 		unsigned stopping : 1;
 	}
 	CWEBVIEW;
 
-#if 0
-class CWebView : public QObject
+class WebViewSignalManager : public QObject
 {
   Q_OBJECT
 
 public:
 
-  static CWebView manager;
+  static WebViewSignalManager manager;
 
 public slots:
 
 	void iconChanged();
-	//void linkClicked(const QUrl &url);
-	void loadFinished(bool ok);
-	void loadProgress(int progress);
+	void titleChanged();
+	void urlChanged();
+	void linkHovered(const QString &link);
 	void loadStarted();
+	void loadProgress(int progress);
+	void loadFinished(bool ok);
+	
+	/*
 	void selectionChanged();
 	void statusBarMessage(const QString &text);
-	void titleChanged(const QString &title);
-	void linkHovered(const QString &link, const QString &title, const QString &textContent);
 	//void downloadRequested(const QNetworkRequest &);
 	void frameCreated(QWebFrame *);
 	void authenticationRequired(QNetworkReply *reply, QAuthenticator *authenticator);
-	void urlChanged(const QUrl &);
 	void downloadRequested(const QNetworkRequest &);
-	void handleUnsupportedContent(QNetworkReply*);
+	void handleUnsupportedContent(QNetworkReply*);*/
 };
-#endif
+
 //QNetworkAccessManager *WEBVIEW_get_network_manager();
 
 #endif

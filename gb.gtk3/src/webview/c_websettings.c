@@ -58,7 +58,6 @@ static bool get_flag(WebKitSettings *settings, int flag)
 		case 21: return webkit_settings_get_print_backgrounds(settings);
 		case 26: return webkit_settings_get_media_playback_requires_user_gesture(settings);
 		case 29: return webkit_settings_get_enable_dns_prefetching(settings);
-		
 	}
 	
 	return FALSE;

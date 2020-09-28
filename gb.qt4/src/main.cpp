@@ -1275,6 +1275,11 @@ static void *QT_CreatePicture(const QPixmap &p)
 	return CPICTURE_create(&p);
 }
 
+/*static void *QT_CreateImage(const Image &p)
+{
+	return CIMAGE_create(&p);
+}*/
+
 void MyApplication::linkDestroyed(QObject *qobject)
 {
 	void *object = _link_map.value(qobject, 0);
@@ -1323,6 +1328,11 @@ static void declare_tray_icon()
 {
 	GB.Component.Declare(TrayIconDesc);
 	GB.Component.Declare(TrayIconsDesc);
+}
+
+static int QT_GetDesktopScale(void)
+{
+	return MAIN_scale;
 }
 
 extern "C" {
@@ -1383,6 +1393,7 @@ void *GB_QT4_1[] EXPORT =
 	(void *)QT_CreatePicture,
 	//(void *)QT_MimeSourceFactory,
 	(void *)QT_GetPixmap,
+	//(void *)QT_CreateImage,
 	(void *)QT_ToUtf8,
 	(void *)QT_GetLastUtf8Length,
 	(void *)QT_NewString,
@@ -1396,6 +1407,7 @@ void *GB_QT4_1[] EXPORT =
 	(void *)CWIDGET_get_background,
 	(void *)Control_Mouse,
 	(void *)CWIDGET_after_set_color,
+	(void *)QT_GetDesktopScale,
 	NULL
 };
 

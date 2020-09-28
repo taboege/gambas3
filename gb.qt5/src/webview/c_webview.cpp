@@ -48,6 +48,8 @@
 	}
 	WEBVIEW_ACTION;*/
 	
+//---------------------------------------------------------------------------
+
 DECLARE_EVENT(EVENT_TITLE);
 DECLARE_EVENT(EVENT_URL);
 DECLARE_EVENT(EVENT_ICON);
@@ -240,22 +242,23 @@ BEGIN_METHOD(WebView_new, GB_OBJECT parent)
 	//wid->page()->setNetworkAccessManager(_network_access_manager);
 	//wid->page()->setForwardUnsupportedContent(true);
 
+  QObject::connect(wid, SIGNAL(iconChanged(const QIcon &)), &WebViewSignalManager::manager, SLOT(iconChanged()));
+  QObject::connect(wid, SIGNAL(titleChanged(const QString &)), &WebViewSignalManager::manager, SLOT(titleChanged()));
+  QObject::connect(wid, SIGNAL(urlChanged(const QUrl &)), &WebViewSignalManager::manager, SLOT(urlChanged()));
+	QObject::connect(wid->page(), SIGNAL(linkHovered(const QString &)), &WebViewSignalManager::manager, SLOT(linkHovered(const QString &)));
+  QObject::connect(wid, SIGNAL(loadStarted()), &WebViewSignalManager::manager, SLOT(loadStarted()));
+  QObject::connect(wid, SIGNAL(loadProgress(int)), &WebViewSignalManager::manager, SLOT(loadProgress(int)));
+  QObject::connect(wid, SIGNAL(loadFinished(bool)), &WebViewSignalManager::manager, SLOT(loadFinished(bool)));
+
   //QObject::connect(wid, SIGNAL(linkClicked(const QUrl &)), &CWebView::manager, SLOT(linkClicked(const QUrl &)));
 #if 0
-  QObject::connect(wid, SIGNAL(loadFinished(bool)), &CWebView::manager, SLOT(loadFinished(bool)));
-  QObject::connect(wid, SIGNAL(loadProgress(int)), &CWebView::manager, SLOT(loadProgress(int)));
-  QObject::connect(wid, SIGNAL(loadStarted()), &CWebView::manager, SLOT(loadStarted()));
   QObject::connect(wid, SIGNAL(selectionChanged()), &CWebView::manager, SLOT(selectionChanged()));
   QObject::connect(wid, SIGNAL(statusBarMessage(const QString &)), &CWebView::manager, SLOT(statusBarMessage(const QString &)));
-  QObject::connect(wid, SIGNAL(titleChanged(const QString &)), &CWebView::manager, SLOT(titleChanged(const QString &)));
   
-	QObject::connect(wid->page(), SIGNAL(linkHovered(const QString &, const QString &, const QString &)), &CWebView::manager, 
-										SLOT(linkHovered(const QString &, const QString &, const QString &)));
 	QObject::connect(wid->page(), SIGNAL(frameCreated(QWebFrame *)), &CWebView::manager, SLOT(frameCreated(QWebFrame *)));
 	QObject::connect(wid->page(), SIGNAL(downloadRequested(QNetworkRequest)), &CWebView::manager, SLOT(downloadRequested(QNetworkRequest)));
   QObject::connect(wid->page(), SIGNAL(unsupportedContent(QNetworkReply*)), &CWebView::manager, SLOT(handleUnsupportedContent(QNetworkReply*)));
 	
-  QObject::connect(wid, SIGNAL(iconChanged()), &CWebView::manager, SLOT(iconChanged()));
 	QObject::connect(wid->page()->mainFrame(), SIGNAL(urlChanged(const QUrl &)), &CWebView::manager, SLOT(urlChanged(const QUrl &)));
 
 	QObject::connect(wid->page()->networkAccessManager(), SIGNAL(authenticationRequired(QNetworkReply *, QAuthenticator *)), &CWebView::manager,
@@ -266,10 +269,6 @@ END_METHOD
 
 BEGIN_METHOD_VOID(WebView_free)
 
-	/*if (_network_access_manager_view == THIS)
-		_network_access_manager_view = 0;*/
-	
-	GB.FreeString(&THIS->userAgent);
 	GB.Unref(POINTER(&THIS->icon));
 
 END_METHOD
@@ -354,6 +353,29 @@ BEGIN_PROPERTY(WebView_Zoom)
 
 END_PROPERTY
 
+BEGIN_PROPERTY(WebView_Icon)
+
+	if (!THIS->icon)
+	{
+		QIcon icon = WIDGET->icon();
+		
+		if (!icon.isNull())
+		{
+			int size = QT.GetDesktopScale() * 2;
+			THIS->icon = QT.CreatePicture(icon.pixmap(size, size));
+			GB.Ref(THIS->icon);
+		}
+	}
+
+	GB.ReturnObject(THIS->icon);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(WebView_Progress)
+
+	GB.ReturnFloat(THIS->progress / 100.0);
+
+END_PROPERTY
 
 #if 0
 BEGIN_PROPERTY(WebView_HTML)
@@ -368,26 +390,6 @@ END_PROPERTY
 BEGIN_PROPERTY(WebView_Text)
 
 	RETURN_NEW_STRING(WIDGET->page()->mainFrame()->toPlainText());
-
-END_PROPERTY
-
-BEGIN_PROPERTY(WebView_Icon)
-
-	if (!THIS->icon)
-	{
-		QIcon icon = WIDGET->icon();
-		
-		if (icon.isNull()) 
-			icon = QWebSettings::iconForUrl(WIDGET->url());
-		
-		if (!icon.isNull())
-		{
-			THIS->icon = QT.CreatePicture(icon.pixmap(16, 16));
-			GB.Ref(THIS->icon);
-		}
-	}
-
-	GB.ReturnObject(THIS->icon);
 
 END_PROPERTY
 
@@ -423,12 +425,6 @@ BEGIN_PROPERTY(WebView_NewView)
 		GB.ReturnObject(THIS->new_view);
 	else
 		GB.StoreObject(PROP(GB_OBJECT), &THIS->new_view);
-
-END_PROPERTY
-
-BEGIN_PROPERTY(WebView_Progress)
-
-	GB.ReturnFloat(THIS->progress);
 
 END_PROPERTY
 
@@ -757,9 +753,7 @@ GB_DESC WebViewDesc[] =
 
 	GB_PROPERTY("Status", "s", WebView_Status),
 
-	GB_PROPERTY_READ("Icon", "Picture", WebView_Icon),
 	GB_PROPERTY_READ("SelectedText", "s", WebView_SelectedText),
-	GB_PROPERTY_READ("Progress", "f", WebView_Progress),
 	#if QT_VERSION >= QT_VERSION_CHECK(4, 5, 0)
 	GB_PROPERTY("Zoom", "f", WebView_Zoom),
 	#else
@@ -838,10 +832,13 @@ GB_DESC WebViewDesc[] =
   GB_DECLARE("WebView", sizeof(CWEBVIEW)), GB_INHERITS("Control"),
 	
   GB_METHOD("_new", NULL, WebView_new, "(Parent)Container;"),
+  GB_METHOD("_free", NULL, WebView_free, NULL),
 
 	GB_PROPERTY("Url", "s", WebView_Url),
 	GB_PROPERTY("Title", "s", WebView_Title),
 	GB_PROPERTY("Zoom", "f", WebView_Zoom),
+	GB_PROPERTY_READ("Icon", "Picture", WebView_Icon),
+	GB_PROPERTY_READ("Progress", "f", WebView_Progress),
 	
 	GB_METHOD("SetHtml", NULL, WebView_SetHtml, "(Html)s[(Root)s]"),
 	
@@ -863,7 +860,7 @@ GB_DESC WebViewDesc[] =
 	GB_EVENT("Progress", NULL, NULL, &EVENT_PROGRESS),
 	GB_EVENT("Finish", NULL, NULL, &EVENT_FINISH),
 	GB_EVENT("Error", NULL, NULL, &EVENT_ERROR),
-	GB_EVENT("Link", NULL, NULL, &EVENT_LINK),
+	GB_EVENT("Link", NULL, "(Url)s", &EVENT_LINK),
 
 	GB_END_DECLARE
 };
@@ -897,8 +894,68 @@ QWebEngineView *MyWebEngineView::createWindow(QWebEnginePage::WebWindowType type
 
 /***************************************************************************/
 
+WebViewSignalManager WebViewSignalManager::manager;
+
+void WebViewSignalManager::iconChanged()
+{
+	GET_SENDER();
+	GB.Unref(POINTER(&THIS->icon));
+	THIS->icon = NULL;
+	GB.RaiseLater(THIS, EVENT_ICON);
+}
+
+void WebViewSignalManager::titleChanged()
+{
+	GET_SENDER();
+	GB.Raise(THIS, EVENT_TITLE, 0);
+}
+
+void WebViewSignalManager::urlChanged()
+{
+	GET_SENDER();
+	GB.Raise(THIS, EVENT_URL, 0);
+}
+
+void WebViewSignalManager::linkHovered(const QString &link)
+{
+	void *_object = QT.GetObject(((QWebEnginePage*)sender())->view());
+	const char *str = TO_UTF8(link);
+	GB.Raise(THIS, EVENT_LINK, 1, GB_T_STRING, str, LAST_UTF8_LENGTH());
+}
+
+void WebViewSignalManager::loadStarted()
+{
+	GET_SENDER();
+
+	THIS->progress = 0;
+	GB.RaiseLater(THIS, EVENT_START);
+}
+
+void WebViewSignalManager::loadProgress(int progress)
+{
+	GET_SENDER();
+
+	if (THIS->progress == progress)
+		return;
+
+	THIS->progress = progress;
+	GB.RaiseLater(THIS, EVENT_PROGRESS);
+}
+
+void WebViewSignalManager::loadFinished(bool ok)
+{
+	GET_SENDER();
+
+	THIS->progress = 100;
+
+	if (ok)
+		GB.Raise(THIS, EVENT_FINISH, 0);
+	else //if (!THIS->stopping)
+		GB.RaiseLater(THIS, EVENT_ERROR);
+}
+
+
 #if 0
-CWebView CWebView::manager;
 
 // void CWebView::linkClicked(const QUrl &url)
 // {
@@ -907,43 +964,6 @@ CWebView CWebView::manager;
 // 	//WIDGET->setUrl(url);
 // 	GB.Raise(THIS, EVENT_CLICK, 0);
 // }
-
-void CWebView::loadFinished(bool ok)
-{
-	GET_SENDER();
-
-	//fprintf(stderr, "loadFinished %d (%d)\n", ok, THIS->stopping);
-
-	THIS->progress = 1;
-
-	if (ok)
-		GB.Raise(THIS, EVENT_LOAD, 0);
-	else if (!THIS->stopping)
-		GB.RaiseLater(THIS, EVENT_ERROR);
-}
-
-void CWebView::loadProgress(int progress)
-{
-	GET_SENDER();
-
-	double v = progress / 100.0;
-	if (THIS->progress == v)
-		return;
-
-	THIS->progress = v;
-	GB.RaiseLater(THIS, EVENT_PROGRESS);
-}
-
-void CWebView::loadStarted()
-{
-	GET_SENDER();
-
-	//fprintf(stderr, "loadStarted\n");
-
-	THIS->progress = 0;
-	_network_access_manager_view = THIS;
-	GB.RaiseLater(THIS, EVENT_PROGRESS);
-}
 
 void CWebView::selectionChanged()
 {
@@ -959,19 +979,6 @@ void CWebView::statusBarMessage(const QString &text)
 	GB.Raise(THIS, EVENT_STATUS, 0);
 }
 	
-void CWebView::titleChanged(const QString &title)
-{
-	GET_SENDER();
-	GB.Raise(THIS, EVENT_TITLE, 0);
-}
-
-void CWebView::linkHovered(const QString &link, const QString &title, const QString &textContent)
-{
-	void *_object = QT.GetObject(((QWebPage*)sender())->view());
-	const char *str = TO_UTF8(link);
-	GB.Raise(THIS, EVENT_LINK, 1, GB_T_STRING, str, LAST_UTF8_LENGTH());
-}
-
 void CWebView::frameCreated(QWebFrame *frame)
 {
 	QObject::connect(frame, SIGNAL(urlChanged(const QUrl &)), &CWebView::manager, SLOT(urlChanged(const QUrl &)));
@@ -994,23 +1001,6 @@ void CWebView::authenticationRequired(QNetworkReply *reply, QAuthenticator *auth
 	
 	THIS->reply = 0;
 	THIS->authenticator = 0;
-}
-
-void CWebView::iconChanged()
-{
-	//void *_object = QT.GetObject(((QWebFrame *)sender())->page()->view());
-	GET_SENDER();
-	GB.Unref(POINTER(&THIS->icon));
-	THIS->icon = NULL;
-	GB.RaiseLater(THIS, EVENT_ICON);
-}
-
-void CWebView::urlChanged(const QUrl &)
-{
-	QWebFrame *frame = (QWebFrame *)sender();
-	//fprintf(stderr, "urlChanged: %p\n", frame);
-	void *_object = QT.GetObject(frame->page()->view());
-	GB.Raise(THIS, EVENT_CLICK, 1, GB_T_OBJECT, CWEBFRAME_get(frame));
 }
 
 void CWebView::downloadRequested(const QNetworkRequest &request)

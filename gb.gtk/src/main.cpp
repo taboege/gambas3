@@ -90,9 +90,6 @@ static void hook_post(void);
 static int hook_loop();
 static void hook_watch(int fd, int type, void *callback, intptr_t param);
 
-static void GTK_CreateControl(void *_object, void *parent, GtkWidget *widget);
-static GtkWidget *GTK_CreateGLArea(void *_object, void *parent, void (*init)(GtkWidget *));
-
 static bool _post_check = false;
 static bool _must_check_quit = false;
 
@@ -105,6 +102,47 @@ bool MAIN_display_x11 = FALSE;
 int MAIN_scale = 0;
 bool MAIN_debug_busy = false;
 bool MAIN_rtl = false;
+
+//-------------------------------------------------------------------------
+
+static void GTK_CreateControl(void *_object, void *parent, GtkWidget *widget)
+{
+	gControl *ctrl = new gControl(CONTAINER(parent));
+	ctrl->border = ctrl->widget = widget;
+	InitControl(ctrl, (CWIDGET*)_object);
+	ctrl->realize(false);
+	ctrl->_has_input_method = TRUE;
+}
+
+static GtkWidget *GTK_CreateGLArea(void *_object, void *parent, void (*init)(GtkWidget *))
+{
+	gControl *ctrl = new gGLArea(CONTAINER(parent), init);
+	InitControl(ctrl, (CWIDGET *)_object);
+	//WIDGET->onExpose = Darea_Expose;
+	return ctrl->widget;
+}
+
+static void *GTK_CreatePicture(cairo_surface_t *surf, int w, int h)
+{
+	gPicture *p = new gPicture(surf);
+	
+	if (w > 0 && h > 0)
+	{
+		gPicture *p2 = p->stretch(w, h, true);
+		p->unref();
+		p = p2;
+	}
+	
+	return CPICTURE_create(p);
+}
+
+static int GTK_GetDesktopScale(void)
+{
+	return MAIN_scale;
+}
+
+
+//-------------------------------------------------------------------------
 
 extern "C"
 {
@@ -199,6 +237,8 @@ void *GB_GTK_1[] EXPORT =
 	(void *)GTK_INTERFACE_VERSION,
 	(void *)GTK_CreateControl,
 	(void *)GTK_CreateGLArea,
+	(void *)GTK_CreatePicture,
+	(void *)GTK_GetDesktopScale,
 	NULL
 };
 
@@ -605,21 +645,4 @@ void MAIN_do_iteration(bool do_not_block)
 	}
 
 	gControl::cleanRemovedControls();
-}
-
-static void GTK_CreateControl(void *_object, void *parent, GtkWidget *widget)
-{
-	gControl *ctrl = new gControl(CONTAINER(parent));
-	ctrl->border = ctrl->widget = widget;
-	InitControl(ctrl, (CWIDGET*)_object);
-	ctrl->realize(false);
-	ctrl->_has_input_method = TRUE;
-}
-
-static GtkWidget *GTK_CreateGLArea(void *_object, void *parent, void (*init)(GtkWidget *))
-{
-	gControl *ctrl = new gGLArea(CONTAINER(parent), init);
-	InitControl(ctrl, (CWIDGET *)_object);
-	//WIDGET->onExpose = Darea_Expose;
-	return ctrl->widget;
 }

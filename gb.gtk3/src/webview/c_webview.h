@@ -32,6 +32,9 @@ typedef
     GTK_CONTROL control;
 		GtkWidget *widget;
 		WebKitBackForwardListItem *item;
+		GTK_PICTURE icon;
+		double progress;
+		unsigned error:1;
    }
   CWEBVIEW;
 
