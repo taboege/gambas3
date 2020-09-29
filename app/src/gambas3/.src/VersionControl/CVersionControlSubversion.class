@@ -1,7 +1,5 @@
 ' Gambas class file
 
-' TODO: Vérifier si la variable d'environnement EDITOR est bien disponible
-
 Inherits CVersionControl
 Create Static
 

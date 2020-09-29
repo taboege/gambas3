@@ -1647,6 +1647,7 @@ Public Sub tvwProject_Rename()
   
   Dim sPath As String
   Dim sNew As String
+  Dim sName As String
   
   $bInRename = False
   sPath = GetCurrent()
@@ -1655,12 +1656,20 @@ Public Sub tvwProject_Rename()
   'DEBUG Before;; tvwProject.Item.Text
   If $sDeleteKey Then
     sNew = File.Dir($sDeleteKey) &/ tvwProject.Item.Text
+    
+    If Project.InsertDirectory(sNew) Then Goto RENAME_FAILED
     Project.DeleteDir(sPath, True)
-    Project.InsertDirectory(sNew)
     $sDeleteKey = ""
   Else
-    Project.RenameFile(sPath, tvwProject.Item.Text)
+    If Project.RenameFile(sPath, tvwProject.Item.Text) Then Goto RENAME_FAILED
   Endif
+  
+  Return
+  
+RENAME_FAILED:
+
+  $sDeleteKey = ""
+  Rename(sPath)
   
 End
 

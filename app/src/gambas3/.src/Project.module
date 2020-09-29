@@ -1764,14 +1764,9 @@ Private Sub InitProjectFilter()
 
     $cProjectFilter = New Collection
 
-    For Each sFile In RDir(Project.Dir)
-
+    For Each sFile In Browse(Project.Dir)
+      
       sPath = Project.Dir &/ sFile
-
-      If IsDir(sPath) Then Continue
-      If Right(sPath) = "~" Then Continue
-      If Left(File.Name(sFile)) = "." Then Continue
-      If InStr(sPath, "/.svn/") Then Continue
 
       sFile = File.Name(sFile)
       If sPath Begins (Project.Dir &/ ".src") Then sFile = File.BaseName(sFile)
@@ -2822,6 +2817,17 @@ Public Sub MakeDir(sDir As String) As Boolean
 
 End
 
+Public Sub IsForbiddenDirectory(sDir As String) As Boolean
+
+  Dim sName As String
+  
+  sName = File.Name(sDir)
+  If sName = "CVS" Or If sName = "CVSROOT" Then Return True
+  If sName = ".svn" Then Return True
+  
+End
+
+
 Public Function InsertDirectory(sDir As String, Optional bNoVerCtrl As Boolean) As Boolean
 
   Dim sPath As String
@@ -2829,6 +2835,11 @@ Public Function InsertDirectory(sDir As String, Optional bNoVerCtrl As Boolean) 
 
   If Exist(sDir) Then
     FMain.ShowWarning(("Directory already exists."))
+    Return True
+  Endif
+  
+  If IsForbiddenDirectory(File.Name(sDir)) Then
+    FMain.ShowWarning(("Forbidden directory name."))
     Return True
   Endif
 
@@ -4329,7 +4340,7 @@ Public Sub RefreshKey(sKey As String, Optional sOld As String)
 
 End
 
-Public Sub RenameFile(sPath As String, sNewName As String)
+Public Sub RenameFile(sPath As String, sNewName As String) As Boolean
 
   Dim sName As String
   Dim sExt As String
@@ -4401,9 +4412,10 @@ Public Sub RenameFile(sPath As String, sNewName As String)
 
 Catch
 
-  sMsg = Error.Text & "\n" & Error.Backtrace.Join(" ")
+  sMsg = Error.Text '& "\n" & Error.Backtrace.Join(" ")
   RefreshKey(sPath)
   FMain.ShowError(Subst(("Unable to rename '&1'") & "\n\n" & sMsg, File.Name(sPath)), sPath)
+  Return True
 
 End
 
@@ -6719,5 +6731,36 @@ Public Sub SaveAsExtern()
   Files[hForm.Path] = hForm
   
   hForm.Save(True)
+  
+End
+
+Public Sub Browse(sRoot As String, Optional bWithDir As Boolean) As String[]
+  
+  Dim aDir As New String[]
+  Dim aResult As New String[]
+  Dim sFile As String
+  Dim sPath As String
+  Dim sDir As String
+  
+  aDir.Add("")
+  While aDir.Count
+    sDir = aDir[0]
+    aDir.Remove(0)
+    If IsForbiddenDirectory(sRoot &/ sDir) Then Continue
+    For Each sFile In Dir(sRoot &/ sDir)
+      sPath = sDir &/ sFile
+      If Right(sFile) = "~" Then Continue
+      If IsDir(sRoot &/ sPath) Then
+        aDir.Add(sPath)
+        If bWithDir Then aResult.Add(sPath)
+      Else
+        If sFile Begins "." Then Continue
+        aResult.Add(sPath)
+      Endif
+    Next
+    
+  Wend
+  
+  Return aResult
   
 End
