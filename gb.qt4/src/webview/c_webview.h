@@ -32,7 +32,7 @@
 #include <QWebPage>
 #include <QWebView>
 
-#include "cwebdownload.h"
+//#include "cwebdownload.h"
 #include "main.h"
 
 #ifndef __CWEBVIEW_CPP
