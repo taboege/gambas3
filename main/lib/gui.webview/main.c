@@ -32,7 +32,7 @@ GB_DESC *GB_CLASSES[] EXPORT =
   NULL
 };
 
-char *GB_INCLUDE EXPORT = "gb.qt5.webview|gb.gtk3.webview";
+char *GB_INCLUDE EXPORT = "gb.qt5.webview|gb.gtk3.webview|gb.qt4.webview";
 
 int EXPORT GB_INIT(void)
 {
@@ -44,6 +44,8 @@ int EXPORT GB_INIT(void)
 	{
 		if (strcmp(env, "gb.qt5") == 0)
 			comp = "gb.qt5.webview";
+		else if (strcmp(env, "gb.qt4") == 0)
+			comp = "gb.qt4.webview";
 		else if (strcmp(env, "gb.gtk3") == 0)
 			comp = "gb.gtk3.webview";
 	}

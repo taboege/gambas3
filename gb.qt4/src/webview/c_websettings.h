@@ -27,8 +27,8 @@
 #include "main.h"
 
 #include <QUrl>
-#include <QWebEngineView>
-#include <QWebEngineSettings>
+#include <QWebView>
+#include <QWebSettings>
 
 typedef
   struct {
@@ -47,7 +47,7 @@ extern GB_DESC WebSettingsFontsDesc[];
 
 #else
 
-#define WEBVIEW ((QWebEngineView *)((QT_WIDGET *)_object)->widget)
+#define WEBVIEW ((QWebView *)((QT_WIDGET *)_object)->widget)
 
 #endif
 

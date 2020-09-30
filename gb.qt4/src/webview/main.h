@@ -1,6 +1,6 @@
 /***************************************************************************
 
-  c_websettings.h
+  main.h
 
   (c) Benoît Minisini <g4mba5@gmail.com>
 
@@ -21,36 +21,21 @@
 
 ***************************************************************************/
 
-#ifndef __C_WEBSETTINGS_H
-#define __C_WEBSETTINGS_H
+#ifndef __MAIN_H
+#define __MAIN_H
 
-#include "main.h"
+#include "gb_common.h"
+#include "gambas.h"
+#include "../gb.qt.h"
 
 #include <QUrl>
-#include <QWebEngineView>
-#include <QWebEngineSettings>
 
-typedef
-  struct {
-    GB_BASE ob;
-   }
-  CWEBSETTINGS;
-
-#ifndef __C_WEBSETTINGS_CPP
-
-/*extern GB_DESC WebSettingsIconDatabaseDesc[];
-extern GB_DESC WebSettingsCacheDesc[];
-extern GB_DESC WebSettingsProxyDesc[];*/
-extern GB_DESC WebViewSettingsDesc[];
-extern GB_DESC WebSettingsDesc[];
-extern GB_DESC WebSettingsFontsDesc[];
-
-#else
-
-#define WEBVIEW ((QWebEngineView *)((QT_WIDGET *)_object)->widget)
-
+#ifndef __MAIN_CPP
+extern "C" GB_INTERFACE GB;
+extern "C" QT_INTERFACE QT;
+extern GB_CLASS CLASS_WebView;
 #endif
 
-//void WEBSETTINGS_set_cache(QWebView *view, bool on);
+void MAIN_return_qvariant(const QVariant &result);
 
 #endif
