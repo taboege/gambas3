@@ -1647,7 +1647,6 @@ Public Sub tvwProject_Rename()
   
   Dim sPath As String
   Dim sNew As String
-  Dim sName As String
   
   $bInRename = False
   sPath = GetCurrent()
