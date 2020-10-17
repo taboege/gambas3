@@ -19,7 +19,7 @@ Property Key As String
 Property Text As String
 Property Separator As Boolean
 Property Size As String
-Property Settings As String
+Property Settings, Layout As String
 
 Private $hForm As FToolBar
 
