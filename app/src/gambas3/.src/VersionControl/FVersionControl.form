@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,95,89)
+  MoveScaled(0,0,115,89)
   Icon = Picture["icon:/small/save"]
   Arrangement = Arrange.Vertical
   Spacing = True
@@ -52,25 +52,31 @@
     Index = 0
   }
   { HBox1 HBox
-    MoveScaled(1,59,85,4)
+    MoveScaled(1,59,110,4)
     Spacing = True
-    { chkDoNotPush CheckBox
-      MoveScaled(0,0,32,4)
-      AutoResize = True
-      Text = ("Do not push to remote repository")
-    }
     { Panel1 Panel
-      MoveScaled(39,0,4,4)
+      MoveScaled(3,0,4,4)
       Expand = True
     }
-    { btnOK Button
-      MoveScaled(45,0,16,4)
+    { btnCommit Button
+      MoveScaled(32,0,16,4)
       Text = ("Commit")
+      Picture = Picture["icon:/small/apply"]
+    }
+    { btnCommitPush Button
+      MoveScaled(49,0,24,4)
+      AutoResize = True
+      Text = ("Commit and push")
       Picture = Picture["icon:/small/upload"]
       Default = True
     }
+    { btnPush Button
+      MoveScaled(74,0,16,4)
+      Text = ("Push")
+      Picture = Picture["icon:/small/upload"]
+    }
     { btnCancel Button
-      MoveScaled(63,0,16,4)
+      MoveScaled(92,0,16,4)
       Text = ("Cancel")
       Cancel = True
     }

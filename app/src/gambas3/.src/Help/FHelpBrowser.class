@@ -152,19 +152,19 @@ End
 
 Public Sub btnZoomIn_Click()
   
-  webHelp.TextZoom = Round(webHelp.TextZoom * 1.125, -3)
+  webHelp.Zoom = Round(webHelp.Zoom * 1.125, -3)
   
 End
 
 Public Sub btnZoomOut_Click()
   
-  webHelp.TextZoom = Round(webHelp.TextZoom / 1.125, -3)
+  webHelp.Zoom = Round(webHelp.Zoom / 1.125, -3)
   
 End
 
 Public Sub btnZoomNormal_Click()
   
-  webHelp.TextZoom = 1
+  webHelp.Zoom = 1
   
 End
 

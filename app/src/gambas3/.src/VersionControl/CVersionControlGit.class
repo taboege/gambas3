@@ -115,13 +115,14 @@ Public Sub GetCurrentBranch() As String
   
 End
 
-Public Sub Diff(sPath As String, Optional bFull As Boolean) As String
+Public Sub Diff(sPath As String, Optional bFull As Boolean, bNoWhiteSpace As Boolean) As String
   
   Dim sDiff As String
   Dim sCmd As String
   Dim sHead As String
   Dim sFull As String
   Dim iPos As Integer
+  Dim sOption As String
 
   'If VersionControl.Shell("cd " & Shell(Project.Dir) & " && git log -1", True) Then
   If RunShell("git log -1", True) Then
@@ -131,11 +132,13 @@ Public Sub Diff(sPath As String, Optional bFull As Boolean) As String
   Endif
 
   If bFull Then sFull = " -U100000"
+  
+  If bNoWhiteSpace Then sOption = " -b --ignore-blank-lines"
 
   If IsDir(sPath) Then
-    sCmd = "cd " & Shell(sPath) & " && git diff" & sFull & " " & sHead & " ."
+    sCmd = "cd " & Shell(sPath) & " && git diff" & sOption & sFull & " " & sHead & " ."
   Else
-    sCmd = "cd " & Shell(File.Dir(sPath)) & " && git diff" & sFull & " " & sHead & " " & Shell(File.Name(sPath))
+    sCmd = "cd " & Shell(File.Dir(sPath)) & " && git diff" & sOption & sFull & " " & sHead & " " & Shell(File.Name(sPath))
   Endif
   
   sDiff = VersionControl.Shell(sCmd)

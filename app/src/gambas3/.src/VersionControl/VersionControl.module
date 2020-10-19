@@ -485,10 +485,10 @@ End
 ' 
 ' End
 
-Public Sub Diff(Optional sPath As String, Optional bFull As Boolean) As String
+Public Sub Diff(Optional sPath As String, Optional bFull As Boolean, bNoWhiteSpace As Boolean) As String
 
   If Not sPath Then sPath = Project.Dir
-  Return $hVC.Diff(sPath, bFull)
+  Return $hVC.Diff(sPath, bFull, bNoWhiteSpace)
 
 End
 

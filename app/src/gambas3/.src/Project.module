@@ -463,7 +463,7 @@ Catch
 
 End
 
-Private Sub LastOpenedFiles()
+Private Sub LoadLastOpenedFiles()
 
   Dim nOpen As Integer
   Dim iInd As Integer
@@ -793,7 +793,7 @@ _INIT_AGAIN:
     If sStatus And If Left(sStatus) <> "?" And If Left(sStatus) <> "D" Then VersionControl.RemoveFile(sPath)
   Endif 
 
-  If Not IsFake() And If Settings["/RestoreFiles", 1] Then LastOpenedFiles
+  If Not IsFake() And If Settings["/RestoreFiles", 1] Then LoadLastOpenedFiles
   
   RecentFiles = New String[]
   CPosition.Clear
