@@ -58,10 +58,10 @@ DECLARE_EVENT(EVENT_PROGRESS);
 DECLARE_EVENT(EVENT_FINISH);
 DECLARE_EVENT(EVENT_ERROR);
 DECLARE_EVENT(EVENT_LINK);
+DECLARE_EVENT(EVENT_NEW_VIEW);
 
 /*DECLARE_EVENT(EVENT_CLICK);
 DECLARE_EVENT(EVENT_LINK);
-DECLARE_EVENT(EVENT_NEW_WINDOW);
 DECLARE_EVENT(EVENT_NEW_FRAME);
 DECLARE_EVENT(EVENT_AUTH);
 DECLARE_EVENT(EVENT_DOWNLOAD);*/
@@ -209,6 +209,13 @@ static void stop_view(void *_object)
 }
 #endif
 
+
+static void set_link(void *_object, const QString &link)
+{
+	GB.FreeString(&THIS->link);
+	THIS->link = QT.NewString(link);
+}
+
 //-------------------------------------------------------------------------
 
 BEGIN_METHOD(WebView_new, GB_OBJECT parent)
@@ -225,7 +232,7 @@ BEGIN_METHOD(WebView_new, GB_OBJECT parent)
 
   MyWebEngineView *wid = new MyWebEngineView(QT.GetContainer(VARG(parent)));
 
-	wid->setAttribute(Qt::WA_NativeWindow, true);
+	//wid->setAttribute(Qt::WA_NativeWindow, true);
 	
 	/*if (!_ignore_png_warnings)
 	{
@@ -269,7 +276,10 @@ END_METHOD
 
 BEGIN_METHOD_VOID(WebView_free)
 
+	GB.FreeString(&THIS->link);
+
 	GB.Unref(POINTER(&THIS->icon));
+	GB.Unref(POINTER(&THIS->new_view));
 
 END_METHOD
 
@@ -292,7 +302,9 @@ BEGIN_PROPERTY(WebView_Url)
 	else
 	{
 		//stop_view(THIS);
-		WIDGET->setUrl(QSTRING_PROP());
+		QString url = QSTRING_PROP();
+		set_link(THIS, url);
+		WIDGET->setUrl(url);
 	}
 
 END_PROPERTY
@@ -377,6 +389,21 @@ BEGIN_PROPERTY(WebView_Progress)
 
 END_PROPERTY
 
+BEGIN_PROPERTY(WebView_NewView)
+
+	if (READ_PROPERTY)
+		GB.ReturnObject(THIS->new_view);
+	else
+		GB.StoreObject(PROP(GB_OBJECT), &THIS->new_view);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(WebView_Link)
+
+	GB.ReturnString(THIS->link);
+
+END_PROPERTY
+
 #if 0
 BEGIN_PROPERTY(WebView_HTML)
 
@@ -416,15 +443,6 @@ BEGIN_PROPERTY(WebView_TextZoom)
 		GB.ReturnFloat(WIDGET->textSizeMultiplier());
 	else
 		WIDGET->setTextSizeMultiplier(VPROP(GB_FLOAT));
-
-END_PROPERTY
-
-BEGIN_PROPERTY(WebView_NewView)
-
-	if (READ_PROPERTY)
-		GB.ReturnObject(THIS->new_view);
-	else
-		GB.StoreObject(PROP(GB_OBJECT), &THIS->new_view);
 
 END_PROPERTY
 
@@ -646,20 +664,7 @@ END_PROPERTY
 
 static QWebEngineHistoryItem get_item(QWebEngineHistory *history, int index)
 {
-	if (index == 0)
-		return history->currentItem();
-	
-	QList<QWebEngineHistoryItem> list;
-	
-	if (index > 0)
-		list = history->forwardItems(history->count());
-	else
-	{
-		list = history->backItems(history->count());
-		index = (-index);
-	}
-	
-	return list.at(index);
+	return history->itemAt(history->currentItemIndex() + index);
 }
 
 BEGIN_PROPERTY(WebViewHistoryItem_Title)
@@ -703,9 +708,8 @@ BEGIN_METHOD(WebViewHistory_get, GB_INTEGER index)
 
 	int index = VARG(index);
 	
-	if (index > 0 && index > HISTORY->forwardItems(HISTORY->count()).count())
-		GB.ReturnNull();
-	else if (index < 0 && (-index) > HISTORY->backItems(HISTORY->count()).count())
+	index += HISTORY->currentItemIndex();
+	if (index < 0 || index >= HISTORY->count())
 		GB.ReturnNull();
 	else
 	{
@@ -839,6 +843,8 @@ GB_DESC WebViewDesc[] =
 	GB_PROPERTY("Zoom", "f", WebView_Zoom),
 	GB_PROPERTY_READ("Icon", "Picture", WebView_Icon),
 	GB_PROPERTY_READ("Progress", "f", WebView_Progress),
+	GB_PROPERTY("NewView", "WebView", WebView_NewView),
+	GB_PROPERTY_READ("Link", "s", WebView_Link),
 	
 	GB_METHOD("SetHtml", NULL, WebView_SetHtml, "(Html)s[(Root)s]"),
 	
@@ -860,39 +866,57 @@ GB_DESC WebViewDesc[] =
 	GB_EVENT("Progress", NULL, NULL, &EVENT_PROGRESS),
 	GB_EVENT("Finish", NULL, NULL, &EVENT_FINISH),
 	GB_EVENT("Error", NULL, NULL, &EVENT_ERROR),
-	GB_EVENT("Link", NULL, "(Url)s", &EVENT_LINK),
+	GB_EVENT("Link", NULL, NULL, &EVENT_LINK),
+	GB_EVENT("NewView", NULL, NULL, &EVENT_NEW_VIEW),
 
 	GB_END_DECLARE
 };
 
-/***************************************************************************/
+//-------------------------------------------------------------------------
 
 MyWebEngineView::MyWebEngineView(QWidget *parent) : QWebEngineView(parent)
 {
 	//settings()->setFontFamily(QWebSettings::FixedFont, "monospace");
-	//setPage(new MyWebPage(this));
+	setPage(new MyWebPage(this));
 }
 
 QWebEngineView *MyWebEngineView::createWindow(QWebEnginePage::WebWindowType type)
 {
-#if 0
 	void *_object = QT.GetObject(this);
-	QWebView *new_view;
+	QWebEngineView *new_view;
 	
-	GB.Raise(THIS, EVENT_NEW_WINDOW, 1, GB_T_BOOLEAN, type == QWebPage::WebModalDialog);
+	GB.Raise(THIS, EVENT_NEW_VIEW, 0);
 	
 	if (!THIS->new_view)
-		return 0;
+		return NULL;
 	
-	new_view = (QWebView *)(((CWEBVIEW *)THIS->new_view)->widget.widget);
+	new_view = (QWebEngineView *)(((CWEBVIEW *)THIS->new_view)->widget.widget);
 	GB.Unref(POINTER(&THIS->new_view));
-	THIS->new_view = 0;
+	THIS->new_view = NULL;
 	return new_view;
-#endif
-	return NULL;
 }
 
-/***************************************************************************/
+//-------------------------------------------------------------------------
+
+MyWebPage::MyWebPage(QObject *parent) : QWebEnginePage(parent)
+{
+}
+
+bool MyWebPage::acceptNavigationRequest(const QUrl &url, QWebEnginePage::NavigationType type, bool isMainFrame)
+{
+	void *_object = QT.GetObject(view());
+	//set_link(url.toString());
+	//fprintf(stderr, "acceptNavigationRequest: %s ==> has_stopped = %d\n", TO_UTF8(url.toString()), THIS->has_stopped);
+	if (THIS->cancel)
+	{
+		THIS->cancel = FALSE;
+		return false;
+	}
+	
+	return true;
+}
+
+//-------------------------------------------------------------------------
 
 WebViewSignalManager WebViewSignalManager::manager;
 
@@ -901,7 +925,7 @@ void WebViewSignalManager::iconChanged()
 	GET_SENDER();
 	GB.Unref(POINTER(&THIS->icon));
 	THIS->icon = NULL;
-	GB.RaiseLater(THIS, EVENT_ICON);
+	GB.Raise(THIS, EVENT_ICON, 0);
 }
 
 void WebViewSignalManager::titleChanged()
@@ -919,8 +943,9 @@ void WebViewSignalManager::urlChanged()
 void WebViewSignalManager::linkHovered(const QString &link)
 {
 	void *_object = QT.GetObject(((QWebEnginePage*)sender())->view());
-	const char *str = TO_UTF8(link);
-	GB.Raise(THIS, EVENT_LINK, 1, GB_T_STRING, str, LAST_UTF8_LENGTH());
+	
+	set_link(THIS, link);
+	GB.Raise(THIS, EVENT_LINK, 0);
 }
 
 void WebViewSignalManager::loadStarted()
@@ -928,7 +953,7 @@ void WebViewSignalManager::loadStarted()
 	GET_SENDER();
 
 	THIS->progress = 0;
-	GB.RaiseLater(THIS, EVENT_START);
+	THIS->cancel = GB.Raise(THIS, EVENT_START, 0);
 }
 
 void WebViewSignalManager::loadProgress(int progress)
@@ -939,19 +964,20 @@ void WebViewSignalManager::loadProgress(int progress)
 		return;
 
 	THIS->progress = progress;
-	GB.RaiseLater(THIS, EVENT_PROGRESS);
+	GB.Raise(THIS, EVENT_PROGRESS, 0);
 }
 
 void WebViewSignalManager::loadFinished(bool ok)
 {
 	GET_SENDER();
 
+	GB.FreeString(&THIS->link);
 	THIS->progress = 100;
 
 	if (ok)
 		GB.Raise(THIS, EVENT_FINISH, 0);
 	else //if (!THIS->stopping)
-		GB.RaiseLater(THIS, EVENT_ERROR);
+		GB.Raise(THIS, EVENT_ERROR, 0);
 }
 
 

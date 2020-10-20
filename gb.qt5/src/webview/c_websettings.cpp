@@ -55,10 +55,10 @@ static void set_cache(bool on)
 
 static QWebEngineSettings *get_settings(void *_object)
 {
-	if (GB.Is(_object, GB.FindClass("WebSettings")))
+	//if (GB.Is(_object, GB.FindClass("WebSettings")))
 		return QWebEngineSettings::defaultSettings();
-	else
-		return WEBVIEW->settings();
+	//else
+	//	return WEBVIEW->settings();
 }
 
 //-------------------------------------------------------------------------
@@ -116,9 +116,9 @@ END_METHOD
 static void handle_font_size(QWebEngineSettings::FontSize size, void *_object, void *_param)
 {
 	if (READ_PROPERTY)
-		GB.ReturnInteger(get_settings(_object)->fontSize(size));
+		GB.ReturnInteger(get_settings(_object)->fontSize(size) * 72 / 96);
 	else
-		get_settings(_object)->setFontSize(size, VPROP(GB_INTEGER));
+		get_settings(_object)->setFontSize(size, VPROP(GB_INTEGER) * 96 / 72);
 }
 
 BEGIN_PROPERTY(WebSettingsFonts_DefaultSize)

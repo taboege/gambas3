@@ -46,6 +46,19 @@ extern GB_DESC WebViewHistoryItemDesc[];
 
 #endif
 
+class MyWebPage : public QWebEnginePage
+{
+	Q_OBJECT
+
+public:
+	
+	MyWebPage(QObject *parent);
+
+protected:
+	
+	virtual bool acceptNavigationRequest(const QUrl &url, QWebEnginePage::NavigationType type, bool isMainFrame);
+};
+
 class MyWebEngineView : public QWebEngineView
 {
 	Q_OBJECT
@@ -64,9 +77,11 @@ typedef
 	{
 		QT_WIDGET widget;
 		QT_PICTURE icon;
+		void *new_view;
+		char *link;
 		int history;
 		int progress;
-		unsigned stopping : 1;
+		unsigned cancel : 1;
 	}
 	CWEBVIEW;
 
