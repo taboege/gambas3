@@ -29,12 +29,24 @@
 #include "c_webview.h"
 #include "c_websettings.h"
 
+static WebKitSettings *_default_settings = NULL;
+
 static WebKitSettings *get_settings(void *_object)
 {
-	if (GB.Is(_object, GB.FindClass("WebSettings")))
-		return WEBVIEW_default_settings;
+	if (!_object || GB.Is(_object, GB.FindClass("WebSettings")))
+	{
+		if (!_default_settings)
+		{
+			GtkWidget *widget = webkit_web_view_new();
+			_default_settings = g_object_ref(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(widget)));
+			gtk_widget_destroy(widget);
+		}
+		return _default_settings;
+	}
 	else
+	{
 		return webkit_web_view_get_settings(WIDGET);
+	}
 }
 
 //-------------------------------------------------------------------------
@@ -100,6 +112,17 @@ BEGIN_METHOD(WebSettings_put, GB_BOOLEAN value; GB_INTEGER flag)
 
 END_METHOD
 
+BEGIN_METHOD_VOID(WebSettings_exit)
+
+	if (_default_settings)
+	{
+		g_object_unref(_default_settings);
+		_default_settings = NULL;
+	}
+
+END_METHOD
+
+
 //-------------------------------------------------------------------------
 
 #define IMPLEMENT_FONT_PROPERTY(_Font, _font) \
@@ -128,15 +151,40 @@ BEGIN_PROPERTY(WebSettingsFonts_##_Size##Size) \
 	WebKitSettings *settings = get_settings(_object); \
  \
 	if (READ_PROPERTY) \
-		GB.ReturnInteger(webkit_settings_get_##_size##_font_size(settings)); \
+		GB.ReturnInteger(webkit_settings_get_##_size##_font_size(settings) * 72 / 96); \
 	else \
-		webkit_settings_set_##_size##_font_size(settings, VPROP(GB_INTEGER)); \
+		webkit_settings_set_##_size##_font_size(settings, VPROP(GB_INTEGER) * 96 / 72); \
  \
 END_PROPERTY
 
 IMPLEMENT_SIZE_PROPERTY(Default, default)
 IMPLEMENT_SIZE_PROPERTY(DefaultFixed, default_monospace)
 IMPLEMENT_SIZE_PROPERTY(Minimum, minimum)
+
+//-------------------------------------------------------------------------
+
+void WEBVIEW_init_settings(void *_object)
+{
+	WebKitSettings *init = get_settings(NULL);
+	WebKitSettings *settings = get_settings(THIS);
+	
+	for (int i = 0; i <= 29; i++)
+		set_flag(settings, i, get_flag(init, i));
+	
+	webkit_settings_set_default_font_family(settings, webkit_settings_get_default_font_family(init));
+	webkit_settings_set_monospace_font_family(settings, webkit_settings_get_monospace_font_family(init));
+	webkit_settings_set_serif_font_family(settings, webkit_settings_get_serif_font_family(init));
+	webkit_settings_set_sans_serif_font_family(settings, webkit_settings_get_sans_serif_font_family(init));
+	webkit_settings_set_cursive_font_family(settings, webkit_settings_get_cursive_font_family(init));
+	webkit_settings_set_fantasy_font_family(settings, webkit_settings_get_fantasy_font_family(init));
+	webkit_settings_set_pictograph_font_family(settings, webkit_settings_get_pictograph_font_family(init));
+	
+	webkit_settings_set_default_font_size(settings, webkit_settings_get_default_font_size(init));
+	webkit_settings_set_default_monospace_font_size(settings, webkit_settings_get_default_monospace_font_size(init));
+	webkit_settings_set_minimum_font_size(settings, webkit_settings_get_minimum_font_size(init));
+}
+
+
 
 #if 0
 /***************************************************************************/
@@ -328,6 +376,8 @@ GB_DESC WebSettingsDesc[] =
 	GB_STATIC_PROPERTY_SELF("IconDatabase", ".WebSettings.IconDatabase"),
 	GB_STATIC_PROPERTY_SELF("Cache", ".WebSettings.Cache"),
 	GB_STATIC_PROPERTY_SELF("Proxy", ".WebSettings.Proxy"),*/
+	
+	GB_STATIC_METHOD("_exit", NULL, WebSettings_exit, NULL),
 	
 	GB_METHOD("_get", "b", WebSettings_get, "(Flag)i"),
 	GB_METHOD("_put", NULL, WebSettings_put, "(Value)b(Flag)i"),

@@ -33,13 +33,15 @@ typedef
 		GtkWidget *widget;
 		WebKitBackForwardListItem *item;
 		GTK_PICTURE icon;
+		void *new_view;
+		char *link;
 		double progress;
-		unsigned error:1;
+		unsigned error : 1;
+		unsigned accept_next : 1;
    }
   CWEBVIEW;
 
 #ifndef __C_WEBVIEW_C
-extern WebKitSettings *WEBVIEW_default_settings;
 extern GB_DESC WebViewDesc[];
 extern GB_DESC WebViewHistoryDesc[];
 extern GB_DESC WebViewHistoryItemDesc[];

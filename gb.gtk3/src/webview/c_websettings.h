@@ -45,4 +45,6 @@ extern GB_DESC WebSettingsFontsDesc[];
 
 #endif
 
+void WEBVIEW_init_settings(void *_object);
+
 #endif
