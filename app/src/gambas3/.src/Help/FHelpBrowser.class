@@ -126,14 +126,12 @@ End
 
 Public Sub btnBack_Click()
   
-  'GotoURL($hHistory.Backward())
   webHelp.Back
   
 End
 
 Public Sub btnForward_Click()
   
-  'GotoURL($hHistory.Forward())
   webHelp.Forward
   
 End
@@ -338,3 +336,4 @@ Public Sub OnProjectChange()
   Endif
   
 End
+

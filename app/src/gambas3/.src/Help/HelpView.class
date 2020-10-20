@@ -12,9 +12,9 @@ Property NoHeader As Boolean
 Private $hObs As Observer
 Private $hWatcher As Watcher
 Private $hSpinner As Spinner
-Private $sLastUrl As String
 Private $bNoHeader As Boolean
 Private $sNextUrl As String
+Private $hNotExist As Label
 
 Public Sub _new()
 
@@ -25,6 +25,18 @@ Public Sub _new()
   $hSpinner.Hide
   $hSpinner.Ignore = True
   $hSpinner.ResizeScaled(8, 8)
+  
+  $hNotExist = New Label(Me.Window) As "lblNotExist"
+  $hNotExist.Hide
+  $hNotExist.Ignore = True
+  $hNotExist.Alignment = Align.Center
+  $hNotExist.Padding = Desktop.Scale \ 2
+  $hNotExist.ResizeScaled(20, 4)
+  $hNotExist.Text = ("This page does not exist.")
+  $hNotExist.AutoResize = True
+  $hNotExist.Font.Bold = True
+  $hNotExist.Border = Border.Plain
+  $hNotExist.Background = Color.TextBackground
   
 End
 
@@ -84,6 +96,8 @@ Public Sub WebView_Move()
     $hSpinner.Move(.ScreenX - hWin.ScreenX - hWin.ClientX + (.W - $hSpinner.W) \ 2, .ScreenY - hWin.ScreenY - hWin.ClientY + (.H - $hSpinner.H) \ 2)
   End With
   
+  $hNotExist.Hide
+  
 End
 
 Public Sub WebView_Resize()
@@ -92,25 +106,18 @@ Public Sub WebView_Resize()
   
 End
 
-Public Sub WebView_Load()
   
-  ShowWaiting(False)
+Public Sub WebView_NewView()
   
-End
-
-Public Sub WebView_Link(Url As String)
+  Project.OpenWebPage(Me.Link)
   
-  $sLastUrl = Url
-  
-End
-
-Public Sub WebView_NewWindow((Modal) As Boolean)
-
-  Project.OpenWebPage($sLastUrl)
-
 End
 
 Public Sub TimerUrl_Timer()
+
+  'Debug $sNextUrl
+
+  Dim hWin As Window
   
   'Debug $sNextUrl
   
@@ -120,7 +127,12 @@ Public Sub TimerUrl_Timer()
     
   Else If $sNextUrl Begins "wiki://" Then
     
-    MHelp.MakeOffline(Me, $sNextUrl, $bNoHeader)
+    If MHelp.MakeOffline(Me, $sNextUrl, $bNoHeader) Then
+      hWin = Me.Window
+      $hNotExist.Move(Mouse.ScreenX - hWin.ScreenX, Mouse.ScreenY - hWin.ScreenY + Desktop.Scale * 2)
+      $hNotExist.Show
+      $hNotExist.Raise
+    Endif
     
   Endif
   
@@ -128,42 +140,85 @@ Public Sub TimerUrl_Timer()
   
 End
 
-Public Sub WebView_Progress()
+' Public Sub WebView_Navigate()
+' 
+'   Dim sUrl As String
+'   Dim hTimer As Timer
+'   
+'   sUrl = Me.Link
+'   Debug sUrl
+'   
+' End
 
-  Dim sLastUrl As String
+' Public Sub WebView_Link()
+'   
+'   Debug Me.Link
+'   
+' End
+
+Public Sub WebView_Start()
+  
+  Dim sUrl As String
   Dim hTimer As Timer
   
-  'Debug Me.Progress;; Me.Url
+  'Debug Me.Link
   
+  ShowWaiting(False)
+  $hNotExist.Hide
+
+  sUrl = Me.Link
+  If Not sUrl Then sUrl = Me.Url
+  If sUrl Begins "gambas://" Or If sUrl Begins "wiki://" Then 
+
+    $sNextUrl = sUrl
+    'Me.Stop
+    hTimer = New Timer As "TimerUrl"
+    hTimer.Trigger
+    
+    Stop Event
+    Return
+    
+  Endif
+      
+  ' sLastUrl = Me.Link
+  ' If Not sLastUrl Then sLastUrl = Me.Url
+  ' 
+  ' ' If $sLastUrl Then
+  ' '   sLastUrl = $sLastUrl
+  ' '   $sLastUrl = ""
+  ' ' Else
+  ' '   sLastUrl = Me.Url
+  ' ' Endif
+  ' 
+  ' If sLastUrl Begins "/" Then sLastUrl = Project.WIKI_ROOT &/ sLastUrl
+  ' 
+  ' If sLastUrl Begins "gambas://" Or If sLastUrl Begins "wiki://" Then 
+  '   
+  '   $sNextUrl = sLastUrl
+  '   'Me.Stop
+  '   hTimer = New Timer As "TimerUrl"
+  '   hTimer.Trigger
+  '   
+  '   'Debug Me;; sLastUrl
+  '   Me.Stop
+  '  
+  ' Endif
+      
+End
+     
+  
+Public Sub WebView_Progress()
+
   ShowWaiting(Me.Progress < 1)
 
-  If Me.Progress = 0 Then
-
-    sLastUrl = $sLastUrl
-    If $sLastUrl Then
-      sLastUrl = $sLastUrl
-      $sLastUrl = ""
-    Else
-      sLastUrl = Me.Url
-    Endif
-    
-    If sLastUrl Begins "/" Then sLastUrl = Project.WIKI_ROOT &/ sLastUrl
-    
-    If sLastUrl Begins "gambas://" Or If sLastUrl Begins "wiki://" Then 
-      
-      $sNextUrl = sLastUrl
-      'Me.Stop
-      hTimer = New Timer As "TimerUrl"
-      hTimer.Trigger
-      
-      'Debug Me;; sLastUrl
-      Me.Stop
-     
-    Endif
-  
-  Endif
-
 End
+
+' Public Sub WebView_Finish()
+'   
+'   Debug
+'   
+' End
+
 
 Private Function NoHeader_Read() As Boolean
 
@@ -181,5 +236,11 @@ Public Sub Stop()
   
   Super.Stop
   ShowWaiting(False)
+  
+End
+
+Public Sub lblNotExist_MouseDown()
+  
+  $hNotExist.Hide
   
 End

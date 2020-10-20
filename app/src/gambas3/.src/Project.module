@@ -249,20 +249,20 @@ End
 
 Public Sub InitWebView()
 
-  Dim sPath As String
+  'Dim sPath As String
   Dim hDefaultFont As Font
   Dim hFixedFont As Font
 
-  If Not WebSettings.Cache.Path Then
-    sPath = "~/.cache"
-    Try Mkdir sPath
-    sPath &/= "gambas3"
-    Try Mkdir sPath
-    sPath &/= "help"
-    Try Mkdir sPath
-    WebSettings.Cache.Path = sPath
-    WebSettings.Cache.Enabled = True
-  Endif
+  ' If Not WebSettings.Cache.Path Then
+  '   sPath = "~/.cache"
+  '   Try Mkdir sPath
+  '   sPath &/= "gambas3"
+  '   Try Mkdir sPath
+  '   sPath &/= "help"
+  '   Try Mkdir sPath
+  '   WebSettings.Cache.Path = sPath
+  '   WebSettings.Cache.Enabled = True
+  ' Endif
 
   'WebSettings.Fonts.StandardFont = Application.Font.Name
   'hFont = Font[Settings["/Editor/Font", Application.Font]]
@@ -270,9 +270,9 @@ Public Sub InitWebView()
   hDefaultFont = Font[Settings["/Browser/Font"]]
   hFixedFont = Font[Settings["/Browser/FixedFont", DEFAULT_FONT]]
   
-  WebSettings.Fonts.SerifFont = hDefaultFont.Name
-  WebSettings.Fonts.SansSerifFont = hDefaultFont.Name
-  WebSettings.Fonts.DefaultFontSize = hDefaultFont.Size
+  WebSettings.Fonts.Serif = hDefaultFont.Name
+  WebSettings.Fonts.SansSerif = hDefaultFont.Name
+  WebSettings.Fonts.DefaultSize = hDefaultFont.Size
 
   ' sFont = Replace(sDefaultFont, "Sans", "Mono")
   ' If sFont = sDefaultFont Or If Not Fonts.Exist(sFont) Then
@@ -285,8 +285,8 @@ Public Sub InitWebView()
   '   Endif
   ' Endif
   
-  WebSettings.Fonts.FixedFont = hFixedFont.Name
-  WebSettings.Fonts.DefaultFixedFontSize = hFixedFont.Size
+  WebSettings.Fonts.Fixed = hFixedFont.Name
+  WebSettings.Fonts.DefaultFixedSize = hFixedFont.Size
 
 End
 
