@@ -1,8 +1,8 @@
 /***************************************************************************
 
-  cwebview.h
+  c_webview.h
 
-  (c) 2000-2017 Benoît Minisini <g4mba5@gmail.com>
+  (c) Benoît Minisini <g4mba5@gmail.com>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
 
 ***************************************************************************/
 
-#ifndef __CWEBVIEW_H
-#define __CWEBVIEW_H
+#ifndef __C_WEBVIEW_H
+#define __C_WEBVIEW_H
 
 #include <QUrl>
 #include <QAuthenticator>
@@ -35,7 +35,7 @@
 //#include "cwebdownload.h"
 #include "main.h"
 
-#ifndef __CWEBVIEW_CPP
+#ifndef __C_WEBVIEW_CPP
 
 extern GB_DESC WebViewDesc[];
 extern GB_DESC WebViewHistoryDesc[];
@@ -69,9 +69,9 @@ public:
 	
 	MyWebView(QWidget *parent);
 
-/*protected:
+protected:
 		
-	virtual QWebView *createWindow(QWebPage::WebWindowType type);*/
+	virtual QWebView *createWindow(QWebPage::WebWindowType type);
 };
 
 typedef
@@ -79,8 +79,11 @@ typedef
 	{
 		QT_WIDGET widget;
 		QT_PICTURE icon;
+		void *new_view;
+		char *link;
 		int history;
 		int progress;
+		unsigned cancel : 1;
 		unsigned stopping : 1;
 	}
 	CWEBVIEW;
