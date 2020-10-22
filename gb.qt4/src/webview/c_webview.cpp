@@ -1,8 +1,8 @@
 /***************************************************************************
 
-  cwebview.cpp
+  c_webview.cpp
 
-  (c) 2000-2017 Benoît Minisini <g4mba5@gmail.com>
+  (c) Benoît Minisini <g4mba5@gmail.com>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 ***************************************************************************/
 
-#define __CWEBVIEW_CPP
+#define __C_WEBVIEW_CPP
 
 #include <QNetworkCookieJar>
 #include <QNetworkAccessManager>
@@ -49,6 +49,7 @@ DECLARE_EVENT(EVENT_PROGRESS);
 DECLARE_EVENT(EVENT_FINISH);
 DECLARE_EVENT(EVENT_ERROR);
 DECLARE_EVENT(EVENT_LINK);
+DECLARE_EVENT(EVENT_NEW_VIEW);
 
 //static QNetworkAccessManager *_network_access_manager = 0;
 static CWEBVIEW *_network_access_manager_view = 0;
@@ -115,6 +116,12 @@ static void stop_view(void *_object)
 	THIS->stopping = FALSE;
 }
 
+static void set_link(void *_object, const QString &link)
+{
+	GB.FreeString(&THIS->link);
+	THIS->link = QT.NewString(link);
+}
+
 //-------------------------------------------------------------------------
 
 BEGIN_METHOD(WebView_new, GB_OBJECT parent)
@@ -176,7 +183,9 @@ BEGIN_METHOD_VOID(WebView_free)
 	
 	//GB.FreeString(&THIS->status);
 	//GB.FreeString(&THIS->userAgent);
+	GB.FreeString(&THIS->link);
 	GB.Unref(POINTER(&THIS->icon));
+	GB.Unref(POINTER(&THIS->new_view));
 
 END_METHOD
 
@@ -192,8 +201,10 @@ BEGIN_PROPERTY(WebView_Url)
 		RETURN_NEW_STRING(WIDGET->url().toString());
 	else
 	{
+		QString url = QSTRING_PROP();
 		stop_view(THIS);
-		WIDGET->setUrl(QSTRING_PROP());
+		set_link(THIS, url);
+		WIDGET->setUrl(url);
 	}
 
 END_PROPERTY
@@ -277,6 +288,21 @@ END_METHOD
 BEGIN_PROPERTY(WebView_Progress)
 
 	GB.ReturnFloat(THIS->progress / 100.0);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(WebView_NewView)
+
+	if (READ_PROPERTY)
+		GB.ReturnObject(THIS->new_view);
+	else
+		GB.StoreObject(PROP(GB_OBJECT), &THIS->new_view);
+
+END_PROPERTY
+
+BEGIN_PROPERTY(WebView_Link)
+
+	GB.ReturnString(THIS->link);
 
 END_PROPERTY
 
@@ -402,7 +428,9 @@ GB_DESC WebViewDesc[] =
 	GB_PROPERTY("Zoom", "f", WebView_Zoom),
 	GB_PROPERTY_READ("Icon", "Picture", WebView_Icon),
 	GB_PROPERTY_READ("Progress", "f", WebView_Progress),
-	
+	GB_PROPERTY("NewView", "WebView", WebView_NewView),
+	GB_PROPERTY_READ("Link", "s", WebView_Link),
+
 	GB_METHOD("SetHtml", NULL, WebView_SetHtml, "(Html)s[(Root)s]"),
 	
 	GB_METHOD("Back", NULL, WebView_Back, NULL),
@@ -423,7 +451,8 @@ GB_DESC WebViewDesc[] =
 	GB_EVENT("Progress", NULL, NULL, &EVENT_PROGRESS),
 	GB_EVENT("Finish", NULL, NULL, &EVENT_FINISH),
 	GB_EVENT("Error", NULL, NULL, &EVENT_ERROR),
-	GB_EVENT("Link", NULL, "(Url)s", &EVENT_LINK),
+	GB_EVENT("Link", NULL, NULL, &EVENT_LINK),
+	GB_EVENT("NewView", NULL, NULL, &EVENT_NEW_VIEW),
 
 	GB_END_DECLARE
 };
@@ -452,21 +481,22 @@ MyWebView::MyWebView(QWidget *parent) : QWebView(parent)
 	setPage(new MyWebPage(this));
 }
 
-/*QWebView *MyWebView::createWindow(QWebPage::WebWindowType type)
+QWebView *MyWebView::createWindow(QWebPage::WebWindowType type)
 {
 	void *_object = QT.GetObject(this);
 	QWebView *new_view;
 	
-	GB.Raise(THIS, EVENT_NEW_WINDOW, 1, GB_T_BOOLEAN, type == QWebPage::WebModalDialog);
+	if (GB.Raise(THIS, EVENT_NEW_VIEW, 0))
+		return NULL;
 	
 	if (!THIS->new_view)
-		return 0;
+		return NULL;
 	
 	new_view = (QWebView *)(((CWEBVIEW *)THIS->new_view)->widget.widget);
 	GB.Unref(POINTER(&THIS->new_view));
-	THIS->new_view = 0;
+	THIS->new_view = NULL;
 	return new_view;
-}*/
+}
 
 /***************************************************************************/
 
@@ -484,6 +514,8 @@ void CWebView::loadFinished(bool ok)
 		GB.Raise(THIS, EVENT_FINISH, 0);
 	else if (!THIS->stopping)
 		GB.Raise(THIS, EVENT_ERROR, 0);
+
+	GB.FreeString(&THIS->link);
 }
 
 void CWebView::loadProgress(int progress)
@@ -529,8 +561,8 @@ void CWebView::titleChanged(const QString &title)
 void CWebView::linkHovered(const QString &link, const QString &title, const QString &textContent)
 {
 	void *_object = QT.GetObject(((QWebPage*)sender())->view());
-	const char *str = TO_UTF8(link);
-	GB.Raise(THIS, EVENT_LINK, 1, GB_T_STRING, str, LAST_UTF8_LENGTH());
+	set_link(THIS, link);
+	GB.Raise(THIS, EVENT_LINK, 0);
 }
 
 /*void CWebView::frameCreated(QWebFrame *frame)
