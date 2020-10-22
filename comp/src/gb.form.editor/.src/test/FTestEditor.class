@@ -29,6 +29,8 @@ End
 
 Public Sub Form_Open()
 
+  Debug Style.ScrollbarSize
+
   Application.Animations = True
   Application.Shadows = True
 

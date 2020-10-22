@@ -1093,6 +1093,8 @@ Public Sub HighlightFrom(Y As Integer)
   Endif
 
   $bHighlighting = True
+  'Debug $sMode;; $hHighlight.Name
+  TextHighlighter.CanRewrite = _Mode.Name
 
   Do
 
