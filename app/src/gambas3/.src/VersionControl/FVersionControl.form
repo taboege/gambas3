@@ -60,19 +60,19 @@
     }
     { btnCommit Button
       MoveScaled(32,0,16,4)
-      Text = ("Commit")
+      Text = ("Commit") & "..."
       Picture = Picture["icon:/small/apply"]
     }
     { btnCommitPush Button
       MoveScaled(49,0,24,4)
       AutoResize = True
-      Text = ("Commit and push")
+      Text = ("Commit and push") & "..."
       Picture = Picture["icon:/small/upload"]
       Default = True
     }
     { btnPush Button
       MoveScaled(74,0,16,4)
-      Text = ("Push")
+      Text = ("Push") & "..."
       Picture = Picture["icon:/small/upload"]
     }
     { btnCancel Button
