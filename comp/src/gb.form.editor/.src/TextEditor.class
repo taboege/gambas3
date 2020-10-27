@@ -4,7 +4,7 @@ Export
 
 Inherits UserControl
 
-Public Const _Properties As String = "*,Border=True,ShowPreview,ScrollBar{Scroll.*}=Both,Highlight{None;Custom;C;CPlusPlus;CSS;Diff;Gambas;HTML;JavaScript;SQL;WebPage}=None,Mode{None;Custom;C;CPlusPlus;CSS;Diff;Gambas;HTML;JavaScript;SQL;WebPage}=None,ReadOnly,TabSize{Range:2;64}=2,TabIndent,Wrap,ShowPosition,ShowLimit,ShowCurrent,ShowLineNumber,ShowModified,ShowBraces,ShowIcon,ShowExpand,ShowCursor=True,ShowSpaces,ShowIndent,CloseBraces,CloseStrings"
+Public Const _Properties As String = "*,Border=True,ShowPreview,ScrollBar{Scroll.*}=Both,Highlight{None;Custom;C;CPlusPlus;CSS;Diff;Gambas;HTML;JavaScript;SQL;WebPage;Sh}=None,Mode{None;Custom;C;CPlusPlus;CSS;Diff;Gambas;HTML;JavaScript;SQL;WebPage;Sh}=None,ReadOnly,TabSize{Range:2;64}=2,TabIndent,Wrap,ShowPosition,ShowLimit,ShowCurrent,ShowLineNumber,ShowModified,ShowBraces,ShowIcon,ShowExpand,ShowCursor=True,ShowSpaces,ShowIndent,CloseBraces,CloseStrings"
 Public Const _DrawWith As String = "-"
 Public Const _DefaultEvent As String = "Change"
 Public Const _Similar As String = "TextArea"
@@ -392,7 +392,7 @@ Private Sub Init()
   
   $bShowCursor = True
   GotoCenter(0, 0)
-  
+  Scroll(0, 0)
   Refresh
   
 End
@@ -2021,9 +2021,9 @@ Private Sub EnsureVisible(Optional bCenter As Boolean)
   
 End
 
-Public Sub GotoCenter(NX As Integer, NY As Integer)
+Public Sub GotoCenter(NX As Integer, NY As Integer, Optional Mark As Boolean)
   
-  Goto(NX, NY)
+  Goto(NX, NY, Mark)
   EnsureVisible(True)
   ' If Not $hTimerEnsureVisible Then
   '   $hTimerEnsureVisible = New Timer As "EnsureVisible"
