@@ -2697,8 +2697,12 @@ Public Sub mnuSetEnv_Click()
   sValue = Mid(sEnv, iPos + 1)
   
   aEnv = Project.Environment
-  iPos = aEnv.Find(sVar & "=*", gb.Like)
-
+  
+  For iPos = 0 To aEnv.Max
+    If LTrim(aEnv[iPos]) Begins (sVar & "=") Then Break
+  Next
+  If iPos >= aEnv.Count Then iPos = -1
+  
   If Not sValue Then
     If iPos >= 0 Then 
       aEnv.Remove(iPos)

@@ -113,7 +113,7 @@
           Arrangement = Arrange.Fill
           Spacing = True
           { tabTable TabPanel
-            MoveScaled(1,5,68,26)
+            MoveScaled(3,3,68,26)
             Visible = False
             Expand = True
             Arrangement = Arrange.Vertical
@@ -230,7 +230,7 @@
             Index = 0
           }
           { panRequest VBox
-            MoveScaled(6,9,80,24)
+            MoveScaled(6,6,80,24)
             Visible = False
             Background = Color.Background
             { tlbData2 ToolBar
