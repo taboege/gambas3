@@ -923,7 +923,7 @@ Private Function MakeDebPackage(sSys As String)
   
   sIcon = sPackageName
   
-  Project.StretchIcon(Project.Dir &/ Project.Icon, 32).Save(sIconDir &/ sIcon & ".xpm")
+  Project.StretchIcon(Project.Dir &/ Project.Icon, 32).Save(sIconDir &/ sIcon & ".png")
   
   Try hImageStat = ImageStat(Project.Dir &/ Project.Icon)
   If Error Then
@@ -995,7 +995,7 @@ Private Function MakeDebPackage(sSys As String)
     Print #hFile, "?package("; sPackageName; "):needs=\""; IIf(IsConsoleProject(), "text", "X11"); "\" section=\""; Project.Menus[sSys]; "\"\\"
     Print #hFile, "title=\""; IIf(Project.Title, Project.Title, Project.Name); "\"\\" 
     Print #hFile, "command=\"/usr/bin/"; $sName; "\"\\"
-    Print #hFile, "icon=\"/usr/share/pixmaps/"; sIcon; ".xpm\""
+    Print #hFile, "icon=\"/usr/share/pixmaps/"; sIcon; ".png\""
     Close #hFile
   Endif 
   
@@ -1038,7 +1038,7 @@ Private Function MakeDebPackage(sSys As String)
       Print #hFile, "src/"; $sName; "/"; $sName; " usr/bin"
       Print #hFile, "debian/"; sPackageName; ".desktop usr/share/applications"
 
-      Print #hFile, "src/"; $sName; "/.hidden/.icons/"; sIcon; ".xpm usr/share/pixmaps"
+      Print #hFile, "src/"; $sName; "/.hidden/.icons/"; sIcon; ".png usr/share/pixmaps"
       For Each iSize In DEBIAN_ICON_SIZES
         sPath = "src" &/ $sName &/ ".hidden/.icons" &/ CStr(iSize) &/ sIcon & ".png"
         If Exist(sPackagePath &/ sPath) Then Print #hFile, sPath; " /usr/share/icons/hicolor/"; iSize; "x"; iSize; "/apps"
