@@ -1,12 +1,18 @@
 # Gambas Project File 3.0
 Title=Multiple document interface management
-Startup=FMain
+Startup=Form3
 Icon=.hidden/control/workspace.png
 Version=3.15.90
 VersionFile=1
 Component=gb.image
 Component=gb.gui
 Component=gb.form
+Component=gb.db
+Component=gb.db.form
+Component=gb.eval
+Component=gb.eval.highlight
+Component=gb.util
+Component=gb.form.editor
 Component=gb.settings
 Component=gb.form.mdi
 Authors="Benoît Minisini"
