@@ -596,7 +596,6 @@ void gContainer::insert(gControl *child, bool realize)
 	//g_debug("gContainer::insert: visible = %d", isReallyVisible());
 	performArrange();
 	//fprintf(stderr, "--> %d %d %d %d\n", child->x(), child->y(), child->width(), child->height());
-	updateFocusChain();
 
 	if (realize)
 	{
@@ -614,7 +613,6 @@ void gContainer::insert(gControl *child, bool realize)
 void gContainer::remove(gControl *child)
 {
 	g_ptr_array_remove(_children, child);
-	updateFocusChain();
 }
 
 
@@ -758,7 +756,7 @@ void gContainer::setVisible(bool vl)
 		performArrange();*/
 }
 
-void gContainer::updateFocusChain()
+/*void gContainer::updateFocusChain()
 {
 	GList *chain = NULL;
 	int i;
@@ -777,7 +775,7 @@ void gContainer::updateFocusChain()
 	gtk_container_set_focus_chain(GTK_CONTAINER(widget), chain);
 	
 	g_list_free(chain);
-}
+}*/
 
 void gContainer::updateFont()
 {
@@ -896,3 +894,4 @@ void gContainer::setDesign(bool vl)
 	gControl::setDesign(true);
 	setDesignRecursive();
 }
+

@@ -71,6 +71,8 @@ public:
 	int mouse();
 	gControl *next();
 	gControl *previous();
+	gControl *nextFocus();
+	gControl *previousFocus();
 	int screenX();
 	int screenY();
 	virtual bool getScreenPos(int *x, int *y);
@@ -139,7 +141,7 @@ public:
 	void setColorButton() { use_base = FALSE; }
 #endif
 
-	bool canFocus() const;
+	virtual bool canFocus() const;
 	bool canFocusOnClick() const;
 	void setCanFocus(bool vl);
 

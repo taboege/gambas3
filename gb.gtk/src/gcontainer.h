@@ -77,6 +77,8 @@ public:
 
 	virtual int childCount() const;
 	virtual gControl *child(int index) const;
+	gControl *firstChild() const { return child(0); };
+	gControl *lastChild() const { return child(childCount() - 1); }
 	
 	int childIndex(gControl *ch) const;
 	
@@ -135,7 +137,6 @@ public:
 	void hideHiddenChildren();
 	virtual GtkWidget *getContainer();
 	gControl *findFirstFocus();	
-	void updateFocusChain();
 
 	static int _arrangement_level;
 

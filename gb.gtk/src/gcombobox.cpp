@@ -643,3 +643,8 @@ void gComboBox::setBorder(bool v)
 {
 	g_object_set(G_OBJECT(widget), "has-frame", v, 	(void *)NULL);
 }
+
+bool gComboBox::canFocus() const
+{
+	return true;
+}

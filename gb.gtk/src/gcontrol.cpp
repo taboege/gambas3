@@ -1233,8 +1233,6 @@ void gControl::setCanFocus(bool vl)
 		_input_method = gtk_im_multicontext_new();
 	}*/
 
-	if (pr)
-		pr->updateFocusChain();
 }
 
 void gControl::setFocus()
@@ -1405,7 +1403,6 @@ void gControl::restack(bool raise)
 		gtk_widget_show(border);
 	}
 
-	pr->updateFocusChain();
 	pr->performArrange();
 	pr->refresh();
 }
@@ -1450,7 +1447,6 @@ void gControl::setNext(gControl *ctrl)
 		}
 	}
 
-	pr->updateFocusChain();
 	pr->performArrange();
 	#endif
 }
@@ -2796,8 +2792,6 @@ void gControl::setNoTabFocus(bool v)
 		return;
 
 	_no_tab_focus = v;
-	if (pr)
-		pr->updateFocusChain();
 }
 
 void gControl::emitEnterEvent(bool no_leave)
@@ -2972,4 +2966,45 @@ void gControl::setColorButton()
 GtkIMContext *gControl::getInputMethod()
 {
 	return _input_method;
+}
+
+gControl *gControl::nextFocus()
+{
+	gControl *ctrl;
+	
+	if (isContainer())
+	{
+		ctrl = ((gContainer *)this)->firstChild();
+		if (ctrl)
+			return ctrl;
+	}
+	
+	ctrl = this;
+	
+	while (!ctrl->next())
+	{
+		ctrl = ctrl->parent();
+		if (ctrl->isTopLevel())
+			return ctrl->nextFocus();
+	}
+	
+	return ctrl->next();
+}
+
+gControl *gControl::previousFocus()
+{
+	gControl *ctrl = previous();
+	
+	if (!ctrl)
+	{
+		if (!isTopLevel())
+			return parent()->previousFocus();
+		
+		ctrl = this;
+	}
+	
+	while (ctrl->isContainer() && ((gContainer *)ctrl)->childCount())
+		ctrl = ((gContainer *)ctrl)->lastChild();
+
+	return ctrl;
 }

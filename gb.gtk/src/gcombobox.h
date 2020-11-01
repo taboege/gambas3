@@ -66,6 +66,7 @@ public:
 #endif
 	virtual void setRealForeground(gColor vl);
 	virtual void setFocus();
+	virtual bool canFocus() const;
 	
 //"Signals"
 	void (*onClick)(gComboBox *sender);
