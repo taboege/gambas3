@@ -7,14 +7,6 @@ VersionFile=1
 Component=gb.image
 Component=gb.gui
 Component=gb.form
-Component=gb.db
-Component=gb.db.form
-Component=gb.eval
-Component=gb.eval.highlight
-Component=gb.util
-Component=gb.form.editor
-Component=gb.settings
-Component=gb.form.mdi
 Authors="Benoît Minisini"
 Environment="GB_GUI=gb.gtk3"
 TabSize=2
