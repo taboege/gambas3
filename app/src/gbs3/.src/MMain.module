@@ -54,44 +54,45 @@ Public $sLibraryNoVendor As String = User.home &/ "/.local/share/" &/ gbsver &/ 
 '' Reset all internal tables and conditions
 '' Used for Test harness
 Public Sub _ResetAll() 
-$sMd5 = ""
-$sPrjPath = ""
 
-$hOutFile = Null
-$hOutClass = Null
-$bScriptSourceStdIn = False
-
-$sProgramHeader = ""
-$sStructures = ""
-$sClassDefinition = ""
-
-$sMainScriptPath = ""
-$iLevel = 0
-
-$cComponents.Clear()
-$cLibraries.Clear()
-$aImplemented.Clear()
-$aSortKey.Clear()
-$aVarsDecl.Clear()                                 ' Changed from string[]
-$bWebPage = False
-$aAppArgs.Clear()
-$bBuildOnly = False                                ' add support to have scripter build the project only and print out the source files
-$bPrecompiler = False
-$sUse = ""
-$sPath = ""
-$aIncFiles.Clear()
-$sFinalProgram = ""
-
-$bNoCache = False
-$bVerbose = False
-$bWarning = False                                   ' added to support warings to be displayed
-
-$bExecuteFromArgs = False
-$bFast = False
-$bUnsafe = False
-
-$bDebug = False
-$bTrace = False
+  $sMd5 = ""
+  $sPrjPath = ""
+  
+  $hOutFile = Null
+  $hOutClass = Null
+  $bScriptSourceStdIn = False
+  
+  $sProgramHeader = ""
+  $sStructures = ""
+  $sClassDefinition = ""
+  
+  $sMainScriptPath = ""
+  $iLevel = 0
+  
+  $cComponents.Clear()
+  $cLibraries.Clear()
+  $aImplemented.Clear()
+  $aSortKey.Clear()
+  $aVarsDecl.Clear()                                 ' Changed from string[]
+  $bWebPage = False
+  $aAppArgs.Clear()
+  $bBuildOnly = False                                ' add support to have scripter build the project only and print out the source files
+  $bPrecompiler = False
+  $sUse = ""
+  $sPath = ""
+  $aIncFiles.Clear()
+  $sFinalProgram = ""
+  
+  $bNoCache = False
+  $bVerbose = False
+  $bWarning = False                                   ' added to support warings to be displayed
+  
+  $bExecuteFromArgs = False
+  $bFast = False
+  $bUnsafe = False
+  
+  $bDebug = False
+  $bTrace = False
 
 End
 
@@ -134,6 +135,12 @@ Public Sub ConfigureLibraries()
   
 End
 
+Sub Warning(sMsg As String)
+  
+  Error "gbs"; System.Version; ": "; sMsg
+  
+End
+
 Public Sub Main() As Integer
 
   Dim sName As String
@@ -151,18 +158,17 @@ Public Sub Main() As Integer
   
   sName = File.Name($sPath)
 
-  If IsNull($sPath) Then
+  If Not $sPath Then
 
     $sPath = Read Lof(File.In)           ' This is invoked when cmd line is like  ' gbs -e < filename'
     
     If Not $sPath Then
-      Error File.Name(Args[0]) & ": " & ("no input file specified")
-      Error ("Type") & " " & File.Name(Args[0]) & " --help " & ("for more information")
+      Warning(("no input file specified"))
       Return 1
     Else
       $bExecuteFromArgs = True
-      If $bVerbose Then Print "gbs:Execute from command line {";; $sPath;; "}"
-      sname = File.Name($sPath)
+      If $bVerbose Then Warning("execute from command line: " & $sPath)
+      sName = File.Name($sPath)
     Endif
 
   Endif
@@ -174,7 +180,7 @@ Public Sub Main() As Integer
     If Not Exist($sPath) Then
       $sPath = Application.Dir &/ $sPath
       If Not Exist($sPath) Then
-        Error File.Name(Args[0]) & " : " & ("input file does not exist") & " : " & Application.Args[1]
+        Warning(("input file does not exist") & ": " & Application.Args[1])
         Return 1
       Endif
     Else
@@ -229,7 +235,7 @@ Public Sub Main() As Integer
     If $bWarning Then parmstring &= "w"
     If $bTrace Then parmstring &= "t"
     
-    If $bVerbose Then Print "gbs:" & System.Path &/ "bin/gbc" & System.Version & " " & parmstring & " " & $sPrjPath & " 2 > &1 " ""
+    If $bVerbose Then Warning(System.Path &/ "bin/gbc" & System.Version & " " & parmstring & " " & $sPrjPath & " 2>&1")
     Shell (System.Path &/ "bin/gbc" & System.Version & " " & parmstring & " " & $sPrjPath & " 2>&1") To sRes
     
     Dim sResLines As String[] = Split(sRes, "\n", "", True)   ' added to only check the last line from compiler, ignore all others
@@ -241,7 +247,7 @@ Public Sub Main() As Integer
     Endif
 
     Try Mkdir sCacheDir &/ $sMd5
-    If $bVerbose Then Print File.Name(Args[0]) & ":" & System.Path &/ "bin/gba" & System.Version, "-o", sCacheDir &/ $sMd5 &/ sName
+    If $bVerbose Then Warning(System.Path &/ "bin/gba" & System.Version & " -o" & sCacheDir &/ $sMd5 &/ sName)
     Exec [System.Path &/ "bin/gba" & System.Version, "-o", sCacheDir &/ $sMd5 &/ sName, $sPrjPath] To sRes
 
     File.Save(sCacheDir &/ $sMd5 & ".info", $aIncFiles.Join("\n"))
@@ -249,8 +255,8 @@ Public Sub Main() As Integer
   Endif
   
   If Not $bBuildOnly Then
-      $aAppArgs.Insert(["gbr" & System.Version, sCacheDir &/ $sMd5 &/ sName], 0)
-      If $bVerbose Then Print File.Name(Args[0]) & ":" & $aAppArgs.Join(" ")
+      $aAppArgs.Insert(["gbr" & System.Version, "-a", $sPath, sCacheDir &/ $sMd5 &/ sName], 0)
+      If $bVerbose Then Warning($aAppArgs.Join(" "))
       If $bTestMode Then 
          Exec $aAppArgs To $sTestModeCapture
       Else
@@ -258,7 +264,7 @@ Public Sub Main() As Integer
       Endif
       
       If Process.LastState = Process.Crashed Then
-        Error File.Name(Args[0]) & ":" & ("Segmentation fault")
+        Warning(("Segmentation fault"))
       Endif
       
      If $bTestMode Then
@@ -280,10 +286,11 @@ Catch
   Error Error.Text
   
   If $bTestMode Then
-         Return 0
-     Else
-         Quit 0
-     Endif
+    Return 0
+  Else
+    Quit 0
+  Endif
+  
 End
 
 Public Function ParseArgs() As String
@@ -416,7 +423,7 @@ Public Sub MakeVirtualProject()
   
   $sPrjPath = Temp("project")
 
-  If $bVerbose Then Print "gbs:";; ("Create project");; $sPrjPath
+  If $bVerbose Then Warning(("Create project") & ": " & $sPrjPath)
 
   Try Mkdir $sPrjPath
   Try Mkdir $sPrjPath &/ ".src"
@@ -504,7 +511,7 @@ Public Sub GenerateFiles(Path As String)
 
     If $aIncFiles.Exist(Path) Then Return
 
-    If $bVerbose Then Print "gbs:";; ("process file");; ":";; Path
+    If $bVerbose Then Warning(("process file") & ": " & Path)
     $aIncFiles.Add(Path)
     $aIncFiles.Add(Stat(Path).LastModified)
     hFile = Open Path For Read
@@ -529,7 +536,7 @@ Public Sub GenerateFiles(Path As String)
     If aSym.Count = 2 And If aSym[0] = "INCLUDE" And If Highlight.Types[1] = Highlight.String Then
       sPath = Mid$(aSym[1], 2, -1) 'Trim(Scan(sLine, "INCLUDE *")[0])
       If Not Exist(sPath) Then sPath = $sMainScriptPath &/ sPath
-      If $bVerbose Then Print "gbs:";; ("include script file");; ":";; sPath
+      If $bVerbose Then Warning(("include script file") & ": " & sPath)
 
       GenerateFiles(sPath)
       Continue
@@ -563,7 +570,7 @@ Public Sub GenerateFiles(Path As String)
         CompileError(Path, iLine, ("Class name missing"))
         Continue
       Endif
-      If $bVerbose Then Print "gbs:";; ("create class");; ":";; sClass
+      If $bVerbose Then Warning(("create class") & ": " & sClass)
       $sClassDefinition = ""
       $hOutClass = Open $sPrjPath &/ ".src" &/ sClass & ".class" For Write Create
       
@@ -586,7 +593,7 @@ Public Sub GenerateFiles(Path As String)
           Continue
         Endif
       
-        If $bVerbose Then Print "gbs:";; ("Struct Defined outside main");; ":";; sStruct
+        If $bVerbose Then Warning(("Struct Defined outside main") & ": " & sStruct)
         $sStructures &= If(iStructPos = 0, "Public ", "") & sLine & "\n"
         bInStruct = True
         Continue
@@ -600,11 +607,11 @@ Public Sub GenerateFiles(Path As String)
         s = Mid$(aSym[iInd], 2, -1)
         
         If s Like "*:*" Or s Like "/*" Then 
-           If $bVerbose Then Print "gbs:";; ("use library");; s
+           If $bVerbose Then Warning(("use library") & " " & s)
            ProcessLibrary(s, iLine, path)
            
         Else
-           If $bVerbose Then Print "gbs:";; ("use component");; ":";; s
+           If $bVerbose Then Warning(("use component") & " " & s)
            ProcessComponent(s, iline, path)
            
         Endif 
@@ -619,7 +626,7 @@ Public Sub GenerateFiles(Path As String)
     Endif
 
     If aSym.Count = 5 And If aSym[0] = "PUBLIC" And If (aSym[1] = "SUB" Or aSym[1] = "PROCEDURE") And If Upper(aSym[2]) = "MAIN" And If aSym[3] = "(" And If aSym[4] = ")" Then
-      If $bVerbose Then Print "gbs:";; ("Main procedure already defined")
+      If $bVerbose Then Warning(("Main procedure already defined"))
       bAutoMain = False
     Else If aSym.Count > 3 And If aSym[0] = "PUBLIC" And If Not (bInClass Or bInStruct) And If aSym[2] = "AS" Then 
       $sProgramHeader &= sLine & "\n"
@@ -645,7 +652,7 @@ Public Sub GenerateFiles(Path As String)
   If bInStruct Then CompileError(Path, iLine, "END STRUCT " & ("missing"))
 
   If bAutoMain And Not IsNull(sCodeBuf) And $iLevel = 1 Then
-    If $bVerbose Then Print "gbs: Main()";; ("procedure not defined, creating it")
+    If $bVerbose Then Warning("Main() " & ("procedure not defined, creating it"))
     $sFinalProgram &= "Public Sub Main()\n"
     $sFinalProgram &= sCodeBuf
     $sFinalProgram &= "End\n"
@@ -702,7 +709,7 @@ Public Sub ProcessLibrary(LibName As String, ProgLine As Integer, Path As String
     If LibEntry = "" Then 
       CompileError(Path, ProgLine, Subst(("Unknown Library") & ": &1", LibName)) 
     Else
-      If $bVerbose Then Print "gbs:";; ("use Library Path");; ":";; LibEntry
+      If $bVerbose Then Warning(("use Library Path") & ": " & LibEntry)
       $cLibraries.Add(LibEntry, LibFileName)
     Endif
 End
