@@ -271,6 +271,7 @@ int main(int argc, char *argv[])
 				printf("  -e              evaluate an expression\n");
 
 			printf(
+				"  -a <path>       override application path\n"
 				"  -g              enter debugging mode\n"
 				"  -h --help       display this help\n"
 				"  -H --httpd      run through an embedded http server\n"
@@ -375,6 +376,9 @@ int main(int argc, char *argv[])
 		else if (is_option_arg(argv, argc, &i, 'T', "test", &_tests))
 		{
 			PROJECT_run_tests = TRUE;
+		}
+		else if (is_option_arg(argv, argc, &i, 'a', NULL, &PROJECT_override))
+		{
 		}
 		else if (is_option(argv[i], '-'))
 		{
