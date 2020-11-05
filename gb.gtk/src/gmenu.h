@@ -101,7 +101,6 @@ public:
 	enum gMenuStyle { NOTHING, SEPARATOR, CHECK, NORMAL };
 	
 	void *pr;
-	bool stop_signal;
 
 	GtkMenuItem *menu;
 	GtkWidget *hbox;
@@ -121,6 +120,7 @@ public:
 	unsigned _disabled : 1;
 	unsigned _mapping : 1;
 	unsigned _proxy_for : 1;
+	unsigned _ignore_signal : 1;
 
 	void initialize();
 	gMenuStyle style() const { return _style; }
@@ -136,6 +136,8 @@ public:
 	void insert(gMenu *child);
 	void remove(gMenu *child);
 	void removeParent();
+	
+	bool ignoreSignal();
 
 private:
 

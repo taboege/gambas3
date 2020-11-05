@@ -92,14 +92,17 @@ static void patch_classes(void)
 
 static void cb_destroy(GtkWidget *object, gMenu *data)
 {
-	if (data->stop_signal) 
-		data->stop_signal = false; 
-	else
-		data->destroy();
+	if (data->ignoreSignal()) 
+		return;
+	
+	data->destroy();
 }
 
 static void cb_activate(GtkMenuItem *menuitem, gMenu *data)
 {
+	if (data->ignoreSignal()) 
+		return;
+	
 	if (data->_popup)
 		return;
 
@@ -108,7 +111,10 @@ static void cb_activate(GtkMenuItem *menuitem, gMenu *data)
 	else if (data->toggle())
 		data->updateChecked();
 	else if (data->checked())
+	{
+		data->_ignore_signal = true;
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), true);
+	}
 	
 	if (data->onClick)
 	{
@@ -224,7 +230,7 @@ void gMenu::update()
 			pos = get_menu_pos(GTK_WIDGET(menu));
 			//shell = (GtkMenuShell*)GTK_WIDGET(menu)->parent;
 			if (_style != NOTHING)
-				stop_signal = true;
+				_ignore_signal = true;
 			gtk_widget_destroy(GTK_WIDGET(menu));
 			//g_debug("%p: delete old menu/separator", this);
 		}
@@ -414,8 +420,6 @@ void gMenu::initialize()
 {
 	//fprintf(stderr, "gMenu::gMenu: %p (%p)\n", this, pr);
 	
-	stop_signal = false;
-	
 	onFinish = NULL;
 	onClick = NULL;
 	onShow = NULL;
@@ -443,6 +447,7 @@ void gMenu::initialize()
 	_style = NOTHING;
 	_oldstyle = NOTHING;
 	
+	_ignore_signal = false;
 	_no_update = false;
 	_destroyed = false;
 	_delete_later = false;
@@ -581,7 +586,7 @@ gMenu::~gMenu()
 		
 	if (menu)
 	{
-		stop_signal = true;
+		_ignore_signal = true;
 		gtk_widget_destroy(GTK_WIDGET(menu));
 	}
 	
@@ -725,7 +730,10 @@ void gMenu::setChecked(bool vl)
 	
 	_checked = vl;
 	if (_style == CHECK)
+	{
+		_ignore_signal = true;
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu), _checked);
+	}
 	else
 		update();
 }
@@ -1241,4 +1249,15 @@ void gMenu::updateChecked()
 		_checked = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menu));
 	else
 		_checked = false;
+}
+
+bool gMenu::ignoreSignal()
+{
+	if (_ignore_signal)
+	{
+		_ignore_signal = false;
+		return true;
+	}
+	else
+		return false;
 }
