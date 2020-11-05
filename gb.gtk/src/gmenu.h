@@ -50,8 +50,8 @@ public:
 	bool radio() const { return _radio; }
 	bool isEnabled() const { return !_disabled; }
 	bool isFullyEnabled() const;
-	gMenu* childMenu(int pos);
-	int childCount();
+	gMenu *child(int index) const;
+	int childCount() const;
 	char* shortcut() const { return _shortcut; }
 	char* text() const { return _text; }
 	bool isVisible();
@@ -98,33 +98,44 @@ public:
 	void (*onHide)(gMenu *sender);
 
 //"Private"
-	enum gMenuStyle { NOTHING, SEPARATOR, MENU };
+	enum gMenuStyle { NOTHING, SEPARATOR, CHECK, NORMAL };
 	
 	void *pr;
 	bool stop_signal;
-	GtkAccelGroup *accel;
-	GtkMenu *child;
+
 	GtkMenuItem *menu;
 	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *aclbl;
+	//GtkWidget *check;
 	GtkWidget *image;
-	GtkWidget *check;
+	GtkWidget *label;
+	GtkWidget *shlabel;
+
+	GtkMenu *_popup;
+
 	GtkSizeGroup *sizeGroup;
+	GtkAccelGroup *accel;
+
 	gMenu *_proxy;
 	unsigned _opened : 1;
 	unsigned _exec: 1;
 	unsigned _disabled : 1;
 	unsigned _mapping : 1;
+	unsigned _proxy_for : 1;
 
 	void initialize();
 	gMenuStyle style() const { return _style; }
   void hideSeparators();
-	void willBeDeletedLater() { _delete_later = TRUE; }
-	void setRadio();
+	void willBeDeletedLater();
+	void updateRadio();
+	void updateChecked();
 	GtkMenu *getSubMenu();
 	void ensureChildMenu();
 	void updateShortcutRecursive();
+	GtkSizeGroup *getSizeGroup();
+	
+	void insert(gMenu *child);
+	void remove(gMenu *child);
+	void removeParent();
 
 private:
 
@@ -137,6 +148,8 @@ private:
 	guint _shortcut_key;
 	GdkModifierType _shortcut_mods;
 
+	GPtrArray *_children;
+	
 	unsigned _checked : 1;
 	unsigned _toggle : 1;
 	unsigned _radio : 1;

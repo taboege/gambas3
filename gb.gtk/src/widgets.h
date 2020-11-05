@@ -24,6 +24,8 @@
 #ifndef __WIDGETS_H
 #define __WIDGETS_H
 
+#define GLIB_VERSION_MIN_REQUIRED GLIB_VERSION_2_26
+
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #ifndef GAMBAS_DIRECTFB
@@ -32,6 +34,8 @@
 #endif
 #endif
 #include <gtk/gtk.h>
+
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
 #ifdef GTK3
 

@@ -21,8 +21,6 @@
 
 ***************************************************************************/
 
-#include <glib.h>
-#include <glib/gprintf.h>
 #include "widgets.h"
 #include "gdialog.h"
 #include "gdesktop.h"

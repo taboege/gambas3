@@ -34,7 +34,7 @@
 
 //#define DEBUG_DND 1
 
-static void cb_destroy (GtkWidget *object,gControl *data)
+static void cb_destroy(GtkWidget *object, gControl *data)
 {
 	if (data->_no_delete)
 		return;
@@ -337,7 +337,7 @@ static void cb_show(GtkWidget *widget, gContainer *data)
 
 void gControl::borderSignals()
 {	
-	g_signal_connect(G_OBJECT(border), "destroy", G_CALLBACK(cb_destroy), (gpointer)this);
+	g_signal_connect_after(G_OBJECT(border), "destroy", G_CALLBACK(cb_destroy), (gpointer)this);
 	//g_signal_connect(G_OBJECT(border),"drag-data-received",G_CALLBACK(sg_drag_data_received),(gpointer)this);
 	g_signal_connect(G_OBJECT(border),"drag-motion",G_CALLBACK(sg_drag_motion),(gpointer)this);
 	g_signal_connect(G_OBJECT(border),"drag-leave",G_CALLBACK(sg_drag_leave),(gpointer)this);

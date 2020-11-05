@@ -46,7 +46,7 @@ class gContainer : public gControl
 public:
 	gContainer();
 	gContainer(gContainer *parent);
-	~gContainer();
+	virtual ~gContainer();
 
 	int arrange() const { return arrangement.mode; }
 	bool autoResize() const { return arrangement.autoresize; }

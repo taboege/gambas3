@@ -416,17 +416,28 @@ gControl::gControl(gContainer *parent)
 	initAll(parent);
 }
 
+void gControl::dispose()
+{
+	gMainWindow *win;
+	
+	win = window();
+	if (win && win->focus == this)
+		win->focus = NULL;
+
+	if (pr)
+	{
+		pr->remove(this);
+		pr = NULL;
+	}
+}
+
 gControl::~gControl()
 {
-	gMainWindow *win = window();
+	//fprintf(stderr, "~gControl: %s %p %s\n", name(), this, GB.GetClassName(hFree));
 
 	emit(SIGNAL(onFinish));
 
-	/*if (pr)
-		pr->remove(this);*/
-
-	if (win && win->focus == this)
-		win->focus = NULL;
+	dispose();
 
 	if (_proxy)
 		_proxy->_proxy_for = NULL;
@@ -452,8 +463,6 @@ gControl::~gControl()
 	if (_css)
 		g_object_unref(_css);
 #endif
-
-	//fprintf(stderr, "~gControl: %s\n", name());
 
 	if (_name)
 		g_free(_name);
@@ -484,9 +493,7 @@ void gControl::destroy()
 		return;
 
 	hide();
-
-	if (pr)
-		pr->remove(this);
+	dispose();
 
 	_destroyed = true;
 	

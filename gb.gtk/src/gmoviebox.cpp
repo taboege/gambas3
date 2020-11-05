@@ -22,7 +22,6 @@
 
 ***************************************************************************/
 
-#include <gdk-pixbuf/gdk-pixbuf.h>
 #include "widgets.h"
 #include "gmoviebox.h"
 

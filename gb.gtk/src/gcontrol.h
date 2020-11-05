@@ -327,9 +327,12 @@ public:
 	static void cleanRemovedControls();
 
 private:
+	
 	gContainer *pr;
 	char *_name;
 	GtkIMContext *_input_method;
+	
+	void dispose();	
 };
 
 #define SIGNAL(_signal) ((void *)_signal)

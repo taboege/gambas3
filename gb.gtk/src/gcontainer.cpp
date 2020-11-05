@@ -21,7 +21,6 @@
 
 ***************************************************************************/
 
-#include <gtk/gtk.h>
 #include "widgets.h"
 
 #include <stdio.h>
@@ -298,6 +297,7 @@ gContainer::~gContainer()
 		child(i)->removeParent();
 	
 	g_ptr_array_unref(_children);
+	_children = NULL;
 	
 	if (radiogroup) { g_object_unref(G_OBJECT(radiogroup)); radiogroup=NULL; }
 }

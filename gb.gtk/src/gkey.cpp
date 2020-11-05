@@ -221,7 +221,10 @@ bool gKey::enable(gControl *control, GdkEventKey *event)
 #endif
 
 			if (!_im_has_input_method)
+			{
+				initContext();
 				f = gtk_im_context_filter_keypress(_im_context, event);
+			}
 
 			#if DEBUG_IM
 			fprintf(stderr, "gKey::enable: [%p] filter -> %d\n", event, f);
@@ -279,16 +282,10 @@ static gboolean hook_commit(GSignalInvocationHint *ihint, guint n_param_values, 
 	return true;
 }
 
-void gKey::init()
+void gKey::initContext()
 {
-	GdkWindowAttr attr;
-
-	attr.event_mask = GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK;
-	attr.width = attr.height = 10;
-	attr.wclass = GDK_INPUT_OUTPUT;
-	attr.window_type = GDK_WINDOW_TOPLEVEL;
-
-	_im_window = gdk_window_new(NULL, &attr, 0);
+	if (_im_context)
+		return;
 
 	_im_context = gtk_im_multicontext_new();
 	gtk_im_context_set_client_window (_im_context, _im_window);
@@ -300,11 +297,26 @@ void gKey::init()
 	g_signal_add_emission_hook(g_signal_lookup("commit", GTK_TYPE_IM_CONTEXT), (GQuark)0, hook_commit, (gpointer)0, NULL);
 }
 
+void gKey::init()
+{
+	GdkWindowAttr attr;
+
+	attr.event_mask = GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK;
+	attr.width = attr.height = 10;
+	attr.wclass = GDK_INPUT_OUTPUT;
+	attr.window_type = GDK_WINDOW_TOPLEVEL;
+
+	_im_window = gdk_window_new(NULL, &attr, 0);
+}
+
 void gKey::exit()
 {
 	disable();
-	g_free(_im_default_slave);
-	g_object_unref(_im_context);
+	if (_im_context)
+	{
+		g_free(_im_default_slave);
+		g_object_unref(_im_context);
+	}
 }
 
 void gKey::setActiveControl(gControl *control)
@@ -319,6 +331,7 @@ void gKey::setActiveControl(gControl *control)
 #endif
 		if (!_im_has_input_method)
 		{
+			initContext();
 			gtk_im_context_reset(_im_context);
 			gtk_im_context_set_client_window (_im_context, 0);
 			gtk_im_context_reset(_im_context);
@@ -335,6 +348,7 @@ void gKey::setActiveControl(gControl *control)
 		
 		if (!control->hasInputMethod())
 		{
+			initContext();
 			_im_has_input_method = FALSE;
 			gtk_im_context_reset(_im_context);
 			gtk_im_context_set_client_window (_im_context, gtk_widget_get_window(control->widget));

@@ -341,7 +341,7 @@ static void gambas_handle_event(GdkEvent *event)
 
 	if (gMenu::currentPopup())
 	{
-		grab = GTK_WIDGET(gMenu::currentPopup()->child);
+		grab = GTK_WIDGET(gMenu::currentPopup()->_popup);
 		//fprintf(stderr, "[2] popup menu: grab = %p\n", grab);
 		if (get_window_group(grab) != get_window_group(widget) && (event->type == GDK_ENTER_NOTIFY || event->type == GDK_LEAVE_NOTIFY))
 			goto __RETURN;

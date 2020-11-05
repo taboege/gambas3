@@ -62,6 +62,8 @@ public:
 
 private:
 	static bool _valid;
+	
+	static void initContext();
 };
 
 void gcb_im_commit(GtkIMContext *context, const char *str, gControl *control);

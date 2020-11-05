@@ -42,40 +42,6 @@ static GB_FUNCTION _init_shortcut_func;
 	while (((CMENU *)(_ob))->widget->proxy()) \
 		_ob = (__typeof__ _ob)(((CMENU *)(_ob))->widget->proxy()->hFree);
 
-/*static void register_proxy(void *_object, CMENU *proxy)
-{
-	CMENU *check = proxy;
-
-	while (check)
-	{
-		if (check == THIS)
-		{
-			GB.Error("Circular proxy chain");	
-			return;
-		}
-		
-		check = (CMENU *)check->proxy;
-	}
-	
-	//if (THIS_EXT && THIS_EXT->proxy && EXT(THIS_EXT->proxy))
-	//	EXT(THIS_EXT->proxy)->proxy_for = NULL;
-	
-	
-	GB.Unref(POINTER(&THIS->proxy));
-	
-	if (!MENU)
-		return;
-	
-	if (proxy)
-	{
-		GB.Ref(proxy);
-		THIS->proxy = proxy;
-		MENU->setProxy((gMenu *)proxy->widget);
-	}
-	else
-		MENU->setProxy(NULL);
-	
-}*/
 
 static void send_click_event(void *_object)
 {
@@ -335,28 +301,29 @@ END_PROPERTY
 BEGIN_PROPERTY(Menu_Shortcut)
 
 	if (READ_PROPERTY)
-	{
 		GB.ReturnNewZeroString(MENU->shortcut());
-		return;
-	}
-
-	MENU->setShortcut(GB.ToZeroString(PROP(GB_STRING)));
+	else
+		MENU->setShortcut(GB.ToZeroString(PROP(GB_STRING)));
 
 END_PROPERTY
 
 
 BEGIN_PROPERTY(Menu_Visible)
 
-	if (READ_PROPERTY) { GB.ReturnBoolean(MENU->isVisible()); return; }
-	MENU->setVisible(VPROP(GB_BOOLEAN));
+	if (READ_PROPERTY)
+		GB.ReturnBoolean(MENU->isVisible());
+	else
+		MENU->setVisible(VPROP(GB_BOOLEAN));
 
 END_PROPERTY
+
 
 BEGIN_METHOD_VOID(Menu_Show)
 
 	MENU->setVisible(true);
 
 END_METHOD
+
 
 BEGIN_METHOD_VOID(Menu_Hide)
 
@@ -381,17 +348,21 @@ END_PROPERTY
 
 BEGIN_METHOD_VOID(MenuChildren_next)
 
-	CMENU *Mn;
 	gMenu *mn;
 	int *ct;
 
-	ct=(int*)GB.GetEnum();
+	ct = (int*)GB.GetEnum();
 
-	if ( ct[0]>=MENU->childCount()  ) { GB.StopEnum(); return; }
-	mn=MENU->childMenu(ct[0]);
-	Mn=(CMENU*)mn->hFree;
-	ct[0]++;
-	GB.ReturnObject(Mn);
+	if (*ct >= MENU->childCount())
+	{
+		GB.StopEnum();
+		return; 
+	}
+	
+	mn = MENU->child(*ct);
+	(*ct)++;
+	
+	GB.ReturnObject(mn->hFree);
 
 END_PROPERTY
 
@@ -406,14 +377,15 @@ BEGIN_METHOD(MenuChildren_get, GB_INTEGER index)
 		return;
 	}
 
-	GB.ReturnObject(MENU->childMenu(index)->hFree);
+	GB.ReturnObject(MENU->child(index)->hFree);
 
 END_METHOD
+
 
 BEGIN_METHOD_VOID(MenuChildren_Clear)
 
 	while (MENU->childCount())
-		delete_menu(MENU->childMenu(0));
+		delete_menu(MENU->child(0));
 
 	THIS->init_shortcut = FALSE;
 
@@ -433,6 +405,7 @@ BEGIN_METHOD(Menu_Popup, GB_INTEGER x; GB_INTEGER y)
 
 END_METHOD
 
+
 BEGIN_METHOD_VOID(Menu_Close)
 
 	HANDLE_PROXY(_object);
@@ -449,6 +422,7 @@ BEGIN_PROPERTY(Menu_Tag)
 		GB.StoreVariant(PROP(GB_VARIANT), (void *)&THIS->tag);
 
 END_METHOD
+
 
 BEGIN_PROPERTY(Menu_Toggle)
 
@@ -539,7 +513,6 @@ BEGIN_PROPERTY(Menu_Closed)
 END_PROPERTY
 
 
-
 //---------------------------------------------------------------------------
 
 GB_DESC CMenuChildrenDesc[] =
@@ -563,7 +536,6 @@ GB_DESC CMenuDesc[] =
 	//GB_STATIC_METHOD("_init", 0, CMENU_init, 0),
 	GB_METHOD("_new", 0, Menu_new, "(Parent)o[(Hidden)b]"),
 	GB_METHOD("_free", 0, Menu_free, 0),
-
 
 	GB_PROPERTY("Name", "s", Menu_Name),
 	GB_PROPERTY("Caption", "s", Menu_Text),

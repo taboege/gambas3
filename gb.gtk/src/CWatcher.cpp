@@ -23,7 +23,6 @@
 
 #define __CWATCHER_CPP
 
-#include <gtk/gtk.h>
 #include "main.h"
 #include "CWatcher.h"
 
