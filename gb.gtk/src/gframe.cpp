@@ -37,7 +37,7 @@ void gPanel::create(void)
 	GtkWidget *ch, *box;
 	bool doReparent = false;
 	bool was_visible = isVisible();
-	GdkRectangle rect;
+	GdkRectangle rect = { 0 };
 	int bg, fg;
 	gControl *nextSibling;
 	

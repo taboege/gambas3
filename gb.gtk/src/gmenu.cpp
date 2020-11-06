@@ -778,7 +778,7 @@ void gMenu::destroy()
 		delete this;
 }
 
-#ifdef GTK3
+#if GTK_CHECK_VERSION(3, 22, 0)
 #else
 static void position_menu(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, MenuPosition *pos)
 {
@@ -800,7 +800,7 @@ void gMenu::doPopup(bool move, int x, int y)
 	_popup_count++;
 	_exec = true;
 	
-#ifdef GTK3
+#if GTK_CHECK_VERSION(3, 22, 0)
 
 	GdkWindow *window;
 	GdkRectangle rect;
