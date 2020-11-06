@@ -512,10 +512,11 @@ int gContainer::clientWidth()
 		if ((width() != a.width || height() != a.height)
 		    && a.width > 0 && a.height > 0)
 		{
+			//g_debug("clientWidth: %s: %d", name(), width());
 			a.x = x(); a.y = y(); a.width = width(); a.height = height();
-			//gt_disable_warnings(true);
+			gt_disable_warnings(true);
 			gtk_widget_size_allocate(widget, &a);
-			//gt_disable_warnings(false);
+			gt_disable_warnings(false);
 		}
 		//g_debug("ClientWidth: %s -> %d", this->name(), cont->allocation.width);
 

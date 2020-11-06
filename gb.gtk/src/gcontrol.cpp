@@ -1710,7 +1710,7 @@ static bool must_patch(GtkWidget *widget)
 	GtkWidget *parent;
 	gControl *parent_control;
 
-	if (GTK_IS_ENTRY(widget) || GTK_IS_FIXED(widget))
+	if (GTK_IS_ENTRY(widget)) // || GTK_IS_FIXED(widget))
 		return true;
 
 	if (gt_get_control(widget))
@@ -1719,6 +1719,9 @@ static bool must_patch(GtkWidget *widget)
 	parent = gtk_widget_get_parent(widget);
 	if (!parent)
 		return false;
+	
+	if (GTK_IS_NOTEBOOK(parent) && GTK_IS_FIXED(widget))
+		return true;
 
 	if (GTK_IS_SCROLLED_WINDOW(parent))
 	{
