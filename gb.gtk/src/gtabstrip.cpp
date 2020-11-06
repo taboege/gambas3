@@ -254,7 +254,7 @@ gTabStripPage::gTabStripPage(gTabStrip *tab)
 	
 	//fix = gtk_event_box_new(); 
 	
-	hbox = gtk_hbox_new(false, 4);
+	hbox = gtk_hbox_new(false, gDesktop::scale() * 3 / 4);
 	fix = hbox;
 	//gtk_box_set_spacing(GTK_BOX(hbox), 4);
 	//gtk_container_add(GTK_CONTAINER(fix), hbox);
@@ -274,6 +274,8 @@ gTabStripPage::gTabStripPage(gTabStrip *tab)
 	
 	g_object_ref(widget);
 	g_object_ref(fix);
+	
+	gt_patch_control(widget, NULL);
 	
 	_visible = false;
 	_picture = NULL;

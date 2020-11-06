@@ -1710,7 +1710,7 @@ static bool must_patch(GtkWidget *widget)
 	GtkWidget *parent;
 	gControl *parent_control;
 
-	if (GTK_IS_ENTRY(widget))
+	if (GTK_IS_ENTRY(widget) || GTK_IS_FIXED(widget))
 		return true;
 
 	if (gt_get_control(widget))
@@ -1950,6 +1950,35 @@ PATCH_DECLARE_BASELINE(GTK_TYPE_BUTTON)
 	return size;
 }*/
 
+void gt_patch_control(GtkWidget *border, GtkWidget *widget)
+{
+	PATCH_CLASS(border, GTK_TYPE_WINDOW)
+	else PATCH_CLASS_BASELINE(border, GTK_TYPE_ENTRY)
+	else PATCH_CLASS_BASELINE(border, GTK_TYPE_SPIN_BUTTON)
+	else PATCH_CLASS_BASELINE(border, GTK_TYPE_BUTTON)
+	else PATCH_CLASS(border, GTK_TYPE_FIXED)
+	else PATCH_CLASS(border, GTK_TYPE_EVENT_BOX)
+	//else PATCH_CLASS(border, GTK_TYPE_ALIGNMENT)
+	else PATCH_CLASS(border, GTK_TYPE_BOX)
+	else PATCH_CLASS(border, GTK_TYPE_TOGGLE_BUTTON)
+	else PATCH_CLASS(border, GTK_TYPE_SCROLLED_WINDOW)
+	else PATCH_CLASS(border, GTK_TYPE_CHECK_BUTTON)
+	else PATCH_CLASS(border, GTK_TYPE_RADIO_BUTTON)
+	else PATCH_CLASS(border, GTK_TYPE_NOTEBOOK)
+	else PATCH_CLASS(border, GTK_TYPE_SOCKET)
+	else PATCH_CLASS(border, GTK_TYPE_TEXT_VIEW)
+	else PATCH_CLASS(border, GTK_TYPE_SCROLLBAR)
+	else PATCH_CLASS(border, GTK_TYPE_SCALE)
+	else
+		fprintf(stderr, "gb.gtk3: warning: class %s was not patched\n", G_OBJECT_TYPE_NAME(border));
+
+	if (!widget)
+		return;
+	
+	PATCH_CLASS_BASELINE(widget, GTK_TYPE_COMBO_BOX)
+	else PATCH_CLASS(widget, GTK_TYPE_TEXT_VIEW)
+}
+
 #endif
 
 void gControl::realize(bool make_frame)
@@ -1994,32 +2023,7 @@ void gControl::realize(bool make_frame)
 	//fprintf(stderr, "realize: %p %p\n", border, widget);
 
 #ifdef GTK3
-
-	PATCH_CLASS(border, GTK_TYPE_WINDOW)
-	else PATCH_CLASS_BASELINE(border, GTK_TYPE_ENTRY)
-	else PATCH_CLASS_BASELINE(border, GTK_TYPE_SPIN_BUTTON)
-	else PATCH_CLASS_BASELINE(border, GTK_TYPE_BUTTON)
-	else PATCH_CLASS(border, GTK_TYPE_FIXED)
-	else PATCH_CLASS(border, GTK_TYPE_EVENT_BOX)
-	//else PATCH_CLASS(border, GTK_TYPE_ALIGNMENT)
-	else PATCH_CLASS(border, GTK_TYPE_BOX)
-	else PATCH_CLASS(border, GTK_TYPE_TOGGLE_BUTTON)
-	else PATCH_CLASS(border, GTK_TYPE_SCROLLED_WINDOW)
-	else PATCH_CLASS(border, GTK_TYPE_CHECK_BUTTON)
-	else PATCH_CLASS(border, GTK_TYPE_RADIO_BUTTON)
-	else PATCH_CLASS(border, GTK_TYPE_NOTEBOOK)
-	else PATCH_CLASS(border, GTK_TYPE_SOCKET)
-	else PATCH_CLASS(border, GTK_TYPE_TEXT_VIEW)
-	else PATCH_CLASS(border, GTK_TYPE_SCROLLBAR)
-	else PATCH_CLASS(border, GTK_TYPE_SCALE)
-	else
-	{
-		fprintf(stderr, "gb.gtk3: warning: class %s was not patched\n", G_OBJECT_TYPE_NAME(border));
-	}
-
-	PATCH_CLASS_BASELINE(widget, GTK_TYPE_COMBO_BOX)
-	else PATCH_CLASS(widget, GTK_TYPE_TEXT_VIEW)
-
+	gt_patch_control(border, widget);
 #endif
 
 	connectParent();

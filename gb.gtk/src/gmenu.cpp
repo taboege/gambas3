@@ -805,6 +805,8 @@ void gMenu::doPopup(bool move, int x, int y)
 	GdkWindow *window;
 	GdkRectangle rect;
 	
+	gt_disable_warnings(true);
+	
 	if (move)
 	{
 		window = gdk_get_default_root_window(); //gdk_event_get_window(gApplication::lastEvent());
@@ -821,6 +823,8 @@ void gMenu::doPopup(bool move, int x, int y)
 	else
 		gtk_menu_popup_at_pointer(_popup, gApplication::lastEvent());
 
+	gt_disable_warnings(false);
+	
 #else
 	
 	MenuPosition *pos = NULL;

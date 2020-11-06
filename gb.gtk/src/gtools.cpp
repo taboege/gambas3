@@ -1590,8 +1590,8 @@ void gt_pixbuf_make_gray(GdkPixbuf *pixbuf)
 static void disabled_handler(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer data)
 {
 	// Print only debugging messages
-	if (log_level & G_LOG_LEVEL_DEBUG)
-		g_log_default_handler(log_domain, log_level, message, data);
+	//if (log_level & G_LOG_LEVEL_DEBUG)
+	//	g_log_default_handler(log_domain, log_level, message, data);
 }
 
 static GLogFunc old_handler = NULL;

@@ -30,6 +30,8 @@
 class gContainer;
 class gMainWindow;
 
+void gt_patch_control(GtkWidget *border, GtkWidget *widget);
+
 class gControl
 {
 public:

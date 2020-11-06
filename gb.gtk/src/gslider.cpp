@@ -154,7 +154,6 @@ void gSlider::updateMark()
 
 void gSlider::setMark(bool vl)
 {
-	
 	if (vl == _mark) return;
 	
 	_mark = vl;
@@ -184,6 +183,9 @@ void gSlider::setPageStep(int vl)
 
 void gSlider::setMax(int vl)
 {
+	if (vl == _max)
+		return;
+
 	_max = vl;
 	if (_min > _max)
 		_min = _max;
@@ -193,6 +195,9 @@ void gSlider::setMax(int vl)
 
 void gSlider::setMin(int vl)
 {
+	if (vl == _min)
+		return;
+	
 	_min = vl;
 	if (_min > _max)
 		_max = _min;
