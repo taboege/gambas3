@@ -233,8 +233,6 @@ void gPlugin_OnPlug(GtkSocket *socket,gPlugin *data)
 
 gPlugin::gPlugin(gContainer *parent) : gControl(parent)
 {
-	g_typ=Type_gPlugin;
-
 	border = gtk_socket_new();
 	widget = border;
 	realize(false);
@@ -341,7 +339,6 @@ void gControl::initAll(gContainer *parent)
 	curs = NULL;
 	_font = NULL;
 	_resolved_font = NULL;
-	g_typ = 0;
 	_design = false;
 	_design_ignore = false;
 	_expand = false;
@@ -377,6 +374,10 @@ void gControl::initAll(gContainer *parent)
 	_scrollbar = SCROLL_NONE;
 	_input_method = NULL;
 	_tooltip = NULL;
+	_is_container = false;
+	_is_window = false;
+	_is_button = false;
+	_is_drawingarea = false;
 
 	onFinish = NULL;
 	onFocusEvent = NULL;
@@ -543,7 +544,7 @@ void gControl::setVisible(bool vl)
 	else
 	{
 		if (parent() && hasFocus())
-			gtk_widget_child_focus(GTK_WIDGET(gtk_widget_get_toplevel(border)), GTK_DIR_TAB_FORWARD);
+			gcb_focus(widget, GTK_DIR_TAB_FORWARD, this);
 		if (gtk_widget_has_grab(border))
 			gtk_grab_remove(border);
 		gtk_widget_hide(border);
@@ -1074,11 +1075,6 @@ HANDLES
 
 ******************************************************************/
 
-bool gControl::isWindow() const
-{
-	return g_typ == Type_gMainWindow;
-}
-
 gMainWindow* gControl::window()
 {
 	if (isWindow())
@@ -1510,11 +1506,7 @@ Internal
 void gControl::connectParent()
 {
 	if (pr)
-	{
-		//gtk_widget_set_redraw_on_allocate(border, false);
-
 		pr->insert(this, true);
-	}
 
 	// BM: Widget has been created, so we can set its cursor if application is busy
 	if (gApplication::isBusy() && mustUpdateCursor())

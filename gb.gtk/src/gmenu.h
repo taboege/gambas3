@@ -78,7 +78,7 @@ public:
 	bool action() const { return _action; }
 	void setAction(bool v) { _action = v; }
 	void setFont();
-	void setColor();
+	//void setColor();
 	
 	bool setProxy(gMenu *menu);
 	gMenu *proxy() const { return _proxy; }

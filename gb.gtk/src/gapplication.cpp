@@ -918,6 +918,7 @@ __RETURN:
 		}
 	}
 
+	gApplication::_event = NULL;
 }
 
 

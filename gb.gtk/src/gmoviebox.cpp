@@ -33,11 +33,9 @@ gMovieBox
 
 gMovieBox::gMovieBox(gContainer *parent) : gControl(parent)
 {	
-	g_typ=Type_gMovieBox;
-	
-	timeout=0;	
-	pl=false;
-	animation=NULL;
+	timeout = 0;	
+	pl = false;
+	animation = NULL;
 	
 	border = gtk_alignment_new(0,0,1,1);
 	widget = gtk_image_new();

@@ -478,7 +478,6 @@ void gTabStripPage::updateButton()
 
 gTabStrip::gTabStrip(gContainer *parent) : gContainer(parent)
 {
-	g_typ = Type_gTabStrip;
 	_pages = g_ptr_array_new();
 	_textFont = NULL;
 	_closable = false;

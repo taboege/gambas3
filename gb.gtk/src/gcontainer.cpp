@@ -255,6 +255,7 @@ void gContainer::initialize()
 	radiogroup = NULL;
 	onArrange = NULL;
 	onBeforeArrange = NULL;
+	
 	_proxyContainer = NULL;
 	_proxyContainerFor = NULL;
 	_client_x = -1;
@@ -264,7 +265,7 @@ void gContainer::initialize()
 	_no_arrangement = 0;
 	_did_arrangement = false;
 	_cb_map = false;
-	//onInsert = NULL;
+	_is_container = true;
 	
 	arrangement.mode = 0;
 	arrangement.spacing = 0;
@@ -599,8 +600,12 @@ void gContainer::insert(gControl *child, bool realize)
 
 	if (realize)
 	{
-    gtk_widget_realize(child->border);
-		gtk_widget_show_all(child->border);
+    //gtk_widget_realize(child->border);
+		gtk_widget_show(child->border);
+		if (child->frame)
+			gtk_widget_show(child->frame);
+		if (child->widget != child->border)
+			gtk_widget_show(child->widget);
 	}
 
 #ifndef GTK3
@@ -699,30 +704,6 @@ void gContainer::setForeground(gColor color)
 GtkWidget *gContainer::getContainer()
 {
 	return widget;
-}
-
-gControl *gContainer::findFirstFocus()
-{
-	int i;
-	gControl *ch;
-	
-	for (i = 0; i < childCount(); i++)
-	{
-		ch = child(i);
-		if (ch->isContainer())
-		{
-			ch = ((gContainer *)ch)->findFirstFocus();
-			if (ch)
-				return ch;
-		}
-		else
-		{
-			if (gtk_widget_get_can_focus(ch->widget) && !((ch->getClass() == Type_gButton) && ((gButton *)ch)->hasShortcut()))
-				return ch;
-		}
-	}
-	
-	return NULL;
 }
 
 bool gContainer::resize(int w, int h)

@@ -121,7 +121,6 @@ void gPanel::create(void)
 
 gPanel::gPanel(gContainer *parent) : gContainer(parent)
 {
-	g_typ = Type_gPanel;
 	border = NULL;
 	create();
 }
@@ -144,8 +143,6 @@ Frame
 
 gFrame::gFrame(gContainer *parent) : gContainer(parent)
 {
-	g_typ=Type_gFrame;
-
 	border = widget = gtk_fixed_new();
 	
 	fr = gtk_frame_new(NULL);

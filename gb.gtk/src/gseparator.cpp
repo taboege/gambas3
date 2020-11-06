@@ -99,8 +99,6 @@ static gboolean cb_expose(GtkWidget *wid, GdkEventExpose *e, gSeparator *data)
 
 gSeparator::gSeparator(gContainer *parent) : gControl(parent)
 {
-	g_typ=Type_gSeparator;
-	
 	border = widget = gtk_fixed_new();
 
 	realize(false);

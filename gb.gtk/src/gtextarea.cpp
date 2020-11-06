@@ -467,7 +467,6 @@ static gboolean cb_keypress(GtkWidget *widget, GdkEvent *event, gTextArea *ctrl)
 
 gTextArea::gTextArea(gContainer *parent) : gControl(parent)
 {
-	g_typ = Type_gTextArea;
 	_align_normal = false;
 	_last_pos = -1;
 	

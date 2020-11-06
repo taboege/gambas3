@@ -462,7 +462,6 @@ BEGIN_PROPERTY(UserContainer_Container)
 		UserControl_Container(_object, _param);
 
 		WIDGET_CONT->setFullArrangement(&THIS_UC->save);
-		//qDebug("(%s %p): arrangement = %08X", GB.GetClassName(THIS), THIS, after->arrangement);
 	}
 
 END_PROPERTY

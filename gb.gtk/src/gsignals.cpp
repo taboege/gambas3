@@ -74,7 +74,7 @@ gboolean gcb_focus_out(GtkWidget *widget, GdkEventFocus *event, gControl *data)
 	return false;
 }
 
-static gboolean cb_focus(GtkWidget *widget, GtkDirectionType direction, gControl *data)
+gboolean gcb_focus(GtkWidget *widget, GtkDirectionType direction, gControl *data)
 {
 	gControl *ctrl;
 	
@@ -381,7 +381,7 @@ void gControl::widgetSignals()
 	
 	g_signal_connect(G_OBJECT(widget), "key-press-event", G_CALLBACK(gcb_key_event), (gpointer)this);
 	g_signal_connect(G_OBJECT(widget), "key-release-event", G_CALLBACK(gcb_key_event), (gpointer)this);
-	g_signal_connect(G_OBJECT(widget), "focus", G_CALLBACK(cb_focus), (gpointer)this);
+	g_signal_connect(G_OBJECT(widget), "focus", G_CALLBACK(gcb_focus), (gpointer)this);
 	g_signal_connect(G_OBJECT(widget), "focus-in-event", G_CALLBACK(gcb_focus_in), (gpointer)this);
 	g_signal_connect(G_OBJECT(widget), "focus-out-event", G_CALLBACK(gcb_focus_out), (gpointer)this);
 	//g_signal_connect(G_OBJECT(widget),"event",G_CALLBACK(sg_event),(gpointer)this);

@@ -39,11 +39,10 @@ public:
 
 	void *hFree;
 
-// "Properties"
-	int getClass() const { return g_typ; }
-	
-	bool isContainer() const { return (g_typ & 0x100) != 0; }
-	bool isWindow() const;
+	bool isContainer() const { return _is_container; }
+	bool isWindow() const { return _is_window; }
+	bool isButton() const { return _is_button; }
+	bool isDrawingArea() const { return _is_drawingarea; }
 	bool isTopLevel() const { return pr == NULL; }
 	bool isDestroyed() const { return _destroyed; }
 	
@@ -223,7 +222,6 @@ public:
 	GtkWidget *border;
 	GtkWidget *frame;
 	GtkScrolledWindow *_scroll;
-	short g_typ;
 	short _mouse;
 	gControl *_proxy, *_proxy_for;
 	gColor _bg, _fg;
@@ -276,6 +274,10 @@ public:
 	unsigned _no_background : 1;           // Don't draw the background automatically
 	unsigned _use_wheel : 1;               // Do not propagate the mouse wheel event
 	unsigned _user_control : 1;            // If the control is a UserControl
+	unsigned _is_container : 1;            // I am a container
+	unsigned _is_window : 1;               // I am a window
+	unsigned _is_button : 1;               // I am a button
+	unsigned _is_drawingarea : 1;          // I am a drawing area
 	
   void removeParent() { pr = NULL; }
 	void initSignals();

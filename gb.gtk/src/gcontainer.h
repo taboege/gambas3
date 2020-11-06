@@ -136,7 +136,6 @@ public:
 	virtual void reparent(gContainer *newpr, int x, int y);
 	void hideHiddenChildren();
 	virtual GtkWidget *getContainer();
-	gControl *findFirstFocus();	
 
 	static int _arrangement_level;
 

@@ -236,8 +236,6 @@ gButton::gButton(gContainer *par, Type typ) : gControl(par)
 {
 	gContainer *ct;
 
-	g_typ = Type_gButton;
-	
 	disable = false;
 	_toggle = false;
 	_radio = false;
@@ -252,6 +250,7 @@ gButton::gButton(gContainer *par, Type typ) : gControl(par)
 	_label = NULL;
 	pic = NULL;
 	shortcut = 0;
+	_is_button = TRUE;
 	
 	switch(typ)
 	{
@@ -614,7 +613,7 @@ void gButton::unsetOtherRadioButtons()
 	for (i = 0; i < pr->childCount(); i++)
 	{
 		child = pr->child(i);
-		if (child->getClass() != getClass())
+		if (!child->isButton())
 			continue;
 			
 		button = (gButton *)child;

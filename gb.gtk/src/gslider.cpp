@@ -49,7 +49,7 @@ void gSlider::update()
 	else if (value > _max)
 		value = _max;
 	
-	if (g_typ == Type_gSlider)
+	if (!isScrollBar())
 	{
 #ifndef GTK3
 	if (_min == _max)
@@ -85,8 +85,6 @@ void gSlider::init()
 
 gSlider::gSlider(gContainer *par, bool scrollbar) : gControl(par)
 {	
-	g_typ = Type_gSlider;
-	
 	_mark = false;
 	_step = 1;
 	_page_step = 10;
@@ -94,6 +92,7 @@ gSlider::gSlider(gContainer *par, bool scrollbar) : gControl(par)
 	_min = 0;
 	_max = 100;
 	_tracking = true;
+	_is_scrollbar = scrollbar;
 
 /*#ifdef GTK3
 	border = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -120,7 +119,6 @@ gSlider::gSlider(gContainer *par, bool scrollbar) : gControl(par)
 
 gScrollBar::gScrollBar(gContainer *par) : gSlider(par, true)
 {
-	g_typ = Type_gScrollBar;
 #ifdef GTK3
 	widget = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, NULL);
 #else
@@ -134,11 +132,6 @@ gScrollBar::gScrollBar(gContainer *par) : gSlider(par, true)
 #ifndef GTK3
 	gtk_range_set_update_policy(GTK_RANGE(widget),GTK_UPDATE_CONTINUOUS);
 #endif
-}
-
-bool gSlider::mark()
-{
-	return _mark;
 }
 
 void gSlider::updateMark()
@@ -169,16 +162,6 @@ void gSlider::setMark(bool vl)
 	updateMark();
 }
 
-int gSlider::step()
-{
-	return _step;
-}
-
-int gSlider::pageStep()
-{
-	return _page_step;
-}
-
 void gSlider::setStep(int vl)
 {
 	if (vl < 1) vl = 1;
@@ -199,21 +182,6 @@ void gSlider::setPageStep(int vl)
 	updateMark();
 }
 
-int gSlider::max()
-{
-	return _max;
-}
-
-int gSlider::min()
-{
-	return _min;
-}
-
-int gSlider::value()
-{
-	return _value;
-}
-	
 void gSlider::setMax(int vl)
 {
 	_max = vl;
@@ -230,11 +198,6 @@ void gSlider::setMin(int vl)
 		_max = _min;
 	update();
 	updateMark();
-}
-
-bool gSlider::tracking()
-{
-	return _tracking;
 }
 
 void gSlider::setTracking(bool vl)

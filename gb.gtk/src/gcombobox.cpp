@@ -267,8 +267,6 @@ gComboBox::gComboBox(gContainer *parent) : gTextBox(parent, true)
 	cell = NULL;
 	_use_wheel = true;
 	
-	g_typ = Type_gComboBox;
-	
 	tree = new gTree();
 	tree->addColumn();
 	//tree->addColumn();

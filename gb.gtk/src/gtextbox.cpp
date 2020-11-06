@@ -134,8 +134,6 @@ gTextBox::gTextBox(gContainer *parent, bool combo) : gControl(parent)
 
 	if (!combo)
 	{
-		g_typ=Type_gTextBox;
-		
 		have_cursor = true;
 		_no_background = TRUE;
 		

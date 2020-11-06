@@ -161,7 +161,6 @@ static gboolean cb_expose(GtkWidget *draw, GdkEventExpose *e, gLabel *d)
 gLabel::gLabel(gContainer *parent) : gControl(parent)
 {
 	textdata = NULL;
-	g_typ = Type_gLabel;
 	markup = false;
 	_autoresize = false;
 	_mask_dirty = false;

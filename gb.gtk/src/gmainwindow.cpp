@@ -382,6 +382,7 @@ void gMainWindow::initialize()
 	_resizable = true;
 	_unmap = false;
 	_grab_on_show	= false;
+	_is_window = true;
 	
 	onOpen = NULL;
 	onShow = NULL;
@@ -458,7 +459,6 @@ static void gtk_fixed_get_preferred_height(GtkWidget *widget, gint *minimum_size
 gMainWindow::gMainWindow(int plug) : gContainer(NULL)
 {
   initialize();
-	g_typ = Type_gMainWindow;
 
 	windows = g_list_append(windows, (gpointer)this);
 
@@ -484,7 +484,6 @@ gMainWindow::gMainWindow(int plug) : gContainer(NULL)
 gMainWindow::gMainWindow(gContainer *par) : gContainer(par)
 {
 	initialize();
-	g_typ = Type_gMainWindow;
 
 #ifdef GTK3
 	//border = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);

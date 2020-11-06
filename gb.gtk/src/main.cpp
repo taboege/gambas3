@@ -252,6 +252,8 @@ int EXPORT GB_INIT(void)
 	if (env && atoi(env))
 		MAIN_debug_busy = true;
 
+	putenv((char *)"GTK_OVERLAY_SCROLLING=0");
+	
 	GB.Hook(GB_HOOK_QUIT, (void *)hook_quit);
 	_old_hook_main = GB.Hook(GB_HOOK_MAIN, (void *)hook_main);
 	GB.Hook(GB_HOOK_WAIT, (void *)hook_wait);

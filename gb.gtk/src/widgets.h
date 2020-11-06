@@ -71,36 +71,6 @@
 
 enum
 {
-	Type_gLabel       = 0x0001,
-	Type_gTextLabel   = 0x0002,
-	Type_gButton      = 0x0003,
-	Type_gPictureBox  = 0x0007,
-	Type_gProgressBar = 0x000A,
-	Type_gSlider      = 0x000E,
-	Type_gScrollBar   = 0x000F,
-	Type_gPlugin      = 0x0013,
-	Type_gMovieBox    = 0x0014,
-	Type_gSpinBox     = 0x0016,
-	Type_gSeparator   = 0x0018,
-	Type_gFrame       = 0x0105,
-	Type_gMainWindow  = 0x0106,
-	Type_gPanel       = 0x0108,
-	Type_gDrawingArea = 0x0109,
-	Type_gTabStrip    = 0x0111,
-	Type_gSplitter    = 0x0117,
-	Type_gScrollView  = 0x0115,
-	Type_gTextBox     = 0x1004,
-	Type_gTextArea    = 0x100B,
-	Type_gComboBox    = 0x100C,
-	Type_gListBox     = 0x100D,
-	Type_gListView    = 0x1010,
-	Type_gColumnView  = 0x1012,
-	Type_gTreeView    = 0x1014,
-	Type_gGLArea      = 0x0018,
-};
-
-enum
-{
  gEvent_MousePress,
  gEvent_MouseRelease,
  gEvent_MouseMove,

@@ -204,7 +204,7 @@ void gMenu::update()
 	
 	if (!_text || !*_text)
 		_style = SEPARATOR;
-	else if (_radio || _toggle || _checked)
+	else if (!_popup && (_radio || _toggle || _checked))
 		_style = CHECK;
 	else
 		_style = NORMAL;
@@ -349,13 +349,13 @@ void gMenu::update()
 					g_signal_connect(G_OBJECT(parent->_popup), "map", G_CALLBACK(cb_map), (gpointer)parent);
 					g_signal_connect(G_OBJECT(parent->_popup), "unmap", G_CALLBACK(cb_unmap), (gpointer)parent);
 					gtk_widget_show_all(GTK_WIDGET(parent->_popup));
+					
+					parent->update();
+					
 					if (parent->style() == NORMAL)
 						gtk_menu_item_set_submenu(parent->menu, GTK_WIDGET(parent->_popup));
 					
-					parent->setColor();
-					
-					//gtk_menu_shell_append(GTK_MENU_SHELL(parent->_popup), GTK_WIDGET(menu));
-					//g_debug("%p: add to new parent %p", this, parent->_popup);
+					//parent->setColor();
 				}
 				shell = GTK_MENU_SHELL(parent->_popup);
 			}
@@ -409,7 +409,7 @@ void gMenu::update()
 			gtk_image_set_from_pixbuf(GTK_IMAGE(image), _picture ? _picture->stretch(ds * 2, ds * 2, true)->getPixbuf() : NULL);
 		}
 		
-		setColor();
+		//setColor();
 		setFont();
 	}
 
@@ -725,7 +725,7 @@ void gMenu::setPicture(gPicture *pic)
 
 void gMenu::setChecked(bool vl)
 {
-	if (vl == _checked)
+	if (vl == _checked || _popup)
 		return;
 	
 	_checked = vl;
@@ -782,7 +782,6 @@ void gMenu::destroy()
 #else
 static void position_menu(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, MenuPosition *pos)
 {
-	fprintf(stderr, "position_menu: %d %d\n", pos->x, pos->y);
 	*x = pos->x;
 	*y = pos->y;
 	*push_in = true;
@@ -808,7 +807,9 @@ void gMenu::doPopup(bool move, int x, int y)
 	
 	if (move)
 	{
-		window = gdk_event_get_window(gApplication::lastEvent());
+		window = gdk_get_default_root_window(); //gdk_event_get_window(gApplication::lastEvent());
+		/*if (!window)
+			window =*/
 		gdk_window_get_origin(window, &rect.x, &rect.y);
 
 		rect.x = x - rect.x;
@@ -1063,7 +1064,7 @@ void gMenu::setFont()
 #endif
 }
 
-void gMenu::setColor()
+/*void gMenu::setColor()
 {
 	gMainWindow *win = window();
 	
@@ -1072,7 +1073,7 @@ void gMenu::setColor()
 		if (label) set_gdk_fg_color(GTK_WIDGET(label), win->foreground());
 	}
 	//if (shortcut) set_gdk_fg_color(GTK_WIDGET(shortcut), win->foreground());
-}
+}*/
 
 void gMenu::updateColor(gMainWindow *win)
 {

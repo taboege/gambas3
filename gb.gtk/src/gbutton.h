@@ -75,7 +75,7 @@ public:
 	void (*onClick)(gControl *sender);
 
 //"Private"
-	int type;
+	char type;
 	char *bufText;
 	GtkWidget *_label;
 	GtkCellRenderer *rendtxt;
@@ -94,8 +94,6 @@ public:
 	void unsetOtherRadioButtons();
 	virtual int minimumHeight();
 	virtual void updateSize();
-	
-	static bool isButton(gControl *control) { return control->getClass() == Type_gButton && ((gButton *)control)->type == Button; }
 };
 
 #endif

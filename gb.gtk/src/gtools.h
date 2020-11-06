@@ -56,6 +56,7 @@ double gt_from_alignment(int align, bool vertical = false);
 
 gboolean gcb_focus_in(GtkWidget *widget, GdkEventFocus *event, gControl *data);
 gboolean gcb_focus_out(GtkWidget *widget, GdkEventFocus *event, gControl *data);
+gboolean gcb_focus(GtkWidget *widget, GtkDirectionType direction, gControl *data);
 
 // Where to scroll to ensure that a specific area is visible
 

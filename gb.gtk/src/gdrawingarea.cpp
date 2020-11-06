@@ -220,6 +220,7 @@ void gDrawingArea::create(void)
 
 gDrawingArea::gDrawingArea(gContainer *parent) : gContainer(parent)
 {
+	_is_drawingarea = true;
 	_cached = false;
 	buffer = NULL;
 	box = NULL;
@@ -230,8 +231,6 @@ gDrawingArea::gDrawingArea(gContainer *parent) : gContainer(parent)
 
 	onExpose = NULL;
 	onFontChange = NULL;
-
-	g_typ = Type_gDrawingArea;
 
 	create();
 }
