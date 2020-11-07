@@ -700,7 +700,6 @@ Public Sub tvwEnv_Save(Row As Integer, Column As Integer, Value As String)
   
   If Column = 1 Then 
     sEnv = Trim(Value) & "=" & aEnv[1]
-    tvwEnv.Columns[1].Width = -1
   Else 
     sEnv = aEnv[0] & "=" & Value
   Endif
@@ -708,6 +707,8 @@ Public Sub tvwEnv_Save(Row As Integer, Column As Integer, Value As String)
   If bDisabled Then sEnv = " " & sEnv
   
   $aEnv[Row] = sEnv
+  
+  If Column = 1 Then tvwEnv.Columns[1].Width = -1
   
 End
 
@@ -726,7 +727,7 @@ Public Sub btnInsertEnv_Click()
   If $aEnv.Count >= 255 Then Return
   $aEnv.Add("=")
   UpdateEnv
-  tvwEnv.MoveTo($aEnv.Max, 0)
+  tvwEnv.MoveTo($aEnv.Max, 1)
   tvwEnv.Edit      
 
 End
@@ -1394,7 +1395,7 @@ Private Sub UpdateEnv()
   tvwEnv.Columns[0].Width = Desktop.Scale * 4
   tvwEnv.Columns[0].Resizable = False
   tvwEnv.Columns[1].Width = -1
-  tvwEnv.Columns[1].Width = Max(tvwEnv.Columns[0].Width, Desktop.Scale * 24)
+  'tvwEnv.Columns[1].Width = Max(tvwEnv.Columns[0].Width, (tvwEnv.W * 3) \ 4)
   tvwEnv.Refresh
 
 End

@@ -109,9 +109,91 @@
         MoveScaled(1,1,106,72)
         Expand = True
         { panTable Panel
-          MoveScaled(2,2,89,35)
+          MoveScaled(3,2,89,35)
           Arrangement = Arrange.Fill
           Spacing = True
+          { panRequest VBox
+            MoveScaled(3,14,80,24)
+            Visible = False
+            Background = Color.Background
+            { tlbData2 ToolBar
+              MoveScaled(0,0,75,4)
+              Separator = True
+              { btnRunQuery ToolButton
+                MoveScaled(0,0,12,4)
+                AutoResize = True
+                Text = ("Run query")
+                Picture = Picture["icon:/small/play"]
+              }
+              { btnAddQuery ToolButton
+                MoveScaled(12,0,8,4)
+                ToolTip = ("New query")
+                AutoResize = True
+                Text = ("New")
+                Picture = Picture["icon:/small/new"]
+              }
+              { btnRemoveQuery ToolButton
+                MoveScaled(20,0,11,4)
+                ToolTip = ("Remove query")
+                AutoResize = True
+                Text = ("Remove")
+                Picture = Picture["icon:/small/remove"]
+              }
+              { btnClear ToolButton
+                MoveScaled(32,0,4,4)
+                ToolTip = ("Clear")
+                Picture = Picture["icon:/small/clear"]
+              }
+              { btnCut ToolButton mnuCut
+                Name = "btnCut"
+                MoveScaled(36,0,4,4)
+                ToolTip = ("Cut")
+                Picture = Picture["icon:/small/cut"]
+              }
+              { btnCopy ToolButton mnuCopy
+                Name = "btnCopy"
+                MoveScaled(40,0,4,4)
+                ToolTip = ("Copy")
+                Picture = Picture["icon:/small/copy"]
+              }
+              { btnPaste ToolButton mnuPaste
+                Name = "btnPaste"
+                MoveScaled(44,0,4,4)
+                ToolTip = ("Paste")
+                Picture = Picture["icon:/small/paste"]
+              }
+              { btnUndo ToolButton mnuUndo
+                Name = "btnUndo"
+                MoveScaled(48,0,4,4)
+                ToolTip = ("Undo")
+                Picture = Picture["icon:/small/undo"]
+              }
+              { btnRedo ToolButton mnuRedo
+                Name = "btnRedo"
+                MoveScaled(52,0,4,4)
+                ToolTip = ("Redo")
+                Picture = Picture["icon:/small/redo"]
+              }
+              { Spring1 Spring
+                MoveScaled(58,1,5,2)
+              }
+            }
+            { tabRequest TabPanel
+              MoveScaled(3,5,33,7)
+              Border = False
+              Index = 0
+              Text = ("")
+              Index = 0
+            }
+            { edtRequest TextEditor
+              MoveScaled(16,12,40,7)
+              Expand = True
+              Border = False
+              Highlight = "SQL"
+              Mode = "SQL"
+              Wrap = True
+            }
+          }
           { tabTable TabPanel
             MoveScaled(3,3,68,26)
             Visible = False
@@ -228,88 +310,6 @@
               Header = GridView.Horizontal
             }
             Index = 0
-          }
-          { panRequest VBox
-            MoveScaled(6,6,80,24)
-            Visible = False
-            Background = Color.Background
-            { tlbData2 ToolBar
-              MoveScaled(0,0,75,4)
-              Separator = True
-              { btnRunQuery ToolButton
-                MoveScaled(0,0,12,4)
-                AutoResize = True
-                Text = ("Run query")
-                Picture = Picture["icon:/small/play"]
-              }
-              { btnAddQuery ToolButton
-                MoveScaled(12,0,8,4)
-                ToolTip = ("New query")
-                AutoResize = True
-                Text = ("New")
-                Picture = Picture["icon:/small/new"]
-              }
-              { btnRemoveQuery ToolButton
-                MoveScaled(20,0,11,4)
-                ToolTip = ("Remove query")
-                AutoResize = True
-                Text = ("Remove")
-                Picture = Picture["icon:/small/remove"]
-              }
-              { btnClear ToolButton
-                MoveScaled(32,0,4,4)
-                ToolTip = ("Clear")
-                Picture = Picture["icon:/small/clear"]
-              }
-              { btnCut ToolButton mnuCut
-                Name = "btnCut"
-                MoveScaled(36,0,4,4)
-                ToolTip = ("Cut")
-                Picture = Picture["icon:/small/cut"]
-              }
-              { btnCopy ToolButton mnuCopy
-                Name = "btnCopy"
-                MoveScaled(40,0,4,4)
-                ToolTip = ("Copy")
-                Picture = Picture["icon:/small/copy"]
-              }
-              { btnPaste ToolButton mnuPaste
-                Name = "btnPaste"
-                MoveScaled(44,0,4,4)
-                ToolTip = ("Paste")
-                Picture = Picture["icon:/small/paste"]
-              }
-              { btnUndo ToolButton mnuUndo
-                Name = "btnUndo"
-                MoveScaled(48,0,4,4)
-                ToolTip = ("Undo")
-                Picture = Picture["icon:/small/undo"]
-              }
-              { btnRedo ToolButton mnuRedo
-                Name = "btnRedo"
-                MoveScaled(52,0,4,4)
-                ToolTip = ("Redo")
-                Picture = Picture["icon:/small/redo"]
-              }
-              { Spring1 Spring
-                MoveScaled(58,1,5,2)
-              }
-            }
-            { tabRequest TabPanel
-              MoveScaled(3,5,33,7)
-              Border = False
-              Index = 0
-              Text = ("")
-              Index = 0
-            }
-            { edtRequest TextEditor
-              MoveScaled(16,12,40,7)
-              Expand = True
-              Border = False
-              Highlight = "SQL"
-              Mode = "SQL"
-              Wrap = True
-            }
           }
         }
         { panData Panel
