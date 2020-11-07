@@ -1057,7 +1057,7 @@ int gTextArea::minimumWidth() const
 
 int gTextArea::minimumHeight() const
 {
-	return gDesktop::scale() * 8;
+	return gDesktop::scale() * 4;
 }
 #endif
 

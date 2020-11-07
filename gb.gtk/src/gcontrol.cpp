@@ -2102,6 +2102,8 @@ void gControl::realizeScrolledWindow(GtkWidget *wid, bool doNotRealize)
 		registerControl();
 
 	updateFont();
+	
+	gtk_widget_show_all(border);
 }
 
 void gControl::updateBorder()
