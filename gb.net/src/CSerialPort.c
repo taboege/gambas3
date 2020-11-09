@@ -679,6 +679,13 @@ BEGIN_PROPERTY(SerialPort_OutputBufferSize)
 
 END_PROPERTY
 
+BEGIN_METHOD_VOID(SerialPort_Clear)
+
+	if (THIS->status)
+		tcflush(THIS->port, TCIOFLUSH);
+
+END_METHOD
+
 // Here we declare the public interface of SerialPort class
 
 GB_DESC CSerialPortDesc[] =
@@ -733,6 +740,8 @@ GB_DESC CSerialPortDesc[] =
 
 	GB_PROPERTY_READ("InputBufferSize", "i", SerialPort_InputBufferSize),
 	GB_PROPERTY_READ("OutputBufferSize", "i", SerialPort_OutputBufferSize),
+	
+	GB_METHOD("Clear", NULL, SerialPort_Clear, NULL),
 
 	GB_CONSTANT("_IsControl", "b", TRUE),
 	GB_CONSTANT("_IsVirtual", "b", TRUE),
