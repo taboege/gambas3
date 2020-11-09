@@ -161,7 +161,7 @@ public:
 	GtkWindowGroup *group;
 	GtkAccelGroup *accel;
 	GtkMenuBar *menuBar;
-	GtkFixed *layout;
+	GtkWidget *layout;
 	int stack;
 	int _type;
 	gPicture *_icon;

@@ -241,6 +241,9 @@ static void cb_resize_layout(GtkWidget *wid, GdkRectangle *a, gMainWindow *data)
 {
 	int w, h;
 	
+	if (!data->isTopLevel())
+		return;
+	
 	data->calcCsdSize();
 	
 	w = a->width;
@@ -1426,7 +1429,7 @@ void gMainWindow::setType(GtkWindowType type)
 	// TODO: test that
 	new_border = gtk_window_new(type);
 	if (layout)
-		gt_widget_reparent(GTK_WIDGET(layout), new_border);
+		gt_widget_reparent(layout, new_border);
 	else
 		gt_widget_reparent(widget, new_border);
 	//embedMenuBar(new_border);
@@ -1662,10 +1665,10 @@ void gMainWindow::configure()
 
 	if (isMenuBarVisible())
 	{
-		gtk_fixed_move(layout, GTK_WIDGET(menuBar), 0, 0);
+		gtk_fixed_move(GTK_FIXED(layout), GTK_WIDGET(menuBar), 0, 0);
 		if (h > 1)
 			gtk_widget_set_size_request(GTK_WIDGET(menuBar), width(), h);
-		gtk_fixed_move(layout, widget, 0, h);
+		gtk_fixed_move(GTK_FIXED(layout), widget, 0, h);
 		gtk_widget_set_size_request(widget, width(), Max(0, height() - h));
 	}
 	else
@@ -1673,8 +1676,8 @@ void gMainWindow::configure()
 		if (layout)
 		{
 			if (menuBar)
-				gtk_fixed_move(layout, GTK_WIDGET(menuBar), 0, -h);
-			gtk_fixed_move(layout, widget, 0, 0);
+				gtk_fixed_move(GTK_FIXED(layout), GTK_WIDGET(menuBar), 0, -h);
+			gtk_fixed_move(GTK_FIXED(layout), widget, 0, 0);
 		}
 		gtk_widget_set_size_request(widget, width(), height());
 	}
@@ -1747,7 +1750,7 @@ void gMainWindow::embedMenuBar(GtkWidget *border)
 	if (menuBar)
 	{
 		// layout is automatically destroyed ?
-		layout = GTK_FIXED(gtk_fixed_new());
+		layout = gtk_fixed_new();
 		
 #ifdef GTK3
 		g_signal_connect_after(G_OBJECT(layout), "size-allocate", G_CALLBACK(cb_resize_layout), (gpointer)this);
@@ -1758,15 +1761,15 @@ void gMainWindow::embedMenuBar(GtkWidget *border)
 		if (gtk_widget_get_parent(GTK_WIDGET(menuBar)))
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(menuBar))), GTK_WIDGET(menuBar));
 
-		gtk_fixed_put(layout, GTK_WIDGET(menuBar), 0, 0);
+		gtk_fixed_put(GTK_FIXED(layout), GTK_WIDGET(menuBar), 0, 0);
 
 		g_object_unref(G_OBJECT(menuBar));
 
-		gt_widget_reparent(widget, GTK_WIDGET(layout));
-		gtk_container_add(GTK_CONTAINER(border), GTK_WIDGET(layout));
+		gt_widget_reparent(widget, layout);
+		gtk_container_add(GTK_CONTAINER(border), layout);
 
 		gtk_widget_show(GTK_WIDGET(menuBar));
-		gtk_widget_show(GTK_WIDGET(layout));
+		gtk_widget_show(layout);
 		gtk_widget_show(GTK_WIDGET(widget));
 
 		gMenu::updateFont(this);
@@ -1971,7 +1974,7 @@ void gMainWindow::calcCsdSize()
 	}
 		
 	gtk_widget_get_allocation(border, &ba);
-	gtk_widget_get_allocation(layout ? GTK_WIDGET(layout) : widget, &wa);
+	gtk_widget_get_allocation(layout ? layout : widget, &wa);
 	
 	if (wa.width == 1 && wa.height == 1)
 		return;
