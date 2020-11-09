@@ -238,6 +238,8 @@ GB_DESC NATIVE_Gambas[] =
 	GB_CONSTANT("Read", "i", GB_ST_READ),
 	GB_CONSTANT("Write", "i", GB_ST_WRITE),
 	GB_CONSTANT("Exec", "i", GB_ST_EXEC),
+	GB_CONSTANT("Input", "i", GB_ST_READ + GB_ST_BUFFERED),
+	GB_CONSTANT("Output", "i", GB_ST_WRITE + GB_ST_BUFFERED),
 
 	GB_CONSTANT("Sunday", "i", 0),
 	GB_CONSTANT("Monday", "i", 1),
