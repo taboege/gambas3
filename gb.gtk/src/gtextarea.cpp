@@ -326,6 +326,7 @@ void gTextAreaAction::addText(char *add, int len)
 
 static void cb_changed(GtkTextBuffer *buf, gTextArea *data)
 {
+	data->updateFixSpacing();
 	data->emit(SIGNAL(data->onChange));
 } 
 
@@ -477,6 +478,7 @@ gTextArea::gTextArea(gContainer *parent) : gControl(parent)
 	_undo_in_progress = false;
 	_has_input_method = true;
 	_use_wheel = true;
+	_fix_spacing_tag = NULL;
 	
 	onChange = 0;
 	onCursor = 0;
@@ -1048,6 +1050,40 @@ GtkWidget *gTextArea::getStyleSheetWidget()
 const char *gTextArea::getStyleSheetColorNode()
 {
 	return "text";
+}
+
+void gTextArea::updateFixSpacing()
+{
+	GtkTextIter start;
+	GtkTextIter end;
+	
+	if (font()->mustFixSpacing())
+	{
+		if (!_fix_spacing_tag)
+			_fix_spacing_tag = gtk_text_buffer_create_tag(_buffer, NULL, "letter-spacing", PANGO_SCALE, NULL);
+	
+		gtk_text_buffer_get_bounds(_buffer, &start, &end);
+		gtk_text_buffer_apply_tag (_buffer, _fix_spacing_tag, &start, &end);
+	}
+	else
+	{
+		if (_fix_spacing_tag)
+		{
+			gtk_text_buffer_get_bounds(_buffer, &start, &end);
+			gtk_text_buffer_remove_tag(_buffer, _fix_spacing_tag, &start, &end);
+			gtk_text_tag_table_remove(gtk_text_buffer_get_tag_table(_buffer), _fix_spacing_tag);
+			_fix_spacing_tag = NULL;
+		}
+	}
+}
+
+void gTextArea::customStyleSheet(GString *)
+{
+	fprintf(stderr, "customStyleSheet: %d\n", font()->mustFixSpacing());
+	gtk_text_view_set_pixels_inside_wrap(GTK_TEXT_VIEW(widget), font()->mustFixSpacing());
+	gtk_text_view_set_pixels_below_lines(GTK_TEXT_VIEW(widget), font()->mustFixSpacing());
+	
+	updateFixSpacing();
 }
 
 int gTextArea::minimumWidth() const

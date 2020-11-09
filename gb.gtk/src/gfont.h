@@ -76,6 +76,8 @@ public:
 	int height();
 	void textSize(const char *text, int len, float *w, float *h);
 	void richTextSize(const char *txt, int len, float sw, float *w, float *h);
+	
+	bool mustFixSpacing() const { return _must_fix_spacing; }
 
 //"Private"
 	gFont(GtkWidget *wg);
@@ -101,7 +103,10 @@ private:
 	void create();
 	void realize();
 	void initFlags();
+	void checkMustFixSpacing();
+
 	int _height;
+	unsigned _must_fix_spacing : 1;
 };
 
 #endif

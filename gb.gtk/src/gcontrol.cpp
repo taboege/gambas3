@@ -2142,6 +2142,11 @@ void gControl::updateStyleSheet()
 				g_string_append(css, ";\n");
 			}
 			
+			if (_font->mustFixSpacing())
+			{
+				g_string_append(css, "letter-spacing:1px;\n");
+			}
+			
 			g_string_append(css, "}\n");
 		}
 
@@ -2151,7 +2156,7 @@ void gControl::updateStyleSheet()
 		css_str = g_string_free(css, FALSE);
 		gtk_css_provider_load_from_data(GTK_CSS_PROVIDER(_css), css_str, -1, NULL);
 		g_free(css_str);
-		gtk_style_context_add_provider(context, _css, GTK_STYLE_PROVIDER_PRIORITY_USER + 10);
+		gtk_style_context_add_provider(context, _css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 	}
 }
 
@@ -2329,7 +2334,7 @@ void gControl::reparent(gContainer *newpr, int x, int y)
 	if (!newpr || !newpr->getContainer())
 		return;
 
-	if (pr == newpr && pr->getContainer() == newpr->getContainer())
+	if (pr == newpr && gtk_widget_get_parent(border) == newpr->getContainer())
 	{
 		move(x, y);
 		return;
@@ -2359,6 +2364,7 @@ void gControl::reparent(gContainer *newpr, int x, int y)
 	}
 
 	//gtk_widget_realize(border);
+	bufX = !x;
 	move(x, y);
 	if (was_visible)
 	{

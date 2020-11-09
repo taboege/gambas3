@@ -252,6 +252,8 @@ void gFont::initFlags()
 	_size_set = comp->size() != size();
 	_strikeout_set = comp->strikeout() != strikeout();
 	_underline_set = comp->underline() != underline();
+
+	checkMustFixSpacing();
 }
 
 void gFont::create()
@@ -282,6 +284,8 @@ void gFont::create()
 	pango_context_set_font_description(ct, sty->font_desc);
 	
 #endif
+	
+	checkMustFixSpacing();
 }
 
 gFont::gFont() : gShare()
@@ -439,10 +443,12 @@ void gFont::setName(char *nm)
 {
 	PangoFontDescription *desc = pango_context_get_font_description(ct);
 	
-	pango_font_description_set_family (desc,nm);
+	pango_font_description_set_family(desc, nm);
 	
 	_name_set = true;
 	_height = 0;
+	
+	checkMustFixSpacing();
 }
 
 double gFont::size()
@@ -547,12 +553,18 @@ void gFont::textSize(const char *text, int len, float *w, float *h)
 	{
 		ly = pango_layout_new(ct);
 		pango_layout_set_text(ly, text, len);	
+		gt_set_layout_from_font(ly, this);
 		pango_layout_get_extents(ly, NULL, &rect);
 		g_object_unref(ly);
 	}
 	
 	if (w) *w = (float)rect.width / PANGO_SCALE;
-	if (h) *h = (float)rect.height / PANGO_SCALE;
+	if (h)
+	{
+		*h = (float)rect.height / PANGO_SCALE;
+		if (mustFixSpacing())
+			*h += 1;
+	}
 }
 
 int gFont::width(const char *text, int len)
@@ -735,4 +747,9 @@ void gFont::richTextSize(const char *txt, int len, float sw, float *w, float *h)
 	
 	if (w) *w = (float)tw / PANGO_SCALE;
 	if (h) *h = (float)th / PANGO_SCALE;
+}
+
+void gFont::checkMustFixSpacing()
+{
+	_must_fix_spacing = ::strcmp(name(), "Gambas") == 0;
 }

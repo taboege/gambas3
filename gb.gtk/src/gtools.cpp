@@ -1661,6 +1661,12 @@ static void set_layout_from_font(PangoLayout *layout, gFont *font, bool add, int
 		pango_attr_list_insert(attrs, attr);
 	}
 	
+	if (font->mustFixSpacing())
+	{
+		attr = pango_attr_letter_spacing_new(PANGO_SCALE);
+		pango_attr_list_insert(attrs, attr);
+	}
+	
 	pango_layout_set_attributes(layout, attrs);
 	
 	if (!add)

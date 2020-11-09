@@ -98,9 +98,11 @@ public:
 #ifdef GTK3
 	virtual GtkWidget *getStyleSheetWidget();
 	virtual const char *getStyleSheetColorNode();
+	virtual void customStyleSheet(GString *css);
 	virtual int minimumWidth() const;
 	virtual int minimumHeight() const;
 #endif
+	void updateFixSpacing();
 	virtual GtkIMContext *getInputMethod();
   //void waitForLayout(int *tw, int *th);
 	void clearUndoStack();
@@ -116,6 +118,7 @@ private:
 	GtkTextBuffer *_buffer;
 	bool _align_normal;
 	int _last_pos;
+	GtkTextTag *_fix_spacing_tag;
 
 	GtkTextIter *getIterAt(int pos = -1);
 };
