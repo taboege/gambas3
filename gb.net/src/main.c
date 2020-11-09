@@ -46,7 +46,7 @@ GB_DESC *GB_CLASSES[] EXPORT =
   CServerSocketDesc,
 	CUdpSocketMulticastDesc,
   CUdpSocketDesc,
-  CSerialPortDesc,
+  SerialPortDesc,
   CNetDesc,
   NULL
 };

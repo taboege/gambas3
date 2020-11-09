@@ -679,16 +679,24 @@ BEGIN_PROPERTY(SerialPort_OutputBufferSize)
 
 END_PROPERTY
 
-BEGIN_METHOD_VOID(SerialPort_Clear)
+BEGIN_METHOD(SerialPort_Clear, GB_INTEGER buffer)
 
+	int buffer = VARGOPT(buffer, GB_ST_READ + GB_ST_WRITE);
+	
+	
 	if (THIS->status)
-		tcflush(THIS->port, TCIOFLUSH);
+	{
+		if (buffer & GB_ST_READ)
+			tcflush(THIS->port, TCIFLUSH);
+		if (buffer & GB_ST_WRITE)
+			tcflush(THIS->port, TCOFLUSH);
+	}
 
 END_METHOD
 
-// Here we declare the public interface of SerialPort class
+//-------------------------------------------------------------------------
 
-GB_DESC CSerialPortDesc[] =
+GB_DESC SerialPortDesc[] =
 {
 	GB_DECLARE("SerialPort", sizeof(CSERIALPORT)),
 
@@ -741,8 +749,8 @@ GB_DESC CSerialPortDesc[] =
 	GB_PROPERTY_READ("InputBufferSize", "i", SerialPort_InputBufferSize),
 	GB_PROPERTY_READ("OutputBufferSize", "i", SerialPort_OutputBufferSize),
 	
-	GB_METHOD("Clear", NULL, SerialPort_Clear, NULL),
-
+	GB_METHOD("Clear", NULL, SerialPort_Clear, "[(Buffer)i]"),
+	
 	GB_CONSTANT("_IsControl", "b", TRUE),
 	GB_CONSTANT("_IsVirtual", "b", TRUE),
 	GB_CONSTANT("_Group", "s", "Network"),
