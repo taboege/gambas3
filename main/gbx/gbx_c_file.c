@@ -95,10 +95,10 @@ static void watch_stream(CSTREAM *_object, int mode, bool on)
 	STREAM *stream = &THIS_STREAM->stream;
 	int fd = STREAM_handle(stream);
 	
-	if (mode & STO_READ)
+	if (mode & GB_ST_READ)
 		GB_Watch(fd, GB_WATCH_READ, (void *)(on ? callback_read : NULL), (intptr_t)THIS);
 
-	if (mode & STO_WRITE)
+	if (mode & GB_ST_WRITE)
 		GB_Watch(fd, GB_WATCH_WRITE, (void *)(on ? callback_write : NULL), (intptr_t)THIS);
 }
 
@@ -112,7 +112,7 @@ CFILE *CFILE_create(STREAM *stream, int mode)
 		*CSTREAM_TO_STREAM(file) = *stream;
 		//file->watch_fd = -1;
 
-		if (mode & STO_WATCH)
+		if (mode & GB_ST_WATCH)
 		{
 			watch_stream(&file->ob, mode, TRUE);
 			OBJECT_attach((OBJECT *)file, OP ? (OBJECT *)OP : (OBJECT *)CP, "File");
@@ -139,9 +139,9 @@ static CFILE *create_default_stream(FILE *file, int mode)
 
 void CFILE_init(void)
 {
-	CFILE_in = create_default_stream(stdin, STO_READ);
-	CFILE_out = create_default_stream(stdout, STO_WRITE);
-	CFILE_err = create_default_stream(stderr, STO_WRITE);
+	CFILE_in = create_default_stream(stdin, GB_ST_READ);
+	CFILE_out = create_default_stream(stdout, GB_ST_WRITE);
+	CFILE_err = create_default_stream(stderr, GB_ST_WRITE);
 }
 
 void CFILE_exit(void)
@@ -618,7 +618,7 @@ BEGIN_METHOD(File_Load, GB_STRING path)
 	int rlen;
 	char *str = NULL;
 
-	STREAM_open(&stream, STRING_conv_file_name(STRING(path), LENGTH(path)), STO_READ);
+	STREAM_open(&stream, STRING_conv_file_name(STRING(path), LENGTH(path)), GB_ST_READ);
 	
 	ON_ERROR_1(error_CFILE_load_save, &stream)
 	{
@@ -662,7 +662,7 @@ BEGIN_METHOD(File_Save, GB_STRING path; GB_STRING data)
 
 	STREAM stream;
 
-	STREAM_open(&stream, STRING_conv_file_name(STRING(path), LENGTH(path)), STO_CREATE);
+	STREAM_open(&stream, STRING_conv_file_name(STRING(path), LENGTH(path)), GB_ST_CREATE);
 	
 	ON_ERROR_1(error_CFILE_load_save, &stream)
 	{
@@ -885,13 +885,9 @@ BEGIN_METHOD(Stream_Watch, GB_INTEGER mode; GB_BOOLEAN on)
 
 	int mode = VARG(mode);
 	
-	if (mode == R_OK)
-		mode = STO_READ;
-	else if (mode == W_OK)
-		mode = STO_WRITE;
-	else
+	if (mode != GB_ST_READ && mode != GB_ST_WRITE)
 	{
-		GB_Error("Unknown watch");
+		GB_Error(GB_ERR_ARG);
 		return;
 	}
 	

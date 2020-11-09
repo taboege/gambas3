@@ -787,6 +787,25 @@ typedef
 	GB_STREAM;
 
 
+/* File constants */
+
+#define GB_ST_READ         1
+#define GB_ST_WRITE        2
+#define GB_ST_READ_WRITE   3
+#define GB_ST_MODE         3
+#define GB_ST_EXEC         4
+#define GB_ST_APPEND       4
+#define GB_ST_CREATE       8
+#define GB_ST_ACCESS       15
+#define GB_ST_BUFFERED     16
+#define GB_ST_LOCK         32
+#define GB_ST_WATCH        64
+#define GB_ST_PIPE         128
+#define GB_ST_MEMORY       256
+#define GB_ST_STRING       512
+#define GB_ST_NULL         1024
+
+
 /* Constants used by the GB.NumberFromString() API function */
 
 #define GB_NB_READ_INTEGER    1
@@ -804,7 +823,7 @@ typedef
 #define GB_COMP_NOCASE      1
 
 
-/* Constant used by GB.ConvString to convert to 32 bits Unicode (that needs some special processing) */
+/* Constant used by GB.ConvString to convert to 32 bits Unicode (it needs some special processing) */
 
 #define GB_SC_UNICODE ((char *)-1)
 

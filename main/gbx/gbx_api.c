@@ -2475,7 +2475,7 @@ bool GB_Serialize(const char *path, GB_VALUE *value)
 
 	CATCH_ERROR
 	{
-		STREAM_open(&stream, path, STO_CREATE);
+		STREAM_open(&stream, path, GB_ST_CREATE);
 		STREAM_write_type(&stream, T_VARIANT, (VALUE *)value);
 		STREAM_close(&stream);
 	}
@@ -2488,7 +2488,7 @@ bool GB_UnSerialize(const char *path, GB_VALUE *value)
 
 	CATCH_ERROR
 	{
-		STREAM_open(&stream, path, STO_READ);
+		STREAM_open(&stream, path, GB_ST_READ);
 		STREAM_read_type(&stream, T_VARIANT, (VALUE *)value);
 		STREAM_close(&stream);
 	}

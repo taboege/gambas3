@@ -999,8 +999,8 @@ void FILE_copy(const char *src, const char *dst)
 
 	TRY
 	{
-		STREAM_open(&stream_src, src, STO_READ);
-		STREAM_open(&stream_dst, dst, STO_CREATE);
+		STREAM_open(&stream_src, src, GB_ST_READ);
+		STREAM_open(&stream_dst, dst, GB_ST_CREATE);
 
 		STREAM_lof(&stream_src, &len);
 
@@ -1033,9 +1033,11 @@ void FILE_copy(const char *src, const char *dst)
 
 bool FILE_access(const char *path, int mode)
 {
+	int m;
+	
 	if (FILE_is_relative(path))
 	{
-		if (mode & (W_OK | X_OK))
+		if (mode & (GB_ST_WRITE | GB_ST_EXEC))
 			return FALSE;
 
 		/*if (!EXEC_arch)
@@ -1048,7 +1050,12 @@ bool FILE_access(const char *path, int mode)
 		return ARCHIVE_exist(NULL, path);
 	}
 
-	return (access(path, mode) == 0);
+	m = 0;
+	if (mode & GB_ST_READ) m += R_OK;
+	if (mode & GB_ST_WRITE) m += W_OK;
+	if (mode & GB_ST_EXEC) m += X_OK;
+	
+	return (access(path, m) == 0);
 }
 
 
