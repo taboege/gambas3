@@ -27,7 +27,7 @@
 class gKey
 {
 public:
-	static bool valid() { return _valid; }
+	static bool isValid() { return _valid; }
 	static const char *text();
 	static int code();
 	static int state();
@@ -61,7 +61,7 @@ public:
 	static int _last_key_release;
 
 private:
-	static bool _valid;
+	static int _valid;
 	
 	static void initContext();
 };

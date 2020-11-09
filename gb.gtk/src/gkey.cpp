@@ -43,7 +43,7 @@ gKey
 
 **************************************************************************/
 
-bool gKey::_valid = false;
+int gKey::_valid = 0;
 bool gKey::_canceled = false;
 GdkEventKey gKey::_event;
 int gKey::_last_key_press = 0;
@@ -162,9 +162,10 @@ int gKey::fromString(const char *str)
 
 void gKey::disable()
 {
-	if (!_valid)
+	_valid--;
+	if (_valid)
 		return;
-		
+	
 	_valid = false;
 	_event.keyval = 0;
 	_event.state = 0;
@@ -175,10 +176,7 @@ bool gKey::enable(gControl *control, GdkEventKey *event)
 {
 	bool f = false;
 	
-	if (_valid)
-		disable();
-
-	_valid = true;
+	_valid++;
 	_canceled = false;
 
 	if (event)
@@ -255,10 +253,10 @@ void gcb_im_commit(GtkIMContext *context, const char *str, gControl *control)
 		return;
 
 	#if DEBUG_IM
-	fprintf(stderr, "cb_im_commit: \"%s\"  _im_no_commit = %d  gKey::valid = %d\n", str, _im_no_commit, gKey::valid());
+	fprintf(stderr, "cb_im_commit: \"%s\"  _im_no_commit = %d  gKey::valid = %d\n", str, _im_no_commit, gKey::isValid());
 	#endif
 	
-	if (!gKey::valid())
+	if (!gKey::isValid())
 	{
 		gKey::enable(control, NULL);
 		gKey::_event.keyval = gKey::_last_key_press;

@@ -561,7 +561,7 @@ static void hook_wait(int duration)
 		return;
 	}
 
-	if (duration && gKey::valid())
+	if (duration && gKey::isValid())
 	{
 #ifdef GTK3
 		fprintf(stderr, "gb.gtk3: warning: calling the event loop during a keyboard event handler is ignored\n");
