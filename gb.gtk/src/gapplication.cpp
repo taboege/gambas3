@@ -974,8 +974,11 @@ void gApplication::ungrabPopup()
 	//fprintf(stderr, "ungrabPopup: %p\n", _popup_grab);
 	//gtk_grab_remove(_popup_grab);
 
-	_popup_grab = NULL;
-	gt_ungrab();
+	if (_popup_grab)
+	{
+		_popup_grab = NULL;
+		gt_ungrab();
+	}
 }
 
 bool gApplication::areTooltipsEnabled()
@@ -1289,9 +1292,8 @@ void gApplication::enterPopup(gMainWindow *owner)
 	//oldGroup = enterGroup();
 
 	gtk_window_set_modal(window, true);
-	gdk_window_set_override_redirect(gtk_widget_get_window(owner->border), true);
-	
 	owner->show();
+	gdk_window_set_override_redirect(gtk_widget_get_window(owner->border), true);
 	
 	if (!owner->isDestroyed())
 	{
@@ -1464,12 +1466,6 @@ void gApplication::setActiveControl(gControl *control, bool on)
 
 int gApplication::getScrollbarSize()
 {
-	//GtkStyle* st;
-	gint trough_border;
-	gint slider_width;
-
-	//st = gtk_rc_get_style_by_paths(gtk_settings_get_default(), NULL, "OsBar", G_TYPE_NONE);
-
 	if (g_type_from_name("OsBar"))
 	{
 		char *env = getenv("LIBOVERLAY_SCROLLBAR");
@@ -1477,10 +1473,37 @@ int gApplication::getScrollbarSize()
 			return 1;
 	}
 
+#ifdef GTK3
+
+	static int size = 0;
+	
+	if (size == 0)
+	{
+		GtkWidget *widget = 
+		#ifdef GTK3
+			gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, NULL);
+		#else
+			gtk_hscrollbar_new(NULL);
+		#endif
+		gtk_widget_show(widget);
+		gtk_widget_get_preferred_width(widget, NULL, &size); //, &minimum_size, &natural_size);
+		gtk_widget_destroy(widget);
+		//fprintf(stderr, "getScrollbarSize = %d\n", size);
+	}
+	
+	return size;
+	
+#else
+	
+	gint trough_border;
+	gint slider_width;
+
 	gt_get_style_property(GTK_TYPE_SCROLLBAR, "slider-width", &slider_width);
 	gt_get_style_property(GTK_TYPE_SCROLLBAR, "trough-border", &trough_border);
 
 	return (trough_border) * 2 + slider_width;
+	
+#endif
 }
 
 int gApplication::getScrollbarSpacing()

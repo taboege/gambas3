@@ -979,7 +979,7 @@ void gMainWindow::showPopup(int x, int y)
 
 	gtk_window_resize(GTK_WINDOW(border), bufW, bufH);
   move(x, y);
-	raise();
+	//raise();
 	setFocus();
 
 	save = _current;
@@ -1418,15 +1418,18 @@ void gMainWindow::setType(GtkWindowType type)
 		return;
 	if (gtk_window_get_window_type(GTK_WINDOW(border)) == type)
 		return;
-		
+	
 	bg = background();
 	fg = foreground();
 
 	gtk_window_remove_accel_group(GTK_WINDOW(border), accel);
 	// TODO: test that
 	new_border = gtk_window_new(type);
-	gt_widget_reparent(widget, new_border);
-	embedMenuBar(new_border);
+	if (layout)
+		gt_widget_reparent(GTK_WIDGET(layout), new_border);
+	else
+		gt_widget_reparent(widget, new_border);
+	//embedMenuBar(new_border);
 	_no_delete = true;
 	gtk_widget_destroy(border);
 	_no_delete = false;
