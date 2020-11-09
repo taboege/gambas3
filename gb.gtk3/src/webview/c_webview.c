@@ -75,9 +75,9 @@ static void cb_load_changed(WebKitWebView *widget, WebKitLoadEvent load_event, C
 	switch (load_event)
 	{
 		case WEBKIT_LOAD_FINISHED:
-			GB.FreeString(&THIS->link);
 			if (!THIS->error)
 				GB.Raise(THIS, EVENT_FINISH, 0);
+			GB.FreeString(&THIS->link);
 			break;
 		default:
 			break;
@@ -158,11 +158,21 @@ static gboolean cb_decide_policy(WebKitWebView *widget, WebKitPolicyDecision *de
 
 //---------------------------------------------------------------------------
 
+#define must_patch(_widget) (true)
+#include "../gb.gtk.patch.h"
+
+PATCH_DECLARE(WEBKIT_TYPE_WEB_VIEW)
+
+
+//---------------------------------------------------------------------------
+
 BEGIN_METHOD(WebView_new, GB_OBJECT parent)
 
 	THIS->widget = webkit_web_view_new();
 	
 	GTK.CreateControl(THIS, VARG(parent), THIS->widget);
+	
+	PATCH_CLASS(THIS->widget, WEBKIT_TYPE_WEB_VIEW)
 	
 	if (!_init)
 	{

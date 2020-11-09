@@ -11,7 +11,7 @@ gb_gtk3_la_CPPFLAGS = @GTK3_INC@ -I$(top_srcdir)/share -DGTK3 -DGTK_DISABLE_SING
 
 gb_gtk3_la_SOURCES = \
 	gtag.h ggambastag.h gshare.h \
-	gb.gtk.h widgets.h font-parser.h font-parser.cpp \
+	gb.gtk.h gb.gtk.patch.h widgets.h font-parser.h font-parser.cpp \
 	gtools.cpp gcolor.h \
 	gfont.cpp gpicture.cpp \
 	gdesktop.cpp gmessage.cpp \
