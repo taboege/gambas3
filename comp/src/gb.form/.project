@@ -1,6 +1,6 @@
 # Gambas Project File 3.0
 Title=More controls for graphical components
-Startup=Form1
+Startup=FTestWizard
 Version=3.15.90
 VersionFile=1
 Component=gb.image
@@ -9,7 +9,7 @@ Component=gb.form
 Component=gb.settings
 Component=gb.form.stock
 Authors="Benoît Minisini"
-Environment="GB_GUI=gb.qt5\nGB_STOCK_DEBUG=1"
+Environment="GB_GUI=gb.gtk3\nGB_STOCK_DEBUG=1"
 TabSize=2
 Translate=1
 Language=en
