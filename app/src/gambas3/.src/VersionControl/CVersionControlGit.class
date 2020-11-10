@@ -105,12 +105,15 @@ Public Sub GetBranches(ByRef sCurrent As String) As String[]
   
 End
 
-Public Sub GetCurrentBranch() As String
+Static Public Sub GetCurrentBranch(Optional sDir As String) As String
   
   Dim sCurrent As String
   
-  GetBranches(ByRef sCurrent)
-  If sCurrent = "master" Then sCurrent = ""
+  If Not sDir Then sDir = Project.Dir
+
+  sCurrent = Trim(VersionControl.Shell("cd " & Shell(sDir) & " && git branch --show-current", True))
+  'If sCurrent = "master" Then sCurrent = ""
+  
   Return sCurrent
   
 End

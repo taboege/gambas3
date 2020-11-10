@@ -21,7 +21,7 @@ OS2Version: 0
 OS2_WeightWidthSlopeOnly: 0
 OS2_UseTypoMetrics: 1
 CreationTime: 1604088669
-ModificationTime: 1604092841
+ModificationTime: 1604895412
 PfmFamily: 17
 TTFWeight: 400
 TTFWidth: 5
@@ -47,7 +47,7 @@ LangName: 1033
 Encoding: UnicodeBmp
 UnicodeInterp: none
 NameList: AGL For New Fonts
-DisplaySize: 16
+DisplaySize: 12
 AntiAlias: 1
 FitToEm: 0
 WinInfo: 0 51 15
@@ -55,7 +55,7 @@ OnlyBitmaps: 1
 BeginPrivate: 0
 EndPrivate
 TeXData: 1 0 0 524288 262144 174762 0 1048576 174762 783286 444596 497025 792723 393216 433062 380633 303038 157286 324010 404750 52429 2506097 1059062 262144
-BeginChars: 65536 2845
+BeginChars: 65536 2848
 
 StartChar: uni0000
 Encoding: 0 0 0
@@ -5259,7 +5259,7 @@ EndChar
 
 StartChar: uni037A
 Encoding: 890 890 650
-Width: 500
+Width: 562
 VWidth: 0
 Flags: W
 LayerCount: 2
@@ -22634,8 +22634,32 @@ VWidth: 0
 Flags: W
 LayerCount: 2
 EndChar
+
+StartChar: uni0394
+Encoding: 916 916 2845
+Width: 538
+VWidth: 0
+Flags: W
+LayerCount: 2
+EndChar
+
+StartChar: uni03A9
+Encoding: 937 937 2846
+Width: 538
+VWidth: 0
+Flags: W
+LayerCount: 2
+EndChar
+
+StartChar: uni03BC
+Encoding: 956 956 2847
+Width: 538
+VWidth: 0
+Flags: W
+LayerCount: 2
+EndChar
 EndChars
-BitmapFont: 12 2846 10 2 1 xos4
+BitmapFont: 12 2848 10 2 1 xos4
 BDFStartProperties: 25
 FONT 1 "-xos4-Gambas-Medium-R-Normal--12-120-72-72-C-60-ISO10646-1"
 SIZE 1 "12 72 72"
@@ -23964,7 +23988,7 @@ BDFChar: 648 886 6 0 4 0 7
 LmXR.W6!&9
 BDFChar: 649 887 6 0 4 0 5
 LmY->aG9fr
-BDFChar: 650 890 6 2 3 -2 0
+BDFChar: 650 890 7 2 3 -2 0
 J:Klb
 BDFChar: 651 891 6 0 4 0 5
 n-B:*#k.fo
@@ -24087,7 +24111,7 @@ E.EIXJ:N/h#S6t9
 BDFChar: 710 959 6 0 4 0 5
 E/9=+Li<=o
 BDFChar: 711 960 6 0 4 0 5
-pkX`^Lkl$2
+peXd`:f%,l
 BDFChar: 712 961 6 0 4 -2 5
 E/9=+M"#qF
 BDFChar: 713 962 6 0 4 -2 5
@@ -27532,8 +27556,16 @@ BDFChar: 2432 65276 6 0 0 0 0
 z
 BDFChar: 2433 65533 7 0 5 0 7
 r/C:7h#,t*
+BDFChar: 2635 895 6 0 3 0 7
+&.fBa&.fE2
+BDFChar: 2845 916 6 0 4 0 7
++<XKW:l'r&
+BDFChar: 2846 937 6 0 4 0 7
+E/9=+Lknm[
+BDFChar: 2847 956 6 0 4 -2 5
+LkpkCM"#qF
 EndBitmapFont
-BitmapFont: 13 2846 11 2 1 xos4
+BitmapFont: 13 2848 11 2 1 xos4
 BDFStartProperties: 39
 FONT 1 "-xos4-Gambas-Medium-R-Normal--13-120-75-75-C-70-ISO10646-1"
 SIZE 1 "12 75 75"
@@ -32834,8 +32866,16 @@ BDFChar: 2633 11363 7 0 5 0 8
 GXUU\GX+MZ5QCca
 BDFChar: 2634 11364 7 1 5 -1 8
 n;)mVnA(]YLd1q?
+BDFChar: 2635 895 7 1 5 0 8
+3"QW4&.fBahuE`W
+BDFChar: 2845 916 7 1 5 0 8
++<Ve':f)t(p](9o
+BDFChar: 2846 937 7 1 5 0 8
+E/9=+Lkpj`fDkmO
+BDFChar: 2847 956 7 1 5 -2 6
+LkpkCLktPNJ,fQL
 EndBitmapFont
-BitmapFont: 16 2846 13 3 1 xos4
+BitmapFont: 16 2848 13 3 1 xos4
 BDFStartProperties: 39
 FONT 1 "-xos4-Gambas-Medium-R-Normal--16-150-75-75-P-89-ISO10646-1"
 SIZE 1 "15 75 75"
@@ -32853,7 +32893,7 @@ POINT_SIZE 18 150
 RESOLUTION_X 19 75
 RESOLUTION_Y 19 75
 SPACING 16 "P"
-AVERAGE_WIDTH 18 89
+AVERAGE_WIDTH 18 90
 CHARSET_REGISTRY 16 "ISO10646"
 CHARSET_ENCODING 16 "1"
 FONTNAME_REGISTRY 16 ""
@@ -32874,7 +32914,7 @@ NORM_SPACE 18 9
 RELATIVE_WEIGHT 19 50
 RELATIVE_SETWIDTH 19 50
 FIGURE_WIDTH 18 9
-AVG_LOWERCASE_WIDTH 18 89
+AVG_LOWERCASE_WIDTH 18 90
 AVG_UPPERCASE_WIDTH 18 90
 BDFEndProperties
 Resolution: 75
@@ -33051,7 +33091,7 @@ I"6`T(^(!:
 BDFChar: 85 116 9 1 6 0 10
 5X7U05X7S"5X7F3
 BDFChar: 86 117 9 1 6 0 7
-KS5#3KS5#'
+KS5#3KS5#+
 BDFChar: 87 118 9 0 6 0 7
 Jq?BY-n#W<
 BDFChar: 88 119 9 0 6 0 7
@@ -33905,9 +33945,9 @@ I"6`T(^(!:+:nq]
 BDFChar: 512 576 9 1 6 -3 7
 qud9:+@(Im+:nq]
 BDFChar: 513 577 9 1 6 0 10
-G_?2&";i7(+<Vd,
+G_?2&"9\ie+<Vd,
 BDFChar: 514 578 9 1 6 0 7
-G_?2&(a'qD
+G_?2&"?7MH
 BDFChar: 515 579 9 0 6 0 10
 HpU.d6@;,j6:-&"
 BDFChar: 516 580 9 0 7 0 10
@@ -34178,14 +34218,16 @@ BDFChar: 648 886 9 1 6 0 10
 KT(kSPbb+n`.WdD
 BDFChar: 649 887 9 1 6 0 7
 N/X!cUnkrI
+BDFChar: 650 890 9 3 5 -3 -2
+J7&?W
 BDFChar: 651 891 9 1 6 0 7
 p]L^&"9\l&
 BDFChar: 652 892 9 1 6 0 7
 I"6a/J:N/t
 BDFChar: 653 893 9 1 6 0 7
 p]L^F"9\l&
-BDFChar: 654 894 9 3 4 -3 6
-^q]pM!5QB85_&h7
+BDFChar: 654 894 9 3 4 -2 6
+^q]pM!5QB8J,fQL
 BDFChar: 655 900 9 3 4 10 12
 5X9i"
 BDFChar: 656 901 9 2 5 8 12
@@ -34299,13 +34341,13 @@ r'5d_5WD#ZJ3Z's";h+=
 BDFChar: 710 959 9 1 6 0 7
 G_Ca'KS5#'
 BDFChar: 711 960 9 1 6 0 7
-r('@L84Z9>
+r('@L84Z9B
 BDFChar: 712 961 9 1 6 -3 7
-0M$kMKS7FNJ:N.M
+G_Ca'KS5$RJ:N.M
 BDFChar: 713 962 9 1 6 -3 7
 4@"FIJ:KmE"9]PA
 BDFChar: 714 963 9 1 7 0 7
-5"L?[KS2lM
+IY`f9Lkpk+
 BDFChar: 715 964 9 1 5 0 7
 p`L\%+<VdD
 BDFChar: 716 965 9 1 6 0 7
@@ -34395,7 +34437,7 @@ BDFChar: 757 1006 9 0 6 0 10
 BDFChar: 758 1007 9 1 5 0 10
 +<^HX+<VdL+<Vd,
 BDFChar: 759 1008 9 0 6 0 7
-7]\!t3%/O[
+KM5'=<+KN+
 BDFChar: 760 1009 9 1 6 -3 7
 0M$kMKS7FNJ3Z3s
 BDFChar: 761 1010 9 1 6 0 7
@@ -34415,7 +34457,7 @@ J:N1>LkLG7KS],JJ:IV"
 BDFChar: 768 1017 9 1 6 0 10
 4@"FIJ:N0#J3Z3s
 BDFChar: 769 1018 9 0 6 0 10
-K#XgRJqAT+JqARS
+JqD"^WiD5FJqARS
 BDFChar: 770 1019 9 0 6 -3 7
 K#XgRJqAT+J:N.M
 BDFChar: 771 1020 9 0 6 -3 7
@@ -38186,5 +38228,11 @@ BDFChar: 2843 11207 9 0 7 1 7
 !tRWr57[hr
 BDFChar: 2844 11208 9 0 7 1 7
 _!q:%r:%K%
+BDFChar: 2845 916 9 0 6 0 10
+&.g6<-q$HkJqEt%
+BDFChar: 2846 937 9 0 6 0 10
+3(/@MJqAT+6n%I'
+BDFChar: 2847 956 9 1 6 -3 7
+KS5#3KS5$RJ:N.M
 EndBitmapFont
 EndSplineFont
