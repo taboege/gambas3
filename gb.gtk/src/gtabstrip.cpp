@@ -275,7 +275,9 @@ gTabStripPage::gTabStripPage(gTabStrip *tab)
 	g_object_ref(widget);
 	g_object_ref(fix);
 	
+	#ifdef GTK3
 	gt_patch_control(widget, NULL);
+	#endif
 	
 	_visible = false;
 	_picture = NULL;
