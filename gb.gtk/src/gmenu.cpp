@@ -201,6 +201,7 @@ void gMenu::update()
 	gint pos;
 	int size;
 	int ds = gDesktop::scale();
+	char *buf;
 	
 	if (!_text || !*_text)
 		_style = SEPARATOR;
@@ -388,25 +389,22 @@ void gMenu::update()
 	
 	if (_style == NORMAL || _style == CHECK)
 	{
-		{
-			char *buf;
-			gMnemonic_correctText(_text, &buf);
-			gtk_label_set_text_with_mnemonic(GTK_LABEL(label), buf);
-			g_free(buf);
-		}
+		gMnemonic_correctText(_text, &buf);
+		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), buf);
+		g_free(buf);
 		
 		if (!_toplevel)
 		{
 			if (_shortcut)
 			{
-				char *buf = g_strconcat("\t", _shortcut, "  ",(void *)NULL);
+				buf = g_strconcat("\t", _shortcut, "  ",(void *)NULL);
 				gtk_label_set_text(GTK_LABEL(shlabel), buf);
 				g_free(buf);
 			}
 			else
 				gtk_label_set_text(GTK_LABEL(shlabel), "\t");
 
-			gtk_image_set_from_pixbuf(GTK_IMAGE(image), _picture ? _picture->stretch(ds * 2, ds * 2, true)->getPixbuf() : NULL);
+			updatePicture();
 		}
 		
 		//setColor();
@@ -414,6 +412,32 @@ void gMenu::update()
 	}
 
 	//g_debug("%p: END UPDATE", this);	
+}
+
+void gMenu::updatePicture()
+{
+	int size;
+	gPicture *pic;
+	
+	if (!image || isTopLevel())
+		return;
+	
+	if (!_picture)
+	{
+		gtk_image_set_from_pixbuf(GTK_IMAGE(image), NULL);
+		return;
+	}
+	
+	size = gDesktop::scale() * 2;
+	if (size > 7) size &= ~7;
+	
+	pic = _picture->stretch(size, size, true);
+	if (_disabled)
+		pic->makeGray();
+	
+	gtk_image_set_from_pixbuf(GTK_IMAGE(image), pic->getPixbuf());
+	
+	delete pic;
 }
 
 void gMenu::initialize()

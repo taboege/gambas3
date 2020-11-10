@@ -1060,10 +1060,8 @@ gPicture *gPicture::stretch(int w, int h, bool smooth)
 	ret->_height = h;
 
 	ret->invalidate();
-
 	return ret;
 }
-
 
 void gPicture::draw(gPicture *pic, int x, int y, int w, int h, int sx, int sy, int sw, int sh)
 {

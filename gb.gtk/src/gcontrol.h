@@ -30,7 +30,9 @@
 class gContainer;
 class gMainWindow;
 
+#ifdef GTK3
 void gt_patch_control(GtkWidget *border, GtkWidget *widget);
+#endif
 
 class gControl
 {

@@ -128,6 +128,7 @@ public:
 	void willBeDeletedLater();
 	void updateRadio();
 	void updateChecked();
+	void updatePicture();
 	GtkMenu *getSubMenu();
 	void ensureChildMenu();
 	void updateShortcutRecursive();

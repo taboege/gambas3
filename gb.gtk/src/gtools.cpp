@@ -773,32 +773,6 @@ void g_stradd(gchar **res, const gchar *s)
   }
 }
 
-GdkPixbuf *gt_pixbuf_create_disabled(GdkPixbuf *img)
-{
-  gint w, h;
-  guchar *r, *g, *b, *end;
-  GdkPixbuf *dimg;
-
-  dimg = gdk_pixbuf_copy(img);
-  w = gdk_pixbuf_get_width(dimg);
-  h = gdk_pixbuf_get_height(dimg);
-  r = gdk_pixbuf_get_pixels(dimg);
-  g = r + 1;
-  b = r + 2;
-  end = r + w * h * gdk_pixbuf_get_n_channels(img);
-  
-	while (r != end) 
-	{
-    //*r = *g = *b = 0x80 | (((*r + *b) >> 1) + *g) >> 2; // (r + b + g) / 3
-		*r = *g = *b = (*r * 11 + *g * 16 + *b * 5) / 32;
-    r += 4;
-    g += 4;
-    b += 4;
-	}
-	
-	return dimg;
-}
-
 void gt_shortcut_parse(char *shortcut, guint *key, GdkModifierType *mods)
 {
 	char **tokens;
@@ -1586,6 +1560,33 @@ void gt_pixbuf_make_gray(GdkPixbuf *pixbuf)
 	for (i = 0; i < n; i++, p += 4)
 		p[0] = p[1] = p[2] = (p[0] * 11 + p[1] * 16 + p[2] * 5) / 32;
 }
+
+GdkPixbuf *gt_pixbuf_create_disabled(GdkPixbuf *img)
+{
+  gint w, h;
+  guchar *r, *g, *b, *end;
+  GdkPixbuf *dimg;
+
+  dimg = gdk_pixbuf_copy(img);
+  w = gdk_pixbuf_get_width(dimg);
+  h = gdk_pixbuf_get_height(dimg);
+  r = gdk_pixbuf_get_pixels(dimg);
+  g = r + 1;
+  b = r + 2;
+  end = r + w * h * gdk_pixbuf_get_n_channels(img);
+  
+	while (r != end) 
+	{
+		*r = *g = *b = (*r * 11 + *g * 16 + *b * 5) / 32;
+    r += 4;
+    g += 4;
+    b += 4;
+	}
+	
+	return dimg;
+}
+
+
 
 static void disabled_handler(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer data)
 {

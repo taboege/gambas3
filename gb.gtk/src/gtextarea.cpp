@@ -1041,17 +1041,6 @@ GtkIMContext *gTextArea::getInputMethod()
 #endif
 }
 
-#ifdef GTK3
-GtkWidget *gTextArea::getStyleSheetWidget()
-{
-	return textview;
-}
-
-const char *gTextArea::getStyleSheetColorNode()
-{
-	return "text";
-}
-
 void gTextArea::updateFixSpacing()
 {
 	GtkTextIter start;
@@ -1077,6 +1066,17 @@ void gTextArea::updateFixSpacing()
 	}
 }
 
+#ifdef GTK3
+GtkWidget *gTextArea::getStyleSheetWidget()
+{
+	return textview;
+}
+
+const char *gTextArea::getStyleSheetColorNode()
+{
+	return "text";
+}
+
 void gTextArea::customStyleSheet(GString *)
 {
 	fprintf(stderr, "customStyleSheet: %d\n", font()->mustFixSpacing());
@@ -1088,12 +1088,18 @@ void gTextArea::customStyleSheet(GString *)
 
 int gTextArea::minimumWidth() const
 {
-	return gDesktop::scale() * 4;
+	if (scrollBar())
+		return gDesktop::scale() * 4;
+	else
+		return 0;
 }
 
 int gTextArea::minimumHeight() const
 {
-	return gDesktop::scale() * 4;
+	if (scrollBar())
+		return gDesktop::scale() * 4;
+	else
+		return 0;
 }
 #endif
 
