@@ -1079,7 +1079,6 @@ const char *gTextArea::getStyleSheetColorNode()
 
 void gTextArea::customStyleSheet(GString *)
 {
-	fprintf(stderr, "customStyleSheet: %d\n", font()->mustFixSpacing());
 	gtk_text_view_set_pixels_inside_wrap(GTK_TEXT_VIEW(widget), font()->mustFixSpacing());
 	gtk_text_view_set_pixels_below_lines(GTK_TEXT_VIEW(widget), font()->mustFixSpacing());
 	

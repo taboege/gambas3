@@ -236,10 +236,31 @@ void gFont::realize()
 {
 	ct = NULL;
 	_height = 0;
+	_metrics = NULL;
 
 	reset();
 	
 	_nfont++;  
+}
+
+PangoFontMetrics *gFont::metrics()
+{
+	if (!_metrics)
+	{
+		PangoFontDescription *desc = pango_context_get_font_description(ct);
+		_metrics = pango_context_get_metrics(ct, desc, NULL);
+	}
+	
+	return _metrics;
+}
+
+void gFont::invalidateMetrics()
+{
+	if (_metrics)
+	{
+		pango_font_metrics_unref(_metrics);
+		_metrics = NULL;
+	}
 }
 
 void gFont::initFlags()
@@ -368,28 +389,17 @@ gFont::~gFont()
 
 int gFont::ascent()
 {
-	PangoFontDescription *desc = pango_context_get_font_description(ct);
-	PangoFontMetrics *metric = pango_context_get_metrics(ct,desc,NULL);
-	
-	//fprintf(stderr, "ascent: %d\n", pango_font_metrics_get_ascent(metric));
-	return gt_pango_to_pixel(pango_font_metrics_get_ascent(metric));
+	return gt_pango_to_pixel(pango_font_metrics_get_ascent(metrics()));
 }
 
 float gFont::ascentF()
 {
-	PangoFontDescription *desc = pango_context_get_font_description(ct);
-	PangoFontMetrics *metric = pango_context_get_metrics(ct,desc,NULL);
-	
-	return (float)pango_font_metrics_get_ascent(metric) / PANGO_SCALE;
+	return (float)pango_font_metrics_get_ascent(metrics()) / PANGO_SCALE;
 }
 
 int gFont::descent()
 {
-	PangoFontDescription *desc = pango_context_get_font_description(ct);
-	PangoFontMetrics *metric = pango_context_get_metrics(ct,desc,NULL);
-	
-	//fprintf(stderr, "descent: %d\n", pango_font_metrics_get_descent(metric));
-	return gt_pango_to_pixel(pango_font_metrics_get_descent(metric));
+	return gt_pango_to_pixel(pango_font_metrics_get_descent(metrics()));
 }
 
 bool gFont::bold()
@@ -411,6 +421,7 @@ void gFont::setBold(bool vl)
 		pango_font_description_set_weight(desc,PANGO_WEIGHT_NORMAL);
 	
 	_bold_set = true;
+	invalidateMetrics();
 }
 
 bool gFont::italic()
@@ -430,6 +441,7 @@ void gFont::setItalic(bool vl)
 		pango_font_description_set_style(desc,PANGO_STYLE_NORMAL);
 		
 	_italic_set = true;
+	invalidateMetrics();
 }
 
 char* gFont::name()
@@ -447,6 +459,7 @@ void gFont::setName(char *nm)
 	
 	_name_set = true;
 	_height = 0;
+	invalidateMetrics();
 	
 	checkMustFixSpacing();
 }
@@ -475,6 +488,7 @@ void gFont::setSize(double sz)
 	
 	_size_set = true;
 	_height = 0;
+	invalidateMetrics();
 }
 
 void gFont::setGrade(int grade)

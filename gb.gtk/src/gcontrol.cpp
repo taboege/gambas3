@@ -1142,23 +1142,32 @@ void gControl::afterRefresh()
 {
 }
 
-void gControl::setDesign(bool vl)
+void gControl::setDesign(bool ignore)
 {
-	if (vl && !_design)
-	{
-		fprintf(stderr, "setDesign: %s\n", name());
-		setCanFocus(false);
-		setMouse(GDK_LEFT_PTR);
-		setTooltip(NULL);
-		_design = vl;
-	}
+	if (_design)
+		return;
+	
+	//fprintf(stderr, "setDesign: %s %d\n", name(), ignore);
+	setCanFocus(false);
+	setMouse(GDK_LEFT_PTR);
+	setTooltip(NULL);
+	_design = true;
+	_design_ignore = ignore;
 }
 
-void gControl::setDesignIgnore()
+gControl *gControl::ignoreDesign()
 {
-	setDesign(true);
-	fprintf(stderr, "setDesignIgnore: %s\n", name());
-	_design_ignore = true;
+	//fprintf(stderr, "ignoreDesign: %s", name());
+	
+	if (!isDesignIgnore())
+		return this;
+	
+	gControl *ctrl = this;
+	while (ctrl && ctrl->isDesignIgnore())
+		ctrl = ctrl->parent();
+
+	//fprintf(stderr, " --> %s\n", ctrl->name());
+	return ctrl;
 }
 
 bool gControl::canFocus() const
@@ -2821,3 +2830,4 @@ gControl *gControl::previousFocus()
 
 	return ctrl;
 }
+

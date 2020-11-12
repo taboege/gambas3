@@ -77,7 +77,9 @@ typedef
 			unsigned drop : 1;
 			unsigned resized : 1;
 			unsigned wheel : 1; // eat wheel events
-			unsigned _reserved : 3;
+			unsigned design : 1;
+			unsigned design_ignore : 1;
+			unsigned _reserved : 1;
 			} flag;
 		int level;
 		char *name;
@@ -98,8 +100,6 @@ typedef
 	CCONTAINER;
 
 enum {
-	WF_DESIGN           = (1 << 0),
-	WF_DESIGN_LEADER    = (1 << 1),
 	WF_PERSISTENT       = (1 << 2),
 	WF_CLOSED           = (1 << 3),
 	WF_DELETED          = (1 << 4),
@@ -188,7 +188,6 @@ void CWIDGET_set_name(CWIDGET *_object, const char *name);
 int CWIDGET_check(void *object);
 QString CWIDGET_Utf8ToQString(GB_STRING *str);
 void CWIDGET_destroy(CWIDGET *_object);
-void CWIDGET_update_design(CWIDGET *_object);
 void CWIDGET_iconset(QIcon &icon, const QPixmap &p, int size = 0);
 void CWIDGET_set_color(CWIDGET *_object, int bg, int fg, bool handle_proxy = false);
 void CWIDGET_reset_color(CWIDGET *_object);
@@ -226,10 +225,12 @@ void CACTION_register(void *control, const char *old, const char *key);
 void CACTION_raise(void *control);
 bool CWIDGET_get_allow_focus(void *_object);
 void CWIDGET_set_allow_focus(void *_object, bool f);
-bool CWIDGET_is_design(CWIDGET *_object);
+bool CWIDGET_is_design(void *_object);
 void CWIDGET_check_visibility(CWIDGET *_object);
 void CWIDGET_check_hovered();
 void CWIDGET_raise_event_action(void *control, int event);
+
+void CWIDGET_set_design(CWIDGET *_object, bool ignore = false);
 
 #ifndef DO_NOT_DECLARE_EVENTS
 #ifndef __CWIDGET_CPP

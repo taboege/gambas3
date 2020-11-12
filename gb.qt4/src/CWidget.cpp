@@ -138,7 +138,7 @@ static void set_mouse(QWidget *w, int mouse, void *cursor)
 	}
 }
 
-static void set_design_object(CWIDGET *_object)
+/*static void set_design_object(CWIDGET *_object)
 {
 	if (CWIDGET_test_flag(THIS, WF_DESIGN))
 		return;
@@ -170,33 +170,30 @@ static void set_design_recursive(QWidget *w, bool set = false)
 		if (child->isWidgetType())
 			set_design_recursive((QWidget *)child, true);
 	}
-}
+}*/
 
-static void set_design(CWIDGET *_object)
+void CWIDGET_set_design(CWIDGET *_object, bool ignore)
 {
-	CWIDGET *cont;
-
-	if (GB.Is(THIS, CLASS_UserControl))
-		set_design_recursive(WIDGET);
-	else if (!GB.Is(THIS, CLASS_Container))
-		set_design_object(THIS);
-
-	CWIDGET_set_flag(THIS, WF_DESIGN_LEADER);
+	if (THIS->flag.design)
+		return;
 	
+	//fprintf(stderr, "CWIDGET_set_design: %s %d\n", THIS->name, ignore);
+	
+	CWidget::removeFocusPolicy(WIDGET);
+	set_mouse(WIDGET, CMOUSE_DEFAULT, 0);
+	
+	THIS->flag.design = true;
+	THIS->flag.design_ignore = ignore;
+
 	if (GB.Is(THIS, CLASS_Container))
 	{
-		//qDebug("(%s %p - %p): LEADER / %p %p", GB.GetClassName(THIS), THIS, WIDGET, QCONTAINER(THIS), CWidget::getReal(QCONTAINER(THIS)));
-
-		cont = CWidget::get(QCONTAINER(THIS));
-		//debugObject(cont);		
-		if (cont && cont != THIS)
-			set_design_object(cont);
-	}
-
-	if (GB.Is(THIS, CLASS_TabStrip))
-	{
-		THIS->flag.fillBackground = TRUE;
-		CWIDGET_reset_color(THIS);
+		if (GB.Is(THIS, CLASS_TabStrip))
+		{
+			THIS->flag.fillBackground = TRUE;
+			CWIDGET_reset_color(THIS);
+		}
+		
+		CCONTAINER_update_design((CCONTAINER *)THIS);
 	}
 }
 
@@ -307,14 +304,14 @@ static QWidget *get_viewport(QWidget *w)
 		return 0;
 }
 
-void CWIDGET_update_design(CWIDGET *_object)
+/*void CWIDGET_update_design(CWIDGET *_object)
 {
 	if (!CWIDGET_test_flag(THIS, WF_DESIGN) && !CWIDGET_test_flag(THIS, WF_DESIGN_LEADER))
 		return;
 
 	//qDebug("CWIDGET_update_design: %s %p", GB.GetClassName(THIS), THIS);
 	set_design(THIS);
-}
+}*/
 
 void CWIDGET_init_name(CWIDGET *_object)
 {
@@ -875,9 +872,9 @@ void CWIDGET_check_hovered()
 }
 #endif
 
-bool CWIDGET_is_design(CWIDGET *_object)
+bool CWIDGET_is_design(void *_object)
 {
-	return CWIDGET_test_flag(THIS, WF_DESIGN) || CWIDGET_test_flag(THIS, WF_DESIGN_LEADER);
+	return THIS->flag.design; //CWIDGET_test_flag(THIS, WF_DESIGN) || CWIDGET_test_flag(THIS, WF_DESIGN_LEADER);
 }
 
 static void _cleanup_CWIDGET_raise_event_action(intptr_t object)
@@ -1018,18 +1015,14 @@ END_PROPERTY
 BEGIN_PROPERTY(Control_Design)
 
 	if (READ_PROPERTY)
-	{
 		GB.ReturnBoolean(CWIDGET_is_design(THIS));
-		return;
-	}
-
-	if (VPROP(GB_BOOLEAN))
+	else
 	{
-		set_design(THIS);
-		//CWIDGET_set_flag(THIS, WF_DESIGN);
+		if (VPROP(GB_BOOLEAN))
+			CWIDGET_set_design(THIS);
+		else if (CWIDGET_is_design(THIS))
+			GB.Error("Design property cannot be reset");
 	}
-	else if (CWIDGET_test_flag(_object, WF_DESIGN) || CWIDGET_test_flag(_object, WF_DESIGN_LEADER))
-		GB.Error("Design property cannot be reset");
 
 END_PROPERTY
 
@@ -2197,7 +2190,7 @@ CWIDGET *CWidget::getRealExisting(QObject *o)
 	CWIDGET *_object = dict[o];
 	
 	if (THIS && CWIDGET_test_flag(THIS, WF_DELETED))
-		_object = 0;
+		_object = NULL;
 	
 	return _object;
 }
@@ -2212,7 +2205,7 @@ CWIDGET *CWidget::getDesign(QObject *o)
 
 	real = true;
 
-	while (o)
+	/*while (o)
 	{
 		ob = dict[o];
 		if (ob)
@@ -2226,14 +2219,14 @@ CWIDGET *CWidget::getDesign(QObject *o)
 
 	if (!o)
 		return NULL;
-
-	if (!CWIDGET_test_flag(ob, WF_DESIGN))
-		return ob;
+	
+	if (!ob->flag.design_ignore)
+		return ob;*/
 
 	while (o)
 	{
 		ob = dict[o];
-		if (ob && CWIDGET_test_flag(ob, WF_DESIGN_LEADER))
+		if (ob && !ob->flag.design_ignore)
 			return ob;
 		if (((QWidget *)o)->isWindow())
 			return NULL;
@@ -2613,7 +2606,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 	//}
 
 	real = CWidget::real;
-	design = CWIDGET_test_flag(control, WF_DESIGN); // && !GB.Is(control, CLASS_Container);
+	design = CWIDGET_is_design(control); //CWIDGET_test_flag(control, WF_DESIGN); // && !GB.Is(control, CLASS_Container);
 	original = event->spontaneous();
 	
 	goto *jump;

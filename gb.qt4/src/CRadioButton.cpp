@@ -54,7 +54,7 @@ void MyRadioButton::adjust(bool force)
 	bool a;
 	QSize hint;
 
-	if (!THIS || (!_autoResize && !force) || CWIDGET_test_flag(THIS, WF_DESIGN) || text().length() <= 0)
+	if (!THIS || (!_autoResize && !force) || CWIDGET_is_design(THIS) || text().length() <= 0)
 		return;
 	
 	a = _autoResize;

@@ -2301,7 +2301,7 @@ void MyMainWindow::keyPressEvent(QKeyEvent *e)
 		if (!ob)
 			return;
 
-		if (CWIDGET_test_flag(ob, WF_DESIGN))
+		if (CWIDGET_is_design(ob))
 			return;
 
 		if (!test->isVisible() || !test->isEnabled())

@@ -568,6 +568,7 @@ __FOUND_WIDGET:
 			}
 
 			save_control = find_child(control, (int)event->button.x_root, (int)event->button.y_root, button_grab);
+			save_control = save_control->ignoreDesign();
 			//fprintf(stderr, "save_control = %p %s\n", save_control, save_control ? save_control->name() : "");
 			
 			if (!save_control)
@@ -582,8 +583,6 @@ __FOUND_WIDGET:
 				goto __HANDLE_EVENT;
 			}
 			
-			while (save_control->isDesignIgnore())
-				save_control = save_control->parent();
 			control = save_control;
 
 			bool menu = false;
@@ -599,8 +598,8 @@ __FOUND_WIDGET:
 					gApplication::setButtonGrab(control);
 			}
 
-		if (event->type == GDK_BUTTON_PRESS)
-			gMouse::handleClickCount(event);
+			if (event->type == GDK_BUTTON_PRESS)
+				gMouse::handleClickCount(event);
 
 		__BUTTON_TRY_PROXY:
 		
@@ -719,8 +718,9 @@ __FOUND_WIDGET:
 			if (!control)
 				goto __HANDLE_EVENT;
 
-			while (control->isDesignIgnore())
-				control = control->parent();
+			control = control->ignoreDesign();
+			/*while (control->isDesignIgnore())
+				control = control->parent();*/
 			//fprintf(stderr, "GDK_MOTION_NOTIFY: (%p %s) grab = %p\n", control, control->name(), button_grab);
 
 			gApplication::checkHoveredControl(control);
@@ -780,8 +780,9 @@ __FOUND_WIDGET:
 			if (!control)
 				goto __HANDLE_EVENT;
 
-			while (control->isDesignIgnore())
-				control = control->parent();
+			control = control->ignoreDesign();
+			/*while (control->isDesignIgnore())
+				control = control->parent();*/
 			
 		__SCROLL_TRY_PROXY:
 

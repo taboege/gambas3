@@ -502,7 +502,15 @@ BEGIN_PROPERTY(CWIDGET_design)
 	if (READ_PROPERTY)
 		GB.ReturnBoolean(CONTROL->isDesign());
 	else
-		CONTROL->setDesign(VPROP(GB_BOOLEAN));
+	{
+		bool v = VPROP(GB_BOOLEAN);
+		if (v == CONTROL->isDesign())
+			return;
+		if (v)
+			CONTROL->setDesign();
+		else
+			GB.Error("Design property cannot be reset");
+	}
 
 END_PROPERTY
 

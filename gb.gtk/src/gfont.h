@@ -95,7 +95,7 @@ public:
 	unsigned _size_set : 1;
 	unsigned _strikeout_set : 1;
 	unsigned _underline_set : 1;
-
+	
 private:
 	
 	bool uline;
@@ -104,7 +104,10 @@ private:
 	void realize();
 	void initFlags();
 	void checkMustFixSpacing();
+	PangoFontMetrics *metrics();
+	void invalidateMetrics();
 
+	PangoFontMetrics *_metrics;
 	int _height;
 	unsigned _must_fix_spacing : 1;
 };

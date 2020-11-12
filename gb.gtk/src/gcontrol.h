@@ -90,8 +90,10 @@ public:
 
 	void setCursor(gCursor *vl);
 	void setAcceptDrops(bool vl);
-	virtual void setDesign(bool vl);
-	void setDesignIgnore();
+	
+	virtual void setDesign(bool ignore = false);
+	gControl *ignoreDesign();
+	
 	virtual void setEnabled(bool vl);
 	void setExpand (bool vl);
 	void setIgnore (bool vl);
@@ -277,7 +279,6 @@ public:
 	unsigned _no_auto_grab : 1;            // do not automatically grab widget on button press event
 	unsigned _no_background : 1;           // Don't draw the background automatically
 	unsigned _use_wheel : 1;               // Do not propagate the mouse wheel event
-	unsigned _user_control : 1;            // If the control is a UserControl
 	unsigned _is_container : 1;            // I am a container
 	unsigned _is_window : 1;               // I am a window
 	unsigned _is_button : 1;               // I am a button

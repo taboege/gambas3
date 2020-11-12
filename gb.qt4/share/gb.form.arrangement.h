@@ -584,8 +584,6 @@ void FUNCTION_NAME(void *_object) //(QFrame *cont)
 
 				case ARRANGE_FILL:
 					
-					w = h = 0;
-					
 					for(;;)
 					{
 						wid = GET_NEXT_CHILD_WIDGET();
@@ -598,13 +596,16 @@ void FUNCTION_NAME(void *_object) //(QFrame *cont)
 						
 						MOVE_RESIZE_WIDGET(ob, wid, xc, yc, wc, hc);
 						
-						if (GET_WIDGET_H(wid) > h)
+						/*if (GET_WIDGET_H(wid) > h)
 							h = GET_WIDGET_H(wid);
 						
 						if (GET_WIDGET_W(wid) > w)
-							w = GET_WIDGET_W(wid);
+							w = GET_WIDGET_W(wid);*/
 					}
 
+					w = wc;
+					h = hc;
+					
 					break;
 			}
 
@@ -662,10 +663,7 @@ void FUNCTION_NAME(void *_object) //(QFrame *cont)
 						break;
 					
 					case ARRANGE_FILL:
-// 						#ifndef QNAMESPACE_H
-// 						if (strncmp(((gControl *)_object)->name(), "DataControl", 11) == 0)
-// 							fprintf(stderr, "%s: RESIZE_CONTAINER(%p, %p, %d, %d)\n", ((gControl *)_object)->name(), GET_WIDGET(_object), cont, w, h);
-// 						#endif
+						//fprintf(stderr, "%s: RESIZE_CONTAINER(%p, %p, %d, %d)\n", GET_OBJECT_NAME(_object), GET_WIDGET(_object), cont, w + padding * 2, h + padding * 2);
 						RESIZE_CONTAINER(_object, cont, w + padding * 2, h + padding * 2);
 						break;
 				}

@@ -259,7 +259,7 @@ void MyLabel::calcMinimumHeight(bool adjust)
 {
 	void *_object = CWidget::getReal(this);
 
-	if (!THIS || (!autoResize && !adjust) || CWIDGET_test_flag(THIS, WF_DESIGN) || text().length() <= 0)
+	if (!THIS || (!autoResize && !adjust) || CWIDGET_is_design(THIS) || text().length() <= 0)
 		return;
 	
 	//qDebug("calcMinimumHeight: %p %s", ob, ((CWIDGET *)ob)->name);

@@ -472,7 +472,10 @@ void CCONTAINER_insert_child(void *_object)
 {
 	CWIDGET *parent = CWidget::get(WIDGET->parentWidget());
 	if (parent)
+	{
+		CCONTAINER_update_design(parent);
 		GB.Raise(parent, EVENT_Insert, 1, GB_T_OBJECT, THIS);
+	}
 }
 
 void CCONTAINER_decide(CWIDGET *control, bool *width, bool *height)
@@ -493,6 +496,42 @@ void CCONTAINER_decide(CWIDGET *control, bool *width, bool *height)
 	    || (THIS_ARRANGEMENT->mode == ARRANGE_VERTICAL && control->flag.expand)
 	    || (THIS_ARRANGEMENT->mode == ARRANGE_COLUMN && control->flag.expand))
 		*height = TRUE;
+}
+
+void CCONTAINER_update_design(void *_object)
+{
+	QObjectList list;
+	CWIDGET *child;
+	int i;
+
+	if (!THIS->widget.flag.design)
+		return;
+	
+	if (!THIS_ARRANGEMENT->user && !THIS->widget.flag.design_ignore)
+		return;
+	
+	//fprintf(stderr, "CCONTAINER_update_design: %s %d\n", THIS->widget.name, THIS->widget.flag.design_ignore);
+	
+	if (THIS->widget.flag.design_ignore)
+	{
+		list = THIS->widget.widget->children();
+		
+		for (i = 0; i < list.count(); i++)
+		{
+			child = CWidget::getRealExisting(list.at(i));
+			if (child)
+				CWIDGET_set_design(child, true);
+		}
+	}
+	
+	list = CONTAINER->children();
+	
+	for (i = 0; i < list.count(); i++)
+	{
+		child = CWidget::getRealExisting(list.at(i));
+		if (child)
+			CWIDGET_set_design(child, true);
+	}
 }
 
 
@@ -1121,6 +1160,7 @@ BEGIN_PROPERTY(UserControl_Container)
 			if (current)
 				CWIDGET_container_for(current, NULL);
 			THIS->container = WIDGET;
+			CCONTAINER_update_design(THIS);
 			CWIDGET_register_proxy(THIS, NULL);
 			return;
 		}
@@ -1151,10 +1191,11 @@ BEGIN_PROPERTY(UserControl_Container)
 			
 			THIS->container = w;
 
-			CWIDGET_update_design((CWIDGET *)THIS);
 			CCONTAINER_arrange(THIS);
 
 			CWIDGET_set_color((CWIDGET *)cont, bg, fg, true);
+			
+			CCONTAINER_update_design(THIS);
 
 			CWIDGET_register_proxy(THIS, cont);
 		}

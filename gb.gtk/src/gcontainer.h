@@ -67,7 +67,7 @@ public:
 	virtual int containerHeight();
 
 	void setArrange(int vl);
-	void setUser(bool vl);
+	void setUser();
 	void setAutoResize(bool vl);
 	void setPadding(int vl);
 	void setSpacing(bool vl);
@@ -110,16 +110,16 @@ public:
 	virtual void setVisible(bool vl);
 
 	gContainer *proxyContainer() { return _proxyContainer ? _proxyContainer : this; }
-	void setProxyContainer(gContainer *proxy) { if (_proxyContainer != this) _proxyContainer = proxy; else _proxyContainer = NULL; }
+	void setProxyContainer(gContainer *proxy);
 	gContainer *proxyContainerFor() { return _proxyContainerFor; }
 	void setProxyContainerFor(gContainer *proxy) { if (proxy != this) _proxyContainerFor = proxy; else _proxyContainerFor = NULL; }
+	
+	virtual void setDesign(bool ignore = false);
 	
 	void disableArrangement();
 	void enableArrangement();
 	bool isArrangementEnabled() const { return _no_arrangement == 0; }
 	
-	virtual void setDesign(bool vl);
-
 //"Signals"
 	void (*onArrange)(gContainer *sender);
 	void (*onBeforeArrange)(gContainer *sender);
@@ -142,7 +142,7 @@ public:
 private:
 
 	void initialize();
-	void setDesignRecursive();
+	void updateDesignChildren();
 
 	gContainerArrangement arrangement;
   gContainer *_proxyContainer;

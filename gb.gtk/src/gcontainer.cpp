@@ -395,13 +395,14 @@ void gContainer::setAutoResize(bool vl)
 	}
 }
 
-void gContainer::setUser(bool vl)
+void gContainer::setUser()
 {
-	if (vl != arrangement.user)
-	{
-		arrangement.user = vl;
-		performArrange();
-	}
+	if (arrangement.user)
+		return;
+	
+	arrangement.user = true;
+	performArrange();
+	updateDesignChildren();
 }
 
 void gContainer::setInvert(bool vl)
@@ -613,6 +614,9 @@ void gContainer::insert(gControl *child, bool realize)
 	if (hasForeground() && !child->_fg_set) child->setForeground();
 #endif
   child->updateFont();
+	
+	if ((isUser() && isDesign()) || isDesignIgnore())
+		child->setDesign(true);
 }
 
 void gContainer::remove(gControl *child)
@@ -850,29 +854,38 @@ void gContainer::clear()
 	}
 }
 
-void gContainer::setDesignRecursive()
+void gContainer::updateDesignChildren()
 {
 	int i;
-	gControl *child;
-	gContainer *proxy = proxyContainer();
+	gContainer *cont;
 
-	for (i = 0;; i++)
-	{
-		child = proxy->child(i);
-		if (!child)
-			break;
-		child->setDesignIgnore();
-		if (child->isContainer())
-			((gContainer *)child)->setDesignRecursive();
-	}
-}
-
-void gContainer::setDesign(bool vl)
-{
-	if (!vl || !isUser())
+	if (!isDesign())
 		return;
 	
-	gControl::setDesign(true);
-	setDesignRecursive();
+	if (!isUser() && !isDesignIgnore())
+		return;
+	
+	cont = isDesignIgnore() ? this : proxyContainer();
+	
+	for (i = 0; i < cont->childCount(); i++)
+		cont->child(i)->setDesign(true);
 }
 
+void gContainer::setDesign(bool ignore)
+{
+	if (isDesign())
+		return;
+	
+	gControl::setDesign(ignore);
+	updateDesignChildren();
+}
+
+void gContainer::setProxyContainer(gContainer *proxy)
+{
+	if (_proxyContainer != this)
+		_proxyContainer = proxy;
+	else
+		_proxyContainer = NULL;
+	
+	updateDesignChildren();
+}

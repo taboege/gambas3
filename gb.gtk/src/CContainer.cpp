@@ -376,8 +376,7 @@ BEGIN_METHOD(UserControl_new, GB_OBJECT parent)
 	InitControl(new gPanel(CONTAINER(VARG(parent))), (CWIDGET*)THIS);
 	
 	PANEL->setArrange(ARRANGE_FILL);
-	PANEL->setUser(true);
-
+	PANEL->setUser();
 	THIS_UC->container = THIS;
 
 END_METHOD

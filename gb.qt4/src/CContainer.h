@@ -126,6 +126,8 @@ void CCONTAINER_draw_border_without_widget(QPainter *p, char border, QStyleOptio
 void CCONTAINER_set_border(char *border, char new_border, QWidget *wid);
 int CCONTAINER_get_border_width(char border);
 
+void CCONTAINER_update_design(void *_object);
+
 class MyFrame : public QWidget
 {
 	Q_OBJECT
