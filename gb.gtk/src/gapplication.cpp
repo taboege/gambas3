@@ -301,7 +301,7 @@ static void gambas_handle_event(GdkEvent *event)
 	widget = gtk_get_event_widget(event);
 	if (!widget)
 		goto __HANDLE_EVENT;
-
+	
 	if (_debug_keypress && (event->type == GDK_KEY_PRESS || event->type == GDK_KEY_RELEASE))
 	{
 		fprintf(stderr, "[%p] %s: keyval = %d state = %08X (%08X) is_modifier = %d hardware = %d send_event = %d for %p\n", event, event->type == GDK_KEY_PRESS ? "GDK_KEY_PRESS" : "GDK_KEY_RELEASE",
@@ -568,7 +568,9 @@ __FOUND_WIDGET:
 			}
 
 			save_control = find_child(control, (int)event->button.x_root, (int)event->button.y_root, button_grab);
-			save_control = save_control->ignoreDesign();
+			
+			if (save_control)
+				save_control = save_control->ignoreDesign();
 			//fprintf(stderr, "save_control = %p %s\n", save_control, save_control ? save_control->name() : "");
 			
 			if (!save_control)
