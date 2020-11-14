@@ -404,6 +404,12 @@ BEGIN_PROPERTY(WebView_Link)
 
 END_PROPERTY
 
+BEGIN_METHOD_VOID(WebView_Clear)
+
+	WIDGET->setPage(new QWebEnginePage(WIDGET));
+
+END_METHOD
+
 #if 0
 BEGIN_PROPERTY(WebView_HTML)
 
@@ -847,6 +853,7 @@ GB_DESC WebViewDesc[] =
 	GB_PROPERTY_READ("Link", "s", WebView_Link),
 	
 	GB_METHOD("SetHtml", NULL, WebView_SetHtml, "(Html)s[(Root)s]"),
+	GB_METHOD("Clear", NULL, WebView_Clear, NULL),
 	
 	GB_METHOD("Back", NULL, WebView_Back, NULL),
 	GB_METHOD("Forward", NULL, WebView_Forward, NULL),
@@ -885,7 +892,8 @@ QWebEngineView *MyWebEngineView::createWindow(QWebEnginePage::WebWindowType type
 	void *_object = QT.GetObject(this);
 	QWebEngineView *new_view;
 	
-	GB.Raise(THIS, EVENT_NEW_VIEW, 0);
+	if (GB.Raise(THIS, EVENT_NEW_VIEW, 0))
+		return NULL;
 	
 	if (!THIS->new_view)
 		return NULL;
@@ -971,13 +979,14 @@ void WebViewSignalManager::loadFinished(bool ok)
 {
 	GET_SENDER();
 
-	GB.FreeString(&THIS->link);
 	THIS->progress = 100;
 
 	if (ok)
 		GB.Raise(THIS, EVENT_FINISH, 0);
 	else //if (!THIS->stopping)
 		GB.Raise(THIS, EVENT_ERROR, 0);
+	
+	GB.FreeString(&THIS->link);
 }
 
 
