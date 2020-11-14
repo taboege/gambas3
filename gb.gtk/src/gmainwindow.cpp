@@ -1238,7 +1238,7 @@ void gMainWindow::setPersistent(bool vl)
   _persistent = vl;
 }
 
-bool gMainWindow::doClose()
+bool gMainWindow::doClose(bool destroying)
 {
 	if (_closing || _closed)
 		return false;
@@ -1257,7 +1257,7 @@ bool gMainWindow::doClose()
 
 		if (_closed)
 		{
-			if (_persistent)
+			if (_persistent || destroying)
 				hide();
 			else
 				destroy();
@@ -1286,7 +1286,7 @@ bool gMainWindow::doClose()
 
 			if (!isModal())
 			{
-				if (_persistent)
+				if (_persistent || destroying)
 					hide();
 				else
 					destroy();
@@ -1974,6 +1974,6 @@ void gMainWindow::calcCsdSize()
 
 void gMainWindow::destroy()
 {
-	doClose();
+	doClose(true);
 	gControl::destroy();
 }

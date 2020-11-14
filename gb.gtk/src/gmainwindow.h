@@ -144,7 +144,7 @@ public:
 	void initWindow();
 	bool emitOpen();
 	void remap();
-	bool doClose();
+	bool doClose(bool destroying = false);
 	void afterShow();
 	void checkMenuBar();
 	int menuBarHeight();
