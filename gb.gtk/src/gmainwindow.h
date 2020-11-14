@@ -115,6 +115,7 @@ public:
 	virtual bool resize(int w, int h);
 	bool close();
 	virtual void reparent(gContainer *newpr, int x, int y);
+	virtual void destroy();
 
 //"Signals"
 	void (*onOpen)(gMainWindow *sender);

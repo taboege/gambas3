@@ -206,7 +206,7 @@ public:
 	
 	bool grab();
 	
-	void destroy();
+	virtual void destroy();
 	void destroyNow() { destroy(); cleanRemovedControls(); }
 	
 	void lock() { _locked++; }

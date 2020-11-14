@@ -504,7 +504,7 @@ gMainWindow::gMainWindow(gContainer *par) : gContainer(par)
 
 gMainWindow::~gMainWindow()
 {
-	//fprintf(stderr, "delete window %p %s\n", this, name());
+	//fprintf(stderr, "delete window %p %s _opened = %d\n", this, name(), _opened);
 
 	gApplication::handleFocusNow();
 
@@ -1970,4 +1970,10 @@ void gMainWindow::calcCsdSize()
 	#ifdef DEBUG_RESIZE
 	fprintf(stderr, "calcCsdSize: %s: csd = %d %d\n", name(), _csd_w, _csd_h);
 	#endif
+}
+
+void gMainWindow::destroy()
+{
+	doClose();
+	gControl::destroy();
 }
