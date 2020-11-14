@@ -306,6 +306,12 @@ BEGIN_PROPERTY(WebView_Link)
 
 END_PROPERTY
 
+BEGIN_METHOD_VOID(WebView_Clear)
+
+	WIDGET->setPage(new QWebPage(WIDGET));
+
+END_METHOD
+
 //-------------------------------------------------------------------------
 
 static QWebHistoryItem get_item(QWebHistory *history, int index)
@@ -432,6 +438,7 @@ GB_DESC WebViewDesc[] =
 	GB_PROPERTY_READ("Link", "s", WebView_Link),
 
 	GB_METHOD("SetHtml", NULL, WebView_SetHtml, "(Html)s[(Root)s]"),
+	GB_METHOD("Clear", NULL, WebView_Clear, NULL),
 	
 	GB_METHOD("Back", NULL, WebView_Back, NULL),
 	GB_METHOD("Forward", NULL, WebView_Forward, NULL),
