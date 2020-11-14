@@ -115,6 +115,7 @@ const void *const GAMBAS_Api[] =
 	(void *)GB_GetLastEventName,
 	(void *)CTIMER_raise,
 	(void *)GB_Stopped,
+	(void *)GB_IsRaiseLocked,
 
 	(void *)GB_NParam,
 	(void *)GB_Conv,
@@ -146,6 +147,7 @@ const void *const GAMBAS_Api[] =
 	(void *)GB_New,
 	(void *)CLASS_auto_create,
 	(void *)GB_CheckObject,
+	(void *)OBJECT_is_locked,
 
 	(void *)GB_GetEnum,
 	(void *)GB_StopEnum,
@@ -749,6 +751,25 @@ bool GB_CanRaise(void *object, int event_id)
 	return (func_id != 0);
 }
 
+bool GB_IsRaiseLocked(void *object)
+{
+	COBSERVER *obs;
+
+	if (GAMBAS_DoNotRaiseEvent)
+		return TRUE;
+	
+	if (!object || !OBJECT_has_events(object))
+		return TRUE;
+
+	LIST_for_each(obs, OBJECT_event(object)->observer)
+	{
+		if (OBJECT_active_parent(obs))
+			return FALSE;
+	}
+	
+	return OBJECT_active_parent(object) == NULL;
+}
+
 
 static int get_event_func_id(ushort *event_tab, int event_id)
 {
@@ -808,7 +829,7 @@ static bool raise_event(OBJECT *observer, void *object, int func_id, int nparam)
 	}
 	CATCH 
 	{
-		if (ERROR->info.code && ERROR->info.code != E_ABORT && !STACK_has_error_handler())
+		if (ERROR->info.code && ERROR->info.code != E_ABORT) // && !STACK_has_error_handler())
 		{
 			ERROR_hook();
 

@@ -985,6 +985,7 @@ typedef
 		char *(*GetLastEventName)(void);
 		void (*RaiseTimer)(void *);
 		bool (*Stopped)(void);
+		bool (*IsRaiseLocked)(void *);
 
 		int (*NParam)(void);
 		bool (*Conv)(GB_VALUE *, GB_TYPE);
@@ -1016,6 +1017,7 @@ typedef
 		void *(*New)(GB_CLASS, char *, void *);
 		void *(*AutoCreate)(GB_CLASS, int);
 		bool (*CheckObject)(void *);
+		bool (*IsLocked)(void *);
 
 		void *(*GetEnum)(void);
 		void (*StopEnum)(void);

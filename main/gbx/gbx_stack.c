@@ -119,6 +119,8 @@ bool STACK_has_error_handler(void)
 		sc = &STACK_frame[i];
 		if (sc->ec || sc->ep)
 			return TRUE;
+		if (!sc->pc)
+			break;
 	}
 	
 	return FALSE;
