@@ -108,7 +108,8 @@ static GtkWidget*cb_create(WebKitWebView *widget, WebKitNavigationAction *naviga
 {
 	GtkWidget *new_view;
 	
-	GB.Raise(THIS, EVENT_NEW_VIEW, 0);
+	if (GB.Raise(THIS, EVENT_NEW_VIEW, 0))
+		return NULL;
 	
 	if (!THIS->new_view)
 		return NULL;
@@ -163,14 +164,11 @@ static gboolean cb_decide_policy(WebKitWebView *widget, WebKitPolicyDecision *de
 
 PATCH_DECLARE(WEBKIT_TYPE_WEB_VIEW)
 
-
-//---------------------------------------------------------------------------
-
-BEGIN_METHOD(WebView_new, GB_OBJECT parent)
-
+static void create_widget(void *_object, void *parent)
+{
 	THIS->widget = webkit_web_view_new();
 	
-	GTK.CreateControl(THIS, VARG(parent), THIS->widget);
+	GTK.CreateControl(THIS, parent, THIS->widget);
 	
 	PATCH_CLASS(THIS->widget, WEBKIT_TYPE_WEB_VIEW)
 	
@@ -193,7 +191,14 @@ BEGIN_METHOD(WebView_new, GB_OBJECT parent)
 	g_signal_connect(G_OBJECT(WIDGET), "decide-policy", G_CALLBACK(cb_decide_policy), (gpointer)THIS);
 	
 	WEBVIEW_init_settings(THIS);
-	
+}
+
+//---------------------------------------------------------------------------
+
+BEGIN_METHOD(WebView_new, GB_OBJECT parent)
+
+	create_widget(THIS, VARG(parent));
+
 END_METHOD
 
 BEGIN_METHOD_VOID(WebView_free)
@@ -308,6 +313,12 @@ BEGIN_PROPERTY(WebView_Link)
 
 END_PROPERTY
 
+BEGIN_METHOD_VOID(WebView_Clear)
+
+	create_widget(THIS, NULL);
+
+END_METHOD
+
 //---------------------------------------------------------------------------
 
 BEGIN_PROPERTY(WebViewHistoryItem_Title)
@@ -350,7 +361,7 @@ END_METHOD
 
 BEGIN_PROPERTY(WebViewHistory_CanGoBack)
 
-	GB.ReturnBoolean(webkit_web_view_can_go_forward(WIDGET));
+	GB.ReturnBoolean(webkit_web_view_can_go_back(WIDGET));
 
 END_PROPERTY
 
@@ -401,6 +412,7 @@ GB_DESC WebViewDesc[] =
 	GB_PROPERTY_READ("Link", "s", WebView_Link),
 
 	GB_METHOD("SetHtml", NULL, WebView_SetHtml, "(Html)s[(Root)s]"),
+	GB_METHOD("Clear", NULL, WebView_Clear, NULL),
 
 	GB_METHOD("Back", NULL, WebView_Back, NULL),
 	GB_METHOD("Forward", NULL, WebView_Forward, NULL),
