@@ -206,6 +206,9 @@ bool gb_raise_MouseEvent(gControl *sender, int type)
 					}
 					return true;
 				}
+				
+				if (sender->hasNativePopup())
+					return false;
 
 				if (sender->isTopLevel())
 					break;

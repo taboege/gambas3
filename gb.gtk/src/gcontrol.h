@@ -148,6 +148,8 @@ public:
 	virtual void updateFont();
 	virtual void updateSize();
 	
+	bool hasNativePopup() const { return _has_native_popup; }
+	
 #ifdef GTK3
 	virtual GtkWidget *getStyleSheetWidget();
 	virtual const char *getStyleSheetColorNode();
@@ -295,6 +297,7 @@ public:
 	unsigned _is_window : 1;               // I am a window
 	unsigned _is_button : 1;               // I am a button
 	unsigned _is_drawingarea : 1;          // I am a drawing area
+	unsigned _has_native_popup : 1;         // I have a native popup menu
 	
   void removeParent() { pr = NULL; }
 	void initSignals();

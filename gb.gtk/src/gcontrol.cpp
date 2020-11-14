@@ -361,6 +361,7 @@ void gControl::initAll(gContainer *parent)
 	_is_window = false;
 	_is_button = false;
 	_is_drawingarea = false;
+	_has_native_popup = false;
 
 	onFinish = NULL;
 	onFocusEvent = NULL;

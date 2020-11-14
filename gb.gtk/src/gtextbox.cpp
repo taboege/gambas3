@@ -145,6 +145,7 @@ gTextBox::gTextBox(gContainer *parent, bool combo) : gControl(parent)
 	
 	_changed = false;
 	_border = true;
+	_has_native_popup = true;
 	
 	onChange = NULL;
 	onActivate = NULL;

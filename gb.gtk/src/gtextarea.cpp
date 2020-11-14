@@ -479,6 +479,7 @@ gTextArea::gTextArea(gContainer *parent) : gControl(parent)
 	_has_input_method = true;
 	_use_wheel = true;
 	_fix_spacing_tag = NULL;
+	_has_native_popup = true;
 	
 	onChange = 0;
 	onCursor = 0;

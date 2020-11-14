@@ -1334,7 +1334,6 @@ void gMainWindow::createWindow(GtkWidget *new_border)
 
 void gMainWindow::reparent(gContainer *newpr, int x, int y)
 {
-	GtkWidget *new_border;
 	int w, h;
 	gColor fg, bg;
 
@@ -1408,7 +1407,6 @@ void gMainWindow::reparent(gContainer *newpr, int x, int y)
 
 void gMainWindow::setType(GtkWindowType type)
 {
-	GtkWidget *new_border;
 	int w, h;
 	gColor bg, fg;
 

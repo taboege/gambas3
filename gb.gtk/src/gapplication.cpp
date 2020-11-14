@@ -692,6 +692,9 @@ __FOUND_WIDGET:
 						cancel = true;
 						break;
 					}
+					if (control->hasNativePopup())
+						goto __HANDLE_EVENT;
+					
 					control = control->_proxy_for;
 				}
 			}
