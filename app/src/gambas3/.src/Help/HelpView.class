@@ -46,6 +46,7 @@ Private Sub ShowWaiting(bShow As Boolean)
 
   If bShow Then
     $hSpinner.Show
+    WebView_Move
     $hSpinner.Raise
     $hSpinner.Start
   Else
@@ -106,7 +107,6 @@ Public Sub WebView_Resize()
   
 End
 
-  
 Public Sub WebView_NewView()
   
   Project.OpenWebPage(Me.Link)
@@ -163,7 +163,7 @@ Public Sub WebView_Start()
   
   'Debug Me.Link
   
-  ShowWaiting(False)
+  ShowWaiting(True)
   $hNotExist.Hide
 
   sUrl = Me.Link
@@ -207,18 +207,11 @@ Public Sub WebView_Start()
 End
      
   
-Public Sub WebView_Progress()
-
-  ShowWaiting(Me.Progress < 1)
-
+Public Sub WebView_Finish()
+  
+  ShowWaiting(False)
+  
 End
-
-' Public Sub WebView_Finish()
-'   
-'   Debug
-'   
-' End
-
 
 Private Function NoHeader_Read() As Boolean
 

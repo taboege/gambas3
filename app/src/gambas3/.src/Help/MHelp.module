@@ -444,10 +444,10 @@ Public Sub InitWebViewWith(hWebView As WebView, iType As Integer, sSymbol As Str
     Endif
     
   Endif
+
+  hWebView.Clear
   
   'hWebView.Stop
-  'hWebView.History.Clear
-  
   If sHtml Then
     
     sTemp = File.Dir(Temp$()) &/ "help"
@@ -473,8 +473,6 @@ Public Sub InitWebViewWith(hWebView As WebView, iType As Integer, sSymbol As Str
     hWebView.SetHtml("<html><body><h2><i>" & ("No help found.") & "</i></h2></body></html>")
     
   Endif
-  
-  'hWebView.TextZoom = 0.8
   
 End
 

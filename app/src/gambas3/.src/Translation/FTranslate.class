@@ -175,6 +175,7 @@ Public Sub Form_Open()
 
   If SetLang() Then
     Me.Close
+    Return
   Endif
 
   tabTranslate_Click
@@ -281,12 +282,13 @@ Private Sub SetLang(Optional sLang As String) As Boolean
     cvwTranslate[iIndex][2] = hTrans.Comments[sMsgId]
     cvwTranslate[iIndex][3] = sMsgId
   Next
-
+  
   $nTrans = hTrans.Translations.Count
 
   MakeFileChoice
-  UpdateOrg(True)
 
+  UpdateOrg(True)
+  
   'cvwTranslate.Columns[1].Text = Language.ToName(sLang)
 
   txtOrig.Text = ""
@@ -1353,6 +1355,7 @@ Private Sub MakeFileChoice()
   Dim iPos As Integer
 
   cmbFileChoice.Clear
+  
   'cbxFileChoice.Add("(" & ("All files") & ")")
 
   With cvwTranslate
@@ -1371,6 +1374,7 @@ Private Sub MakeFileChoice()
   aChoice.Add("(" & ("All files") & ")", 0)
 
   cmbFileChoice.List = aChoice.Sort()
+  
   Object.Lock(cmbFileChoice)
   cmbFileChoice.Index = 0
   Object.Unlock(cmbFileChoice)

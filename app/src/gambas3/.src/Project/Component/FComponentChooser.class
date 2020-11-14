@@ -169,7 +169,7 @@ End
 
 Public Sub btnBack_Click()
 
-  If webAboutComponent.History.Index Then
+  If webAboutComponent.History.CanGoBack Then
     webAboutComponent.Back
   Else
     webAboutComponent.Stop

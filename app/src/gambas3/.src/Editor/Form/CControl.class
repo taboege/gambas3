@@ -297,6 +297,7 @@ Private Function CreateControl(sName As String, sClass As String, hParent As Obj
   'IF hCtrl IS UserControl OR NOT hCtrl IS Container THEN
   'Try hCtrl.Tracking = True
   hCtrl.Raise
+  hCtrl.Name = sName
   Try hCtrl.Design = True
   
   Return hCtrl
