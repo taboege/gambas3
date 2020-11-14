@@ -41,6 +41,9 @@ static void gb_tabstrip_post_click(gTabStrip *sender)
 {
 	CWIDGET *_object = GetObject(sender);
 	
+	if (GB.IsRaiseLocked(_object))
+		return;
+	
 	GB.Ref(THIS);
 	GB.Post((GB_CALLBACK)gb_tabstrip_raise_click, (long)THIS);
 }

@@ -315,10 +315,10 @@ static bool always_can_raise(gControl *sender, int type)
 
 void gControl::initAll(gContainer *parent)
 {
-	bufW = 0;
-	bufH = 0;
-	bufX = 0;
-	bufY = 0;
+	bufW = 8;
+	bufH = 8;
+	bufX = -16;
+	bufY = -16;
 	curs = NULL;
 	_font = NULL;
 	_resolved_font = NULL;
@@ -546,6 +546,14 @@ bool gControl::getScreenPos(int *x, int *y)
 {
 	if (!gtk_widget_get_window(border))
 	{
+		if (pr)
+		{
+			pr->getScreenPos(x, y);
+			x += pr->clientX() + bufX;
+			y += pr->clientY() + bufY;
+			return false;
+		}
+		
 		*x = *y = 0; // widget is not realized
 		return true;
 	}
@@ -580,26 +588,6 @@ int gControl::screenY()
 	int x,y;
 	getScreenPos(&x, &y);
 	return y;
-}
-
-void gControl::setLeft(int l)
-{
-	move(l,top());
-}
-
-void gControl::setTop(int t)
-{
-	move(left(),t);
-}
-
-void gControl::setWidth(int w)
-{
-	resize(w,height());
-}
-
-void gControl::setHeight(int h)
-{
-	resize(width(),h);
 }
 
 static void send_configure (gControl *control)
@@ -684,6 +672,9 @@ bool gControl::resize(int w, int h)
 
 	if (h < minimumHeight())
 		h = minimumHeight();*/
+	
+	if (w < 0) w = 0;
+	if (h < 0) h = 0;
 
 	if (width() == w && height() == h)
 		return true;
@@ -739,7 +730,7 @@ void gControl::moveResize(int x, int y, int w, int h)
 		pr->enableArrangement();
 }
 
-void gControl::updateGeometry()
+void gControl::updateGeometry(bool force)
 {
 // 	if (_dirty_pos)
 // 	{
@@ -757,17 +748,17 @@ void gControl::updateGeometry()
 // 		//gtk_widget_set_size_request(border, width(), height());
 // 		gtk_widget_size_allocate(border,
 // 	}
-	if (_dirty_pos || _dirty_size)
+	if (force || _dirty_pos || _dirty_size)
 	{
 		//g_debug("move-resize: %s: %d %d %d %d", this->name(), x(), y(), width(), height());
-		if (_dirty_pos)
+		if (force || _dirty_pos)
 		{
 			if (pr)
 				pr->moveChild(this, x(), y());
 
 			_dirty_pos = false;
 		}
-		if (_dirty_size && isVisible())
+		if ((force || _dirty_size) && isVisible())
 		{
 			gtk_widget_set_size_request(border, width(), height());
 			_dirty_size = false;
@@ -1838,6 +1829,8 @@ void gControl::realize(bool make_frame)
 #endif
 
 	connectParent();
+	updateGeometry(true);
+
 	initSignals();
 
 //#ifndef GTK3
@@ -2831,3 +2824,19 @@ gControl *gControl::previousFocus()
 	return ctrl;
 }
 
+void gControl::createBorder(GtkWidget *new_border, bool keep_widget)
+{
+	GtkWidget *old = border;
+	
+	border = new_border;
+	
+	if (keep_widget && widget)
+		gt_widget_reparent(widget, border);
+	
+	if (old)
+	{
+		_no_delete = true;
+		gtk_widget_destroy(old);
+		_no_delete = false;
+	}
+}

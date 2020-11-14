@@ -32,6 +32,8 @@ DECLARE_EVENT(EVENT_Show);
 DECLARE_EVENT(EVENT_Hide);
 //DECLARE_EVENT(EVENT_Remove);
 
+static void connect_signals(GtkWidget *wid, void *_object);
+
 static void raise_show(GtkWidget *widget, CWATCHER *_object)
 {
 	GB.Raise(THIS, EVENT_Show, 0);
@@ -65,16 +67,32 @@ static void raise_configure(GtkWidget *widget, GdkEventConfigure *e, CWATCHER *_
 
 static void cb_destroy(GtkWidget *widget, CWATCHER *_object)
 {
-	GB.Unref(POINTER(&THIS->wid));
-	THIS->wid = 0;
+	gControl *ctrl = THIS->wid->widget;
+	
+	if (ctrl->_no_delete)
+	{
+		connect_signals(ctrl->border, _object);
+	}
+	else
+	{
+		GB.Unref(POINTER(&THIS->wid));
+		THIS->wid = 0;
+	}
 }
 
+static void connect_signals(GtkWidget *wid, void *_object)
+{
+	g_signal_connect(G_OBJECT(wid), "map", G_CALLBACK(raise_show), _object);
+	g_signal_connect(G_OBJECT(wid), "unmap", G_CALLBACK(raise_hide), _object);
+	g_signal_connect(G_OBJECT(wid), "configure-event", G_CALLBACK(raise_configure), _object);
+	g_signal_connect(G_OBJECT(wid), "destroy", G_CALLBACK(cb_destroy), _object);
+}
+	
 
 /** Watcher class *********************************************************/
 
 BEGIN_METHOD(CWATCHER_new, GB_OBJECT control)
 
-	GtkWidget *wid;
 	gControl *control;
 
 	THIS->wid = (CWIDGET*)VARG(control);
@@ -83,7 +101,7 @@ BEGIN_METHOD(CWATCHER_new, GB_OBJECT control)
 		return;
 
 	//fprintf(stderr, "Watcher %p: Ref %p (%s %p)\n", _object, THIS->wid, GB.GetClassName(THIS->wid), THIS->wid);
-	GB.Ref((void*)THIS->wid);
+	GB.Ref((void *)THIS->wid);
 
 	control = THIS->wid->widget;
 	
@@ -92,11 +110,7 @@ BEGIN_METHOD(CWATCHER_new, GB_OBJECT control)
 	THIS->w = control->width() - 1;
 	THIS->h = control->height() - 1;
 
-	wid = THIS->wid->widget->border;
-	g_signal_connect(G_OBJECT(wid), "map", G_CALLBACK(raise_show), _object);
-	g_signal_connect(G_OBJECT(wid), "unmap", G_CALLBACK(raise_hide), _object);
-	g_signal_connect(G_OBJECT(wid), "configure-event", G_CALLBACK(raise_configure), _object);
-	g_signal_connect(G_OBJECT(wid), "destroy", G_CALLBACK(cb_destroy), _object);
+	connect_signals(control->border, THIS);
 
 END_METHOD
 

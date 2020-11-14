@@ -1320,6 +1320,18 @@ static void hide_hidden_children(gContainer *cont)
 	}
 }
 
+void gMainWindow::createWindow(GtkWidget *new_border)
+{
+	if (layout)
+		gt_widget_reparent(layout, new_border);
+	else
+		gt_widget_reparent(widget, new_border);
+	
+	createBorder(new_border);
+	registerControl();
+	setCanFocus(true);
+}
+
 void gMainWindow::reparent(gContainer *newpr, int x, int y)
 {
 	GtkWidget *new_border;
@@ -1336,16 +1348,7 @@ void gMainWindow::reparent(gContainer *newpr, int x, int y)
 	{
 		gtk_window_remove_accel_group(GTK_WINDOW(topLevel()->border), accel);
 
-		new_border = gtk_event_box_new();
-		gt_widget_reparent(widget, new_border);
-		embedMenuBar(new_border);
-		_no_delete = true;
-		gtk_widget_destroy(border);
-		_no_delete = false;
-
-		border = new_border;
-		registerControl();
-		setCanFocus(true);
+		createWindow(gtk_event_box_new());
 
 		setParent(newpr);
 		connectParent();
@@ -1372,16 +1375,8 @@ void gMainWindow::reparent(gContainer *newpr, int x, int y)
 	{
 		gtk_window_remove_accel_group(GTK_WINDOW(topLevel()->border), accel);
 		// TODO: test that
-		new_border = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		gt_widget_reparent(widget, new_border);
-		embedMenuBar(new_border);
-		_no_delete = true;
-		gtk_widget_destroy(border);
-		_no_delete = false;
-
-		border = new_border;
-		registerControl();
-		setCanFocus(true);
+		
+		createWindow(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 
 		if (parent())
 		{
@@ -1427,19 +1422,8 @@ void gMainWindow::setType(GtkWindowType type)
 
 	gtk_window_remove_accel_group(GTK_WINDOW(border), accel);
 	// TODO: test that
-	new_border = gtk_window_new(type);
-	if (layout)
-		gt_widget_reparent(layout, new_border);
-	else
-		gt_widget_reparent(widget, new_border);
-	//embedMenuBar(new_border);
-	_no_delete = true;
-	gtk_widget_destroy(border);
-	_no_delete = false;
-
-	border = new_border;
-	registerControl();
-	setCanFocus(true);
+	
+	createWindow(gtk_window_new(type));
 
 	initWindow();
 	borderSignals();

@@ -27,9 +27,9 @@
 #include "gscrollbar.h"
 #include "gslider.h"
 
-static void cb_change(GtkAdjustment *adj, gSlider *data)
+static void cb_change(GtkRange *wid, gSlider *data)
 {
-	int new_value = gtk_adjustment_get_value(adj);
+	int new_value = gtk_adjustment_get_value(gtk_range_get_adjustment(wid));
 
 	if (data->_value == new_value)
 		return;
@@ -41,45 +41,47 @@ static void cb_change(GtkAdjustment *adj, gSlider *data)
 
 void gSlider::update()
 {
-	GtkAdjustment* adj = gtk_range_get_adjustment(GTK_RANGE(widget));
+	GtkAdjustment *adj = gtk_range_get_adjustment(GTK_RANGE(widget));
 	int value = _value;
+	int max;
 	
 	if (value < _min)
 		value = _min;
 	else if (value > _max)
 		value = _max;
 	
+	//gtk_range_set_adjustment(GTK_RANGE(widget), NULL);
+	
 	if (!isScrollBar())
 	{
-#ifndef GTK3
-	if (_min == _max)
-		_max = _min + 1;
-#endif
-		gtk_range_set_range(GTK_RANGE(widget), (gdouble)_min, (gdouble)_max);
-		gtk_range_set_increments(GTK_RANGE(widget), (gdouble)_step, (gdouble)_page_step);
+		max = _max;
+		#ifndef GTK3
+		if (max == _min)
+			max = _min + 1;
+		#endif
 	}
 	else
 	{
-		gtk_range_set_range(GTK_RANGE(widget), (gdouble)_min, (gdouble)_max + _page_step);
-		gtk_range_set_increments(GTK_RANGE(widget), (gdouble)_step, (gdouble)_page_step);
-		gtk_adjustment_set_page_size(adj, _page_step);
+		max = _max + _page_step;
 	}
-	gtk_range_set_value(GTK_RANGE(widget), value);
-#ifndef GTK3
+	
+	gtk_adjustment_configure(adj, value, _min, max, _step, _page_step, _page_step);
+	
+	#ifndef GTK3
 	gtk_range_set_update_policy(GTK_RANGE(widget), _tracking ? GTK_UPDATE_CONTINUOUS : GTK_UPDATE_DISCONTINUOUS);
-#endif
+	#endif
 
 	checkInverted();
 }
 
 void gSlider::init()
 {
-	GtkAdjustment* adj = gtk_range_get_adjustment(GTK_RANGE(widget));
+	//GtkAdjustment* adj = gtk_range_get_adjustment(GTK_RANGE(widget));
 
 	_use_wheel = true;
 	onChange = NULL;
 
-	g_signal_connect(adj, "value-changed", G_CALLBACK(cb_change), (gpointer)this);
+	g_signal_connect(widget, "value-changed", G_CALLBACK(cb_change), (gpointer)this);
 	//g_signal_connect(adj, "changed", G_CALLBACK(cb_change), (gpointer)this);
 }
 

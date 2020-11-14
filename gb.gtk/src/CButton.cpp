@@ -29,27 +29,12 @@
 
 DECLARE_EVENT(EVENT_Click);
 
-static void _cleanup_gb_raise_button_Click(intptr_t object)
+static void cb_click(gControl *sender)
 {
-	GB.Unref(POINTER(&object));
-}
-
-void gb_raise_button_Click(gControl *sender)
-{
-	GB_RAISE_HANDLER handler;
 	CWIDGET *ob = GetObject(sender);
-
-	if (!ob) return;
-
+	
 	GB.Ref(ob);
-
-	handler.callback = _cleanup_gb_raise_button_Click;
-	handler.data = (intptr_t)ob;
-
-	GB.RaiseBegin(&handler);
-	GB.Raise((void*)ob, EVENT_Click, 0);
-	GB.RaiseEnd(&handler);
-
+	GB.Raise((void *)ob, EVENT_Click, 0);
 	CACTION_raise(ob);
 	GB.Unref(POINTER(&ob));
 }
@@ -63,7 +48,7 @@ CONSTRUCTORS
 BEGIN_METHOD(CBUTTON_new, GB_OBJECT parent)
 
 	InitControl(new gButton(CONTAINER(VARG(parent)), gButton::Button), (CWIDGET*)THIS);
-	BUTTON->onClick=gb_raise_button_Click;
+	BUTTON->onClick = cb_click;
 
 END_METHOD
 
@@ -71,28 +56,28 @@ END_METHOD
 BEGIN_METHOD(CTOGGLEBUTTON_new, GB_OBJECT parent)
 
 	InitControl(new gButton(CONTAINER(VARG(parent)), gButton::Toggle), (CWIDGET*)THIS);
-	BUTTON->onClick=gb_raise_button_Click;
+	BUTTON->onClick = cb_click;
 
 END_METHOD
 
 BEGIN_METHOD(CCHECKBOX_new, GB_OBJECT parent)
 
 	InitControl(new gButton(CONTAINER(VARG(parent)), gButton::Check), (CWIDGET*)THIS);
-	BUTTON->onClick = gb_raise_button_Click;
+	BUTTON->onClick = cb_click;
 
 END_METHOD
 
 BEGIN_METHOD(CRADIOBUTTON_new, GB_OBJECT parent)
 	
 	InitControl(new gButton(CONTAINER(VARG(parent)), gButton::Radio), (CWIDGET*)THIS);
-	BUTTON->onClick=gb_raise_button_Click;
+	BUTTON->onClick = cb_click;
 
 END_METHOD
 
 BEGIN_METHOD(CTOOLBUTTON_new, GB_OBJECT parent)
 
 	InitControl(new gButton(CONTAINER(VARG(parent)), gButton::Tool), (CWIDGET*)THIS);
-	BUTTON->onClick=gb_raise_button_Click;
+	BUTTON->onClick = cb_click;
 
 END_METHOD
 

@@ -157,6 +157,7 @@ public:
 	void setTransientFor();
 	void setType(GtkWindowType type);
 	void calcCsdSize();
+	void createWindow(GtkWidget *new_border);
 	
 	GtkWindowGroup *group;
 	GtkAccelGroup *accel;

@@ -55,13 +55,12 @@ public:
 	
 	gContainer *parent() const { return pr; }
 	bool isAncestorOf(gControl *child);
-	gCursor* cursor();
+
 	bool isDesign() const { return _design; }
 	bool isDesignIgnore() const { return _design_ignore; }
-	virtual bool isEnabled() const;
-	bool isExpand() const { return _expand; }
-	bool isIgnore() const { return _ignore; }
+
 	bool hovered();
+	
 	virtual int handle();
 	
 	int left() const { return bufX; }
@@ -70,45 +69,63 @@ public:
 	int y() const { return top(); }
 	int width() const { return bufW; }
 	int height() const { return bufH; }
-	
+	void setLeft(int v) { move(v, y()); }
+	void setTop(int v) { move(x(), v); }
+	void setWidth(int w) { resize(w, height()); }
+	void setHeight(int h) { resize(width(), h); }
+	virtual void move(int x, int y);
+	virtual bool resize(int w, int h);
+	void resize() { resize(width(), height()); }
+	virtual void moveResize(int x, int y, int w, int h);
+	void getGeometry(GdkRectangle *rect) const { rect->x = bufX; rect->y = bufY; rect->width = bufW; rect->height = bufH; }
+	void setGeometry(GdkRectangle *rect) { moveResize(rect->x, rect->y, rect->width, rect->height); }
+
+	bool isVisible() const { return _visible; }
+	bool isReallyVisible();
+	virtual void setVisible(bool v);
+	void hide() { setVisible(false); }
+	void show() { setVisible(true); }
+
+	virtual bool isEnabled() const;
+	virtual void setEnabled(bool vl);
+
 	int mouse();
+	void setMouse(int m);
+	gCursor* cursor();
+	void setCursor(gCursor *vl);
+	virtual void updateCursor(GdkCursor *cursor);
+	
 	gControl *next();
 	gControl *previous();
 	gControl *nextFocus();
 	gControl *previousFocus();
-	int screenX();
-	int screenY();
-	virtual bool getScreenPos(int *x, int *y);
-	char *tooltip() const { return _tooltip; }
-	bool isVisible() const { return _visible; }
-	bool isReallyVisible();
-	bool acceptDrops() const { return _accept_drops; }
-	const char *name() const { return _name; }
-	void setName(char *name);
-	bool action() const { return _action; }
-	void setAction(bool v) { _action = v; }
-
-	void setCursor(gCursor *vl);
-	void setAcceptDrops(bool vl);
-	
-	virtual void setDesign(bool ignore = false);
-	gControl *ignoreDesign();
-	
-	virtual void setEnabled(bool vl);
-	void setExpand (bool vl);
-	void setIgnore (bool vl);
-	virtual void setHeight(int h);
-	void setLeft(int l);
-	void setMouse(int m);
-	virtual void updateCursor(GdkCursor *cursor);
-	char *tooltip() { return _tooltip; }
-	void setTooltip(char *vl);
-	void setTop(int t);
-	virtual void setVisible(bool v);
-	virtual void setWidth(int w);
 	void setPrevious(gControl *prev);
 	void setNext(gControl *next);
 	
+	int screenX();
+	int screenY();
+	virtual bool getScreenPos(int *x, int *y);
+	
+	bool isExpand() const { return _expand; }
+	bool isIgnore() const { return _ignore; }
+	void setExpand (bool vl);
+	void setIgnore (bool vl);
+
+	bool acceptDrops() const { return _accept_drops; }
+	void setAcceptDrops(bool vl);
+	
+	const char *name() const { return _name; }
+	void setName(char *name);
+	
+	bool action() const { return _action; }
+	void setAction(bool v) { _action = v; }
+
+	virtual void setDesign(bool ignore = false);
+	gControl *ignoreDesign();
+	
+	char *tooltip() { return _tooltip; }
+	void setTooltip(char *vl);
+
 	bool isTracking() const;
 	void setTracking(bool vl);
 	
@@ -130,6 +147,7 @@ public:
 	bool ownFont() { return _font != NULL; }
 	virtual void updateFont();
 	virtual void updateSize();
+	
 #ifdef GTK3
 	virtual GtkWidget *getStyleSheetWidget();
 	virtual const char *getStyleSheetColorNode();
@@ -158,26 +176,22 @@ public:
 	void scroll(int x, int y);
 	void setScrollX(int vl);
 	void setScrollY(int vl);
-	//virtual int scrollWidth();
-	//virtual int scrollHeight();
+
 	int scrollBar() const { return _scrollbar; }
 	void setScrollBar(int vl);
 	virtual void updateScrollBar();
 	
 	bool isDragging() const { return _dragging; }
 	
-// "Methods"
 	void dragText(char *txt, char *format = NULL) { gDrag::dragText(this, txt, format); }
 	void dragImage(gPicture *pic) { gDrag::dragImage(this, pic); }
 	
 	virtual void reparent(gContainer *newpr, int x, int y);
-	void hide() { setVisible(false); }
+
 	void lower() { restack(false); }
 	void raise() { restack(true); }
 	void restack(bool raise);
-	virtual void move(int x, int y);
-	virtual bool resize(int w, int h);
-	virtual void moveResize(int x, int y, int w, int h);
+
 	virtual void setFocus();
 	bool hasFocus() const;
 #if GTK_CHECK_VERSION(3, 2, 0)
@@ -185,21 +199,19 @@ public:
 #else
 	bool hasVisibleFocus() const { return hasFocus(); }
 #endif
-	void resize() { resize(width(), height()); }
-	void show() { setVisible(true); }
+
 	void refresh();
 	void refresh(int x, int y, int w, int h);
 	virtual void afterRefresh();
+	
 	bool grab();
+	
 	void destroy();
 	void destroyNow() { destroy(); cleanRemovedControls(); }
 	
 	void lock() { _locked++; }
 	void unlock() { _locked--; }
 	bool locked() { return _locked; }
-	
-	void getGeometry(GdkRectangle *rect) const { rect->x = bufX; rect->y = bufY; rect->width = bufW; rect->height = bufH; }
-	void setGeometry(GdkRectangle *rect) { moveResize(rect->x, rect->y, rect->width, rect->height); }
 	
 	void emit(void *signal);
 	void emit(void *signal, intptr_t arg);
@@ -294,7 +306,7 @@ public:
 	void realize(bool make_frame = false);
 	void realizeScrolledWindow(GtkWidget *wid, bool doNotRealize = false);
 	void registerControl();
-	void updateGeometry();
+	void updateGeometry(bool force = false);
 	bool mustUpdateCursor() { return mouse() != -1 || have_cursor; }
 	
 	bool hasInputMethod() { return _has_input_method; }
@@ -317,6 +329,8 @@ public:
 	void drawBorder(GdkEventExpose *e);
 	void drawBackground(GdkEventExpose *e);
 #endif
+	
+	void createBorder(GtkWidget *new_border, bool keep_widget = false);
 	
 	virtual int minimumHeight() const;
 	virtual int minimumWidth() const;

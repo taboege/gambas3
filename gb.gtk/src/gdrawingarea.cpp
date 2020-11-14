@@ -165,15 +165,12 @@ void gDrawingArea::create(void)
 			gtk_container_remove(GTK_CONTAINER(widget), ch);
 		}
 
-		_no_delete = true;
-		gtk_widget_destroy(border);
-		_no_delete = false;
 		doReparent = true;
 	}
 
 	if (_cached || _use_tablet)
 	{
-		border = gtk_event_box_new();
+		createBorder(gtk_event_box_new());
 		widget = gtk_fixed_new();
 		box = widget;
 		gtk_widget_set_app_paintable(border, TRUE);
@@ -181,7 +178,8 @@ void gDrawingArea::create(void)
 	}
 	else
 	{
-		border = widget = gtk_fixed_new();
+		createBorder(gtk_fixed_new());
+		widget = border;
 		box = NULL;
 	}
 

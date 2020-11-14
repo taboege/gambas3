@@ -105,13 +105,32 @@ bool MAIN_rtl = false;
 
 //-------------------------------------------------------------------------
 
-static void GTK_CreateControl(void *_object, void *parent, GtkWidget *widget)
+static void GTK_CreateControl(CWIDGET *ob, void *parent, GtkWidget *widget)
 {
-	gControl *ctrl = new gControl(CONTAINER(parent));
-	ctrl->border = ctrl->widget = widget;
-	InitControl(ctrl, (CWIDGET*)_object);
+	gControl *ctrl;
+	bool recreate;
+	
+	if (!parent)
+	{
+		recreate = true;
+		ctrl = ob->widget;
+		ctrl->parent()->remove(ctrl);
+		ctrl->createBorder(widget);
+	}
+	else
+	{
+		recreate = false;
+		ctrl = new gControl(CONTAINER(parent));
+		ctrl->border = widget;
+	}
+	
+	ctrl->widget = ctrl->border;
+	InitControl(ctrl, ob);
 	ctrl->realize(false);
 	ctrl->_has_input_method = TRUE;
+	
+	if (recreate)
+		ctrl->updateGeometry(true);
 }
 
 static GtkWidget *GTK_CreateGLArea(void *_object, void *parent, void (*init)(GtkWidget *))
