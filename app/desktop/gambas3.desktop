@@ -12,3 +12,19 @@ Terminal=false
 Type=Application
 Categories=Development;IDE;
 StartupNotify=true
+Actions=QT4;QT5;GTK3
+
+[Desktop Action QT4]
+Name=Run with QT4
+Name[fr]=Exécuter avec QT4
+Exec=env GB_GUI=gb.qt4 gambas3
+
+[Desktop Action QT5]
+Name=Run with QT5
+Name[fr]=Exécuter avec QT5
+Exec=env GB_GUI=gb.qt5 gambas3
+
+[Desktop Action GTK3]
+Name=Run with GTK3
+Name[fr]=Exécuter avec GTK3
+Exec=env GB_GUI=gb.gtk3 gambas3
