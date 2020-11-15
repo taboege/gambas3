@@ -206,7 +206,7 @@ static bool emit_open_event(void *_object)
 	if (THIS->opened)
 		return false;
 
-	CWIDGET_clear_flag(THIS, WF_CLOSED);
+	THIS->closed = false;
 	THIS->opened = true;
 
 	if (!THIS->minw && !THIS->minh)
@@ -221,7 +221,7 @@ static bool emit_open_event(void *_object)
 	//WINDOW->configure();
 	GB.Raise(THIS, EVENT_Open, 0);
 	//THIS->opening = false;
-	if (CWIDGET_test_flag(THIS, WF_CLOSED))
+	if (THIS->closed)
 	{
 		#if DEBUG_WINDOW
 		qDebug("emit_open_event: %s %p [CANCELED]", GB.GetClassName(THIS), THIS);
@@ -563,10 +563,10 @@ static bool do_close(CWINDOW *_object, int ret, bool destroyed = false)
 	bool closed;
 
 	#if DEBUG_WINDOW
-	qDebug("do_close: (%s %p) %d %d", GB.GetClassName(THIS), THIS, THIS->closing, CWIDGET_test_flag(THIS, WF_CLOSED));
+	qDebug("do_close: (%s %p) %d %d", GB.GetClassName(THIS), THIS, THIS->closing, THIS->closed);
 	#endif
 
-	if (THIS->closing || CWIDGET_test_flag(THIS, WF_CLOSED)) // || WIDGET->isHidden())
+	if (THIS->closing || THIS->closed) // || WIDGET->isHidden())
 		return false;
 
 	if (!THIS->toplevel)
@@ -583,14 +583,14 @@ static bool do_close(CWINDOW *_object, int ret, bool destroyed = false)
 
 		if (destroyed || closed)
 		{
-			CWIDGET_set_flag(THIS, WF_CLOSED);
+			THIS->closed = true;
 			THIS->opened = false;
 		}
 
 		if (closed)
 		{
 			WIDGET->hide();
-			if (!CWIDGET_test_flag(_object, WF_PERSISTENT))
+			if (!THIS->persistent)
 				CWIDGET_destroy((CWIDGET *)THIS);
 		}
 	}
@@ -789,27 +789,8 @@ BEGIN_PROPERTY(Window_TopLevel)
 
 END_PROPERTY
 
-/*BEGIN_METHOD_VOID(CWINDOW_dialog)
-
-	CWINDOW *win;
-
-	GB.New(POINTER(&win), GB.GetClass(NULL), NULL, NULL);
-
-	win->ret = 0;
-	((MyMainWindow *)win->widget.widget)->showModal();
-	GB.ReturnInteger(win->ret);
-
-END_METHOD*/
-
 
 BEGIN_PROPERTY(Window_Persistent)
-
-	/*
-	if (READ_PROPERTY)
-		GB.ReturnBoolean(WIDGET->isPersistent());
-	else
-		WIDGET->setPersistent(PROPERTY(char) != 0);
-	*/
 
 	if (!THIS->toplevel)
 	{
@@ -819,14 +800,9 @@ BEGIN_PROPERTY(Window_Persistent)
 	else
 	{
 		if (READ_PROPERTY)
-			GB.ReturnBoolean(CWIDGET_test_flag(THIS, WF_PERSISTENT));
+			GB.ReturnBoolean(THIS->persistent);
 		else
-		{
-			if (VPROP(GB_BOOLEAN))
-				CWIDGET_set_flag(THIS, WF_PERSISTENT);
-			else
-				CWIDGET_clear_flag(THIS, WF_PERSISTENT);
-		}
+			THIS->persistent = VPROP(GB_BOOLEAN);
 	}
 
 END_PROPERTY
@@ -1093,7 +1069,7 @@ BEGIN_METHOD_VOID(Window_Delete)
 	do_close(THIS, 0);
 
 	if (THIS->toplevel)
-		CWIDGET_clear_flag(THIS, WF_PERSISTENT);
+		THIS->persistent = false;
 
 	CWIDGET_destroy((CWIDGET *)THIS);
 
@@ -1674,7 +1650,7 @@ void MyMainWindow::initProperties(int which)
 
 void MyMainWindow::setEventLoop()
 {
-	if (!CWIDGET_test_flag(THIS, WF_CLOSED))
+	if (!THIS->closed)
 		THIS->loopLevel = CWINDOW_Current ? CWINDOW_Current->loopLevel : 0;
 }
 
@@ -1830,7 +1806,7 @@ void MyMainWindow::doShowModal(bool popup, const QPoint *pos)
 {
 	CWIDGET *_object = CWidget::get(this);
 	CWINDOW *parent;
-	bool persistent = CWIDGET_test_flag(THIS, WF_PERSISTENT);
+	bool persistent = THIS->persistent;
 	//QPoint p = pos();
 	QEventLoop eventLoop;
 	GB_ERROR_HANDLER handler;
@@ -2434,7 +2410,7 @@ void MyMainWindow::closeEvent(QCloseEvent *e)
 
 	//modal = isModal(); //testWFlags(Qt::WShowModal); // && THIS->opened;
 
-	CWIDGET_set_flag(THIS, WF_CLOSED);
+	THIS->closed = true;
 	//qApp->sendEvent(WIDGET, new QEvent(EVENT_CLOSE));
 
 	/*if (CWINDOW_Active == THIS)
@@ -2452,7 +2428,7 @@ void MyMainWindow::closeEvent(QCloseEvent *e)
 	if (THIS == CWINDOW_Active)
 		CWINDOW_activate(NULL);
 
-	if (!CWIDGET_test_flag(THIS, WF_PERSISTENT))
+	if (!THIS->persistent)
 	{
 		if (CWINDOW_Main == THIS)
 		{
@@ -2484,7 +2460,7 @@ void MyMainWindow::closeEvent(QCloseEvent *e)
 
 IGNORE:
 
-	CWIDGET_clear_flag(THIS, WF_CLOSED);
+	THIS->closed = false;
 	e->ignore();
 }
 
@@ -2898,7 +2874,7 @@ bool CWindow::eventFilter(QObject *o, QEvent *e)
 {
 	CWINDOW *_object = (CWINDOW *)CWidget::get(o);
 
-	if (THIS && !CWIDGET_test_flag(THIS, WF_DELETED))
+	if (THIS && !THIS->widget.flag.deleted)
 	{
 		if (e->type() == QEvent::Show) // && !e->spontaneous())
 		{

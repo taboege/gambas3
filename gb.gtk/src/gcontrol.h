@@ -56,7 +56,7 @@ public:
 	gContainer *parent() const { return pr; }
 	bool isAncestorOf(gControl *child);
 
-	bool isDesign() const { return _design; }
+	bool isDesign() const { return _design && !_no_design; }
 	bool isDesignIgnore() const { return _design_ignore; }
 
 	bool hovered();
@@ -259,6 +259,7 @@ public:
 	
 	unsigned _design : 1;
 	unsigned _design_ignore : 1;
+	unsigned _no_design : 1;
 	unsigned _expand : 1;
 	unsigned _ignore : 1;
 	unsigned _action : 1;                  // *reserved*

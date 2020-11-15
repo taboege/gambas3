@@ -289,7 +289,7 @@ void CWIDGET_register_proxy(void *_object, void *proxy)
 
 int CWIDGET_check(void *_object)
 {
-	return WIDGET == NULL || CWIDGET_test_flag(THIS, WF_DELETED);
+	return WIDGET == NULL || THIS->flag.deleted;
 }
 
 static QWidget *get_viewport(QWidget *w)
@@ -418,13 +418,13 @@ void CWIDGET_new(QWidget *w, void *_object, bool no_show, bool no_filter, bool n
 	//qDebug("CWIDGET_new: %s %p: %p in (%s %p)", GB.GetClassName(THIS), THIS, w, p ? GB.GetClassName(CWidget::get(p)) : "", CWidget::get(p));
 
 	THIS->widget = w;
-	THIS->level = MAIN_loop_level;
+	//THIS->level = MAIN_loop_level;
 
 	if (!no_init)
 		CWIDGET_init_name(THIS);	
 
 	if (qobject_cast<QAbstractScrollArea *>(w)) // || qobject_cast<Q3ScrollView *>(w))
-		CWIDGET_set_flag(THIS, WF_SCROLLVIEW);
+		THIS->flag.scrollview = TRUE;
 
 	//w->setAttribute(Qt::WA_PaintOnScreen, true);
 	
@@ -537,7 +537,7 @@ void CWIDGET_destroy(CWIDGET *_object)
 	if (!THIS || !WIDGET)
 		return;
 
-	if (CWIDGET_test_flag(THIS, WF_DELETED))
+	if (THIS->flag.deleted)
 		return;
 	
 	if (THIS->flag.dragging)
@@ -554,7 +554,7 @@ void CWIDGET_destroy(CWIDGET *_object)
 	//qDebug("CWIDGET_destroy: %s %p", GB.GetClassName(THIS), THIS);
 
 	CWIDGET_set_visible(THIS, false);
-	CWIDGET_set_flag(THIS, WF_DELETED);
+	THIS->flag.deleted = true;
 
 	WIDGET->deleteLater();
 }
@@ -874,7 +874,7 @@ void CWIDGET_check_hovered()
 
 bool CWIDGET_is_design(void *_object)
 {
-	return THIS->flag.design; //CWIDGET_test_flag(THIS, WF_DESIGN) || CWIDGET_test_flag(THIS, WF_DESIGN_LEADER);
+	return THIS->flag.design && !THIS->flag.no_design;
 }
 
 static void _cleanup_CWIDGET_raise_event_action(intptr_t object)
@@ -1325,7 +1325,7 @@ END_PROPERTY
 BEGIN_METHOD_VOID(Control_Refresh) //, GB_INTEGER x; GB_INTEGER y; GB_INTEGER w; GB_INTEGER h)
 
 	QWIDGET(_object)->update();
-	if (CWIDGET_test_flag(THIS, WF_SCROLLVIEW))
+	if (THIS->flag.scrollview)
 		get_viewport(WIDGET)->update();
 
 END_METHOD
@@ -1879,7 +1879,7 @@ BEGIN_PROPERTY(Control_Drop)
 	else
 	{
 		THIS->flag.drop = VPROP(GB_BOOLEAN);
-		if (CWIDGET_test_flag(THIS, WF_SCROLLVIEW))
+		if (THIS->flag.scrollview)
 			get_viewport(WIDGET)->setAcceptDrops(VPROP(GB_BOOLEAN));
 		else
 			WIDGET->setAcceptDrops(VPROP(GB_BOOLEAN));
@@ -2189,7 +2189,7 @@ CWIDGET *CWidget::getRealExisting(QObject *o)
 {
 	CWIDGET *_object = dict[o];
 	
-	if (THIS && CWIDGET_test_flag(THIS, WF_DELETED))
+	if (THIS && THIS->flag.deleted)
 		_object = NULL;
 	
 	return _object;
@@ -2580,7 +2580,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 			jump = &&__DRAG_LEAVE; break;
 		case QEvent::DeferredDelete:
 			control = CWidget::getDesign(widget);
-			if (!control || CWIDGET_test_flag(control, WF_DELETED))
+			if (!control || control->flag.deleted)
 			{
 				QObject::eventFilter(widget, event); 
 				return false;
@@ -2725,7 +2725,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 		if (!real)
 		{
 			CWIDGET *cont = CWidget::get(widget);
-			if (CWIDGET_test_flag(cont, WF_SCROLLVIEW))
+			if (cont->flag.scrollview)
 			{
 				if (qobject_cast<QScrollBar *>(widget))
 					goto _STANDARD;
@@ -2892,7 +2892,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 		if (!real)
 		{
 			CWIDGET *cont = CWidget::get(widget);
-			if (CWIDGET_test_flag(cont, WF_SCROLLVIEW))
+			if (cont->flag.scrollview)
 			{
 				if (qobject_cast<QScrollBar *>(widget))
 					goto _STANDARD;
@@ -3286,7 +3286,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 	
 	__NEXT:
 	
-	if (!control || CWIDGET_test_flag(control, WF_DELETED))
+	if (!control || control->flag.deleted)
 	{
 		QObject::eventFilter(widget, event); 
 		return (type != QEvent::DeferredDelete);

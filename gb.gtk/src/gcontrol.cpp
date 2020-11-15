@@ -324,6 +324,7 @@ void gControl::initAll(gContainer *parent)
 	_resolved_font = NULL;
 	_design = false;
 	_design_ignore = false;
+	_no_design = false;
 	_expand = false;
 	_ignore = false;
 	_accept_drops = false;

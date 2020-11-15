@@ -210,7 +210,7 @@ MyTabWidget::~MyTabWidget()
 	for (i = 0; i < stack.count(); i++)
 		delete stack.at(i);
 
-	CWIDGET_set_flag(THIS, WF_DELETED);
+	THIS->widget.flag.deleted = true;
 }
 
 void MyTabWidget::setEnabled(bool e)
@@ -437,7 +437,7 @@ BEGIN_METHOD(TabStrip_new, GB_OBJECT parent)
 	QObject::connect(wid, SIGNAL(currentChanged(int)), &CTabStrip::manager, SLOT(currentChanged(int)));
 	QObject::connect(wid, SIGNAL(tabCloseRequested(int)), &CTabStrip::manager, SLOT(tabCloseRequested(int)));
 
-	//THIS->widget.flag.fillBackground = TRUE;
+	THIS->widget.flag.no_design = TRUE;
 	THIS->container = NULL;
 	THIS->index = -1;
 

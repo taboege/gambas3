@@ -55,14 +55,15 @@ typedef
 		QWidget *widget;
 		void *ext;
 		struct {
-			unsigned char f;
+			unsigned deleted : 1;
+			unsigned scrollview : 1;         // inherits QScrollView
 			unsigned expand : 1;
 			unsigned ignore : 1;
 			unsigned notified : 1;
 			unsigned visible : 1;
 			unsigned fillBackground : 1;
 			unsigned noBackground : 1;
-			unsigned shown : 1; // for containers
+			unsigned shown : 1;              // for containers
 			unsigned tracking : 1;
 			unsigned old_tracking : 1;
 			unsigned grab : 1;
@@ -76,16 +77,14 @@ typedef
 			unsigned has_action : 1;
 			unsigned drop : 1;
 			unsigned resized : 1;
-			unsigned wheel : 1; // eat wheel events
+			unsigned wheel : 1;              // eat wheel events
 			unsigned design : 1;
 			unsigned design_ignore : 1;
-			unsigned _reserved : 1;
+			unsigned no_design : 1;
 			} flag;
-		int level;
 		char *name;
 		void *font;
 		}
-//	PACKED
 	CWIDGET; // BEWARE: gb.qt.h MUST be updated accordingly!
 
 typedef
@@ -98,16 +97,6 @@ typedef
 		int32_t arrangement;
 		}
 	CCONTAINER;
-
-enum {
-	WF_PERSISTENT       = (1 << 2),
-	WF_CLOSED           = (1 << 3),
-	WF_DELETED          = (1 << 4),
-	WF_VISIBLE          = (1 << 5),  // Only for menus
-	WF_SCROLLVIEW       = (1 << 6),  // Inherits QScrollView
-	};
-
-
 
 #ifndef __CWIDGET_CPP
 
@@ -141,10 +130,6 @@ DECLARE_PROPERTY(Control_Enabled);
 DECLARE_PROPERTY(Control_Font);
 DECLARE_PROPERTY(Control_Action);
 DECLARE_PROPERTY(Control_Mouse);
-
-#define CWIDGET_set_flag(wid, _f) (((CWIDGET *)wid)->flag.f |= _f)
-#define CWIDGET_clear_flag(wid, _f) (((CWIDGET *)wid)->flag.f &= ~_f)
-#define CWIDGET_test_flag(wid, _f) ((((CWIDGET *)wid)->flag.f & _f) != 0)
 
 #define RAISE_EVENT(_event) \
 { \
