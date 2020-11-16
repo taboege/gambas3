@@ -383,7 +383,7 @@ void gComboBox::setIndex(int vl)
 	else if (vl >= count()) 
 		return;
 		
-	if (vl == index())
+	if (vl == index() && vl >= 0)
 	{
 		emit(SIGNAL(onClick));
 		return;
