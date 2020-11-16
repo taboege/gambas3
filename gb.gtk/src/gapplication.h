@@ -99,6 +99,8 @@ public:
 
 	static void setButtonGrab(gControl *grab) { _button_grab = grab; }
 	
+	static void onThemeChange();
+	
 	static bool fix_breeze;
 	static bool fix_oxygen;
 

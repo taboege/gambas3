@@ -84,7 +84,7 @@ void fill_gdk_color(GdkColor *gcol, gColor color, GdkColormap *cmap)
 }
 #endif
 
-gColor get_gdk_color(GdkColor *gcol)
+gColor gt_gdkcolor_to_color(GdkColor *gcol)
 {
 	return gt_rgb_to_color(SCALE(gcol->red), SCALE(gcol->green), SCALE(gcol->blue));
 }
@@ -163,7 +163,7 @@ gColor get_gdk_fg_color(GtkWidget *wid, bool enabled)
 	GtkStyle* st;
 
 	st=gtk_widget_get_style(wid);
-	return get_gdk_color(&st->fg[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
+	return gt_gdkcolor_to_color(&st->fg[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
 }
 #endif
 
@@ -182,7 +182,7 @@ gColor get_gdk_bg_color(GtkWidget *wid, bool enabled)
 	GtkStyle* st;
 
 	st=gtk_widget_get_style(wid);	
-	return get_gdk_color(&st->bg[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
+	return gt_gdkcolor_to_color(&st->bg[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
 }
 #endif
 
@@ -201,7 +201,7 @@ gColor get_gdk_text_color(GtkWidget *wid, bool enabled)
 	GtkStyle* st;
 
 	st=gtk_widget_get_style(wid);	
-	return get_gdk_color(&st->text[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
+	return gt_gdkcolor_to_color(&st->text[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
 }
 #endif
 
@@ -220,7 +220,7 @@ gColor get_gdk_base_color(GtkWidget *wid, bool enabled)
 	GtkStyle* st;
 
 	st=gtk_widget_get_style(wid);
-	return get_gdk_color(&st->base[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
+	return gt_gdkcolor_to_color(&st->base[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
 }
 #endif
 
@@ -2039,8 +2039,7 @@ void gt_cairo_draw_pixbuf(cairo_t *cr, GdkPixbuf *pixbuf, float x, float y, floa
 #define NUM_STYLES 12
 
 #ifdef GTK3
-static int _style_context_loaded = 0;
-static GtkStyleContext *_style_context[NUM_STYLES];
+static GtkStyleContext *_style[NUM_STYLES] = { 0 };
 #else
 static int _style_loaded = 0;
 static GtkStyle *_style[NUM_STYLES];
@@ -2081,7 +2080,7 @@ const char *gt_get_style_class(GType type)
 	static const char *_class[] = {
 		GTK_STYLE_CLASS_DEFAULT, GTK_STYLE_CLASS_ENTRY, GTK_STYLE_CLASS_BACKGROUND, GTK_STYLE_CLASS_TOOLTIP,
 		GTK_STYLE_CLASS_SCROLLBAR, GTK_STYLE_CLASS_DEFAULT, GTK_STYLE_CLASS_CHECK, GTK_STYLE_CLASS_RADIO,
-		GTK_STYLE_CLASS_FRAME, GTK_STYLE_CLASS_BACKGROUND, GTK_STYLE_CLASS_BUTTON, GTK_STYLE_CLASS_DEFAULT
+		GTK_STYLE_CLASS_FRAME, GTK_STYLE_CLASS_BACKGROUND, GTK_STYLE_CLASS_BUTTON, GTK_STYLE_CLASS_BACKGROUND
 	};
 
 	int index = type_to_index(type);
@@ -2091,33 +2090,47 @@ const char *gt_get_style_class(GType type)
 		return _class[index];
 }
 
-GtkStyleContext *gt_get_style(GType type)
+GtkStyleContext *gt_get_style(GType type, const char *node, const char *more_klass)
 {
-	int index = type_to_index(type);
-	if (index < 0)
-		return NULL;
+	int index;
+	GtkStyleContext *style;
 
-	if ((_style_context_loaded & (1 << index)) == 0)
+	if (!node && !more_klass)
 	{
-		GtkStyleContext *style = gtk_style_context_new();
-		GtkWidgetPath *path = gtk_widget_path_new();
-		const char *klass = gt_get_style_class(type);
-
-		if (klass)
-			gtk_style_context_add_class(style, klass);
-
-		gtk_widget_path_append_type(path, type);
-#if GTK_CHECK_VERSION(3, 20, 0)
-		gtk_widget_path_iter_set_object_name(path, -1, klass);
-#endif
-		gtk_style_context_set_path(style, path);
-		//gtk_widget_path_unref(path);
-
-		_style_context[index] = style;
-		_style_context_loaded |= (1 << index);
+		index = type_to_index(type);
+		style = _style[index];
+		if (style)
+			return style;
 	}
+	
+	GtkWidgetPath *path = gtk_widget_path_new();
+	const char *klass = gt_get_style_class(type);
 
-	return _style_context[index];
+	style = gtk_style_context_new();
+	
+	if (klass)
+		gtk_style_context_add_class(style, klass);
+
+	if (more_klass)
+		gtk_style_context_add_class(style, more_klass);
+
+	gtk_widget_path_append_type(path, type);
+
+	#if GTK_CHECK_VERSION(3, 20, 0)
+	gtk_widget_path_iter_set_object_name(path, -1, klass);
+	if (node)
+	{
+		gtk_widget_path_append_type(path, type);
+		gtk_widget_path_iter_set_object_name(path, 1, node);
+	}
+#endif
+
+	gtk_style_context_set_path(style, path);
+
+	if (!node && !more_klass)
+		_style[index] = style;
+	
+	return style;
 }
 
 #else
@@ -2380,3 +2393,14 @@ void gt_widget_reparent(GtkWidget *widget, GtkWidget *new_parent)
   g_object_unref(widget);
 }
 #endif
+
+void gt_on_theme_change()
+{
+	int i;
+	
+	for (i = 0; i < NUM_STYLES; i++)
+	{
+		g_object_unref(G_OBJECT(_style[i]));
+		_style[i] = NULL;
+	}
+}

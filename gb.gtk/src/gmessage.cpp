@@ -747,7 +747,7 @@ bool gDialog::selectColor()
 	
 	gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(msg)), &gcol);
 	
-	DIALOG_color = get_gdk_color(&gcol);
+	DIALOG_color = gt_gdkcolor_to_color(&gcol);
 	
 	gtk_widget_destroy(GTK_WIDGET(msg));
 	gDialog::setTitle(NULL);

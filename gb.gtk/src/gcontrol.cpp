@@ -1505,7 +1505,7 @@ GList* gControl::controlList()
 
 gColor gControl::getFrameColor()
 {
-	return gDesktop::lightfgColor();
+	return gDesktop::getColor(gDesktop::LIGHT_FOREGROUND);
 }
 
 #ifdef GTK3
@@ -2171,7 +2171,7 @@ gColor gControl::realBackground(bool no_default)
 	else if (pr)
 		return pr->realBackground(no_default);
 	else
-		return no_default ? gDesktop::bgColor() : COLOR_DEFAULT;
+		return no_default ? gDesktop::getColor(gDesktop::BACKGROUND) : COLOR_DEFAULT;
 }
 
 gColor gControl::background()
@@ -2198,7 +2198,7 @@ gColor gControl::realForeground(bool no_default)
 	else if (pr)
 		return pr->realForeground(no_default);
 	else
-		return no_default ? gDesktop::fgColor() : COLOR_DEFAULT;
+		return no_default ? gDesktop::getColor(gDesktop::FOREGROUND) : COLOR_DEFAULT;
 }
 
 gColor gControl::foreground()
@@ -2230,7 +2230,7 @@ gColor gControl::realBackground(bool no_default)
 	else if (pr)
 		return pr->realBackground(no_default);
 	else
-		return no_default ? gDesktop::bgColor() : COLOR_DEFAULT;
+		return no_default ? gDesktop::getColor(gDesktop::BACKGROUND) : COLOR_DEFAULT;
 }
 
 gColor gControl::background()
@@ -2276,7 +2276,7 @@ gColor gControl::realForeground(bool no_default)
 	else if (pr)
 		return pr->realForeground(no_default);
 	else
-		return no_default ? gDesktop::fgColor() : COLOR_DEFAULT;
+		return no_default ? gDesktop::getColor(gDesktop::FOREGROUND) : COLOR_DEFAULT;
 }
 
 gColor gControl::foreground()

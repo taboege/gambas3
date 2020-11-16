@@ -72,51 +72,6 @@ static GtkWindowGroup *get_window_group(GtkWidget *widget)
     return gtk_window_get_group(NULL);
 }
 
-/*static gboolean close_dialog(GtkButton *button)
-{
-	gtk_button_clicked(button);
-	return FALSE;
-}*/
-
-/*static bool raise_key_event_to_parent_window(gControl *control, int type)
-{
-	gMainWindow *win;
-
-	while (control->parent())
-	{
-		win = control->parent()->window();
-		if (win->onKeyEvent && win->canRaise(win, type))
-		{
-			//fprintf(stderr, "onKeyEvent: %d %p %s\n", type, win, win->name());
-			if (win->onKeyEvent(win, type))
-				return true;
-		}
-
-		control = win;
-	}
-
-	return false;
-}*/
-
-/*
-static bool check_crossing_event(GdkEvent *event)
-{
-	#if DEBUG_ENTER_LEAVE
-	fprintf(stderr, "check_crossing_event: %d / %d\n", event->crossing.detail, event->crossing.mode);
-	#endif
-
-	return true;
-
-	if ((event->crossing.mode == GDK_CROSSING_NORMAL || event->crossing.mode == GDK_CROSSING_STATE_CHANGED))
-		// || event->crossing.mode == GDK_CROSSING_UNGRAB || event->crossing.mode == GDK_CROSSING_GTK_UNGRAB))
-		return true;
-	else
-	{
-		fprintf(stderr, "ignore\n");
-		return false;
-	}
-}*/
-
 static gControl *find_child(gControl *control, int rx, int ry, gControl *button_grab = NULL)
 {
 	gContainer *cont;
@@ -1034,28 +989,6 @@ static void do_nothing()
 {
 }
 
-/*#ifdef GTK3
-static void (*_old_scrollbar_button_press)();
-static void (*_old_scrollbar_button_release)();
-
-static gint scrollbar_button_press(GtkWidget *widget, GdkEventButton *event)
-{
-	gint ret = ((gint (*)(GtkWidget *, GdkEventButton *))_old_scrollbar_button_press)(widget, event);
-	if (ret)
-		gtk_grab_add(widget);
-	return ret;
-}
-
-static gint scrollbar_button_release(GtkWidget *widget, GdkEventButton *event)
-{
-	gint ret = ((gint (*)(GtkWidget *, GdkEventButton *))_old_scrollbar_button_release)(widget, event);
-	if (ret)
-		gtk_grab_remove(widget);
-	return ret;
-}
-
-#endif*/
-
 static gboolean master_client_save_yourself(GnomeClient *client, gint phase, GnomeSaveStyle save_style, gboolean is_shutting_down, GnomeInteractStyle interact_style, gboolean fast, gpointer user_data)
 {
 	if (gApplication::mainWindow())
@@ -1077,11 +1010,20 @@ static void master_client_die(GnomeClient *client, gpointer user_data)
 	MAIN_check_quit();
 }
 
+static void cb_theme_changed(GtkSettings *settings, GParamSpec *param, gpointer data)
+{
+	gApplication::onThemeChange();
+	gDesktop::onThemeChange();
+}
+
 void gApplication::init(int *argc, char ***argv)
 {
-	appEvents=0;
+	GtkSettings *settings;
+	
+	appEvents = 0;
 
 	gtk_init(argc, argv);
+	
 	session_manager_init(argc, argv);
 	g_signal_connect(gnome_master_client(), "save-yourself", G_CALLBACK(master_client_save_yourself), NULL);
 	g_signal_connect(gnome_master_client(), "die", G_CALLBACK(master_client_die), NULL);
@@ -1104,6 +1046,9 @@ void gApplication::init(int *argc, char ***argv)
 	fix_breeze = strcasecmp(getStyleName(), "breeze") == 0 || strcasecmp(getStyleName(), "breeze dark") == 0 ;
 	fix_oxygen = strcasecmp(getStyleName(), "oxygen-gtk") == 0;
 
+	settings = gtk_settings_get_default();
+	g_signal_connect(G_OBJECT(settings), "notify::gtk-theme-name", G_CALLBACK(cb_theme_changed), 0);
+	
 	gApplication::_init = true;
 }
 
@@ -1681,4 +1626,13 @@ int gApplication::dblClickTime()
   gint value;
   g_object_get (gtk_settings_get_default(), "gtk-double-click-time", &value, (char *)NULL);
 	return value;
+}
+
+void gApplication::onThemeChange()
+{
+	if (_theme)
+	{
+		g_free(_theme);
+		_theme = NULL;
+	}
 }

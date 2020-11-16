@@ -148,7 +148,7 @@ void gt_cairo_draw_pixbuf(cairo_t *cr, GdkPixbuf *pixbuf, float x, float y, floa
 
 // Color functions
 
-gColor get_gdk_color(GdkColor *gcol);
+gColor gt_gdkcolor_to_color(GdkColor *gcol);
 #ifdef GTK3
 void fill_gdk_color(GdkColor *gcol, gColor color);
 #else
@@ -192,12 +192,14 @@ void gt_draw_border(cairo_t *cr, GtkStyleContext *st, GtkStateFlags state, int b
 // Style management
 
 #ifdef GTK3
-GtkStyleContext *gt_get_style(GType type);
+GtkStyleContext *gt_get_style(GType type, const char *node = NULL, const char *more_klass = NULL);
 #else
 GtkStyle *gt_get_style(GType type);
 #endif
 
 void gt_get_style_property(GType type, const char *name, void *pvalue);
+
+void gt_on_theme_change();
 
 void gMnemonic_correctText(char *st,char **buf);
 guint gMnemonic_correctMarkup(char *st,char **buf);

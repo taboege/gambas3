@@ -597,10 +597,11 @@ static void style_panel(int x, int y, int w, int h, int border, int state)
 	gColor col = 0;
 
 	if (border == BORDER_PLAIN)
-	{
+		col = gDesktop::getColor(gDesktop::LIGHT_FOREGROUND);
+	/*{
 		col = IMAGE.MergeColor(gDesktop::bgColor(), gDesktop::fgColor(), 0.5);
 		col = IMAGE.LighterColor(col);
-	}
+	}*/
 
 	gt_draw_border(_cr, style, get_state(state), border, col, x, y, w, h);
 
@@ -624,7 +625,7 @@ static void style_panel(int x, int y, int w, int h, int border, int state)
 		GdkGCValues values;
 		uint col;
 
-		col = IMAGE.MergeColor(gDesktop::bgColor(), gDesktop::fgColor(), 0.5);
+		col = IMAGE.MergeColor(gDesktop::getColor(gDesktop::BACKGROUND), gDesktop::getColor(gDesktop::FOREGROUND), 0.5);
 		col = IMAGE.LighterColor(col);
 
 		fill_gdk_color(&values.foreground, col, gdk_drawable_get_colormap(_dr));

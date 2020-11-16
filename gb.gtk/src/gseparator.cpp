@@ -37,7 +37,7 @@ static gboolean cb_draw(GtkWidget *wid, cairo_t *cr, gSeparator *data)
 
 	color = data->foreground();
 	if (color == COLOR_DEFAULT)
-		color = gDesktop::lightfgColor();
+		color = gDesktop::getColor(gDesktop::LIGHT_FOREGROUND);
 
 	gt_cairo_set_source_color(cr, color);
 	
@@ -80,7 +80,7 @@ static gboolean cb_expose(GtkWidget *wid, GdkEventExpose *e, gSeparator *data)
 		
 		color = data->foreground();
 		if (color == COLOR_DEFAULT)
-			color = gDesktop::lightfgColor();
+			color = gDesktop::getColor(gDesktop::LIGHT_FOREGROUND);
 		
 		gt_cairo_set_source_color(cr, color);
 		

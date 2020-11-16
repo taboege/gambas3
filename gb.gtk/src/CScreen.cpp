@@ -317,7 +317,7 @@ BEGIN_PROPERTY(Application_DarkTheme)
 	if (!_init)
 	{
 		_init = TRUE;
-		bg = gDesktop::bgColor();
+		bg = gDesktop::getColor(gDesktop::BACKGROUND);
 		if (IMAGE.GetLuminance(bg) >= 128)
 		{
 			env = getenv("GB_GUI_DARK_THEME");
