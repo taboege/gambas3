@@ -244,11 +244,16 @@ void gDesktop::calcColors()
 	_colors[TOOLTIP_BACKGROUND] = get_color(GTK_TYPE_TOOLTIP, false, STATE_NORMAL);
 	_colors[TOOLTIP_FOREGROUND] = get_color(GTK_TYPE_TOOLTIP, true, STATE_NORMAL);
 	#ifdef GTK3
-	_colors[LINK_FOREGROUND] = get_color(GTK_TYPE_LINK_BUTTON, true, STATE_LINK);
-	_colors[VISITED_FOREGROUND] = get_color(GTK_TYPE_LINK_BUTTON, true, (STATE_T)((int)STATE_LINK + (int)STATE_VISITED));
+		#if GTK_CHECK_VERSION(3, 12, 0)
+			_colors[LINK_FOREGROUND] = get_color(GTK_TYPE_LINK_BUTTON, true, STATE_LINK);
+			_colors[VISITED_FOREGROUND] = get_color(GTK_TYPE_LINK_BUTTON, true, (STATE_T)((int)STATE_LINK + (int)STATE_VISITED));
+		#else
+			_colors[LINK_FOREGROUND] = get_color(GTK_TYPE_LINK_BUTTON, true, STATE_NORMAL);
+			_colors[VISITED_FOREGROUND] = IMAGE.DarkerColor(_colors[LINK_FOREGROUND]);
+		#endif
 	#else
-	_colors[LINK_FOREGROUND] = IMAGE.LighterColor(_colors[SELECTED_BACKGROUND]);
-	_colors[VISITED_FOREGROUND] = IMAGE.DarkerColor(_colors[SELECTED_BACKGROUND]);
+		_colors[LINK_FOREGROUND] = IMAGE.LighterColor(_colors[SELECTED_BACKGROUND]);
+		_colors[VISITED_FOREGROUND] = IMAGE.DarkerColor(_colors[LINK_FOREGROUND]);
 	#endif
 	_colors[LIGHT_BACKGROUND] = IMAGE.MergeColor(_colors[SELECTED_BACKGROUND], _colors[SELECTED_FOREGROUND], 0.3);
 	_colors[LIGHT_FOREGROUND] = IMAGE.MergeColor(_colors[BACKGROUND], _colors[FOREGROUND], 0.3);
