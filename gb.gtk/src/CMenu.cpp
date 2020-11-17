@@ -109,7 +109,7 @@ static void cb_click(gMenu *sender)
 		_popup_menu_clicked = THIS;
 	}
 	else
-		send_click_event(THIS);
+		GB.Post((GB_CALLBACK)send_click_event, (intptr_t)THIS);
 }
 
 static void cb_show(gMenu *sender)

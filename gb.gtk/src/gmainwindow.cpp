@@ -636,6 +636,7 @@ bool gMainWindow::resize(int w, int h)
 				gtk_window_resize(GTK_WINDOW(border), w, h);
 			else
 			{
+				setGeometryHints();
 				gtk_widget_set_size_request(border, w, h);
 			}
 

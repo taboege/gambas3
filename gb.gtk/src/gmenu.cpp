@@ -131,7 +131,7 @@ static void cb_size_allocate(GtkWidget *menu, GdkRectangle *allocation, gMenu *d
 	{
 		data->_opened = true;
 		if (data->onShow) (*data->onShow)(data);
-		data->hideSeparators();
+		//data->hideSeparators();
 	}
 }
 
@@ -144,8 +144,9 @@ static gboolean cb_map(GtkWidget *menu, gMenu *data)
 
 	data->_mapping = true;
 	
-	gtk_widget_hide(gtk_widget_get_parent(menu));
-	gtk_widget_show(gtk_widget_get_parent(menu));
+	data->hideSeparators();
+	gtk_widget_hide(menu);
+	gtk_widget_show(menu);
 	//gtk_menu_reposition(GTK_MENU(menu));
 	
 	data->_mapping = false;
@@ -232,6 +233,7 @@ void gMenu::update()
 			//shell = (GtkMenuShell*)GTK_WIDGET(menu)->parent;
 			if (_style != NOTHING)
 				_ignore_signal = true;
+			gtk_widget_hide(GTK_WIDGET(menu));
 			gtk_widget_destroy(GTK_WIDGET(menu));
 			//g_debug("%p: delete old menu/separator", this);
 		}
@@ -246,13 +248,19 @@ void gMenu::update()
 			if (_style == SEPARATOR)
 			{
 				menu = (GtkMenuItem *)gtk_separator_menu_item_new();
-#ifdef GTK3
-#else
-				GtkRequisition req;
-				gtk_widget_size_request(GTK_WIDGET(menu), &req);
-				if (req.height > 5)
-					gtk_widget_set_size_request(GTK_WIDGET(menu), -1, 5);
-#endif
+
+				hbox = NULL;
+				label = NULL;
+				shlabel = NULL;
+				image = NULL;
+				
+				#ifdef GTK3
+				#else
+					GtkRequisition req;
+					gtk_widget_size_request(GTK_WIDGET(menu), &req);
+					if (req.height > 5)
+						gtk_widget_set_size_request(GTK_WIDGET(menu), -1, 5);
+				#endif
 				//g_debug("%p: create new separator %p", this, menu);
 			}
 			else
@@ -288,7 +296,7 @@ void gMenu::update()
 					gtk_misc_set_alignment(GTK_MISC(shlabel), 0, 0.5);
 					gtk_size_group_add_widget(parentMenu()->getSizeGroup(), shlabel);
 					
-					size = MAX(ds * 3 / 2, window()->font()->height());
+					size = window()->font()->height();
 
 					//gtk_widget_set_size_request(check, size, size);
 					//ON_DRAW(check, this, cb_check_expose, cb_check_draw);
@@ -428,8 +436,7 @@ void gMenu::updatePicture()
 		return;
 	}
 	
-	size = gDesktop::scale() * 2;
-	if (size > 7) size &= ~7;
+	size = (gDesktop::scale() * 2 + 1) & ~7;
 	
 	pic = _picture->stretch(size, size, true);
 	if (_disabled)
@@ -753,10 +760,10 @@ void gMenu::setChecked(bool vl)
 		return;
 	
 	_checked = vl;
-	if (_style == CHECK)
+	if (_toggle || _radio)
 	{
 		_ignore_signal = true;
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu), _checked);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu), vl);
 	}
 	else
 		update();
@@ -1024,7 +1031,7 @@ void gMenu::hideSeparators()
 
 	if (!_popup)
 		return;
-		
+	
 	last_sep = true;
 	last_ch = 0;
 	
@@ -1067,12 +1074,9 @@ void gMenu::hideSeparators()
 	for (i = 0; i < childCount(); i++)
 	{
 		ch = child(i);
-		if (ch->style() == SEPARATOR || !ch->isVisible())
+		if (!ch->image || !ch->isVisible())
 			continue;
-		/*if (show_check)
-			gtk_widget_show(ch->check);
-		else
-			gtk_widget_hide(ch->check);*/
+		
 		if (show_image)
 			gtk_widget_show(ch->image);
 		else

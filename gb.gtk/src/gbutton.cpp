@@ -530,7 +530,7 @@ void gButton::setValue(bool vl)
     if (vl) gtk_button_clicked(GTK_BUTTON(widget));
   }
   else
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(widget),vl);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), vl);
 }
 
 void gButton::setToggle(bool vl)
