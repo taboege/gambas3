@@ -496,7 +496,7 @@ bool DATE_from_string(const char *str, int len, VALUE *val, bool local)
 
 	c = COMMON_get_unicode_char();
 
-	if (c == info->date_sep)
+	if (c == info->date_sep[info->date_order[0]])
 	{
 		has_date = TRUE;
 
@@ -505,14 +505,21 @@ bool DATE_from_string(const char *str, int len, VALUE *val, bool local)
 
 		c = COMMON_get_unicode_char();
 
-		if (c == info->date_sep)
+		if (c == info->date_sep[info->date_order[1]])
 		{
 			set_date(&date, info->date_order[0], nbr, zero);
 			set_date(&date, info->date_order[1], nbr2, zero2);
 
 			if (read_integer(&nbr, &zero))
 				return TRUE;
-
+			
+			if (info->date_sep[info->date_order[2]])
+			{
+				c = COMMON_get_unicode_char();
+				if (c != info->date_sep[info->date_order[2]])
+					return TRUE;
+			}
+			
 			set_date(&date, info->date_order[2], nbr, zero);
 		}
 		else if ((c < 0) || isspace(c))
@@ -540,7 +547,7 @@ bool DATE_from_string(const char *str, int len, VALUE *val, bool local)
 		c = COMMON_get_unicode_char();
 	}
 
-	if (c == info->time_sep)
+	if (c == info->time_sep[info->time_order[0]])
 	{
 		//has_time = TRUE;
 
@@ -549,7 +556,7 @@ bool DATE_from_string(const char *str, int len, VALUE *val, bool local)
 
 		c = COMMON_get_unicode_char();
 
-		if (c == info->time_sep)
+		if (c == info->time_sep[info->time_order[1]])
 		{
 			set_time(&date, info->time_order[0], nbr);
 			set_time(&date, info->time_order[1], nbr2);
@@ -558,6 +565,13 @@ bool DATE_from_string(const char *str, int len, VALUE *val, bool local)
 				return TRUE;
 
 			set_time(&date, info->time_order[2], nbr);
+
+			if (info->time_sep[info->time_order[2]])
+			{
+				c = COMMON_get_unicode_char();
+				if (c != info->time_sep[info->time_order[2]])
+					return TRUE;
+			}
 
 			c = get_char();
 			if (c == '.') // msec separator

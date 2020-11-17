@@ -77,7 +77,8 @@ LOCAL_INFO LOCAL_default = {
 	NULL, 0, NULL, 0,
 	3, 3,
 	0,
-	'/', ':',
+	{ 0, '/', '/' },
+	{ ':', ':', 0 },
 	"",
 	"",
 	{ LO_MONTH, LO_DAY, LO_YEAR },
@@ -93,7 +94,7 @@ LOCAL_INFO LOCAL_default = {
 	"(#,##0.##)",
 	"True", 4,
 	"False", 5,
-	0
+	FALSE
 	};
 
 /* User language localization */
@@ -225,6 +226,8 @@ static void add_string(const char *src, int len, int *before)
 static void add_unicode(uint unicode)
 {
 	char str[8];
+	if (unicode == 0)
+		return;
 	STRING_utf8_from_unicode(unicode, str);
 	add_string(str, STRING_utf8_get_char_length(*str), NULL);
 }
@@ -343,12 +346,14 @@ static void fill_local_info(void)
 	struct lconv *info;
 	char *p;
 	char c;
-	char *dp;
-	char *tp;
+	uchar *dp;
+	uchar *tp;
 	char *codeset;
 	const char *lang;
 	char *am_pm;
 	bool got_second;
+	uchar ind;
+	int len;
 
 	free_local_info();
 
@@ -446,10 +451,23 @@ static void fill_local_info(void)
 			}
 		}
 
-		if (dp != LOCAL_local.date_order && LOCAL_local.date_sep == 0)
-			LOCAL_local.date_sep = STRING_utf8_to_unicode(p - 1, STRING_utf8_get_char_length(c));
+		if (dp != LOCAL_local.date_order)
+		{
+			ind = dp[-1];
+			if (LOCAL_local.date_sep[ind] == 0)
+			{
+				len = STRING_utf8_get_char_length(c);
+				LOCAL_local.date_sep[ind] = STRING_utf8_to_unicode(p - 1, len);
+				p += len - 1;
+			}
+		}
 	}
+	
+	LOCAL_local.date_tail_sep = LOCAL_local.date_order[2] != 0;
+	LOCAL_local.date_many_sep = LOCAL_local.date_sep[LOCAL_local.date_order[0]] != LOCAL_local.date_sep[LOCAL_local.date_order[1]];
 
+	//fprintf(stderr, "date_tail_sep = %d date_many_sep = %d\n", LOCAL_local.date_tail_sep, LOCAL_local.date_many_sep);
+	
 	// Time format
 
 	p = nl_langinfo(T_FMT);
@@ -501,9 +519,20 @@ static void fill_local_info(void)
 			}
 		}
 
-		if (tp != LOCAL_local.time_order && LOCAL_local.time_sep == 0)
-			LOCAL_local.time_sep = STRING_utf8_to_unicode(p - 1, STRING_utf8_get_char_length(c));
+		if (tp != LOCAL_local.time_order)
+		{
+			ind = tp[-1];
+			if (LOCAL_local.time_sep[ind] == 0)
+			{
+				len = STRING_utf8_get_char_length(c);
+				LOCAL_local.time_sep[ind] = STRING_utf8_to_unicode(p - 1, len);
+				p += len - 1;
+			}
+		}
 	}
+
+	LOCAL_local.time_tail_sep = LOCAL_local.time_order[2] != 0;
+	LOCAL_local.time_many_sep = LOCAL_local.time_sep[LOCAL_local.time_order[0]] != LOCAL_local.time_sep[LOCAL_local.time_order[1]];
 
 	// Fix missing seconds
 
@@ -517,7 +546,7 @@ static void fill_local_info(void)
 
 	lang = LOCAL_get_lang();
 	if (strcmp(lang, "fr") == 0 || strncmp(lang, "fr_", 3) == 0)
-		LOCAL_local.date_sep = '/';
+		LOCAL_local.date_sep[LO_DAY] = LOCAL_local.date_sep[LO_MONTH] = '/';
 
 	stradd_sep(LOCAL_local.general_date, LOCAL_local.long_time, " ");
 	am_pm = nl_langinfo(AM_STR);
@@ -529,7 +558,7 @@ static void fill_local_info(void)
 			stradd_sep(LOCAL_local.medium_time, "AM/PM", " ");
 		}
 	}
-
+	
 	// Currency format
 
 	LOCAL_local.currency_thousand_sep = fix_separator(info->mon_thousands_sep);
@@ -1295,7 +1324,6 @@ static bool add_date_token(DATE_SERIAL *date, char *token, int count)
 				tm.tm_wday = date->weekday;
 				add_strftime(count == 3 ? "%a" : "%A", &tm);
 			}
-
 			break;
 
 		case 'm':
@@ -1309,7 +1337,6 @@ static bool add_date_token(DATE_SERIAL *date, char *token, int count)
 				tm.tm_mon = date->month - 1;
 				add_strftime(count == 3 ? "%b" : "%B", &tm);
 			}
-
 			break;
 
 		case 'y':
@@ -1318,14 +1345,21 @@ static bool add_date_token(DATE_SERIAL *date, char *token, int count)
 				add_number(date->year - (date->year >= 2000 ? 2000 : 1900), 2);
 			else
 				add_number(date->year, (count == 1 ? 0 : count));
-
 			break;
 
 		case 'h':
+			
+			add_number(date->hour, (count == 1 ? 0 : 2));
+			break;
+			
 		case 'n':
-		case 's':
 
-			add_number((*token == 'h') ? date->hour : ((*token == 'n') ? date->min : date->sec), (count == 1 ? 0 : 2));
+			add_number(date->min, (count == 1 ? 0 : 2));
+			break;
+			
+		case 's':
+			
+			add_number(date->sec, (count == 1 ? 0 : 2));
 			break;
 
 		case 'u':
@@ -1343,7 +1377,6 @@ static bool add_date_token(DATE_SERIAL *date, char *token, int count)
 					add_string(buf, n, NULL);
 				}
 			}
-
 			break;
 
 		case 't':
@@ -1362,6 +1395,89 @@ static bool add_date_token(DATE_SERIAL *date, char *token, int count)
 }
 
 
+static void add_date_separator(char c, char *token)
+{
+	uchar index = 0;
+	uint sep;
+	
+	if (*token == 0)
+	{
+		if (c == '/' || c == ':')
+			return;
+		
+		sep = c;
+		c = 0;
+		goto ADD_SEPARATOR;
+	}
+	
+	switch (*token)
+	{
+		case 'y':
+		case 'm':
+		case 'd':
+			
+			switch (*token)
+			{
+				case 'y': index = LO_YEAR; break;
+				case 'm': index = LO_MONTH; break;
+				case 'd': index = LO_DAY; break;
+			}
+			
+			sep = local_current->date_sep[index];
+
+			if (c == '/')
+			{
+				c = 0;
+				if (!sep && !local_current->date_many_sep)
+					sep = local_current->date_sep[local_current->date_order[0]];
+			}
+			else
+			{
+				if (!local_current->date_tail_sep)
+					sep = 0;
+			}
+			
+			goto ADD_SEPARATOR;
+			
+		case 'h':
+		case 'n':
+		case 's':
+
+			switch (*token)
+			{
+				case 'h': index = LO_HOUR; break;
+				case 'n': index = LO_MINUTE; break;
+				case 's': index = LO_SECOND; break;
+			}
+
+			sep = local_current->time_sep[index];
+			
+			if (c == ':')
+			{
+				c = 0;
+				if (!sep && !local_current->time_many_sep)
+					sep = local_current->time_sep[local_current->time_order[0]];
+			}
+			else
+			{
+				if (!local_current->time_tail_sep)
+					sep = 0;
+			}
+			
+			goto ADD_SEPARATOR;
+			
+		default:
+			return;
+	}
+	
+ADD_SEPARATOR:
+
+	if (sep) add_unicode(sep);
+	if (c) add_unicode(c);
+	*token = 0;
+}
+
+
 bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, int len_fmt, char **str, int *len_str)
 {
 	DATE_SERIAL vdate;
@@ -1369,10 +1485,9 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 	int pos;
 	int pos_ampm = -1;
 	struct tm date_tm;
-
 	char token;
+	char last_token;
 	int token_count;
-
 	local_current = &LOCAL_local;
 	vdate = *date;
 
@@ -1497,7 +1612,7 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 			{
 				add_date_token(&vdate, &token, token_count);
 
-				token = c;
+				last_token = token = c;
 				token_count = 0;
 			}
 
@@ -1506,18 +1621,12 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 		else
 		{
 			if (!add_date_token(&vdate, &token, token_count))
-			{
-				if (c == '/')
-					add_unicode(local_current->date_sep);
-				else if (c == ':')
-					add_unicode(local_current->time_sep);
-				else
-					put_char(c);
-			}
+				add_date_separator(c, &last_token);
 		}
 	}
 
-	add_date_token(&vdate, &token, token_count);
+	if (!add_date_token(&vdate, &token, token_count))
+		add_date_separator(0, &last_token);
 
 	/* return the result */
 

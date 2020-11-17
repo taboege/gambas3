@@ -74,12 +74,12 @@ typedef
 		char group_size;
 		char currency_group_size;
 		unsigned char currency_flag;
-		uint date_sep;
-		uint time_sep;
+		uint date_sep[3];
+		uint time_sep[3];
 		const char *currency_symbol;
 		const char *intl_currency_symbol;
-		char date_order[4];
-		char time_order[4];
+		uchar date_order[4];
+		uchar time_order[4];
 		char long_date[20];
 		char medium_date[12];
 		char short_date[12];
@@ -93,7 +93,11 @@ typedef
 		int len_true_str;
 		char *false_str;
 		int len_false_str;
-		bool rtl;
+		unsigned rtl : 1;
+		unsigned date_many_sep : 1;
+		unsigned date_tail_sep : 1;
+		unsigned time_many_sep : 1;
+		unsigned time_tail_sep : 1;
 		}
 	LOCAL_INFO;
 
