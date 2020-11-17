@@ -22,7 +22,6 @@ gb_gtk3_la_SOURCES = \
 	gmenu.cpp gtrayicon.cpp gmainwindow.cpp \
 	gtree.h gtree.cpp \
 	watcher.h watcher.cpp \
-	CStock.cpp CStock.h \
 	CConst.h CConst.cpp CColor.h CColor.cpp \
 	CFont.h CFont.cpp \
 	CKey.h CKey.cpp \
