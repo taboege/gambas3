@@ -1212,7 +1212,7 @@ Public Sub Paste()
   
   Dim sText As String
   
-  sText = Clipboard.Paste("text/plain")
+  sText = Clipboard.Paste("text/plain;charset=utf-8")
   If Not sText Then Return
   
   If $hFilter.BracketedPasteActive Then sText = "\e[200~" & sText & "\e[200~"

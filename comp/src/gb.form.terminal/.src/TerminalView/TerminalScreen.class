@@ -231,7 +231,7 @@ Private Sub Insert(sText As String, Optional X As Integer = $X)
         Return
       Endif
       Insert(sLeft, X)
-      sText = String.Mid$(sText, iLen + 1) 
+      sText = String.Mid$(sText, iLen + 1)
     Endif
     If WrapMode Then
       Index()
