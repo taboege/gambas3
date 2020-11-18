@@ -63,11 +63,25 @@ Private Sub GetTimeFormat() As String
   
 End
 
+Private Sub UpdateTimeWidth()
+
+  If panDate.Visible Then
+    If panTime.Visible Then
+      panTime.Expand = False
+      panTime.W = Desktop.Scale * 32
+    Else
+    Endif
+  Else
+    If panTime.Visible Then
+      panTime.Expand = True
+    Endif
+  Endif
+
+End
 
 Public Sub _new()
   
-  panTime.W = Desktop.Scale * 24
-  
+  UpdateTimeWidth
   FillMonth(False)
   
   $dDate = Now  
@@ -725,6 +739,7 @@ Public Sub SetShowTime(bShowTime As Boolean)
   If Not GetShowDate() And Not bShowTime Then Error.Raise("Bad argument")
   panTime.Visible = bShowTime
   sepTime.Visible = GetShowTime() And GetShowDate()
+  UpdateTimeWidth
   
 End
 
@@ -739,6 +754,7 @@ Public Sub SetShowDate(bShowDate As Boolean)
   If Not GetShowTime() And Not bShowDate Then Error.Raise("Bad argument")
   panDate.Visible = bShowDate
   sepTime.Visible = GetShowTime() And GetShowDate()
+  UpdateTimeWidth
   
 End
 
@@ -838,10 +854,24 @@ Public Sub txtMinute_MouseWheel()
 
   If Mouse.Forward Then
     Inc iMinute
-    If iMinute > 59 Then iMinute = 0
+    If iMinute > 59 Then
+      If Hour($dTime) = 23 Then 
+        Stop Event
+        Return
+      Endif
+      iMinute = 0
+      txtHour_MouseWheel
+    Endif
   Else
     Dec iMinute
-    If iMinute < 0 Then iMinute = 59
+    If iMinute < 0 Then
+      If Hour($dTime) = 0 Then 
+        Stop Event
+        Return
+      Endif
+      iMinute = 59
+      txtHour_MouseWheel
+    Endif
   Endif
   
   SetTime(Time(Hour($dTime), iMinute, 0))

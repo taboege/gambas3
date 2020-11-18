@@ -39,7 +39,6 @@
           { dwgGradient DrawingArea
             MoveScaled(6,0,2,4)
             Ignore = True
-            NoBackground = True
           }
         }
         { Separator3 Separator
