@@ -56,13 +56,6 @@
 
 //#define DEBUG_LANG
 
-#define buffer_init COMMON_buffer_init
-#define look_char COMMON_look_char
-#define put_char COMMON_put_char
-#define get_current COMMON_get_current
-#define buffer_pos COMMON_pos
-#define get_size_left COMMON_get_size_left
-
 static void add_string(const char *src, int len, int *before);
 
 /* System encoding*/
@@ -159,14 +152,14 @@ static void my_setenv(const char *name, const char *value, char *ptr)
 
 static void begin(void)
 {
-	buffer_init(COMMON_buffer, COMMON_BUF_MAX - 4);
+	COMMON_buffer_init(COMMON_buffer, COMMON_BUF_MAX - 4);
 }
 
 static void end(char **str, int *len)
 {
-	*(get_current()) = 0;
+	*(COMMON_get_current()) = 0;
 	*str = COMMON_buffer;
-	*len = buffer_pos;
+	*len = COMMON_pos;
 }
 
 
@@ -197,8 +190,8 @@ static void add_thousand_sep(int *before)
 
 		if (group > 0 && (*before > 1) && ((*before - 1) == (((*before - 1) / group) * group)))
 		{
-			if (buffer_pos > 0 && (get_current()[-1] == ' '))
-				put_char(' ');
+			if (COMMON_pos > 0 && (COMMON_get_current()[-1] == ' '))
+				COMMON_put_char(' ');
 			else
 				add_string(thsep, lthsep, NULL);
 		}
@@ -215,7 +208,7 @@ static void add_string(const char *src, int len, int *before)
 
 	while (len > 0)
 	{
-		put_char(*src++);
+		COMMON_put_char(*src++);
 		len--;
 
 		if (before)
@@ -223,13 +216,21 @@ static void add_string(const char *src, int len, int *before)
 	}
 }
 
-static void add_unicode(uint unicode)
+static void add_unicode(uint unicode, bool unique)
 {
 	char str[8];
+	int len;
+	
 	if (unicode == 0)
 		return;
+	
 	STRING_utf8_from_unicode(unicode, str);
-	add_string(str, STRING_utf8_get_char_length(*str), NULL);
+	len = STRING_utf8_get_char_length(*str);
+	
+	if (unique && COMMON_pos >= len && strncmp(&COMMON_buffer[COMMON_pos - len], str, len) == 0)
+		return;
+	
+	add_string(str, len, NULL);
 }
 
 static void add_currency(const char *sym)
@@ -243,7 +244,7 @@ static void add_currency(const char *sym)
 		if (c == 0)
 			return;
 		if (c != ' ')
-			put_char(c);
+			COMMON_put_char(c);
 	}
 }
 
@@ -252,7 +253,7 @@ static void add_char(char c, int count, int *before)
 {
 	while (count > 0)
 	{
-		put_char(c);
+		COMMON_put_char(c);
 		count--;
 
 		add_thousand_sep(before);
@@ -273,16 +274,16 @@ static void add_sign(char mode, int sign, bool after)
 	if (sign < 0)
 	{
 		if (mode == '(')
-			put_char(after ? ')' : '(');
+			COMMON_put_char(after ? ')' : '(');
 		else
-			put_char('-');
+			COMMON_put_char('-');
 	}
 	else if (mode != 0 && mode != '(')
 	{
 		if (sign > 0)
-			put_char(mode);
+			COMMON_put_char(mode);
 		else
-			put_char(' ');
+			COMMON_put_char(' ');
 	}
 }
 
@@ -447,6 +448,8 @@ static void fill_local_info(void)
 						stradd_sep(LOCAL_local.general_date, "dd", "/");
 						break;
 				}
+
+				LOCAL_local.date_tail_sep = FALSE;
 				continue;
 			}
 		}
@@ -460,10 +463,10 @@ static void fill_local_info(void)
 				LOCAL_local.date_sep[ind] = STRING_utf8_to_unicode(p - 1, len);
 				p += len - 1;
 			}
+			LOCAL_local.date_tail_sep = TRUE;
 		}
 	}
 	
-	LOCAL_local.date_tail_sep = LOCAL_local.date_order[2] != 0;
 	LOCAL_local.date_many_sep = LOCAL_local.date_sep[LOCAL_local.date_order[0]] != LOCAL_local.date_sep[LOCAL_local.date_order[1]];
 
 	//fprintf(stderr, "date_tail_sep = %d date_many_sep = %d\n", LOCAL_local.date_tail_sep, LOCAL_local.date_many_sep);
@@ -515,6 +518,7 @@ static void fill_local_info(void)
 						got_second = TRUE;
 						break;
 				}
+				LOCAL_local.time_tail_sep = FALSE;
 				continue;
 			}
 		}
@@ -528,10 +532,10 @@ static void fill_local_info(void)
 				LOCAL_local.time_sep[ind] = STRING_utf8_to_unicode(p - 1, len);
 				p += len - 1;
 			}
+			LOCAL_local.time_tail_sep = TRUE;
 		}
 	}
 
-	LOCAL_local.time_tail_sep = LOCAL_local.time_order[2] != 0;
 	LOCAL_local.time_many_sep = LOCAL_local.time_sep[LOCAL_local.time_order[0]] != LOCAL_local.time_sep[LOCAL_local.time_order[1]];
 
 	// Fix missing seconds
@@ -1026,12 +1030,12 @@ _FORMAT:
 	{
 		add_currency(intl_currency ? local_current->intl_currency_symbol : local_current->currency_symbol);
 		if (is_currency_space(number_sign < 0, intl_currency))
-			put_char(' ');
+			COMMON_put_char(' ');
 	}
 
 	/* We note where the first digit will be printed */
 
-	pos_first_digit = buffer_pos;
+	pos_first_digit = COMMON_pos;
 
 	/* the number */
 
@@ -1136,7 +1140,7 @@ _FORMAT:
 		/* decimal point */
 
 		if (point)
-			put_char(local_current->decimal_point);
+			COMMON_put_char(local_current->decimal_point);
 
 		/* digits after the decimal point */
 
@@ -1182,21 +1186,21 @@ _FORMAT:
 
 		/* The decimal point is removed if it is located at the end */
 
-		buffer_pos--;
-		if (look_char() != local_current->decimal_point)
-			buffer_pos++;
+		COMMON_pos--;
+		if (COMMON_look_char() != local_current->decimal_point)
+			COMMON_pos++;
 
 		/* exponent */
 
 		if (exponent != 0) // && number != 0.0)
 		{
-			put_char(exponent);
+			COMMON_put_char(exponent);
 			if (exp_sign && number_real_exp >= 1)
-				put_char('+');
+				COMMON_put_char('+');
 			n = int_to_string(number_real_exp - 1, &buf_addr);
 			while (exp_zero > n)
 			{
-				put_char('0');
+				COMMON_put_char('0');
 				exp_zero--;
 			}
 			add_string(buf_addr, n, NULL);
@@ -1215,7 +1219,7 @@ _FORMAT:
 	if (_currency && !is_currency_before(number_sign < 0, intl_currency))
 	{
 		if (is_currency_space(number_sign < 0, intl_currency))
-			put_char(' ');
+			COMMON_put_char(' ');
 		add_currency(intl_currency ? local_current->intl_currency_symbol : local_current->currency_symbol);
 	}
 
@@ -1230,8 +1234,8 @@ _FORMAT:
 
 	/* print at least a zero */
 
-	if (buffer_pos == pos_first_digit)
-		put_char('0');
+	if (COMMON_pos == pos_first_digit)
+		COMMON_put_char('0');
 
 	/* suffixe de formatage */
 
@@ -1248,8 +1252,8 @@ static void add_strftime(const char *format, struct tm *tm)
 {
 	int n;
 
-	n = strftime(get_current(), get_size_left(), format, tm);
-	buffer_pos += n;
+	n = strftime(COMMON_get_current(), COMMON_get_size_left(), format, tm);
+	COMMON_pos += n;
 }
 
 
@@ -1472,8 +1476,8 @@ static void add_date_separator(char c, char *token)
 	
 ADD_SEPARATOR:
 
-	if (sep) add_unicode(sep);
-	if (c) add_unicode(c);
+	if (sep) add_unicode(sep, TRUE);
+	if (c) add_unicode(c, FALSE);
 	*token = 0;
 }
 
@@ -1488,6 +1492,7 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 	char token;
 	char last_token;
 	int token_count;
+	
 	local_current = &LOCAL_local;
 	vdate = *date;
 
@@ -1583,7 +1588,7 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 			if (pos >= len_fmt)
 				break;
 			add_date_token(&vdate, &token, token_count);
-			put_char(fmt[pos]);
+			COMMON_put_char(fmt[pos]);
 			continue;
 		}
 
