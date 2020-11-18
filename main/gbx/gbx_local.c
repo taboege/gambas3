@@ -216,7 +216,7 @@ static void add_string(const char *src, int len, int *before)
 	}
 }
 
-static void add_unicode(uint unicode, bool unique)
+static void add_unicode(uint unicode)
 {
 	char str[8];
 	int len;
@@ -227,7 +227,7 @@ static void add_unicode(uint unicode, bool unique)
 	STRING_utf8_from_unicode(unicode, str);
 	len = STRING_utf8_get_char_length(*str);
 	
-	if (unique && COMMON_pos >= len && strncmp(&COMMON_buffer[COMMON_pos - len], str, len) == 0)
+	if (COMMON_pos >= len && strncmp(&COMMON_buffer[COMMON_pos - len], str, len) == 0)
 		return;
 	
 	add_string(str, len, NULL);
@@ -1399,7 +1399,7 @@ static bool add_date_token(DATE_SERIAL *date, char *token, int count)
 }
 
 
-static void add_date_separator(char c, char *token)
+static void add_date_separator(uint c, char *token)
 {
 	uchar index = 0;
 	uint sep;
@@ -1409,8 +1409,7 @@ static void add_date_separator(char c, char *token)
 		if (c == '/' || c == ':')
 			return;
 		
-		sep = c;
-		c = 0;
+		sep = 0;
 		goto ADD_SEPARATOR;
 	}
 	
@@ -1476,8 +1475,8 @@ static void add_date_separator(char c, char *token)
 	
 ADD_SEPARATOR:
 
-	if (sep) add_unicode(sep, TRUE);
-	if (c) add_unicode(c, FALSE);
+	if (sep) add_unicode(sep);
+	if (c) add_unicode(c);
 	*token = 0;
 }
 
@@ -1486,6 +1485,8 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 {
 	DATE_SERIAL vdate;
 	char c;
+	int len;
+	uint code;
 	int pos;
 	int pos_ampm = -1;
 	struct tm date_tm;
@@ -1625,8 +1626,13 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 		}
 		else
 		{
+			len = STRING_utf8_get_char_length(c);
+			code = STRING_utf8_to_unicode(&fmt[pos], len);
+			
 			if (!add_date_token(&vdate, &token, token_count))
-				add_date_separator(c, &last_token);
+				add_date_separator(code, &last_token);
+			
+			pos += len - 1;
 		}
 	}
 
