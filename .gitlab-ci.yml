@@ -96,7 +96,7 @@ build:debian-testing:
     - >
        apt-get update && apt-get install -y build-essential g++ automake 
        autoconf libbz2-dev default-libmysqlclient-dev unixodbc-dev libpq-dev 
-       postgresql-server-dev-12 libsqlite0-dev libsqlite3-dev libglib2.0-dev 
+       postgresql-server-dev-13 libsqlite0-dev libsqlite3-dev libglib2.0-dev 
        libgtk2.0-dev libcurl4-gnutls-dev libgtkglext1-dev libpcre3-dev 
        libsdl-sound1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libxml2-dev 
        libxslt1-dev librsvg2-dev libpoppler-dev libpoppler-glib-dev 
