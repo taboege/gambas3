@@ -406,7 +406,9 @@ END_PROPERTY
 
 BEGIN_METHOD_VOID(WebView_Clear)
 
-	WIDGET->setPage(new QWebEnginePage(WIDGET));
+	delete WIDGET->page();
+	WIDGET->setPage(new MyWebPage(WIDGET));
+	QObject::connect(WIDGET->page(), SIGNAL(linkHovered(const QString &)), &WebViewSignalManager::manager, SLOT(linkHovered(const QString &)));
 
 END_METHOD
 
@@ -912,9 +914,17 @@ MyWebPage::MyWebPage(QObject *parent) : QWebEnginePage(parent)
 
 bool MyWebPage::acceptNavigationRequest(const QUrl &url, QWebEnginePage::NavigationType type, bool isMainFrame)
 {
-	void *_object = QT.GetObject(view());
+	QWidget *wid = view();
+	void *_object;
+	
+	if (!wid)
+		return true;
+	
+	_object = QT.GetObject(wid);
+	
 	//set_link(url.toString());
 	//fprintf(stderr, "acceptNavigationRequest: %s ==> has_stopped = %d\n", TO_UTF8(url.toString()), THIS->has_stopped);
+	
 	if (THIS->cancel)
 	{
 		THIS->cancel = FALSE;
