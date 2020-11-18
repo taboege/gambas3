@@ -66,7 +66,7 @@ End
 
 Public Sub _new()
   
-  panTime.W = Desktop.Scale * 16
+  panTime.W = Desktop.Scale * 24
   
   FillMonth(False)
   
@@ -233,7 +233,7 @@ Public Sub dwgMonth_Draw()
   Draw.LineStyle = Line.None
   
   Draw.Font = dwgMonth.Font
-  fSize = Draw.Font.Size * H / Draw.Font.Height * 0.7
+  fSize = Draw.Font.Size * H / Draw.Font.Height * 0.6
   Draw.Font.Size = fSize
   Draw.Font.Bold = True
 
