@@ -222,7 +222,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gambas3 3.15.90\n"
-"POT-Creation-Date: 2020-11-14 01:04 UTC\n"
+"POT-Creation-Date: 2020-11-18 18:22 UTC\n"
 "PO-Revision-Date: 2020-10-16 10:53 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
@@ -1009,7 +1009,7 @@ msgstr "Extension de l'EDI"
 #: FSearch.class:942 FSelectComponent.form:39 FSelectExtraFile.form:43
 #: FSelectIcon.form:89 FSelectLibrary.form:66 FSnippet.form:57
 #: FSoftwareFarm.class:559 FTableChooser.form:68 FTestSuite.class:404
-#: FText.form:40 FTranslate.class:677 FVersionControl.form:106
+#: FText.form:40 FTranslate.class:679 FVersionControl.form:106
 #: FWebFontChooser.form:129 Project.module:574 VersionControl.module:429
 msgid "Cancel"
 msgstr "Annuler"
@@ -1980,7 +1980,7 @@ msgstr "Déselectionner tout"
 msgid "Gambas 3 project conversion"
 msgstr "Conversion en projet Gambas 3"
 
-#: FCrash.class:73 FTranslate.class:244 Project.module:4603
+#: FCrash.class:73 FTranslate.class:245 Project.module:4603
 msgid "The '&1' command has failed."
 msgstr "La commande '&1' a échoué."
 
@@ -2316,7 +2316,7 @@ msgstr "Afficher la fenêtre de recherche"
 msgid "Search again"
 msgstr "Rechercher de nouveau"
 
-#: FDebugInfo.form:479 FSearch.class:521 FTranslate.class:639
+#: FDebugInfo.form:479 FSearch.class:521 FTranslate.class:641
 msgid "Search string cannot be found."
 msgstr "La chaîne recherchée est introuvable."
 
@@ -3075,7 +3075,7 @@ msgstr "Formes"
 msgid "Stroke"
 msgstr "Tracer"
 
-#: FImageProperty.form:371 FTranslate.class:1753
+#: FImageProperty.form:371 FTranslate.class:1757
 msgid "Fill"
 msgstr "Remplir"
 
@@ -3281,7 +3281,7 @@ msgstr "Importer des fichiers"
 msgid "Create symbolic links"
 msgstr "Créer des liens symboliques"
 
-#: FImportTable.class:58 FSearch.form:172 FTranslate.class:1371
+#: FImportTable.class:58 FSearch.form:172 FTranslate.class:1374
 msgid "All files"
 msgstr "Tous les fichiers"
 
@@ -5941,71 +5941,71 @@ msgstr "Non traduit"
 msgid "Translation files"
 msgstr "Fichiers de traduction"
 
-#: FTranslate.class:328
+#: FTranslate.class:330
 msgid "Cannot read translation file for language '&1'"
 msgstr "Impossible de lire le fichier de traduction pour la langue « &1 »"
 
-#: FTranslate.class:564
+#: FTranslate.class:566
 msgid "Cannot save translation."
 msgstr "Impossible de sauvegarder la traduction."
 
-#: FTranslate.class:677
+#: FTranslate.class:679
 msgid "Do you really want to delete this translation ?"
 msgstr "Voulez-vous vraiment supprimer cette traduction ?"
 
-#: FTranslate.class:786
+#: FTranslate.class:788
 msgid "Do you really want to reload this translation ?"
 msgstr "Voulez-vous vraiment recharger cette traduction ?"
 
-#: FTranslate.class:800
+#: FTranslate.class:802
 msgid "Export a translation"
 msgstr "Exporter une traduction"
 
-#: FTranslate.class:1015
+#: FTranslate.class:1017
 msgid "Please select the translation file to import."
 msgstr "Veuillez sélectionner le fichier de traduction à importer."
 
-#: FTranslate.class:1053
+#: FTranslate.class:1055
 msgid "No translation were picked up."
 msgstr "Aucune traduction n'a été récupérée."
 
-#: FTranslate.class:1055
+#: FTranslate.class:1057
 msgid "One translation was picked up."
 msgstr "Une traduction a été récupérée."
 
-#: FTranslate.class:1057
+#: FTranslate.class:1059
 msgid "&1 translations were picked up."
 msgstr "&1 traductions ont été récupérées."
 
-#: FTranslate.class:1065
+#: FTranslate.class:1067
 msgid "Cannot import translation file."
 msgstr "Impossible d'importer le fichier de traduction."
 
-#: FTranslate.class:1114
+#: FTranslate.class:1116
 msgid "Everything seems to be correct."
 msgstr "Tout semble correct."
 
-#: FTranslate.class:1124
+#: FTranslate.class:1126
 msgid "Translated string symbols do not match untranslated string ones."
 msgstr "Les symboles de la chaîne traduite ne correspondent pas à ceux de la chaîne non traduite."
 
-#: FTranslate.class:1150
+#: FTranslate.class:1152
 msgid "&1 strings. Everything is translated!"
 msgstr "&1 chaînes de caractères. Tout est traduit !"
 
-#: FTranslate.class:1152
+#: FTranslate.class:1154
 msgid "&1 strings. One is not translated. &3% done."
 msgstr "&1 chaînes de caractères. Une n'est pas traduite. &3% effectué."
 
-#: FTranslate.class:1154
+#: FTranslate.class:1156
 msgid "&1 strings. &2 are not translated. &3% done."
 msgstr "&1 chaînes de caractères. &2 ne sont pas traduites. &3% effectué."
 
-#: FTranslate.class:1741
+#: FTranslate.class:1745
 msgid "Automatic translation has failed."
 msgstr "La traduction automatique a échoué."
 
-#: FTranslate.class:1753
+#: FTranslate.class:1757
 msgid "Do you want to fill the translation automatically?"
 msgstr "Voulez-vous remplir la traduction automatiquement ?"
 

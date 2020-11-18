@@ -1,127 +1,126 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gb.report2 3.10.90\n"
+"Project-Id-Version: gb.report2 3.15.90\n"
 "POT-Creation-Date: 2020-11-18 18:39 UTC\n"
-"PO-Revision-Date: 2017-09-30 01:38 UTC\n"
-"Last-Translator: benoit <benoit@benoit-kubuntu>\n"
-"Language: fr\n"
+"PO-Revision-Date: 2020-11-18 18:39 UTC\n"
+"Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: .project:1
 msgid "ReportsEvolution"
-msgstr ""
+msgstr "报表解决方案"
 
 #: FPreview.class:210
 msgid "PDF files"
-msgstr "Fichiers PDF"
+msgstr "PDF文件"
 
 #: FPreview.class:210
 msgid "Postscript files"
-msgstr "Fichiers Postscript"
+msgstr "Postscript文件"
 
 #: FPreview.class:225
 msgid "Cancel"
-msgstr "Annuler"
+msgstr "取消"
 
 #: FPreview.class:315
 msgid "Replace"
-msgstr "Remplacer"
+msgstr "替换"
 
 #: FPreview.class:315
 msgid ""
 "This file already exists.\n"
 "Do you want to replace it?"
 msgstr ""
-"Ce fichier existe déjà.\n"
-"Voules-vous le remplacer ?"
+"此文件已存在。\n"
+"是否替换它？"
 
 #: FPreview.class:340
 msgid "Layout..."
-msgstr "Mise en page..."
+msgstr "布局..."
 
 #: FPreview.class:354
 msgid "Printing..."
-msgstr "Impression en cours..."
+msgstr "打印中..."
 
 #: FPreview.form:79
 msgid "Report preview"
-msgstr "Aperçu de l'état"
+msgstr "报表预览"
 
 #: FPreview.form:86
 msgid "Print to file"
-msgstr "Imprimer dans un fichier"
+msgstr "打印到文件"
 
 #: FPreview.form:115
-#, fuzzy
 msgid "Printing"
-msgstr "Impression en cours..."
+msgstr "打印"
 
 #: FPreview.form:145
 msgid "One page"
-msgstr "Une page"
+msgstr "单页"
 
 #: FPreview.form:154
 msgid "Two pages"
-msgstr "Deux pages"
+msgstr "双页"
 
 #: FPreview.form:163
 msgid "Full width"
-msgstr "Pleine largeur"
+msgstr "全宽"
 
 #: FPreview.form:172
 msgid "Real size"
-msgstr "Taille réelle"
+msgstr "实际尺寸"
 
 #: FPreview.form:180
 msgid "Zoom out"
-msgstr "Réduire"
+msgstr "缩小"
 
 #: FPreview.form:193
 msgid "100 %"
-msgstr "-"
+msgstr ""
 
 #: FPreview.form:199
 msgid "Zoom in"
-msgstr "Agrandir"
+msgstr "放大"
 
 #: FPreview.form:208
 msgid "Print"
-msgstr "Imprimer"
+msgstr "打印"
 
 #: FPreview.form:216
 msgid "Show options"
-msgstr "Afficher les options"
+msgstr "显示设置"
 
 #: FPreview.form:239
 msgid "Printer"
-msgstr "Imprimante"
+msgstr "打印机"
 
 #: FPreview.form:264
 msgid "Two-sided"
-msgstr ""
+msgstr "双面"
 
 #: FPreview.form:271
 msgid "Long side"
-msgstr "Côté long"
+msgstr "长边"
 
 #: FPreview.form:271
 msgid "None"
-msgstr "Aucun"
+msgstr "无"
 
 #: FPreview.form:271
 msgid "Short side"
-msgstr "Côté court"
+msgstr "短边"
 
 #: FPreview.form:275
 msgid "File"
-msgstr "Fichier"
+msgstr "文件"
 
 #: FPreview.form:301
 msgid "Resolution"
-msgstr ""
+msgstr "分辨率"
 
 #: FPreview.form:313
 msgid "dpi"
@@ -129,87 +128,87 @@ msgstr ""
 
 #: FPreview.form:336
 msgid "Range"
-msgstr "Plage"
+msgstr "范围"
 
 #: FPreview.form:352
 msgid "Copies"
-msgstr "Copies"
+msgstr "份数"
 
 #: FPreview.form:372
 msgid "Orientation"
-msgstr "Orientation"
+msgstr "方向"
 
 #: FPreview.form:379
 msgid "Landscape"
-msgstr "Paysage"
+msgstr "横向"
 
 #: FPreview.form:379
 msgid "Portrait"
-msgstr "Portrait"
+msgstr "纵向"
 
 #: FPreview.form:389
 msgid "Paper"
-msgstr "-"
+msgstr "纸张"
 
 #: FPreview.form:396
 msgid "A3"
-msgstr "-"
+msgstr ""
 
 #: FPreview.form:396
 msgid "A4"
-msgstr "-"
+msgstr ""
 
 #: FPreview.form:396
 msgid "A5"
-msgstr "-"
+msgstr ""
 
 #: FPreview.form:396
 msgid "B5"
-msgstr "-"
+msgstr ""
 
 #: FPreview.form:396
 msgid "Custom"
-msgstr "Personnalisé"
+msgstr "自定义"
 
 #: FPreview.form:396
 msgid "Executive"
-msgstr "-"
+msgstr ""
 
 #: FPreview.form:396
 msgid "Legal"
-msgstr "-"
+msgstr ""
 
 #: FPreview.form:396
 msgid "Letter"
-msgstr "-"
+msgstr ""
 
 #: FPreview.form:411
 msgid "Width"
-msgstr "Largeur"
+msgstr "宽度"
 
 #: FPreview.form:422
 msgid "mm"
-msgstr "-"
+msgstr ""
 
 #: FPreview.form:432
 msgid "Height"
-msgstr "Hauteur"
+msgstr "高度"
 
 #: FPreview.form:455
 msgid "Grayscale"
-msgstr "Niveaux de gris"
+msgstr "灰度"
 
 #: FPreview.form:461
 msgid "Full page"
-msgstr "Pleine page"
+msgstr "全页面"
 
 #: FPreview.form:466
 msgid "Collate copies"
-msgstr "Assembler les copies"
+msgstr "逐份打印"
 
 #: FPreview.form:471
 msgid "Reverse order"
-msgstr "Inverser"
+msgstr "倒序"
 
 #: OutputReport2.report:77
 msgid "Version 1.0"
@@ -269,7 +268,7 @@ msgstr ""
 
 #: Report.class:120
 msgid "Section "
-msgstr ""
+msgstr "节"
 
 #: Report1.report:29
 msgid "=\"Page \" & Page"
@@ -296,8 +295,9 @@ msgid "=page & \" / \" & pages"
 msgstr ""
 
 #: Report11.report:19 Report12.report:17
+#, fuzzy
 msgid "Section 1"
-msgstr ""
+msgstr "节"
 
 #: Report11.report:39
 msgid "Gambas"
@@ -332,8 +332,9 @@ msgid "Reference"
 msgstr ""
 
 #: Report14.report:35
+#, fuzzy
 msgid "Description"
-msgstr ""
+msgstr "节"
 
 #: Report14.report:42
 msgid "Valeur"
@@ -370,7 +371,7 @@ msgstr ""
 #: Report51.report:99
 #, fuzzy
 msgid "Observations"
-msgstr "Orientation"
+msgstr "方向"
 
 #: Report6.report:12
 msgid ""
@@ -378,12 +379,3 @@ msgid ""
 "\n"
 "<table border=1 cellspacing=0><tr><td><td width=20></td></td></tr></table>"
 msgstr ""
-
-#~ msgid "75"
-#~ msgstr "-"
-
-#~ msgid "300"
-#~ msgstr "-"
-
-#~ msgid "150"
-#~ msgstr "-"

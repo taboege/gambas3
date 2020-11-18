@@ -27,7 +27,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gb.form 3.14.90\n"
-"POT-Creation-Date: 2020-11-10 23:24 UTC\n"
+"POT-Creation-Date: 2020-11-18 18:23 UTC\n"
 "PO-Revision-Date: 2020-06-25 01:21 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
@@ -87,19 +87,19 @@ msgstr ""
 msgid "Toggle Filechooser Detailed View"
 msgstr ""
 
-#: FCalendar.form:47
+#: FCalendar.form:48
 msgid "Today"
 msgstr "Aujourd'hui"
 
-#: FCalendar.form:53
+#: FCalendar.form:54
 msgid "Previous month"
 msgstr "Mois précédent"
 
-#: FCalendar.form:59
+#: FCalendar.form:60
 msgid "Next month"
 msgstr "Mois suivant"
 
-#: FCalendar.form:143
+#: FCalendar.form:147
 msgid "Apply"
 msgstr "Appliquer"
 
@@ -223,31 +223,31 @@ msgstr "Répertoire parent"
 msgid "Root directory"
 msgstr "Répertoire racine"
 
-#: FDirChooser.form:139
+#: FDirChooser.form:140
 msgid "Image preview"
 msgstr "Prévisualisation des images"
 
-#: FDirChooser.form:147
+#: FDirChooser.form:148
 msgid "Detailed view"
 msgstr "Vue détaillée"
 
-#: FDirChooser.form:155
+#: FDirChooser.form:156
 msgid "File properties"
 msgstr "Propriétés du fichier"
 
-#: FDirChooser.form:161
+#: FDirChooser.form:162
 msgid "Show files"
 msgstr "Afficher les fichiers"
 
-#: FDirChooser.form:181
+#: FDirChooser.form:182
 msgid "Bookmarks"
 msgstr "Signets"
 
-#: FDirChooser.form:248 FInputBox.form:45 FWizard.class:76 Form1.form:32
+#: FDirChooser.form:249 FInputBox.form:45 FWizard.class:76 Form1.form:32
 msgid "OK"
 msgstr "OK"
 
-#: FDirChooser.form:254 FEditBookmark.class:119 FInputBox.form:51
+#: FDirChooser.form:255 FEditBookmark.class:119 FInputBox.form:51
 #: FSidePanel.class:1149 FWizard.form:52 Form1.form:38
 msgid "Cancel"
 msgstr "Annuler"
@@ -579,7 +579,7 @@ msgstr ""
 msgid "Button2"
 msgstr ""
 
-#: FTestDateChooser.form:47
+#: FTestDateChooser.form:30
 msgid "Enable"
 msgstr ""
 
