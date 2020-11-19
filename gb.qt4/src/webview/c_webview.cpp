@@ -163,13 +163,13 @@ BEGIN_METHOD(WebView_new, GB_OBJECT parent)
   //QObject::connect(wid, SIGNAL(statusBarMessage(const QString &)), &CWebView::manager, SLOT(statusBarMessage(const QString &)));
   QObject::connect(wid, SIGNAL(titleChanged(const QString &)), &CWebView::manager, SLOT(titleChanged(const QString &)));
   
-										SLOT(linkHovered(const QString &, const QString &, const QString &)));
 	//QObject::connect(wid->page(), SIGNAL(frameCreated(QWebFrame *)), &CWebView::manager, SLOT(frameCreated(QWebFrame *)));
 	//QObject::connect(wid->page(), SIGNAL(downloadRequested(QNetworkRequest)), &CWebView::manager, SLOT(downloadRequested(QNetworkRequest)));
   //QObject::connect(wid->page(), SIGNAL(unsupportedContent(QNetworkReply*)), &CWebView::manager, SLOT(handleUnsupportedContent(QNetworkReply*)));
 	
   QObject::connect(wid, SIGNAL(iconChanged()), &CWebView::manager, SLOT(iconChanged()));
 	QObject::connect(wid->page(), SIGNAL(linkHovered(const QString &, const QString &, const QString &)), &CWebView::manager, 
+										SLOT(linkHovered(const QString &, const QString &, const QString &)));
 	QObject::connect(wid->page()->mainFrame(), SIGNAL(urlChanged(const QUrl &)), &CWebView::manager, SLOT(urlChanged(const QUrl &)));
 
 	/*QObject::connect(wid->page()->networkAccessManager(), SIGNAL(authenticationRequired(QNetworkReply *, QAuthenticator *)), &CWebView::manager,
@@ -311,6 +311,7 @@ BEGIN_METHOD_VOID(WebView_Clear)
 	delete WIDGET->page();
 	WIDGET->setPage(new QWebPage(WIDGET));
 	QObject::connect(WIDGET->page(), SIGNAL(linkHovered(const QString &, const QString &, const QString &)), &CWebView::manager, 
+										SLOT(linkHovered(const QString &, const QString &, const QString &)));
 	QObject::connect(WIDGET->page()->mainFrame(), SIGNAL(urlChanged(const QUrl &)), &CWebView::manager, SLOT(urlChanged(const QUrl &)));
 
 END_METHOD
