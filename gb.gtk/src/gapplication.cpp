@@ -46,10 +46,6 @@
 
 static bool _debug_keypress = false;
 
-bool gApplication::fix_breeze = false;
-bool gApplication::fix_oxygen = false;
-
-
 /**************************************************************************
 
 	Global event handler
@@ -524,9 +520,11 @@ __FOUND_WIDGET:
 
 			save_control = find_child(control, (int)event->button.x_root, (int)event->button.y_root, button_grab);
 			
+			/*if (type == gEvent_MousePress)
+				fprintf(stderr, "save_control = %p %s\n", save_control, save_control ? save_control->name() : "");*/
+			
 			if (save_control)
 				save_control = save_control->ignoreDesign();
-			//fprintf(stderr, "save_control = %p %s\n", save_control, save_control ? save_control->name() : "");
 			
 			if (!save_control)
 			{
@@ -536,6 +534,8 @@ __FOUND_WIDGET:
 					if (win->isPopup())
 						win->close();
 				}
+				
+				//fprintf(stderr, "handle event %s\n", type == gEvent_MousePress ? "press" : type == gEvent_MouseRelease ? "release" : "other");
 			
 				goto __HANDLE_EVENT;
 			}
@@ -920,6 +920,10 @@ void (*gApplication::onLeaveEventLoop)();
 bool gApplication::_must_quit = false;
 GdkEvent *gApplication::_event = NULL;
 
+bool gApplication::_fix_breeze = false;
+bool gApplication::_fix_oxygen = false;
+int gApplication::_scrollbar_size = 0;
+
 void gApplication::grabPopup()
 {
 	//fprintf(stderr, "grabPopup: %p\n", _popup_grab);
@@ -1043,8 +1047,7 @@ void gApplication::init(int *argc, char ***argv)
 	if (env && strcmp(env, "0"))
 		_debug_keypress = true;
 
-	fix_breeze = strcasecmp(getStyleName(), "breeze") == 0 || strcasecmp(getStyleName(), "breeze dark") == 0 ;
-	fix_oxygen = strcasecmp(getStyleName(), "oxygen-gtk") == 0;
+	getStyleName();
 
 	settings = gtk_settings_get_default();
 	g_signal_connect(G_OBJECT(settings), "notify::gtk-theme-name", G_CALLBACK(cb_theme_changed), 0);
@@ -1426,9 +1429,7 @@ int gApplication::getScrollbarSize()
 
 #ifdef GTK3
 
-	static int size = 0;
-	
-	if (size == 0)
+	if (_scrollbar_size == 0)
 	{
 		GtkWidget *widget = 
 		#ifdef GTK3
@@ -1437,12 +1438,15 @@ int gApplication::getScrollbarSize()
 			gtk_hscrollbar_new(NULL);
 		#endif
 		gtk_widget_show(widget);
-		gtk_widget_get_preferred_width(widget, NULL, &size); //, &minimum_size, &natural_size);
+		gtk_widget_get_preferred_width(widget, NULL, &_scrollbar_size); //, &minimum_size, &natural_size);
 		gtk_widget_destroy(widget);
+		
+		if (_fix_breeze)
+			_scrollbar_size += 3;
 		//fprintf(stderr, "getScrollbarSize = %d\n", size);
 	}
 	
-	return size;
+	return _scrollbar_size;
 	
 #else
 	
@@ -1468,7 +1472,7 @@ int gApplication::getScrollbarSpacing()
 
 int gApplication::getInnerWidth()
 {
-	if (fix_oxygen)
+	if (_fix_oxygen)
 		return 1;
 	else
 		return 0;
@@ -1579,6 +1583,13 @@ char *gApplication::getStyleName()
 			*p = tolower(*p);
 			p++;
 		}
+		
+		_fix_breeze = false;
+		_fix_oxygen = false;
+		if (strcasecmp(_theme, "breeze") == 0 || strcasecmp(_theme, "breeze dark") == 0)
+			_fix_breeze = true;
+		else if (strcasecmp(_theme, "oxygen-gtk") == 0)
+			_fix_oxygen = true;
 	}
 
 	return _theme;
@@ -1635,4 +1646,7 @@ void gApplication::onThemeChange()
 		g_free(_theme);
 		_theme = NULL;
 	}
+	
+	getStyleName();
+	_scrollbar_size = 0;
 }

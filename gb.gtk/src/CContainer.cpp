@@ -176,9 +176,9 @@ BEGIN_PROPERTY(Container_Invert)
 END_PROPERTY
 
 
-BEGIN_METHOD(Container_Find, GB_INTEGER x; GB_INTEGER y)
+BEGIN_METHOD(Container_FindChild, GB_INTEGER x; GB_INTEGER y)
 
-	gControl *child = WIDGET->find(VARG(x), VARG(y));
+	gControl *child = WIDGET->proxyContainer()->find(VARG(x), VARG(y));
 	
 	if (child)
 		GB.ReturnObject(child->hFree);
@@ -215,7 +215,7 @@ BEGIN_METHOD(Container_unknown, GB_VALUE x; GB_VALUE y)
 	if (GB.Conv(ARG(x), GB_T_INTEGER) || GB.Conv(ARG(y), GB_T_INTEGER))
 		return;
 	
-	Container_Find(_object, _param);
+	Container_FindChild(_object, _param);
 	
 	GB.ReturnConvVariant();
 
@@ -353,7 +353,7 @@ GB_DESC ContainerDesc[] =
 	GB_PROPERTY_READ("ClientH", "i", Container_ClientHeight),
 	GB_PROPERTY_READ("ClientHeight", "i", Container_ClientHeight),
 
-	GB_METHOD("FindChild", "Control", Container_Find, "(X)i(Y)i"),
+	GB_METHOD("FindChild", "Control", Container_FindChild, "(X)i(Y)i"),
 	GB_METHOD("_unknown", "v", Container_unknown, "."),
 
 	CONTAINER_DESCRIPTION,

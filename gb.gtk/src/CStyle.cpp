@@ -659,7 +659,7 @@ static void style_box(int x, int y, int w, int h, int state, GB_COLOR color)
 {
 	STYLE_T *style = get_style(GTK_TYPE_ENTRY);
 
-	if (gApplication::fix_oxygen)
+	if (gApplication::_fix_oxygen)
 	{
 		x -= 3;
 		w += 6;
@@ -702,7 +702,7 @@ static void style_box(int x, int y, int w, int h, int state, GB_COLOR color)
 
 #else
 
-	if (gApplication::fix_breeze)
+	if (gApplication::_fix_breeze)
 		state &= ~GB_DRAW_STATE_HOVER;
 
 	GtkStateType st = get_state(state);

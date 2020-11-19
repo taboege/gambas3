@@ -835,8 +835,19 @@ void gMenu::doPopup(bool move, int x, int y)
 
 	GdkWindow *window;
 	GdkRectangle rect;
+	GdkEvent *event;
+	bool free = false;
 	
 	gt_disable_warnings(true);
+	
+	event = gApplication::lastEvent();
+	if (!event)
+	{
+		event = gdk_event_new(GDK_BUTTON_PRESS);
+		event->button.time = GDK_CURRENT_TIME;
+		gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_display_get_default())));
+		free = true;
+	}
 	
 	if (move)
 	{
@@ -849,12 +860,15 @@ void gMenu::doPopup(bool move, int x, int y)
 		rect.y = y - rect.y;
 		rect.width = rect.height = 1;
 		
-		gtk_menu_popup_at_rect(_popup, window, &rect, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, gApplication::lastEvent());
+		gtk_menu_popup_at_rect(_popup, window, &rect, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, event);
 	}
 	else
 		gtk_menu_popup_at_pointer(_popup, gApplication::lastEvent());
 
 	gt_disable_warnings(false);
+	
+	if (free)
+		gdk_event_free(event);
 	
 #else
 	

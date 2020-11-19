@@ -101,8 +101,9 @@ public:
 	
 	static void onThemeChange();
 	
-	static bool fix_breeze;
-	static bool fix_oxygen;
+	static bool _fix_breeze;
+	static bool _fix_oxygen;
+	static int _scrollbar_size;
 
 	//"Private"
 	static bool _init;
@@ -116,7 +117,6 @@ public:
 	static void *_loop_owner;
 	static GtkWindowGroup *_group;
 	static GtkWindowGroup *currentGroup();
-	//static void dispatchEnterLeave(gControl *enter);
 	static gControl *_enter;
 	static gControl *_leave;
 	static gControl *_ignore_until_next_enter;
