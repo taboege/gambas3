@@ -162,14 +162,14 @@ static void end(char **str, int *len)
 	*len = COMMON_pos;
 }
 
-
-#define stradd_sep(_dst, _src, _sep) \
-{ \
-	if (LOCAL_local._dst) \
-		LOCAL_local._dst = STRING_add_char(LOCAL_local._dst, _sep); \
-	LOCAL_local._dst = STRING_add(LOCAL_local._dst, _src, strlen(_src)); \
+static void stradd_sep_real(char **dst, const char *src, char sep)
+{
+	if (*dst)
+		*dst = STRING_add_char(*dst, sep);
+	*dst = STRING_add(*dst, src, strlen(src));
 }
 
+#define stradd_sep(_dst, _src, _sep) stradd_sep_real(&LOCAL_local._dst, _src, _sep)
 
 static void add_thousand_sep(int *before)
 {
@@ -472,9 +472,13 @@ static void fill_local_info(void)
 				p += len - 1;
 			}
 			LOCAL_local.date_tail_sep = TRUE;
-			LOCAL_local.short_date = STRING_add_char(LOCAL_local.short_date, '/');
-			LOCAL_local.general_date = STRING_add_char(LOCAL_local.general_date, '/');
 		}
+	}
+	
+	if (LOCAL_local.date_tail_sep)
+	{
+		LOCAL_local.short_date = STRING_add_char(LOCAL_local.short_date, '/');
+		LOCAL_local.general_date = STRING_add_char(LOCAL_local.general_date, '/');
 	}
 	
 	LOCAL_local.date_many_sep = LOCAL_local.date_sep[LOCAL_local.date_order[0]] != LOCAL_local.date_sep[LOCAL_local.date_order[1]];
@@ -543,10 +547,12 @@ static void fill_local_info(void)
 				p += len - 1;
 			}
 			LOCAL_local.time_tail_sep = TRUE;
-			LOCAL_local.long_time = STRING_add_char(LOCAL_local.long_time, ':');
 		}
 	}
 
+	if (LOCAL_local.time_tail_sep)
+		LOCAL_local.long_time = STRING_add_char(LOCAL_local.long_time, ':');
+	
 	LOCAL_local.time_many_sep = LOCAL_local.time_sep[LOCAL_local.time_order[0]] != LOCAL_local.time_sep[LOCAL_local.time_order[1]];
 
 	// Fix missing seconds
