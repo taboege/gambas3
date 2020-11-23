@@ -49,7 +49,6 @@ public:
 	void setSorted(bool vl);
 	virtual void setText(const char *vl);
 	
-	bool hasBorder() const { return _has_border; }
 	void setBorder(bool v);
 
 //"Methods"
@@ -86,7 +85,6 @@ public:
 	GtkWidget *_button;
 	int _model_dirty_timeout;
 	unsigned _sort : 1;
-	unsigned _has_border : 1;
 	
 	virtual void updateFont();
 	void updateModel();

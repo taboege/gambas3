@@ -2064,7 +2064,14 @@ void gControl::setStyleSheetNode(GString *css, const char *node)
 	_css_node = node;
 	
 	if (node)
+	{
+		if (!_css)
+		{
+			setWidgetName();
+			_css = GTK_STYLE_PROVIDER(gtk_css_provider_new());
+		}
 		g_string_append_printf(css, "#%s %s {\ntransition:none;\n", gtk_widget_get_name(getStyleSheetWidget()), node);
+	}
 }
 
 void gControl::updateStyleSheet()
@@ -2082,109 +2089,104 @@ void gControl::updateStyleSheet()
 	
 	fg = realForeground();
 
-	if (_bg == COLOR_DEFAULT && fg == COLOR_DEFAULT && !_font)
+	css = g_string_new(NULL);
+	_css_node = NULL;
+	
+	if (_bg != COLOR_DEFAULT || fg != COLOR_DEFAULT)
 	{
-		if (_css)
-			gtk_style_context_remove_provider(context, _css);
+		setStyleSheetNode(css, getStyleSheetColorNode());
+
+		if (_bg != COLOR_DEFAULT)
+		{
+			gt_to_css_color(buffer, _bg);
+			g_string_append(css, "background-color:");
+			g_string_append(css, buffer);
+			g_string_append(css, ";\nbackground-image:none;\n");
+		}
+
+		if (fg != COLOR_DEFAULT)
+		{
+			gt_to_css_color(buffer, fg);
+			g_string_append(css, "color:");
+			g_string_append(css, buffer);
+			g_string_append(css, ";\n");
+		}
 	}
-	else
+	
+	if (_font)
 	{
-		if (!_css)
+		setStyleSheetNode(css, getStyleSheetFontNode());
+
+		if (_font->_name_set)
 		{
-			setWidgetName();
-			_css = GTK_STYLE_PROVIDER(gtk_css_provider_new());
-		}
-		else
-			gtk_style_context_remove_provider(context, _css);
-
-		css = g_string_new(NULL);
-		_css_node = NULL;
-		
-		if (_bg != COLOR_DEFAULT || fg != COLOR_DEFAULT)
-		{
-			setStyleSheetNode(css, getStyleSheetColorNode());
-
-			if (_bg != COLOR_DEFAULT)
-			{
-				gt_to_css_color(buffer, _bg);
-				g_string_append(css, "background-color:");
-				g_string_append(css, buffer);
-				g_string_append(css, ";\nbackground-image:none;\n");
-			}
-
-			if (fg != COLOR_DEFAULT)
-			{
-				gt_to_css_color(buffer, fg);
-				g_string_append(css, "color:");
-				g_string_append(css, buffer);
-				g_string_append(css, ";\n");
-			}
-		}
-		
-		if (_font)
-		{
-			setStyleSheetNode(css, getStyleSheetFontNode());
-
-			if (_font->_name_set)
-			{
-				g_string_append(css, "font-family:\"");
-				g_string_append(css, _font->name());
-				g_string_append(css, "\";\n");
-			}
-
-			if (_font->_size_set)
-			{
-				s = (int)(_font->size() * 10 + 0.5);
-				sprintf(buffer, "%dpt;\n", s / 10); //, s % 10);
-				g_string_append(css, "font-size:");
-				g_string_append(css, buffer);
-			}
-
-			if (_font->_bold_set)
-			{
-				g_string_append(css, "font-weight:");
-				g_string_append(css, _font->bold() ? "bold" : "normal");
-				g_string_append(css, ";\n");
-			}
-
-			if (_font->_italic_set)
-			{
-				g_string_append(css, "font-style:");
-				g_string_append(css, _font->italic() ? "italic" : "normal");
-				g_string_append(css, ";\n");
-			}
-
-			if (_font->_underline_set || _font->_strikeout_set)
-			{
-				g_string_append(css, "text-decoration-line:");
-				if (_font->strikeout())
-					g_string_append(css, "line-through");
-				else if (_font->underline())
-					g_string_append(css, "underline");
-				else
-					g_string_append(css, "none");
-				g_string_append(css, ";\n");
-			}
-			
-			if (_font->mustFixSpacing())
-			{
-				g_string_append(css, "letter-spacing:1px;\n");
-			}
+			g_string_append(css, "font-family:\"");
+			g_string_append(css, _font->name());
+			g_string_append(css, "\";\n");
 		}
 
-		customStyleSheet(css);
+		if (_font->_size_set)
+		{
+			s = (int)(_font->size() * 10 + 0.5);
+			sprintf(buffer, "%dpt;\n", s / 10); //, s % 10);
+			g_string_append(css, "font-size:");
+			g_string_append(css, buffer);
+		}
 
-		setStyleSheetNode(css, NULL);
+		if (_font->_bold_set)
+		{
+			g_string_append(css, "font-weight:");
+			g_string_append(css, _font->bold() ? "bold" : "normal");
+			g_string_append(css, ";\n");
+		}
+
+		if (_font->_italic_set)
+		{
+			g_string_append(css, "font-style:");
+			g_string_append(css, _font->italic() ? "italic" : "normal");
+			g_string_append(css, ";\n");
+		}
+
+		if (_font->_underline_set || _font->_strikeout_set)
+		{
+			g_string_append(css, "text-decoration-line:");
+			if (_font->strikeout())
+				g_string_append(css, "line-through");
+			else if (_font->underline())
+				g_string_append(css, "underline");
+			else
+				g_string_append(css, "none");
+			g_string_append(css, ";\n");
+		}
 		
+		if (_font->mustFixSpacing())
+		{
+			g_string_append(css, "letter-spacing:1px;\n");
+		}
+	}
+
+	customStyleSheet(css);
+
+	setStyleSheetNode(css, NULL);
+	
+	if (css->len)
+	{
 		css_str = g_string_free(css, FALSE);
 		gtk_css_provider_load_from_data(GTK_CSS_PROVIDER(_css), css_str, -1, NULL);
 		g_free(css_str);
 		gtk_style_context_add_provider(context, _css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-		
-		/*css_str = gtk_css_provider_to_string(GTK_CSS_PROVIDER(_css));
-		fprintf(stderr, "---- %s\n%s", gtk_widget_get_name(wid), css_str);
-		g_free(css_str);*/
 	}
+	else
+	{
+		if (_css)
+		{
+			gtk_style_context_remove_provider(context, _css);
+			_css = NULL;
+		}
+	}
+		
+	/*css_str = gtk_css_provider_to_string(GTK_CSS_PROVIDER(_css));
+	fprintf(stderr, "---- %s\n%s", gtk_widget_get_name(wid), css_str);
+	g_free(css_str);*/
 }
 
 gColor gControl::realBackground(bool no_default)

@@ -1052,6 +1052,14 @@ void gApplication::init(int *argc, char ***argv)
 	settings = gtk_settings_get_default();
 	g_signal_connect(G_OBJECT(settings), "notify::gtk-theme-name", G_CALLBACK(cb_theme_changed), 0);
 	
+#ifdef GTK3
+	// Override theme
+	
+	GtkCssProvider *css = gtk_css_provider_new();
+	gtk_css_provider_load_from_data(css, "button { min-width:0;min-height:0; }", -1, NULL);
+	gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(css), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+#endif
+	
 	gApplication::_init = true;
 }
 
