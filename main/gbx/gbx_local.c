@@ -544,8 +544,6 @@ static void fill_local_info(void)
 			}
 			LOCAL_local.time_tail_sep = TRUE;
 			LOCAL_local.long_time = STRING_add_char(LOCAL_local.long_time, ':');
-			LOCAL_local.medium_time = STRING_add_char(LOCAL_local.medium_time, ':');
-			LOCAL_local.short_time = STRING_add_char(LOCAL_local.short_time, ':');
 		}
 	}
 
