@@ -389,7 +389,7 @@ void gComboBox::customStyleSheet(GString *css)
 	if (!_has_border)
 	{
 		setStyleSheetNode(css, "");
-		g_string_append_printf(css, "border:none;box-shadow:none;\n");
+		g_string_append_printf(css, "border:none;box-shadow:none;padding:0;\n");
 		if (background() == COLOR_DEFAULT)
 			g_string_append_printf(css, "background:none;");
 		
