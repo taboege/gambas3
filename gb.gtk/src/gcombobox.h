@@ -49,7 +49,7 @@ public:
 	void setSorted(bool vl);
 	virtual void setText(const char *vl);
 	
-	bool hasBorder() const;
+	bool hasBorder() const { return _has_border; }
 	void setBorder(bool v);
 
 //"Methods"
@@ -61,18 +61,23 @@ public:
 	
 #ifdef GTK3
 	virtual GtkWidget *getStyleSheetWidget();
+	virtual const char *getStyleSheetColorNode();
+	virtual const char *getStyleSheetFontNode();
+	virtual void customStyleSheet(GString *css);
+	virtual void setForeground(gColor color);
 #else
 	virtual void setRealBackground(gColor vl);
-#endif
 	virtual void setRealForeground(gColor vl);
+#endif
 	virtual void setFocus();
 	virtual bool canFocus() const;
+	void updateBorder();
+	virtual void setDesign(bool ignore = false);
 	
 //"Signals"
 	void (*onClick)(gComboBox *sender);
 
 //"Private"
-	bool sort;
 	GtkCellRenderer *cell;
 	virtual int minimumHeight();
 	gTree *tree;
@@ -80,6 +85,8 @@ public:
 	int _last_key;
 	GtkWidget *_button;
 	int _model_dirty_timeout;
+	unsigned _sort : 1;
+	unsigned _has_border : 1;
 	
 	virtual void updateFont();
 	void updateModel();

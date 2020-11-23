@@ -122,6 +122,7 @@ public:
 
 	virtual void setDesign(bool ignore = false);
 	gControl *ignoreDesign();
+	void updateDesign();
 	
 	char *tooltip() { return _tooltip; }
 	void setTooltip(char *vl);
@@ -151,11 +152,13 @@ public:
 	bool hasNativePopup() const { return _has_native_popup; }
 	
 #ifdef GTK3
+	void setWidgetName();
 	virtual GtkWidget *getStyleSheetWidget();
 	virtual const char *getStyleSheetColorNode();
 	virtual const char *getStyleSheetFontNode();
 	void updateStyleSheet();
 	virtual void customStyleSheet(GString *css);
+	void setStyleSheetNode(GString *css, const char *node);
 	virtual void updateColor();
 	void setColorNames(const char *bg_names[], const char *fg_names[]);
 	void setColorBase();
@@ -213,7 +216,7 @@ public:
 	
 	void lock() { _locked++; }
 	void unlock() { _locked--; }
-	bool locked() { return _locked; }
+	bool locked() const { return _locked; }
 	
 	void emit(void *signal);
 	void emit(void *signal, intptr_t arg);
@@ -248,6 +251,7 @@ public:
 	char *_tooltip;
 #ifdef GTK3
 	GtkStyleProvider *_css;
+	const char *_css_node;
 	const char *_bg_name;
 	const char **_bg_name_list;
 	GdkRGBA _bg_default;
@@ -335,6 +339,7 @@ public:
 #endif
 	
 	void createBorder(GtkWidget *new_border, bool keep_widget = false);
+	void createWidget();
 	
 	virtual int minimumHeight() const;
 	virtual int minimumWidth() const;

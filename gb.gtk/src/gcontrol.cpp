@@ -1148,6 +1148,15 @@ void gControl::setDesign(bool ignore)
 	_design_ignore = ignore;
 }
 
+void gControl::updateDesign()
+{
+	if (!_design)
+		return;
+	
+	_design = false;
+	setDesign(_design_ignore);
+}
+
 gControl *gControl::ignoreDesign()
 {
 	//fprintf(stderr, "ignoreDesign: %s", name());
@@ -2041,17 +2050,32 @@ void gControl::customStyleSheet(GString *css)
 {
 }
 
+void gControl::setStyleSheetNode(GString *css, const char *node)
+{
+	if (node == _css_node)
+		return;
+	
+	if (node && _css_node && !::strcmp(node, _css_node))
+		return;
+	
+	if (_css_node)
+		g_string_append(css, "}\n");
+	
+	_css_node = node;
+	
+	if (node)
+		g_string_append_printf(css, "#%s %s {\ntransition:none;\n", gtk_widget_get_name(getStyleSheetWidget()), node);
+}
+
 void gControl::updateStyleSheet()
 {
-	static int count = 0;
-
 	GtkWidget *wid;
 	GtkStyleContext *context;
 	GString *css;
 	char *css_str;
-	char buffer[16];
 	int s;
 	gColor fg;
+	char buffer[16];
 
 	wid = getStyleSheetWidget();
 	context = gtk_widget_get_style_context(wid);
@@ -2067,20 +2091,18 @@ void gControl::updateStyleSheet()
 	{
 		if (!_css)
 		{
-			count++;
-			sprintf(buffer, "g%d", count);
-			gtk_widget_set_name(wid, buffer);
-
+			setWidgetName();
 			_css = GTK_STYLE_PROVIDER(gtk_css_provider_new());
 		}
 		else
 			gtk_style_context_remove_provider(context, _css);
 
 		css = g_string_new(NULL);
+		_css_node = NULL;
 		
 		if (_bg != COLOR_DEFAULT || fg != COLOR_DEFAULT)
 		{
-			g_string_append_printf(css, "#%s %s {\ntransition:none;\n", gtk_widget_get_name(wid), getStyleSheetColorNode());
+			setStyleSheetNode(css, getStyleSheetColorNode());
 
 			if (_bg != COLOR_DEFAULT)
 			{
@@ -2097,13 +2119,11 @@ void gControl::updateStyleSheet()
 				g_string_append(css, buffer);
 				g_string_append(css, ";\n");
 			}
-			
-			g_string_append(css, "}\n");
 		}
 		
 		if (_font)
 		{
-			g_string_append_printf(css, "#%s %s {\ntransition:none;\n", gtk_widget_get_name(wid), getStyleSheetFontNode());
+			setStyleSheetNode(css, getStyleSheetFontNode());
 
 			if (_font->_name_set)
 			{
@@ -2150,17 +2170,20 @@ void gControl::updateStyleSheet()
 			{
 				g_string_append(css, "letter-spacing:1px;\n");
 			}
-			
-			g_string_append(css, "}\n");
 		}
 
 		customStyleSheet(css);
 
-		//fprintf(stderr, "---- %s\n%s", _name, css);
+		setStyleSheetNode(css, NULL);
+		
 		css_str = g_string_free(css, FALSE);
 		gtk_css_provider_load_from_data(GTK_CSS_PROVIDER(_css), css_str, -1, NULL);
 		g_free(css_str);
 		gtk_style_context_add_provider(context, _css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+		
+		/*css_str = gtk_css_provider_to_string(GTK_CSS_PROVIDER(_css));
+		fprintf(stderr, "---- %s\n%s", gtk_widget_get_name(wid), css_str);
+		g_free(css_str);*/
 	}
 }
 
@@ -2826,6 +2849,17 @@ gControl *gControl::previousFocus()
 	return ctrl;
 }
 
+void gControl::createWidget()
+{
+#ifdef GTK3
+	if (_css)
+	{
+		g_object_unref(_css);
+		_css = NULL;
+	}
+#endif
+}
+
 void gControl::createBorder(GtkWidget *new_border, bool keep_widget)
 {
 	GtkWidget *old = border;
@@ -2840,5 +2874,19 @@ void gControl::createBorder(GtkWidget *new_border, bool keep_widget)
 		_no_delete = true;
 		gtk_widget_destroy(old);
 		_no_delete = false;
+		createWidget();
 	}
 }
+
+#ifdef GTK3
+void gControl::setWidgetName()
+{
+	static int count = 0;
+	
+	char buffer[16];
+	
+	count++;
+	sprintf(buffer, "g%d", count);
+	gtk_widget_set_name(getStyleSheetWidget(), buffer);
+}
+#endif

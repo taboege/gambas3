@@ -122,7 +122,7 @@ static gboolean button_expose(GtkWidget *wid, GdkEventExpose *e, gButton *data)
 	if (data->hasText())
 	{
 		gt_set_cell_renderer_text_from_font((GtkCellRendererText *)data->rendtxt, data->font());
-		wt = data->font()->width(data->text(), strlen(data->text()));
+		wt = data->font()->width(data->text(), strlen(data->text())) + 4;
 	}
 	
 	if (data->rendpix)
