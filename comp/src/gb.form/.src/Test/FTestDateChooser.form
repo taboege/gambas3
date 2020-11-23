@@ -3,24 +3,37 @@
 { Form Form
   Move(0,0,824,336)
   #Scaled = False
+  Arrangement = Arrange.Horizontal
   Spacing = True
   Margin = True
-  { DateBox1 DateBox
-    Move(16,64,192,32)
-    Mode = DateChooser.TimeOnly
+  { Panel1 Panel
+    Move(16,8,320,304)
+    { DateBox2 DateBox
+      Move(40,112,184,32)
+    }
+    { DateBox3 DateBox
+      Move(8,160,296,32)
+      Mode = DateChooser.DateTime
+    }
+    { Button1 Button
+      Move(16,0,128,32)
+      Text = ("Enable")
+    }
+    { DateBox1 DateBox
+      Move(0,56,192,32)
+      Mode = DateChooser.TimeOnly
+    }
+    { TextBox1 TextBox
+      Move(40,216,192,32)
+      Border = False
+    }
+    { TextBox2 TextBox
+      Move(40,256,192,32)
+    }
   }
   { DateChooser1 DateChooser
-    Move(456,32,357,238)
-  }
-  { DateBox2 DateBox
-    Move(16,120,184,32)
-  }
-  { Button1 Button
-    Move(32,8,128,32)
-    Text = ("Enable")
-  }
-  { DateBox3 DateBox
-    Move(16,168,296,32)
-    Mode = DateChooser.DateTime
+    Move(408,32,408,240)
+    Expand = True
+    ShowWeek = True
   }
 }

@@ -432,7 +432,7 @@ Public Sub DrawingArea_Draw()
   If bMenu Then
     Paint.FillRect(1, 1, Me.W - 2, Me.H - 2, Color.SelectedBackground)
   Else 
-    Paint.FillRect(1, 1, Me.W - 2, Me.H - 2, Color.Background)
+    Paint.FillRect(1, 1, Me.W - 2, Me.H - 2, Style.BackgroundOf(Me))
     If $bInsideArrow Or If $bMenuOnly Then
       Style.PaintButton(0, 0, Me.W, Me.H, False, iFlag, bFlat)
     Else
