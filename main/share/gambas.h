@@ -29,8 +29,17 @@
 #endif
 
 #ifndef NO_CONFIG_H
+#ifdef PACKAGE_NAME
+	#undef PACKAGE_NAME
+	#undef PACKAGE_BUGREPORT
+	#undef PACKAGE_STRING
+	#undef PACKAGE_TARNAME
+	#undef PACKAGE_VERSION
+	#undef PACKAGE_URL
+#endif
 #include "config.h"
 #endif
+
 #include <stdint.h>
 #include <stddef.h>
 #include <sys/types.h>
