@@ -550,7 +550,7 @@ Private Sub DrawText(sText As String, SX As Integer, X As Integer, Y As Integer)
   
 End
 
-Private Sub DrawMatch(X As Integer, Y As Integer, H As Integer, XM As Integer, YM As Integer)
+Private Sub DrawMatch(X As Integer, Y As Integer, H As Integer, XM As Integer, YM As Integer, bOther As Boolean)
   
   'Dim sCar As String
   Dim XY As Point
@@ -559,8 +559,11 @@ Private Sub DrawMatch(X As Integer, Y As Integer, H As Integer, XM As Integer, Y
   If Not $bShowCursor Then Return
   XY = LinePos(YM, XM)
   WW = TextWidth($hDoc.Lines[YM], XM + 1, 1)
-  'Paint.FillRect(X + XY.X, Y + XY.Y + H - 1, WW, 1, $iForeground)
-  Paint.FillRect(X + XY.X, Y + XY.Y, WW, H, $iMatchColor)
+  If bOther Then
+    Paint.FillRect(X + XY.X, Y + XY.Y, WW, H, $iMatchColor)
+  Else
+    Paint.FillRect(X + XY.X, Y + XY.Y + H - 2, WW, 2, $iMatchColor)
+  Endif
   
 End
 
@@ -1064,8 +1067,8 @@ Private Sub DrawLine(X As Integer, Y As Integer, Width As Integer, Height As Int
   ' Matching characters
   
   If $YM >= 0 Then
-    If Row = $YMO Then DrawMatch(X, Y, H, $XMO, $YMO)
-    If Row = $YM Then DrawMatch(X, Y, H, $XM, $YM)
+    If Row = $YMO Then DrawMatch(X, Y, H, $XMO, $YMO, False)
+    If Row = $YM Then DrawMatch(X, Y, H, $XM, $YM, True)
   Endif
   
   ' Text
@@ -1881,6 +1884,9 @@ Public Sub View_KeyPress()
       
     Case Key.Insert
       Me.Overwrite = Not $bOverwrite
+      
+    Case Else
+      Stop Event
       
   End Select
   
