@@ -4,6 +4,7 @@ Static Private $iButton As Integer
 
 Public Sub Run(sIcon As String, sText As String, aButton As String[]) As Integer
 
+  Dim DS As Integer = Desktop.Scale
   Dim sTitle As String
   Dim hPict As Picture
   Dim H As Integer
@@ -13,6 +14,7 @@ Public Sub Run(sIcon As String, sText As String, aButton As String[]) As Integer
   Dim iBusy As Integer
   Dim WB As Integer
   Dim HT As Integer
+  Dim hSpace As Spring
 
   sTitle = Message.Title
   If Not sTitle Then sTitle = Application.Title
@@ -33,14 +35,10 @@ Public Sub Run(sIcon As String, sText As String, aButton As String[]) As Integer
   If Not hPict Then hPict = Picture["./gb.gui.base/message/info.png"]
   picMessage.Picture = hPict
   
-  hPict = Picture["icon:/small/copy"]
-  If Not hPict Then hPict = Picture["./gb.gui.base/message/copy.png"]
-  btnCopy.Picture = hPict
-  
   sText = Replace(sText, "\n", "<br>")
   
   txtMessage.Ignore = True
-  txtMessage.W = Screen.AvailableWidth \ 3
+  txtMessage.W = Screen.AvailableWidth \ 4
   txtMessage.Text = sText
   txtMessage.Adjust
   HT = txtMessage.H
@@ -51,16 +49,17 @@ Public Sub Run(sIcon As String, sText As String, aButton As String[]) As Integer
     hButton = New Button(panButton) As "Button"
     hButton.Tag = I
     hButton.Text = aButton[I]
-    hButton.W = Max(Desktop.Scale * 14, hButton.Font.TextWidth(hButton.Text) + Desktop.Scale * 2)
+    hButton.W = Max(DS * 14, hButton.Font.TextWidth(hButton.Text) + DS * 2)
     H = Max(H, hButton.Font.TextHeight(hButton.Text))
-    WB += hButton.W + Desktop.Scale
+    WB += hButton.W + DS
     If I = 0 Then hButton.SetFocus()
     If I = aButton.Max Then hButton.Cancel = True
   Next
-  panButton.H = Max(H, Desktop.Scale * 4)
+  hSpace = New Spring(panButton)
+  panButton.H = Max(H, DS * 4)
   
-  W = Max(txtMessage.W + 1, WB) + picMessage.W + Desktop.Scale * 4
-  H = Max(Desktop.Scale * 8, HT) + panButton.H + Desktop.Scale * 5
+  W = Max(DS * 32, Max(txtMessage.W + 1, WB) + picMessage.W + DS * 4)
+  H = Max(DS * 8, HT) + panButton.H + DS * 5
   
   Me.Resize(W, H)
   
@@ -98,9 +97,10 @@ Public Sub Form_KeyPress()
 
 End
 
-Public Sub btnCopy_Click()
+Public Sub mnuCopy_Click()
 
   Component.Load("gb.util")
   Clipboard.Copy(String.FromHTML(txtMessage.Text))
 
 End
+

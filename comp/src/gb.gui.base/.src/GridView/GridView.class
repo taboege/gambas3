@@ -417,8 +417,6 @@ Public Sub ScrollArea_Draw()
   Dim iBgSel As Integer
   Dim iPadding As Integer
   
-  'Debug Me.Font.ToString();; Draw.Font.ToString()
-  
   If $iBg <> Color.Transparent Then
     If $iBg = Color.Default Then 
       iBg = Color.TextBackground
