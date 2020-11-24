@@ -2997,12 +2997,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 
 		if (MAIN_key_debug)
 		{
-#ifdef QT5
-			qDebug("gb.qt5"
-#else
-			qDebug("gb.qt4"
-#endif
-				": %s: real = %d original = %d no_keyboard = %d",
+			qDebug(QT_NAME ": %s: real = %d original = %d no_keyboard = %d",
 				(type == QEvent::KeyRelease ? "KeyRelease" :
 				 (type == QEvent::KeyPress ? "KeyPress" : "?")),
 				real, original, control->flag.no_keyboard);
@@ -3030,8 +3025,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 		
 		if (MAIN_key_debug)
 		{
-			qDebug("       " 
-				"(%s %s) -> %d `%s' %s",
+			qDebug(QT_NAME ": (%s %s) -> %d `%s' %s",
 				GB.GetClassName(control), control->name,
 				kevent->key(), (const char *)kevent->text().toLatin1(), kevent->isAutoRepeat() ? "AR" : "--");
 		}
@@ -3097,12 +3091,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 
 		if (MAIN_key_debug)
 		{
-#ifdef QT5
-			qDebug("gb.qt5"
-#else
-			qDebug("gb.qt4"
-#endif
-				": InputMethod: real = %d original = %d no_keyboard = %d",
+			qDebug(QT_NAME ": InputMethod: real = %d original = %d no_keyboard = %d",
 				real, original, control->flag.no_keyboard);
 		}
 		
@@ -3115,8 +3104,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 		{
 			if (MAIN_key_debug)
 			{
-				qDebug("       " 
-					"(%s %s) -> `%s'",
+				qDebug(QT_NAME ": (%s %s) -> `%s'",
 					GB.GetClassName(control), control->name,
 					(const char *)imevent->commitString().toUtf8());
 			}
