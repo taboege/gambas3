@@ -901,7 +901,7 @@ bool GB_Raise(void *object, int event_id, int nparam, ...)
 {
 	OBJECT *parent;
 	int func_id;
-	int result;
+	bool result;
 	va_list args;
 	bool arg;
 	COBSERVER *obs;
