@@ -611,7 +611,7 @@ static bool analyze(const char *comp, bool include)
 	if (!native && !gambas)
 	{
 		if (!include || !_no_include_warning)
-			warning("component %s not found", name);
+			warning("component not found: %s", name);
 		STR_free(name);
 		return TRUE;
 	}
