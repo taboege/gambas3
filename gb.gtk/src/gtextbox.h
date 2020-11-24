@@ -33,11 +33,11 @@ public:
 //"Properties"
 	int alignment() const;
 	bool hasBorder() const { return _has_border; }
-	virtual int length() const;
+	virtual int length();
 	int maxLength() const;
 	bool password() const;
 	int position() const;
-	virtual char *text() const;
+	virtual char *text();
 	virtual char *placeholder() const;
 	virtual bool isReadOnly() const;
 	int selLength() const;

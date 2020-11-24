@@ -480,6 +480,7 @@ gTextArea::gTextArea(gContainer *parent) : gControl(parent)
 	_use_wheel = true;
 	_fix_spacing_tag = NULL;
 	_has_native_popup = true;
+	_eat_return_key = true;
 	
 	onChange = 0;
 	onCursor = 0;
@@ -572,6 +573,7 @@ void gTextArea::setReadOnly(bool vl)
 {
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(textview), !vl);
 	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(textview), !vl);
+	_eat_return_key = !vl;
 }
 
 GtkTextIter *gTextArea::getIterAt(int pos)

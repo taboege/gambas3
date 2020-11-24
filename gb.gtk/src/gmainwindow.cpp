@@ -44,6 +44,11 @@
 
 //#define DEBUG_RESIZE 1
 
+GList *gMainWindow::windows = NULL;
+gMainWindow *gMainWindow::_active = NULL;
+gMainWindow *gMainWindow::_current = NULL;
+
+
 #define CHECK_STATE(_var, _state) \
 	if (event->changed_mask & _state) \
 	{ \
@@ -332,14 +337,45 @@ static gboolean cb_expose(GtkWidget *wid, GdkEventExpose *e, gMainWindow *data)
 }
 #endif
 
+static gboolean my_key_press_event(GtkWidget *widget, GdkEventKey *event)
+{
+  GtkWindow *window = GTK_WINDOW(widget);
+  gboolean handled = FALSE;
+
+  /* handle focus widget key events */
+  if (!handled)
+    handled = gtk_window_propagate_key_event (window, event);
+
+  /* Chain up, invokes binding set */
+  if (!handled)
+	{
+		GtkWidgetClass *parent_klass = (GtkWidgetClass*)g_type_class_peek(g_type_parent(GTK_TYPE_WINDOW));
+    handled = parent_klass->key_press_event(widget, event);
+	}
+
+  /* handle mnemonics and accelerators */
+  if (!handled)
+    handled = gtk_window_activate_key(window, event);
+
+  return handled;
+}
 
 
-GList *gMainWindow::windows = NULL;
-gMainWindow *gMainWindow::_active = NULL;
-gMainWindow *gMainWindow::_current = NULL;
+//-------------------------------------------------------------------------
 
 void gMainWindow::initialize()
 {
+	// workaround GTK+ accelerator management
+
+	static bool _init = FALSE;
+	if (!_init)
+	{
+		GtkWidgetClass *klass = (GtkWidgetClass*)g_type_class_peek(GTK_TYPE_WINDOW);
+		klass->key_press_event = my_key_press_event;
+		_init = TRUE;
+	}
+		
+	
 	//fprintf(stderr, "new window: %p in %p\n", this, parent());
 
 	stack = 0;

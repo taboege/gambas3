@@ -445,7 +445,7 @@ bool gKey::raiseEvent(int type, gControl *control, const char *text)
 	bool cancel = false;
 
 #if DEBUG_IM
-	fprintf(stderr, "gKey::raiseEvent to %p %s\n", control, control->name());
+	fprintf(stderr, "gKey::raiseEvent %s to %p %s\n", type == gEvent_KeyPress ? "KeyPress" : "KeyRelease", control, control->name());
 #endif
 					
 	if (text)
@@ -471,11 +471,19 @@ __KEY_TRY_PROXY:
 	{
 		//fprintf(stderr, "gEvent_KeyPress on %p %s\n", control, control->name());
 		//fprintf(stderr, "onKeyEvent: %p %d %p %s\n", event, type, control, control->name());
+		#if DEBUG_IM
+			fprintf(stderr, "--> %s\n", control->name());
+		#endif
 		cancel = control->onKeyEvent(control, type);
 	}
 
 	if (cancel)
+	{
+		#if DEBUG_IM
+			fprintf(stderr, "--> cancel\n");
+		#endif
 		return true;
+	}
 
 	if (control->_proxy_for)
 	{
@@ -498,7 +506,7 @@ gboolean gcb_key_event(GtkWidget *widget, GdkEvent *event, gControl *control)
 	bool cancel;
 
 #if DEBUG_IM
-	fprintf(stderr, "gcb_key_event %s for %p %s / active = %p %s\n", event->type == GDK_KEY_PRESS ? "GDK_KEY_PRESS" : "GDK_KEY_RELEASE", control, control->name(), gApplication::activeControl(), gApplication::activeControl() ? gApplication::activeControl()->name() : "-");
+	fprintf(stderr, "gcb_key_event: %s for %p %s / active = %p %s\n", event->type == GDK_KEY_PRESS ? "GDK_KEY_PRESS" : "GDK_KEY_RELEASE", control, control->name(), gApplication::activeControl(), gApplication::activeControl() ? gApplication::activeControl()->name() : "-");
 #endif
 
 	/*if (!control->_grab && gApplication::activeControl())
@@ -540,30 +548,39 @@ gboolean gcb_key_event(GtkWidget *widget, GdkEvent *event, gControl *control)
 	if (cancel)
 		return true;
 
-	win = control->window();
-
-	if (event->key.keyval == GDK_Escape)
+	if (type == gEvent_KeyPress)
 	{
-		if (control->_grab)
-		{
-			gApplication::exitLoop(control);
-			return true;
-		}
+		win = control->window();
 
-		if (check_button(win->_cancel))
+		if (event->key.keyval == GDK_Escape)
 		{
-			win->_cancel->setFocus();
-			win->_cancel->animateClick(type == gEvent_KeyRelease);
-			return true;
+			if (control->_grab)
+			{
+				gApplication::exitLoop(control);
+				return true;
+			}
+
+			if (check_button(win->_cancel))
+			{
+				#if DEBUG_IM
+					fprintf(stderr, "gcb_key_event: cancel button\n");
+				#endif
+				win->_cancel->setFocus();
+				win->_cancel->animateClick(type == gEvent_KeyRelease);
+				return true;
+			}
 		}
-	}
-	else if (event->key.keyval == GDK_Return || event->key.keyval == GDK_KP_Enter)
-	{
-		if (check_button(win->_default))
+		else if (event->key.keyval == GDK_Return || event->key.keyval == GDK_KP_Enter)
 		{
-			win->_default->setFocus();
-			win->_default->animateClick(type == gEvent_KeyRelease);
-			return true;
+			if (!control->eatReturnKey() && check_button(win->_default))
+			{
+				#if DEBUG_IM
+					fprintf(stderr, "gcb_key_event: default button\n");
+				#endif
+				win->_default->setFocus();
+				win->_default->animateClick(type == gEvent_KeyRelease);
+				return true;
+			}
 		}
 	}
 

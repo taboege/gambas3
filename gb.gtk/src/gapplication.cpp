@@ -823,14 +823,14 @@ __FOUND_WIDGET:
 
 			if (event->key.keyval)
 				gKey::_last_key_press = event->key.keyval;
-			send_to_window = control->isWindow();
+			send_to_window = false; //control->isWindow();
 			goto __HANDLE_EVENT;
 
 		case GDK_KEY_RELEASE:
 
 			if (event->key.keyval)
 				gKey::_last_key_release = event->key.keyval;
-			send_to_window = control->isWindow();
+			send_to_window = false; //control->isWindow();
 			goto __HANDLE_EVENT;
 			
 		default:

@@ -173,6 +173,8 @@ public:
 	bool canFocusOnClick() const;
 	void setCanFocus(bool vl);
 
+	bool eatReturnKey() const { return _eat_return_key; }
+	
 	gControl *proxy() const { return _proxy; }
 	bool setProxy(gControl *proxy);
 
@@ -302,7 +304,8 @@ public:
 	unsigned _is_window : 1;               // I am a window
 	unsigned _is_button : 1;               // I am a button
 	unsigned _is_drawingarea : 1;          // I am a drawing area
-	unsigned _has_native_popup : 1;         // I have a native popup menu
+	unsigned _has_native_popup : 1;        // I have a native popup menu
+	unsigned _eat_return_key : 1;          // If the control eats the return key
 	
   void removeParent() { pr = NULL; }
 	void initSignals();

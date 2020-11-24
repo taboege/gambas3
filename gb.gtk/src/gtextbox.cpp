@@ -160,7 +160,7 @@ void gTextBox::initEntry()
 	//g_signal_connect(getInputMethod(), "commit", G_CALLBACK(cb_im_commit), (gpointer)this);
 }
 
-char* gTextBox::text() const
+char* gTextBox::text()
 {
 	return (char*)gtk_entry_get_text(GTK_ENTRY(entry));
 }
@@ -288,7 +288,7 @@ void gTextBox::insert(char *txt, int len)
 	gtk_editable_insert_text(GTK_EDITABLE(entry), txt, len, &pos);
 }
 
-int gTextBox::length() const
+int gTextBox::length()
 {
 	const gchar *buf;
 	

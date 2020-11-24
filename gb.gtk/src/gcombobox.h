@@ -33,13 +33,13 @@ public:
 	gComboBox(gContainer *parent);
 	~gComboBox();
 
-	int count();
+	int count() const;
 	int index();
 	char* itemText(int ind);
 	virtual int length();
 	//char** list();
-	virtual bool isReadOnly();
-	bool isSorted();
+	virtual bool isReadOnly() const;
+	bool isSorted() const;
 	virtual char *text();
 
 	void setIndex(int vl);

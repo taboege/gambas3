@@ -440,7 +440,7 @@ void gComboBox::setRealForeground(gColor color)
 }
 #endif
 
-int gComboBox::count()
+int gComboBox::count() const
 {
 	return tree->rowCount();
 }
@@ -487,7 +487,7 @@ int gComboBox::length()
 		return gTextBox::length();
 }
 
-bool gComboBox::isSorted()
+bool gComboBox::isSorted() const
 {
 	return tree->isSorted();
 }
@@ -718,7 +718,7 @@ int gComboBox::minimumHeight()
 }
 
 
-bool gComboBox::isReadOnly()
+bool gComboBox::isReadOnly() const
 {
 	return entry == NULL;
 }
