@@ -5654,7 +5654,7 @@ Public Sub SetCurrentPopup(hMenu As Menu)
   Try $hCurrentPopup.Enabled = False
   $hCurrentPopup = hMenu
   Try $hCurrentPopup.Enabled = True
-  'Debug $hCurrentPopup.Name;; $hCurrentPopup.Window.Title
+  'Debug $hCurrentPopup.Window.Name; "."; $hCurrentPopup.Name
 
 End
 

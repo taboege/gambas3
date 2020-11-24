@@ -1047,7 +1047,7 @@ Public Sub btnImport_Click()
 
   DisplayTrans
   $bModify = True
-  SaveTranslate
+  SetLang($sLang)
 
   Dec Application.Busy
 
