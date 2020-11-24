@@ -54,15 +54,6 @@
 #include <stdarg.h>
 #include <string.h>
 
-#ifdef PACKAGE_NAME
-	#undef PACKAGE_NAME
-	#undef PACKAGE_BUGREPORT
-	#undef PACKAGE_STRING
-	#undef PACKAGE_TARNAME
-	#undef PACKAGE_VERSION
-	#undef PACKAGE_URL
-#endif
-
 #ifdef Max
 	#undef Max
 #endif
