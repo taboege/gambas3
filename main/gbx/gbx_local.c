@@ -55,6 +55,7 @@
 #include "gbx_local.h"
 
 //#define DEBUG_LANG
+//#define DEBUG_DATE
 
 static void add_string(const char *src, int len, int *before);
 
@@ -70,8 +71,8 @@ LOCAL_INFO LOCAL_default = {
 	NULL, 0, NULL, 0,
 	3, 3,
 	0,
-	{ 0, '/', '/' },
-	{ ':', ':', 0 },
+	{ 0, 0, '/', '/' },
+	{ 0, ':', ':', 0 },
 	"",
 	"",
 	{ LO_MONTH, LO_DAY, LO_YEAR },
@@ -112,6 +113,9 @@ static char *_lang = NULL;
 
 extern char **environ;
 static char **_environ;
+
+enum { PAD_DEFAULT, PAD_NONE, PAD_ZERO, PAD_SPACE };
+enum { LAST_NONE, LAST_DATE, LAST_TIME };
 
 #define add_currency_flag(_flag) (LOCAL_local.currency_flag <<= 1, LOCAL_local.currency_flag |= (!!(_flag)))
 #define test_currency_flag(_negative, _space, _before, _intl) (!!(LOCAL_local.currency_flag & (1 << ((!!_negative) + ((!!_before) << 1) + ((!!_intl) << 2)))))
@@ -161,15 +165,6 @@ static void end(char **str, int *len)
 	*str = COMMON_buffer;
 	*len = COMMON_pos;
 }
-
-static void stradd_sep_real(char **dst, const char *src, char sep)
-{
-	if (*dst)
-		*dst = STRING_add_char(*dst, sep);
-	*dst = STRING_add(*dst, src, strlen(src));
-}
-
-#define stradd_sep(_dst, _src, _sep) stradd_sep_real(&LOCAL_local._dst, _src, _sep)
 
 static void add_thousand_sep(int *before)
 {
@@ -298,18 +293,18 @@ static char *get_languages(void)
 	p = index(lang, '.');
 	if (p) *p = 0;
 
-	lang_list = STRING_add(lang_list, lang, 0);
+	lang_list = STRING_add_zero(lang_list, lang);
 	lang_list = STRING_add_char(lang_list, ':');
 
 	src = index(lang, '_');
 	if (src)
 	{
 		*src = 0;
-		lang_list = STRING_add(lang_list, lang, 0);
+		lang_list = STRING_add_zero(lang_list, lang);
 		lang_list = STRING_add_char(lang_list, ':');
 	}
 
-	lang_list = STRING_add(lang_list, lang, 0);
+	lang_list = STRING_add_zero(lang_list, lang);
 	lang_list = STRING_add(lang_list, "_*", 2);
 
 	#ifdef DEBUG_LANG
@@ -350,18 +345,100 @@ static const char *fix_separator(const char *str)
 	return str[1] ? "_" : str;
 }
 
+#define FORMAT_ADD(_dst, _str) (LOCAL_local._dst = STRING_add_zero(LOCAL_local._dst, (_str)))
+#define FORMAT_ADD_CHAR(_dst, _char) (LOCAL_local._dst = STRING_add_char(LOCAL_local._dst, (_char)))
+
+static void format_add_len(char **pdst, const char *str, int len)
+{
+	if (len == 1 && isalpha(*str))
+		*pdst = STRING_add_char(*pdst, '\\');
+	*pdst = STRING_add(*pdst, str, len);
+}
+
+#define FORMAT_ADD_LEN(_dst, _str, _len) (format_add_len(&LOCAL_local._dst, (_str), (_len)))
+
+static void format_add_sep(char **pdst, const char *str, char sep)
+{
+	if (*pdst)
+		*pdst = STRING_add_char(*pdst, sep);
+	*pdst = STRING_add_zero(*pdst, str);
+}
+
+#define FORMAT_ADD_SEP(_dst, _str, _sep) format_add_sep(&LOCAL_local._dst, (_str), (_sep))
+
+static bool order_add(uchar *p, uchar type)
+{
+	int i;
+	
+	for (i = 0; i < 3; i++)
+	{
+		if (p[i] == type)
+			return FALSE;
+		else if (p[i] == 0)
+		{
+			p[i] = type;
+			return TRUE;
+		}
+	}
+	
+	return FALSE;
+}
+
+#define ORDER_DATE_ADD(_type) order_add(LOCAL_local.date_order, (_type))
+#define ORDER_TIME_ADD(_type) order_add(LOCAL_local.time_order, (_type))
+
+static char *get_strftime(int which)
+{
+	char *fmt = NULL;
+	char *p = nl_langinfo(which);
+	char c;
+	
+	for(;;)
+	{
+		c = *p++;
+		if (!c)
+			break;
+		if (c != '%')
+		{
+			fmt = STRING_add_char(fmt, c);
+			continue;
+		}
+		
+		c = *p++;
+		if (c == 'D')
+			fmt = STRING_add_zero(fmt, "%m/%d/%y");
+		else if (c == 'F')
+			fmt = STRING_add_zero(fmt, "%Y-%m-%d");
+		else if (c == 'R')
+			fmt = STRING_add_zero(fmt, "%H:%M");
+		else if (c == 'r')
+			fmt = STRING_add_zero(fmt, "%I:%M:%S %p");
+		else if (c == 'T')
+			fmt = STRING_add_zero(fmt, "%H:%M:%S");
+		else
+		{
+			fmt = STRING_add_char(fmt, '%');
+			fmt = STRING_add_char(fmt, c);
+		}
+	}
+	
+	#ifdef DEBUG_DATE
+	fprintf(stderr, "fmt = %s\n", fmt);
+	#endif
+	return fmt;
+}
+
 static void fill_local_info(void)
 {
 	struct lconv *info;
 	char *p;
+	char *fmt;
 	char c;
-	uchar *dp;
-	uchar *tp;
+	char pad;
+	char last;
+	uchar last_elt;
 	char *codeset;
 	const char *lang;
-	char *am_pm;
-	bool got_second;
-	uchar ind;
 	int len;
 
 	free_local_info();
@@ -405,163 +482,394 @@ static void fill_local_info(void)
 	LOCAL_local.intl_currency_symbol = STRING_conv_to_UTF8(info->int_curr_symbol, 0);
 	STRING_ref(LOCAL_local.intl_currency_symbol);*/
 
-	// Date format
+	// Date & time format
 
-	p = nl_langinfo(D_FMT);
-	//fprintf(stderr, "date format: %s\n", p);
-	dp = LOCAL_local.date_order;
-
-	if (strcmp(p, "%D") == 0)
-		p = "%m/%d/%y";
-	else if (strcmp(p, "%F") == 0)
-		p = "%Y-%m-%d";
-
-	for (;;)
+	#ifdef DEBUG_DATE
+	fprintf(stderr, "D_T_FMT: %s\n", nl_langinfo(D_T_FMT));
+	fprintf(stderr, "D_FMT: %s\n", nl_langinfo(D_FMT));
+	fprintf(stderr, "T_FMT: %s\n", nl_langinfo(T_FMT));
+	#endif
+	
+	// gb.GeneralDate / gb.LongDate
+	
+	p = fmt = get_strftime(D_T_FMT);
+	last = LAST_NONE;
+	last_elt = 0;
+	
+	for(;;)
 	{
 		c = *p++;
 		if (!c)
 			break;
-
+		
 		if (c == '%')
 		{
 			c = *p++;
 			if (c != '%')
 			{
+				pad = PAD_DEFAULT;
+				
+				while (c && !isalpha(c))
+				{
+					if (c == '-')
+						pad = PAD_NONE;
+					else if (c == '_')
+						pad = PAD_SPACE;
+					else if (c == '0')
+						pad = PAD_ZERO;
+					c = *p++;
+				}
+				
 				if (c == 'E' || c == 'O')
 					c = *p++;
-
+				
 				switch (c)
 				{
-					case 'y': case 'Y':
-						*dp++ = LO_YEAR;
-						stradd_sep(long_date, "yyyy", ' ');
-						stradd_sep(medium_date, "yyyy", ' ');
-						stradd_sep(short_date, "yyyy", '/');
-						stradd_sep(general_date, "yyyy", '/');
+					case 'a': case 'A':
+						FORMAT_ADD(general_date, (c == 'a') ? "ddd" : "dddd");
+						FORMAT_ADD(long_date, "dddd");
+						last = LAST_DATE;
 						break;
-
-					case 'b': case 'B': case 'h': case 'm':
-						*dp++ = LO_MONTH;
-						stradd_sep(long_date, "mmmm", ' ');
-						stradd_sep(medium_date, "mmm", ' ');
-						stradd_sep(short_date, "mm", '/');
-						stradd_sep(general_date, "mm", '/');
+						
+					case 'b': case 'h': case 'B':
+						FORMAT_ADD(general_date, (c == 'b') ? "mmm" : "mmmm");
+						FORMAT_ADD(long_date, "mmmm");
+						last = LAST_DATE;
 						break;
-
+						
 					case 'd': case 'e':
-						*dp++ = LO_DAY;
-						stradd_sep(long_date, "dddd d", ' ');
-						stradd_sep(medium_date, "dd", ' ');
-						stradd_sep(short_date, "dd", '/');
-						stradd_sep(general_date, "dd", '/');
+						if (pad == PAD_DEFAULT)
+							pad = (c == 'e') ? PAD_NONE : PAD_ZERO;
+						FORMAT_ADD(general_date, (pad == PAD_ZERO) ? "dd" : "d");
+						FORMAT_ADD(long_date, (pad == PAD_ZERO) ? "dd" : "d");
+						last = LAST_DATE;
+						break;
+					
+					case 'H': case 'I': case 'k': case 'l':
+						if (pad == PAD_DEFAULT)
+							pad = (c == 'k' || c == 'l') ? PAD_NONE : PAD_ZERO;
+						FORMAT_ADD(general_date, (pad == PAD_ZERO) ? "hh" : "h");
+						last = LAST_TIME;
+						break;
+						
+					case 'm':
+						if (pad == PAD_DEFAULT)
+							pad = PAD_ZERO;
+						FORMAT_ADD(general_date, (pad == PAD_ZERO) ? "mm" : "m");
+						FORMAT_ADD(long_date, (pad == PAD_ZERO) ? "mm" : "m");
+						last = LAST_DATE;
+						break;
+						
+					case 'M':
+						if (pad == PAD_DEFAULT)
+							pad = PAD_ZERO;
+						FORMAT_ADD(general_date, (pad == PAD_ZERO) ? "nn" : "n");
+						last = LAST_TIME;
+						break;
+						
+					case 'P': case 'p':
+						FORMAT_ADD(general_date, (c == 'P') ? "am/pm" : "AM/PM");
+						last = LAST_TIME;
+						break;
+						
+					case 'S':
+						if (pad == PAD_DEFAULT)
+							pad = PAD_ZERO;
+						FORMAT_ADD(general_date, (pad == PAD_ZERO) ? "ss" : "s");
+						last = LAST_TIME;
+						break;
+						
+					case 'Y': case 'y':
+						FORMAT_ADD(general_date, "yyyy");
+						FORMAT_ADD(long_date, "yyyy");
+						last = LAST_DATE;
+						break;
+						
+					case 'z':
+						FORMAT_ADD(general_date, "t");
+						FORMAT_ADD(long_date, "t");
+						last = LAST_DATE;
+						break;
+						
+					case 'Z':
+						FORMAT_ADD(general_date, "tt");
+						FORMAT_ADD(long_date, "t");
+						last = LAST_DATE;
 						break;
 				}
-
-				LOCAL_local.date_tail_sep = FALSE;
+			
 				continue;
 			}
 		}
+		
+		len = STRING_utf8_get_char_length(c);
+		p--;
+		
+		FORMAT_ADD_LEN(general_date, p, len);
+		
+		if (last == LAST_DATE)
+			FORMAT_ADD_LEN(long_date, p, len);
+		
+		p += len;
+	}
+	
+	STRING_free(&fmt);
 
-		if (dp != LOCAL_local.date_order)
+	// Other date formats
+	
+	p = fmt = get_strftime(D_FMT);
+	last = LAST_NONE;
+	last_elt = 0;
+	
+	for(;;)
+	{
+		c = *p++;
+		if (!c)
+			break;
+		
+		if (c == '%')
 		{
-			ind = dp[-1];
-			if (LOCAL_local.date_sep[ind] == 0)
+			c = *p++;
+			if (c != '%')
 			{
-				len = STRING_utf8_get_char_length(c);
-				LOCAL_local.date_sep[ind] = STRING_utf8_to_unicode(p - 1, len);
-				p += len - 1;
+				pad = PAD_DEFAULT;
+				
+				while (c && !isalpha(c))
+				{
+					if (c == '-')
+						pad = PAD_NONE;
+					else if (c == '_')
+						pad = PAD_SPACE;
+					else if (c == '0')
+						pad = PAD_ZERO;
+					c = *p++;
+				}
+				
+				if (c == 'E' || c == 'O')
+					c = *p++;
+				
+				switch (c)
+				{
+					case 'a': case 'A':
+						if (ORDER_DATE_ADD(LO_DAY))
+						{
+							FORMAT_ADD_SEP(medium_date, "dd", '/');
+							FORMAT_ADD_SEP(short_date, "d", '/');
+							last = LAST_DATE;
+							last_elt = LO_DAY;
+						}
+						break;
+						
+					case 'b': case 'h': case 'B':
+						if (ORDER_DATE_ADD(LO_MONTH))
+						{
+							FORMAT_ADD_SEP(medium_date, "mm", '/');
+							FORMAT_ADD_SEP(short_date, "m", '/');
+							last = LAST_DATE;
+							last_elt = LO_MONTH;
+						}
+						break;
+						
+					case 'd': case 'e':
+						if (pad == PAD_DEFAULT)
+							pad = (c == 'e') ? PAD_NONE : PAD_ZERO;
+						if (ORDER_DATE_ADD(LO_DAY))
+						{
+							FORMAT_ADD_SEP(medium_date, "dd", '/');
+							FORMAT_ADD_SEP(short_date, "d", '/');
+							last = LAST_DATE;
+							last_elt = LO_DAY;
+						}
+						break;
+					
+					case 'm':
+						if (pad == PAD_DEFAULT)
+							pad = PAD_ZERO;
+						if (ORDER_DATE_ADD(LO_MONTH))
+						{
+							FORMAT_ADD_SEP(medium_date, "mm", '/');
+							FORMAT_ADD_SEP(short_date, "m", '/');
+							last = LAST_DATE;
+							last_elt = LO_MONTH;
+						}
+						break;
+						
+					case 'Y': case 'y':
+						FORMAT_ADD_SEP(medium_date, "yyyy", '/');
+						FORMAT_ADD_SEP(short_date, "yyyy", '/');
+						if (ORDER_DATE_ADD(LO_YEAR))
+						{
+							last = LAST_DATE;
+							last_elt = LO_YEAR;
+						}							
+						break;
+						
+					default:
+						last = LAST_NONE;
+				}
+			
+				if (last == LAST_DATE)
+					LOCAL_local.date_tail_sep = FALSE;
+				
+				continue;
 			}
-			LOCAL_local.date_tail_sep = TRUE;
 		}
+		
+		len = STRING_utf8_get_char_length(c);
+		p--;
+		
+		if (last == LAST_DATE)
+		{
+			if (LOCAL_local.date_sep[last_elt] == 0)
+				LOCAL_local.date_sep[last_elt] = STRING_utf8_to_unicode(p, len);
+			LOCAL_local.date_tail_sep = c != ' ';
+		}
+		
+		p += len;
 	}
 	
 	if (LOCAL_local.date_tail_sep)
 	{
-		LOCAL_local.short_date = STRING_add_char(LOCAL_local.short_date, '/');
-		LOCAL_local.general_date = STRING_add_char(LOCAL_local.general_date, '/');
+		FORMAT_ADD_CHAR(medium_date, '/');
+		FORMAT_ADD_CHAR(short_date, '/');
 	}
 	
 	LOCAL_local.date_many_sep = LOCAL_local.date_sep[LOCAL_local.date_order[0]] != LOCAL_local.date_sep[LOCAL_local.date_order[1]];
 
-	//fprintf(stderr, "date_tail_sep = %d date_many_sep = %d\n", LOCAL_local.date_tail_sep, LOCAL_local.date_many_sep);
+	STRING_free(&fmt);
+
+	// Other time formats
 	
-	// Time format
-
-	p = nl_langinfo(T_FMT);
-	//fprintf(stderr, "time format: %s\n", p);
-	tp = LOCAL_local.time_order;
-
-	if (strcmp(p, "%T") == 0 || strcmp(p, "%R") == 0 || strcmp(p, "%r") == 0)
-		p = "%H:%M:%S";
-
-	got_second = FALSE;
-
-	for (;;)
+	p = fmt = get_strftime(T_FMT);
+	last = LAST_NONE;
+	last_elt = 0;
+	
+	for(;;)
 	{
 		c = *p++;
 		if (!c)
 			break;
-
+		
 		if (c == '%')
 		{
 			c = *p++;
 			if (c != '%')
 			{
+				pad = PAD_DEFAULT;
+				
+				while (c && !isalpha(c))
+				{
+					if (c == '-')
+						pad = PAD_NONE;
+					else if (c == '_')
+						pad = PAD_SPACE;
+					else if (c == '0')
+						pad = PAD_ZERO;
+					c = *p++;
+				}
+				
 				if (c == 'E' || c == 'O')
 					c = *p++;
-
-				switch(c)
+				
+				switch (c)
 				{
 					case 'H': case 'I': case 'k': case 'l':
-						*tp++ = LO_HOUR;
-						stradd_sep(long_time, "hh", ':');
-						stradd_sep(medium_time, "hh", ':');
-						stradd_sep(short_time, "hh", ':');
+						if (pad == PAD_DEFAULT)
+							pad = (c == 'k' || c == 'l') ? PAD_NONE : PAD_ZERO;
+						if (ORDER_TIME_ADD(LO_HOUR))
+						{
+							FORMAT_ADD_SEP(long_time, "hh", ':');
+							FORMAT_ADD_SEP(medium_time, (pad == PAD_ZERO) ? "hh" : "h", ':');
+							FORMAT_ADD_SEP(short_time, "h", ':');
+							last = LAST_TIME;
+							last_elt = LO_HOUR;
+						}
 						break;
-
+						
 					case 'M':
-						*tp++ = LO_MINUTE;
-						stradd_sep(long_time, "nn", ':');
-						stradd_sep(medium_time, "nn", ':');
-						stradd_sep(short_time, "nn", ':');
+						if (pad == PAD_DEFAULT)
+							pad = PAD_ZERO;
+						if (ORDER_TIME_ADD(LO_MINUTE))
+						{
+							FORMAT_ADD_SEP(long_time, "nn", ':');
+							FORMAT_ADD_SEP(medium_time, (pad == PAD_ZERO) ? "nn" : "n", ':');
+							FORMAT_ADD_SEP(short_time, "nn", ':');
+							last = LAST_TIME;
+							last_elt = LO_MINUTE;
+						}
 						break;
-
+						
+					case 'P': case 'p':
+						FORMAT_ADD_SEP(medium_time, (c == 'P') ? "am/pm" : "AM/PM", ' ');
+						break;
+						
 					case 'S':
-						*tp++ = LO_SECOND;
-						stradd_sep(long_time, "ss", ':');
-						got_second = TRUE;
+						if (pad == PAD_DEFAULT)
+							pad = PAD_ZERO;
+						if (ORDER_TIME_ADD(LO_SECOND))
+						{
+							FORMAT_ADD_SEP(long_time, "ss", ':');
+							FORMAT_ADD_SEP(medium_time, (pad == PAD_ZERO) ? "ss" : "s", ':');
+							last = LAST_TIME;
+							last_elt = LO_SECOND;
+						}
 						break;
+					
+					default:
+						last = LAST_NONE;
 				}
-				LOCAL_local.time_tail_sep = FALSE;
+			
+				if (last == LAST_TIME)
+					LOCAL_local.time_tail_sep = FALSE;
+				
 				continue;
 			}
 		}
-
-		if (tp != LOCAL_local.time_order)
+		
+		len = STRING_utf8_get_char_length(c);
+		p--;
+		
+		if (last == LAST_TIME)
 		{
-			ind = tp[-1];
-			if (LOCAL_local.time_sep[ind] == 0)
-			{
-				len = STRING_utf8_get_char_length(c);
-				LOCAL_local.time_sep[ind] = STRING_utf8_to_unicode(p - 1, len);
-				p += len - 1;
-			}
-			LOCAL_local.time_tail_sep = TRUE;
+			if (LOCAL_local.time_sep[last_elt] == 0)
+				LOCAL_local.time_sep[last_elt] = STRING_utf8_to_unicode(p, len);
+			LOCAL_local.time_tail_sep = c != ' ';
 		}
+		
+		p += len;
 	}
-
+	
 	if (LOCAL_local.time_tail_sep)
-		LOCAL_local.long_time = STRING_add_char(LOCAL_local.long_time, ':');
+	{
+		FORMAT_ADD_CHAR(long_time, ':');
+		FORMAT_ADD_CHAR(medium_time, ':');
+		FORMAT_ADD_CHAR(short_time, ':');
+	}
 	
 	LOCAL_local.time_many_sep = LOCAL_local.time_sep[LOCAL_local.time_order[0]] != LOCAL_local.time_sep[LOCAL_local.time_order[1]];
 
+	STRING_free(&fmt);
+
+	#ifdef DEBUG_DATE
+	fprintf(stderr, "date_tail_sep = %d\n", LOCAL_local.date_tail_sep);
+	fprintf(stderr, "time_tail_sep = %d\n\n", LOCAL_local.time_tail_sep);
+	
+	fprintf(stderr, "general_date: %s\n", LOCAL_local.general_date);
+	fprintf(stderr, "long_date: %s\n", LOCAL_local.long_date);
+	fprintf(stderr, "medium_date: %s\n", LOCAL_local.medium_date);
+	fprintf(stderr, "short_date: %s\n", LOCAL_local.short_date);
+	fprintf(stderr, "long_time: %s\n", LOCAL_local.long_time);
+	fprintf(stderr, "medium_time: %s\n", LOCAL_local.medium_time);
+	fprintf(stderr, "short_time: %s\n", LOCAL_local.short_time);
+	#endif
+	
 	// Fix missing seconds
 
-	if (!got_second)
+	/*if (!got_second)
 	{
 		*tp++ = LO_SECOND;
 		stradd_sep(long_time, "ss", ':');
-	}
+	}*/
 
 	// Fix the french date separator
 
@@ -569,7 +877,7 @@ static void fill_local_info(void)
 	if (strcmp(lang, "fr") == 0 || strncmp(lang, "fr_", 3) == 0)
 		LOCAL_local.date_sep[LO_DAY] = LOCAL_local.date_sep[LO_MONTH] = '/';
 
-	stradd_sep(general_date, LOCAL_local.long_time, ' ');
+	/*stradd_sep(general_date, LOCAL_local.long_time, ' ');
 	am_pm = nl_langinfo(AM_STR);
 	if (am_pm && *am_pm)
 	{
@@ -578,7 +886,7 @@ static void fill_local_info(void)
 		{
 			stradd_sep(medium_time, "AM/PM", ' ');
 		}
-	}
+	}*/
 	
 	// Currency format
 
@@ -764,6 +1072,27 @@ static int int_to_string(uint64_t nbr, char **addr)
 	return len;
 }
 
+const char *LOCAL_get_format(LOCAL_INFO *info, int type)
+{
+	switch(type)
+	{
+		case LF_GENERAL_NUMBER: return "0.###############E@#";
+		case LF_SHORT_NUMBER: return "0.#######E@#";
+		case LF_FIXED: return "0.00";
+		case LF_PERCENT: return "###%";
+		case LF_SCIENTIFIC: return "0.################E+0";
+		case LF_CURRENCY: return info->general_currency;
+		case LF_INTERNATIONAL: return info->intl_currency;
+		case LF_GENERAL_DATE: return info->general_date;
+		case LF_LONG_DATE: return info->long_date;
+		case LF_MEDIUM_DATE: return info->medium_date;
+		case LF_SHORT_DATE: return info->short_date;
+		case LF_LONG_TIME: return info->long_time;
+		case LF_MEDIUM_TIME: return info->medium_time;
+		case LF_SHORT_TIME: return info->short_time;
+		default: return NULL;
+	}
+}
 
 bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_fmt, char **str, int *len_str, bool local)
 {
@@ -782,7 +1111,8 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 	char exponent;
 	int exp_zero;
 	bool exp_sign;
-
+	
+	double fabs_number;
 	int number_sign;
 	uint64_t mantisse;
 	uint64_t power;
@@ -803,44 +1133,15 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 	{
 		case LF_USER:
 			break;
-
+			
 		case LF_STANDARD:
-		case LF_GENERAL_NUMBER:
-			if ((number != 0.0) && ((fabs(number) < 1E-4) || (fabs(number) >= 1E10)))
-				fmt = "0.###############E+#";
-			else
-				fmt = "0.###############";
-			break;
-
-		case LF_SHORT_NUMBER:
-			if ((number != 0.0) && ((fabs(number) < 1E-4) || (fabs(number) >= 1E10)))
-				fmt = "0.#######E+#";
-			else
-				fmt = "0.#######";
-			break;
-
-		case LF_FIXED:
-			fmt = "0.00";
-			break;
-
-		case LF_PERCENT:
-			fmt = "###%";
-			break;
-
-		case LF_SCIENTIFIC:
-			fmt = "0.################E+0";
-			break;
-
-		case LF_CURRENCY:
-			fmt = local_current->general_currency;
-			break;
-
-		case LF_INTERNATIONAL:
-			fmt = local_current->intl_currency;
-			break;
+			fmt_type = LF_GENERAL_NUMBER;
+			// continue
 
 		default:
-			return TRUE;
+			fmt = LOCAL_get_format(local_current, fmt_type);
+			if (!fmt)
+				return TRUE;
 	}
 
 	if (len_fmt == 0)
@@ -861,6 +1162,7 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 	exp_zero = 0;
 	_currency = FALSE;
 	intl_currency = FALSE;
+	fabs_number = fabs(number);
 
 	begin();
 
@@ -904,7 +1206,7 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 		}
 	}
 	
-	/* specify the sign */
+	// specify the sign
 
 	if (fmt[pos] == '-')
 	{
@@ -925,7 +1227,7 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 	if (pos >= len_fmt)
 		return TRUE;
 
-	/* currency */
+	// currency
 
 	if (fmt[pos] == '$')
 	{
@@ -939,7 +1241,7 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 		}
 	}
 
-	/* decimal digits */
+	// decimal digits
 
 	for(; pos < len_fmt; pos++)
 	{
@@ -965,7 +1267,7 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 	if (pos >= len_fmt)
 		goto _FORMAT;
 
-	/* the point */
+	// decimal point
 
 	if (fmt[pos] != '.')
 		goto _FORMAT;
@@ -976,7 +1278,7 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 	if (pos >= len_fmt)
 		goto _FORMAT;
 
-	/* digits after point */
+	// digits after decimal point
 
 	for(; pos < len_fmt; pos++)
 	{
@@ -996,19 +1298,22 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 	if (pos >= len_fmt)
 		goto _FORMAT;
 
-	/* exponent */
+	// exponent
 
 	if (fmt[pos] == 'e' || fmt[pos] == 'E')
 	{
+		bool exp_optional = FALSE;
+		
 		exponent = fmt[pos];
 
 		pos++;
 		if (pos >= len_fmt)
 			return TRUE;
-
-		if (fmt[pos] == '-' || fmt[pos] == '+')
+		
+		if (fmt[pos] == '-' || fmt[pos] == '+' || fmt[pos] == '@')
 		{
 			exp_sign = TRUE;
+			exp_optional = fmt[pos] == '@';
 			pos++;
 		}
 
@@ -1028,6 +1333,12 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 
 			break;
 		}
+		
+		if (exp_optional)
+		{
+			if (number == 0.0 || (fabs_number > 1E-4 && fabs_number < 1E10))
+				exponent = 0;
+		}
 	}
 
 _FORMAT:
@@ -1035,13 +1346,13 @@ _FORMAT:
 	if (before == 0 && after == 0)
 		return TRUE;
 
-	/* sign */
+	// sign
 
 	number_sign = fsgn(number);
 
 	add_sign(sign, number_sign, FALSE);
 
-	/* currency (before) */
+	// currency (before)
 
 	if (_currency && is_currency_before(number_sign < 0, intl_currency))
 	{
@@ -1050,11 +1361,11 @@ _FORMAT:
 			COMMON_put_char(' ');
 	}
 
-	/* We note where the first digit will be printed */
+	// We note where the first digit will be printed
 
 	pos_first_digit = COMMON_pos;
 
-	/* the number */
+	// the number
 
 	if (isfinite(number))
 	{
@@ -1097,7 +1408,7 @@ _FORMAT:
 		ndigit--;
 		buf_addr[ndigit] = 0;
 
-		/* 0.0 <= number_mant < 1.0 */
+		// 0.0 <= number_mant < 1.0
 
 		//number_exp++; /* simplifie les choses */
 
@@ -1133,7 +1444,7 @@ _FORMAT:
 				ndigit--;
 		}
 
-		/* digits before point */
+		// digits before point
 
 		thousand = Max(before, Max(before_zero, number_exp));
 		thousand_ptr = comma ? &thousand : NULL;
@@ -1154,12 +1465,12 @@ _FORMAT:
 			add_zero(before_zero, thousand_ptr);
 		}
 
-		/* decimal point */
+		// decimal point
 
 		if (point)
 			COMMON_put_char(local_current->decimal_point);
 
-		/* digits after the decimal point */
+		// digits after the decimal point
 
 		if ((ndigit - number_exp) > 0)
 		{
@@ -1201,13 +1512,13 @@ _FORMAT:
 
 	_EXPOSANT:
 
-		/* The decimal point is removed if it is located at the end */
+		// The decimal point is removed if it is located at the end
 
 		COMMON_pos--;
 		if (COMMON_look_char() != local_current->decimal_point)
 			COMMON_pos++;
 
-		/* exponent */
+		// exponent
 
 		if (exponent != 0) // && number != 0.0)
 		{
@@ -1231,7 +1542,7 @@ _FORMAT:
 			add_string("Inf", 3, NULL);
 	}
 
-	/* currency (after) */
+	// currency (after)
 
 	if (_currency && !is_currency_before(number_sign < 0, intl_currency))
 	{
@@ -1240,26 +1551,26 @@ _FORMAT:
 		add_currency(intl_currency ? local_current->intl_currency_symbol : local_current->currency_symbol);
 	}
 
-	/* The last format brace is ignored */
+	// The last format brace is ignored
 
 	if (sign == '(' && fmt[pos] == ')')
 		pos++;
 
-	/* The sign after */
+	// The sign after
 
 	add_sign(sign, number_sign, TRUE);
 
-	/* print at least a zero */
+	// print at least a zero
 
 	if (COMMON_pos == pos_first_digit)
 		COMMON_put_char('0');
 
-	/* suffixe de formatage */
+	// format suffix
 
 	if (pos < len_fmt)
 		add_string(&fmt[pos], len_fmt - pos, NULL);
 
-	/* return the result */
+	// return the result
 
 	end(str, len_str);
 	return FALSE;
@@ -1465,6 +1776,9 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 			break;
 
 		case LF_STANDARD:
+			fmt_type = LF_GENERAL_DATE;
+			// continue;
+			
 		case LF_GENERAL_DATE:
 			if (date->year == 0)
 			{
@@ -1480,32 +1794,10 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 				fmt = local_current->general_date;
 			break;
 
-		case LF_LONG_DATE:
-			fmt = local_current->long_date;
-			break;
-
-		case LF_MEDIUM_DATE:
-			fmt = local_current->medium_date;
-			break;
-
-		case LF_SHORT_DATE:
-			fmt = local_current->short_date;
-			break;
-
-		case LF_LONG_TIME:
-			fmt = local_current->long_time;
-			break;
-
-		case LF_MEDIUM_TIME:
-			fmt = local_current->medium_time;
-			break;
-
-		case LF_SHORT_TIME:
-			fmt = local_current->short_time;
-			break;
-
 		default:
-			return TRUE;
+			fmt = LOCAL_get_format(local_current, fmt_type);
+			if (!fmt)
+				return TRUE;
 	}
 
 	if (len_fmt == 0)
@@ -1548,7 +1840,11 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 		c = fmt[pos];
 		
 		if (quote)
+		{
+			COMMON_put_char(c);
 			quote = FALSE;
+			continue;
+		}
 		else if (c == '\\')
 		{
 			quote = TRUE;

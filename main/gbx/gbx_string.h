@@ -90,6 +90,7 @@ bool STRING_extend_will_realloc(char *str, int new_len);
 
 //void STRING_extend_end(char *str);
 char *STRING_add(char *str, const char *src, int len);
+#define STRING_add_zero(_str, _src) STRING_add((_str), (_src), -1)
 char *STRING_add_char(char *str, char c);
 
 #define STRING_extend_end(_str) \

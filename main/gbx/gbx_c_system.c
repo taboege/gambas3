@@ -327,6 +327,18 @@ BEGIN_METHOD(System_Exist, GB_STRING program)
 
 END_METHOD
 
+
+BEGIN_METHOD(System_GetFormat, GB_INTEGER format)
+
+	const char *fmt = LOCAL_get_format(&LOCAL_local, VARG(format));
+	if (!fmt)
+		GB_ReturnNull();
+	else
+		GB_ReturnNewZeroString(fmt);
+
+END_METHOD
+
+
 //-------------------------------------------------------------------------
 
 BEGIN_PROPERTY(Jit_Time)
@@ -387,6 +399,8 @@ GB_DESC NATIVE_System[] =
 
 	GB_STATIC_METHOD("Exist", "b", System_Exist, "(Program)s"),
 	GB_STATIC_METHOD("Find", "s", System_Find, "(Program)s"),
+
+	GB_STATIC_METHOD("GetFormat", "s", System_GetFormat, "(Format)i"),
 
 	GB_END_DECLARE
 };

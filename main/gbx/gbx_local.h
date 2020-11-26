@@ -55,12 +55,12 @@ enum {
 #ifndef GBX_INFO
 
 enum {
-	LO_HOUR = 0,
-	LO_MINUTE = 1,
-	LO_SECOND = 2,
-	LO_YEAR = 0,
-	LO_MONTH = 1,
-	LO_DAY = 2
+	LO_HOUR = 1,
+	LO_MINUTE = 2,
+	LO_SECOND = 3,
+	LO_YEAR = 1,
+	LO_MONTH = 2,
+	LO_DAY = 3
 	};
 
 typedef
@@ -74,8 +74,8 @@ typedef
 		char group_size;
 		char currency_group_size;
 		unsigned char currency_flag;
-		uint date_sep[3];
-		uint time_sep[3];
+		uint date_sep[4];
+		uint time_sep[4];
 		const char *currency_symbol;
 		const char *intl_currency_symbol;
 		uchar date_order[4];
@@ -119,6 +119,7 @@ const char *LOCAL_gettext(const char *msgid);
 //void LOCAL_load_translation(ARCHIVE *arch);
 int LOCAL_get_first_day_of_week();
 void LOCAL_set_first_day_of_week(char day);
+const char *LOCAL_get_format(LOCAL_INFO *info, int type);
 
 #define LOCAL_get(_local) ((_local) ? &LOCAL_local : &LOCAL_default)
 
