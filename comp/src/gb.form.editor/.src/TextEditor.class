@@ -1692,6 +1692,7 @@ Public Sub View_KeyPress()
           Goto($X + 1, $Y, Key.Shift)
         Endif
       Endif
+      Goto STOP_EVENT
       
     Case Key.Left
       '$X = NormalizeColumn($X, $Y)
@@ -1708,6 +1709,7 @@ Public Sub View_KeyPress()
           Goto($X - 1, $Y, Key.Shift)
         Endif
       Endif
+      Goto STOP_EVENT
       
     Case Key.Up
       If Key.Alt Then
@@ -1728,6 +1730,7 @@ Public Sub View_KeyPress()
       Else
         GotoXY($X0 + $MW - $hView.ScrollX, $hRows._GetRowY($Y) - $hView.ScrollY + $XY.Y - $hRows.H, Key.Shift)
       Endif
+      Goto STOP_EVENT
       
     Case Key.Down
       If Key.Alt Then
@@ -1751,6 +1754,7 @@ Public Sub View_KeyPress()
         GotoXY(X, $hRows._GetRowY($Y) - $hView.ScrollY + $XY.Y + $hRows.H, Key.Shift)
         ' ?? If $Y = Y Then GotoXY(X, $hRows._GetRowY($Y + 1) - $hView.ScrollY, Key.Shift)
       Endif
+      Goto STOP_EVENT
       
     Case Key.Home
       If Key.Control Then
@@ -1771,6 +1775,7 @@ Public Sub View_KeyPress()
           Goto(P, $Y, Key.Shift)
         Endif
       Endif
+      Goto STOP_EVENT
       
     Case Key.End
       If Key.Control Then
@@ -1792,6 +1797,7 @@ Public Sub View_KeyPress()
           Goto(P, $Y, Key.Shift)
         Endif
       Endif
+      Goto STOP_EVENT
       
     Case Key.PageUp
       'Y = RealToView($Y)
@@ -1801,6 +1807,7 @@ Public Sub View_KeyPress()
       If Not Key.Control And If Not Key.Alt And If Not Key.Meta Then
         If GotoXY($X0 + $MW - $hView.ScrollX, $hRows._GetRowY($Y) + $XY.Y - $hView.ClientH - $hView.ScrollY, Key.Shift) Then
           Goto(0, 0, Key.Shift)
+          Goto STOP_EVENT
         Endif
       Endif
       
@@ -1816,6 +1823,7 @@ Public Sub View_KeyPress()
       If Not Key.Control And If Not Key.Alt And If Not Key.Meta Then
         If GotoXY($X0 + $MW - $hView.ScrollX, $hRows._GetRowY($Y) + $XY.Y + $hView.ClientH - $hView.ScrollY, Key.Shift) Then
           Goto(-1, $hDoc.Max, Key.Shift)
+          Goto STOP_EVENT
         Endif
       Endif
       
@@ -1851,6 +1859,7 @@ Public Sub View_KeyPress()
       Endif
       'If Not $bPrint Then $bOverwrite = True
       $bOverwrite = bSaveOverwrite
+      Goto STOP_EVENT
       
     Case Key.BackSpace
       If Key.Control Then
@@ -1861,6 +1870,7 @@ Public Sub View_KeyPress()
         If $hDoc._Mode And If $hDoc._Mode.OnKeyPress(Me) Then Goto STOP_EVENT
         DeleteLeft
       Endif
+      Goto STOP_EVENT
       
     Case Key.Delete
       If Key.Control Then
@@ -1870,6 +1880,7 @@ Public Sub View_KeyPress()
         If $bReadOnly Then Goto STOP_EVENT
         DeleteRight
       Endif
+      Goto STOP_EVENT
       
     Case Key.Tab
       If Key.Control Then
@@ -1878,17 +1889,19 @@ Public Sub View_KeyPress()
       Else
         DoIndent(Key.Shift)
       Endif
+      Goto STOP_EVENT
       
     Case Key.BackTab
       DoIndent(True)
+      Goto STOP_EVENT
       
     Case Key.Insert
       Me.Overwrite = Not $bOverwrite
-      
-    Case Else
-      Stop Event
+      Goto STOP_EVENT
       
   End Select
+  
+  Return
   
 STOP_EVENT:
   
