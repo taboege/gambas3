@@ -755,6 +755,8 @@ static void make_component_list()
 		if (strcmp(FILE_get_ext(name), "component"))
 			continue;
 		name = FILE_get_basename(name);
+		if (strcmp(name, "gb") == 0)
+			continue;
 		*((char **)ARRAY_add(&_components)) = STR_copy(name);
 	}
 
