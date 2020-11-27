@@ -49,6 +49,7 @@ install-exec-local:
 	@$(DESTDIR)$(bindir)/gbi$(GAMBAS_VERSION) -r $(DESTDIR)$(prefix) gb
 	@rm -f $(DESTDIR)$(gblibdir)/gb.la
 	@rm -f $(DESTDIR)$(gblibdir)/gb.so*
+	@rm -f $(DESTDIR)$(gblibdir)/gb.component
 	@$(INSTALL) lib/gb.component $(DESTDIR)$(gblibdir)
 
 	@echo "Installing compiler tools..."
