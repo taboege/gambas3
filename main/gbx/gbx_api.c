@@ -792,6 +792,7 @@ static bool raise_event(OBJECT *observer, void *object, int func_id, int nparam)
 	CLASS_DESC_METHOD *desc;
 	void *old_last;
 	bool result;
+	uint stack_barrier;
 
 	func_id--;
 
@@ -823,6 +824,8 @@ static bool raise_event(OBJECT *observer, void *object, int func_id, int nparam)
 	stop_event = GAMBAS_StopEvent;
 	GAMBAS_StopEvent = FALSE;
 
+	stack_barrier = STACK_push_barrier();
+	
 	TRY
 	{
 		EXEC_public_desc(class, observer, desc, nparam);
@@ -845,10 +848,15 @@ static bool raise_event(OBJECT *observer, void *object, int func_id, int nparam)
 			}
 		}
 		else
+		{
+			EVENT_Last = old_last;
+			GAMBAS_StopEvent = stop_event;
+			STACK_pop_barrier(stack_barrier);
 			PROPAGATE();
+		}
 	}
 	END_TRY
-
+	
 	if (RP->type == T_VOID)
 		result = FALSE;
 	else
@@ -857,10 +865,9 @@ static bool raise_event(OBJECT *observer, void *object, int func_id, int nparam)
 	if (GAMBAS_StopEvent)
 		result = TRUE;
 
-	GAMBAS_StopEvent = stop_event;
-
-	//OBJECT_UNREF(object, "raise_event");
 	EVENT_Last = old_last;
+	GAMBAS_StopEvent = stop_event;
+	STACK_pop_barrier(stack_barrier);
 
 	EXEC_release_return_value();
 
