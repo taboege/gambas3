@@ -46,11 +46,10 @@ install-exec-local:
 
 	@echo "Installing 'gb' component..."
 	@$(INSTALL) -d $(DESTDIR)$(gbdatadir)/info
+	@$(INSTALL) lib/gb.component $(DESTDIR)$(gblibdir)
 	@$(DESTDIR)$(bindir)/gbi$(GAMBAS_VERSION) -r $(DESTDIR)$(prefix) gb
 	@rm -f $(DESTDIR)$(gblibdir)/gb.la
 	@rm -f $(DESTDIR)$(gblibdir)/gb.so*
-	@rm -f $(DESTDIR)$(gblibdir)/gb.component
-	@$(INSTALL) lib/gb.component $(DESTDIR)$(gblibdir)
 
 	@echo "Installing compiler tools..."
 	@(cd $(srcdir)/tools; d=`pwd`; \
