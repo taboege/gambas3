@@ -436,7 +436,8 @@ void gMenu::updatePicture()
 		return;
 	}
 	
-	size = (gDesktop::scale() * 2 + 1) & ~7;
+	gtk_widget_get_size_request(image, NULL, &size);
+	size = size & ~3;
 	
 	pic = _picture->stretch(size, size, true);
 	if (_disabled)
