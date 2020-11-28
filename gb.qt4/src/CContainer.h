@@ -105,6 +105,9 @@ typedef
 
 #endif
 
+DECLARE_PROPERTY(Container_ClientX);
+DECLARE_PROPERTY(Container_ClientY);
+
 DECLARE_PROPERTY(Container_Arrangement);
 DECLARE_PROPERTY(Container_AutoResize);
 DECLARE_PROPERTY(Container_Padding);

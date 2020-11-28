@@ -39,9 +39,6 @@
 #include "CTabStrip.h"
 
 
-DECLARE_METHOD(Container_X);
-DECLARE_METHOD(Container_Y);
-
 DECLARE_EVENT(EVENT_Click);
 DECLARE_EVENT(EVENT_Close);
 
@@ -767,20 +764,6 @@ BEGIN_PROPERTY(TabStrip_Closable)
 END_PROPERTY
 
 
-BEGIN_PROPERTY(TabStrip_ClientX)
-
-	Container_X(_object, _param);
-
-END_PROPERTY
-
-
-BEGIN_PROPERTY(TabStrip_ClientY)
-
-	Container_Y(_object, _param);
-
-END_PROPERTY
-
-
 BEGIN_PROPERTY(TabStrip_ClientWidth)
 
 	GB.ReturnInteger(THIS->container->width());
@@ -906,8 +889,8 @@ GB_DESC CTabStripDesc[] =
 	GB_PROPERTY("Orientation", "i", TabStrip_Orientation),
 	GB_PROPERTY("Enabled", "b", TabStrip_Enabled),
 
-	GB_PROPERTY_READ("ClientX", "i", TabStrip_ClientX),
-	GB_PROPERTY_READ("ClientY", "i", TabStrip_ClientY),
+	GB_PROPERTY_READ("ClientX", "i", Container_ClientX),
+	GB_PROPERTY_READ("ClientY", "i", Container_ClientY),
 	GB_PROPERTY_READ("ClientW", "i", TabStrip_ClientWidth),
 	GB_PROPERTY_READ("ClientWidth", "i", TabStrip_ClientWidth),
 	GB_PROPERTY_READ("ClientH", "i", TabStrip_ClientHeight),
