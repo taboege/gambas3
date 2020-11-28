@@ -370,9 +370,9 @@ AC_DEFUN([GB_INIT],
 
   if test "x$gambas_optimization" = "xyes"; then
     AM_CFLAGS_OPT="$AM_CFLAGS -O3"
-    AM_CFLAGS="$AM_CFLAGS -Os"
+    AM_CFLAGS="$AM_CFLAGS -O2"
     AM_CXXFLAGS_OPT="$AM_CXXFLAGS -O3 -fno-omit-frame-pointer"
-    AM_CXXFLAGS="$AM_CXXFLAGS -Os -fno-omit-frame-pointer"
+    AM_CXXFLAGS="$AM_CXXFLAGS -O2 -fno-omit-frame-pointer"
   else
     AM_CFLAGS_OPT="$AM_CFLAGS -O0"
     AM_CFLAGS="$AM_CFLAGS -O0"
@@ -638,6 +638,11 @@ AC_DEFUN([GB_SYSTEM],
       ARCH=ARM
       AC_DEFINE(ARCH_ARM, 1, [Target architecture is ARM])
       AC_DEFINE(ARCHITECTURE, "arm", [Architecture])
+      ;;
+    aarch64*-*-* )
+      ARCH=AARCH64
+      AC_DEFINE(ARCH_AARCH64, 1, [Target architecture is AARCH64])
+      AC_DEFINE(ARCHITECTURE, "aarch64", [Architecture])
       ;;
     powerpc*-*-* )
       ARCH=PPC
