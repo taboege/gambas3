@@ -846,7 +846,7 @@ static QRect getRect(void *_object)
 	return w->contentsRect();
 }
 
-BEGIN_PROPERTY(Container_X)
+BEGIN_PROPERTY(Container_ClientX)
 
 	#ifdef DEBUG
 	if (!CONTAINER)
@@ -861,7 +861,7 @@ BEGIN_PROPERTY(Container_X)
 END_PROPERTY
 
 
-BEGIN_PROPERTY(Container_Y)
+BEGIN_PROPERTY(Container_ClientY)
 
 	#ifdef DEBUG
 	if (!CONTAINER)
@@ -876,7 +876,7 @@ BEGIN_PROPERTY(Container_Y)
 END_PROPERTY
 
 
-BEGIN_PROPERTY(Container_Width)
+BEGIN_PROPERTY(Container_ClientWidth)
 
 	#ifdef DEBUG
 	if (!CONTAINER)
@@ -888,7 +888,7 @@ BEGIN_PROPERTY(Container_Width)
 END_PROPERTY
 
 
-BEGIN_PROPERTY(Container_Height)
+BEGIN_PROPERTY(Container_ClientHeight)
 
 	#ifdef DEBUG
 	if (!CONTAINER)
@@ -1451,12 +1451,12 @@ GB_DESC ContainerDesc[] =
 
 	GB_PROPERTY_READ("Children", "ContainerChildren", Container_Children),
 
-	GB_PROPERTY_READ("ClientX", "i", Container_X),
-	GB_PROPERTY_READ("ClientY", "i", Container_Y),
-	GB_PROPERTY_READ("ClientW", "i", Container_Width),
-	GB_PROPERTY_READ("ClientWidth", "i", Container_Width),
-	GB_PROPERTY_READ("ClientH", "i", Container_Height),
-	GB_PROPERTY_READ("ClientHeight", "i", Container_Height),
+	GB_PROPERTY_READ("ClientX", "i", Container_ClientX),
+	GB_PROPERTY_READ("ClientY", "i", Container_ClientY),
+	GB_PROPERTY_READ("ClientW", "i", Container_ClientWidth),
+	GB_PROPERTY_READ("ClientWidth", "i", Container_ClientWidth),
+	GB_PROPERTY_READ("ClientH", "i", Container_ClientHeight),
+	GB_PROPERTY_READ("ClientHeight", "i", Container_ClientHeight),
 	
 	GB_METHOD("_unknown", "v", Container_unknown, "."),
 	GB_METHOD("FindChild", "Control", Container_FindChild, "(X)i(Y)i"),

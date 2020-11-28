@@ -77,7 +77,7 @@ static void get_client_area(gContainer *cont, int *x, int *y, int *w, int *h)
 }
 
 
-BEGIN_PROPERTY(Container_X)
+BEGIN_PROPERTY(Container_ClientX)
 
 	int x;
 	get_client_area(WIDGET, &x, NULL, NULL, NULL);
@@ -86,7 +86,7 @@ BEGIN_PROPERTY(Container_X)
 END_PROPERTY
 
 
-BEGIN_PROPERTY(Container_Y)
+BEGIN_PROPERTY(Container_ClientY)
 
 	int y;
 	get_client_area(WIDGET, NULL, &y, NULL, NULL);
@@ -346,8 +346,8 @@ GB_DESC ContainerDesc[] =
 
 	GB_PROPERTY_READ("Children", "ContainerChildren", Container_Children),
 
-	GB_PROPERTY_READ("ClientX", "i", Container_X),
-	GB_PROPERTY_READ("ClientY", "i", Container_Y),
+	GB_PROPERTY_READ("ClientX", "i", Container_ClientX),
+	GB_PROPERTY_READ("ClientY", "i", Container_ClientY),
 	GB_PROPERTY_READ("ClientW", "i", Container_ClientWidth),
 	GB_PROPERTY_READ("ClientWidth", "i", Container_ClientWidth),
 	GB_PROPERTY_READ("ClientH", "i", Container_ClientHeight),
