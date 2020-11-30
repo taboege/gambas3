@@ -370,7 +370,7 @@ Static Public Sub GetModeFromPath(sPath As String) As String
     Case "c"
       sMode = "c"
     Case "cpp", "h"
-      sMode = "c++"
+      sMode = "cplusplus"
     Case "gbs"
       sMode = "gambas"
     Case "html", "htm", "xml", "kml", "rss"
