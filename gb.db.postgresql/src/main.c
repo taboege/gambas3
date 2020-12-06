@@ -83,6 +83,16 @@ static DB_DRIVER _driver;
 static int _last_error;
 /*static int _print_query = FALSE;*/
 
+// Get the SQL expression returning the default value of a field
+
+static const char *get_default_value(const char *old_way)
+{
+	if (DB.GetCurrentDatabase()->version >= 90600)
+		return "pg_get_expr(adbin, adrelid) AS adsrc";
+	else
+		return old_way;
+}
+
 /* Internal function to check the result of a query */
 
 static int check_result(PGresult *res, const char *err)
@@ -535,11 +545,11 @@ static void conv_data(const char *data, int len, GB_VARIANT_VALUE *val, Oid type
 
 /* Internal function to substitute the table name into a query */
 
-static char *query_param[3];
+static char *query_param[4];
 
 static void query_get_param(int index, char **str, int *len, char quote)
 {
-	if (index > 3)
+	if (index > 4)
 		return;
 
 	index--;
@@ -567,8 +577,8 @@ static int do_query(DB_DATABASE *db, const char *error, PGresult **pres, const c
 	if (nsubst)
 	{
 		va_start(args, nsubst);
-		if (nsubst > 3)
-			nsubst = 3;
+		if (nsubst > 4)
+			nsubst = 4;
 		for (i = 0; i < nsubst; i++)
 			query_param[i] = va_arg(args, char *);
 
@@ -1423,10 +1433,10 @@ static int table_init(DB_DATABASE *db, const char *table, DB_INFO *info)
 	{
 		qfield_all=
 				"SELECT col.attname, col.atttypid::int, col.atttypmod, "
-						"col.attnotnull, def.adsrc, col.atthasdef "
+						"col.attnotnull, &1, col.atthasdef "
 				"FROM pg_catalog.pg_class tbl, pg_catalog.pg_attribute col "
 								"LEFT JOIN pg_catalog.pg_attrdef def ON (def.adnum = col.attnum AND def.adrelid = col.attrelid) "
-				"WHERE tbl.relname = '&1' AND "
+				"WHERE tbl.relname = '&2' AND "
 						"col.attrelid = tbl.oid AND "
 						"col.attnum > 0 AND "
 						"not col.attisdropped "
@@ -1434,11 +1444,11 @@ static int table_init(DB_DATABASE *db, const char *table, DB_INFO *info)
 
 		qfield_schema_all =
 			"select pg_attribute.attname, pg_attribute.atttypid::int, pg_attribute.atttypmod, "
-							"pg_attribute.attnotnull, pg_attrdef.adsrc, pg_attribute.atthasdef "
+							"pg_attribute.attnotnull, &1, pg_attribute.atthasdef "
 					"from pg_class, pg_attribute "
 							"LEFT JOIN pg_catalog.pg_attrdef  ON (pg_attrdef.adnum = pg_attribute.attnum AND pg_attrdef.adrelid = pg_attribute.attrelid) "
-					"where pg_class.relname = '&1' "
-							"and (pg_class.relnamespace in (select oid from pg_namespace where nspname = '&2')) "
+					"where pg_class.relname = '&2' "
+							"and (pg_class.relnamespace in (select oid from pg_namespace where nspname = '&3')) "
 							"and pg_attribute.attnum > 0 and not pg_attribute.attisdropped "
 							"and pg_attribute.attrelid = pg_class.oid ";
 	}
@@ -1446,11 +1456,11 @@ static int table_init(DB_DATABASE *db, const char *table, DB_INFO *info)
 	{
 		qfield_all=
 				"SELECT col.attname, col.atttypid::int, col.atttypmod, "
-						"col.attnotnull, def.adsrc, col.atthasdef, pg_collation.collname "
+						"col.attnotnull, &1, col.atthasdef, pg_collation.collname "
 				"FROM pg_catalog.pg_class tbl, pg_catalog.pg_attribute col "
 								"LEFT JOIN pg_catalog.pg_attrdef def ON (def.adnum = col.attnum AND def.adrelid = col.attrelid) "
 								"LEFT JOIN pg_collation ON (pg_collation.oid = col.attcollation) "
-				"WHERE tbl.relname = '&1' AND "
+				"WHERE tbl.relname = '&2' AND "
 						"col.attrelid = tbl.oid AND "
 						"col.attnum > 0 AND "
 						"not col.attisdropped "
@@ -1458,12 +1468,12 @@ static int table_init(DB_DATABASE *db, const char *table, DB_INFO *info)
 
 		qfield_schema_all =
 			"select pg_attribute.attname, pg_attribute.atttypid::int, pg_attribute.atttypmod, "
-							"pg_attribute.attnotnull, pg_attrdef.adsrc, pg_attribute.atthasdef, pg_collation.collname "
+							"pg_attribute.attnotnull, &1, pg_attribute.atthasdef, pg_collation.collname "
 					"from pg_class, pg_attribute "
 							"LEFT JOIN pg_catalog.pg_attrdef  ON (pg_attrdef.adnum = pg_attribute.attnum AND pg_attrdef.adrelid = pg_attribute.attrelid) "
 								"LEFT JOIN pg_collation ON (pg_collation.oid = pg_attribute.attcollation) "
-					"where pg_class.relname = '&1' "
-							"and (pg_class.relnamespace in (select oid from pg_namespace where nspname = '&2')) "
+					"where pg_class.relname = '&2' "
+							"and (pg_class.relnamespace in (select oid from pg_namespace where nspname = '&3')) "
 							"and pg_attribute.attnum > 0 and not pg_attribute.attisdropped "
 							"and pg_attribute.attrelid = pg_class.oid ";
 	}
@@ -1478,12 +1488,12 @@ static int table_init(DB_DATABASE *db, const char *table, DB_INFO *info)
 
 	if (get_table_schema(&table, &schema))
 	{
-		if (do_query(db,"Unable to get table fields: &1", &res, qfield_all, 1, table))
+		if (do_query(db,"Unable to get table fields: &1", &res, qfield_all, 2, get_default_value("def.adsrc"), table))
 			return TRUE;
 	}
 	else
 	{
-		if (do_query(db, "Unable to get table fields: &1", &res, qfield_schema_all, 2, table, schema))
+		if (do_query(db, "Unable to get table fields: &1", &res, qfield_schema_all, 3, get_default_value("pg_attrdef.adsrc"), table, schema))
 			return TRUE;
 	}
 
@@ -2230,23 +2240,23 @@ static int field_info(DB_DATABASE *db, const char *table, const char *field, DB_
 	{
 		query =
 			"select pg_attribute.attname, pg_attribute.atttypid::int, "
-			"pg_attribute.atttypmod, pg_attribute.attnotnull, pg_attrdef.adsrc, pg_attribute.atthasdef "
+			"pg_attribute.atttypmod, pg_attribute.attnotnull, &1, pg_attribute.atthasdef "
 			"from pg_class, pg_attribute "
 			"left join pg_attrdef on (pg_attrdef.adrelid = pg_attribute.attrelid and pg_attrdef.adnum = pg_attribute.attnum) "
-			"where pg_class.relname = '&1' "
+			"where pg_class.relname = '&2' "
 			"and (pg_class.relnamespace not in (select oid from pg_namespace where nspname = 'information_schema')) "
-			"and pg_attribute.attname = '&2' "
+			"and pg_attribute.attname = '&3' "
 			"and pg_attribute.attnum > 0 and not pg_attribute.attisdropped "
 			"and pg_attribute.attrelid = pg_class.oid";
 
 		query_schema =
 			"select pg_attribute.attname, pg_attribute.atttypid::int, "
-			"pg_attribute.atttypmod, pg_attribute.attnotnull, pg_attrdef.adsrc, pg_attribute.atthasdef "
+			"pg_attribute.atttypmod, pg_attribute.attnotnull, &1, pg_attribute.atthasdef "
 			"from pg_class, pg_attribute "
 			"left join pg_attrdef on (pg_attrdef.adrelid = pg_attribute.attrelid and pg_attrdef.adnum = pg_attribute.attnum) "
-			"where pg_class.relname = '&1' "
-			"and (pg_class.relnamespace in (select oid from pg_namespace where nspname = '&3')) "
-			"and pg_attribute.attname = '&2' "
+			"where pg_class.relname = '&2' "
+			"and (pg_class.relnamespace in (select oid from pg_namespace where nspname = '&4')) "
+			"and pg_attribute.attname = '&3' "
 			"and pg_attribute.attnum > 0 and not pg_attribute.attisdropped "
 			"and pg_attribute.attrelid = pg_class.oid";
 	}
@@ -2254,25 +2264,25 @@ static int field_info(DB_DATABASE *db, const char *table, const char *field, DB_
 	{
 		query =
 			"select pg_attribute.attname, pg_attribute.atttypid::int, "
-			"pg_attribute.atttypmod, pg_attribute.attnotnull, pg_attrdef.adsrc, pg_attribute.atthasdef, pg_collation.collname "
+			"pg_attribute.atttypmod, pg_attribute.attnotnull, &1, pg_attribute.atthasdef, pg_collation.collname "
 			"from pg_class, pg_attribute "
 			"left join pg_attrdef on (pg_attrdef.adrelid = pg_attribute.attrelid and pg_attrdef.adnum = pg_attribute.attnum) "
 			"left join pg_collation on (pg_collation.oid = pg_attribute.attcollation) "
-			"where pg_class.relname = '&1' "
+			"where pg_class.relname = '&2' "
 			"and (pg_class.relnamespace not in (select oid from pg_namespace where nspname = 'information_schema')) "
-			"and pg_attribute.attname = '&2' "
+			"and pg_attribute.attname = '&3' "
 			"and pg_attribute.attnum > 0 and not pg_attribute.attisdropped "
 			"and pg_attribute.attrelid = pg_class.oid";
 
 		query_schema =
 			"select pg_attribute.attname, pg_attribute.atttypid::int, "
-			"pg_attribute.atttypmod, pg_attribute.attnotnull, pg_attrdef.adsrc, pg_attribute.atthasdef, pg_collation.collname "
+			"pg_attribute.atttypmod, pg_attribute.attnotnull, &1, pg_attribute.atthasdef, pg_collation.collname "
 			"from pg_class, pg_attribute "
 			"left join pg_attrdef on (pg_attrdef.adrelid = pg_attribute.attrelid and pg_attrdef.adnum = pg_attribute.attnum) "
 			"left join pg_collation on (pg_collation.oid = pg_attribute.attcollation) "
-			"where pg_class.relname = '&1' "
-			"and (pg_class.relnamespace in (select oid from pg_namespace where nspname = '&3')) "
-			"and pg_attribute.attname = '&2' "
+			"where pg_class.relname = '&2' "
+			"and (pg_class.relnamespace in (select oid from pg_namespace where nspname = '&4')) "
+			"and pg_attribute.attname = '&3' "
 			"and pg_attribute.attnum > 0 and not pg_attribute.attisdropped "
 			"and pg_attribute.attrelid = pg_class.oid";
 	}
@@ -2283,12 +2293,12 @@ static int field_info(DB_DATABASE *db, const char *table, const char *field, DB_
 
 	if (get_table_schema(&table, &schema))
 	{
-		if (do_query(db, "Unable to get field info: &1", &res, query, 2, table, field))
+		if (do_query(db, "Unable to get field info: &1", &res, query, 3, get_default_value("pg_attrdef.adsrc"), table, field))
 			return TRUE;
 	}
 	else
 	{
-		if (do_query(db, "Unable to get field info: &1", &res, query_schema, 3, table, field, schema))
+		if (do_query(db, "Unable to get field info: &1", &res, query_schema, 4, get_default_value("pg_attrdef.adsrc"), table, field, schema))
 			return TRUE;
 	}
 
