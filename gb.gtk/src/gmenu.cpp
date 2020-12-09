@@ -25,6 +25,7 @@
 #include "gmainwindow.h"
 #include "gapplication.h"
 #include "gdesktop.h"
+#include "gmouse.h"
 #include "gmenu.h"
 #include "CStyle.h"
 
@@ -846,7 +847,7 @@ void gMenu::doPopup(bool move, int x, int y)
 	{
 		event = gdk_event_new(GDK_BUTTON_PRESS);
 		event->button.time = GDK_CURRENT_TIME;
-		gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_display_get_default())));
+		gdk_event_set_device(event, gMouse::getPointer());
 		free = true;
 	}
 	

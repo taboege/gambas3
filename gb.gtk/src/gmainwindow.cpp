@@ -355,7 +355,10 @@ static gboolean my_key_press_event(GtkWidget *widget, GdkEventKey *event)
 
   /* handle mnemonics and accelerators */
   if (!handled)
+	{
+		fprintf(stderr, "activate shortcut\n");
     handled = gtk_window_activate_key(window, event);
+	}
 
   return handled;
 }
@@ -1072,10 +1075,18 @@ void gMainWindow::showPopup()
 	showPopup(x, y);
 }
 
-void gMainWindow::raise()
+void gMainWindow::restack(bool raise)
 {
-	if (!isTopLevel()) { gControl::raise(); return; }
-	present();
+	if (!isTopLevel())
+	{
+		gControl::restack(raise);
+		return;
+	}
+	
+	if (raise)
+		present();
+	else
+		gdk_window_lower(gtk_widget_get_window(border));
 }
 
 const char* gMainWindow::text()
@@ -1828,7 +1839,15 @@ void gMainWindow::setOpacity(double v)
 int gMainWindow::screen()
 {
 	gMainWindow *tl = topLevel();
+#if GTK_CHECK_VERSION(3, 22, 0)
+	GdkWindow *window = gtk_widget_get_window(tl->border);
+	if (window)
+		return gt_find_monitor(gdk_display_get_monitor_at_window(gdk_display_get_default(), window));
+	else
+		return -1;
+#else
 	return gdk_screen_get_number(gtk_window_get_screen(GTK_WINDOW(tl->border)));
+#endif
 }
 
 void gMainWindow::emitResize()

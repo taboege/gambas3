@@ -197,7 +197,7 @@ public:
 
 	void lower() { restack(false); }
 	void raise() { restack(true); }
-	void restack(bool raise);
+	virtual void restack(bool raise);
 
 	virtual void setFocus();
 	bool hasFocus() const;

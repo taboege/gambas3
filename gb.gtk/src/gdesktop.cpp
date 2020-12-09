@@ -94,14 +94,26 @@ gMainWindow* gDesktop::activeWindow()
 	return gMainWindow::_active ? gMainWindow::_active->topLevel() : NULL;
 }
 
-int gDesktop::height()
-{
-	return gdk_screen_get_height(gdk_screen_get_default ());
-}
-
 int gDesktop::width()
 {
+#if GTK_CHECK_VERSION(3, 22, 0)
+	GdkRectangle rect;
+	gdk_monitor_get_geometry(gdk_display_get_primary_monitor(gdk_display_get_default()), &rect);
+	return rect.width;
+#else
 	return gdk_screen_get_width(gdk_screen_get_default ());
+#endif
+}
+
+int gDesktop::height()
+{
+#if GTK_CHECK_VERSION(3, 22, 0)
+	GdkRectangle rect;
+	gdk_monitor_get_geometry(gdk_display_get_primary_monitor(gdk_display_get_default()), &rect);
+	return rect.height;
+#else
+	return gdk_screen_get_height(gdk_screen_get_default());
+#endif
 }
 
 int gDesktop::resolution()
@@ -130,7 +142,9 @@ gPicture* gDesktop::screenshot(int x, int y, int w, int h)
 
 int gDesktop::count()
 {
-#ifdef GTK3
+#if GTK_CHECK_VERSION(3, 22, 0)
+	return gdk_display_get_n_monitors(gdk_display_get_default());
+#elif defined(GTK3)
 	return gdk_screen_get_n_monitors(gdk_screen_get_default());
 #else
 	return gdk_display_get_n_screens(gdk_display_get_default());
@@ -143,7 +157,9 @@ void gDesktop::geometry(int screen, GdkRectangle *rect)
 	if (screen < 0 || screen >= count())
 		return;
 
-#ifdef GTK3
+#if GTK_CHECK_VERSION(3, 22, 0)
+	gdk_monitor_get_geometry(gdk_display_get_monitor(gdk_display_get_default(), screen), rect);
+#elif defined(GTK3)
 	gdk_screen_get_monitor_geometry(gdk_screen_get_default(), screen, rect);
 #else
 	rect->width = gdk_screen_get_width(gdk_display_get_screen(gdk_display_get_default(), screen));
@@ -157,7 +173,9 @@ void gDesktop::availableGeometry(int screen, GdkRectangle *rect)
 	if (screen < 0 || screen >= count())
 		return;
 
-#ifdef GTK3
+#if GTK_CHECK_VERSION(3, 22, 0)
+	gdk_monitor_get_workarea(gdk_display_get_monitor(gdk_display_get_default(), screen), rect);
+#elif defined(GTK3)
 	gdk_screen_get_monitor_workarea(gdk_screen_get_default(), screen, rect);
 #else
 	if (X11_get_available_geometry(screen, &rect->x, &rect->y, &rect->width, &rect->height))

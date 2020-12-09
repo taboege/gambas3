@@ -229,4 +229,8 @@ void gt_widget_reparent(GtkWidget *widget, GtkWidget *new_parent);
 #define gt_get_focus_on_click(_widget) (gtk_button_get_focus_on_click(GTK_BUTTON(_widget)))
 #endif
 
+#if GTK_CHECK_VERSION(3, 22, 0)
+int gt_find_monitor(GdkMonitor *monitor);
+#endif
+
 #endif

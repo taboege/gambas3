@@ -2404,3 +2404,19 @@ void gt_on_theme_change()
 		_style[i] = NULL;
 	}
 }
+
+#if GTK_CHECK_VERSION(3, 22, 0)
+int gt_find_monitor(GdkMonitor *monitor)
+{
+	GdkDisplay *display = gdk_display_get_default();
+	int i;
+	
+	for (i = 0; i < gdk_display_get_n_monitors(display); i++)
+	{
+		if (gdk_display_get_monitor(display, i) == monitor)
+			return i;
+	}
+	
+	return -1;
+}
+#endif
