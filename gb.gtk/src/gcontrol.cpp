@@ -1352,7 +1352,8 @@ void gControl::restack(bool raise)
 	GList *find;
 	gpointer *p;
 
-	if (!pr) return;
+	if (!pr) 
+		return;
 
 	parent = GTK_CONTAINER(gtk_widget_get_parent(border));
 	

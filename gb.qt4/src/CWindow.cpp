@@ -486,7 +486,7 @@ BEGIN_METHOD_VOID(CFORM_new)
 END_METHOD
 
 
-BEGIN_METHOD_VOID(CFORM_main)
+BEGIN_METHOD_VOID(Form_Main)
 
 	CWINDOW *form = (CWINDOW *)GB.AutoCreate(GB.GetClass(NULL), 0);
 
@@ -496,9 +496,9 @@ BEGIN_METHOD_VOID(CFORM_main)
 END_METHOD
 
 
-BEGIN_METHOD(CFORM_load, GB_OBJECT parent)
+BEGIN_METHOD(Form_Load, GB_OBJECT parent)
 
-	//qDebug("CFORM_load");
+	//qDebug("Form_Load");
 	reparent_window((CWINDOW *)GB.AutoCreate(GB.GetClass(NULL), 0), VARGOPT(parent, 0), false);
 
 END_METHOD
@@ -1084,6 +1084,8 @@ BEGIN_PROPERTY(Window_Visible)
 	{
 		bool show = !!VPROP(GB_BOOLEAN);
 		
+		THIS->hidden = !show;
+		
 		if (show == WINDOW->isHidden())
 		{
 			if (show)
@@ -1478,8 +1480,8 @@ GB_DESC CFormDesc[] =
 	GB_DECLARE("Form", sizeof(CFORM)), GB_INHERITS("Window"),
 	GB_AUTO_CREATABLE(),
 
-	GB_STATIC_METHOD("Main", NULL, CFORM_main, NULL),
-	GB_STATIC_METHOD("Load", NULL, CFORM_load, "[(Parent)Control;]"),
+	GB_STATIC_METHOD("Main", NULL, Form_Main, NULL),
+	GB_STATIC_METHOD("Load", NULL, Form_Load, "[(Parent)Control;]"),
 	GB_METHOD("_new", NULL, CFORM_new, NULL),
 
 	FORM_DESCRIPTION,

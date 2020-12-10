@@ -110,12 +110,12 @@ public:
 	void showPopup();
 	void showPopup(int x, int y);
 	void activate();
-	void raise();
 	virtual void move(int x, int y);
 	virtual bool resize(int w, int h);
 	bool close();
 	virtual void reparent(gContainer *newpr, int x, int y);
 	virtual void destroy();
+	virtual void restack(bool raise);
 
 //"Signals"
 	void (*onOpen)(gMainWindow *sender);
