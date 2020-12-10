@@ -767,7 +767,7 @@ END_METHOD
 
 //-------------------------------------------------------------------------
 
-BEGIN_METHOD_VOID(CFORM_new)
+BEGIN_METHOD_VOID(Form_new)
 
 	if (!GB.Parent(_object))
 		GB.Attach(_object, _object, "Form");
@@ -777,7 +777,7 @@ BEGIN_METHOD_VOID(CFORM_new)
 END_METHOD
 
 
-BEGIN_METHOD_VOID(CFORM_main)
+BEGIN_METHOD_VOID(Form_Main)
 
 	CWINDOW *form;
 
@@ -788,7 +788,7 @@ BEGIN_METHOD_VOID(CFORM_main)
 END_METHOD
 
 
-BEGIN_METHOD(CFORM_load, GB_OBJECT parent)
+BEGIN_METHOD(Form_Load, GB_OBJECT parent)
 
 	gMainWindow *window = (gMainWindow *)((CWIDGET *)GB.AutoCreate(GB.GetClass(NULL), 0))->widget;
 	CCONTAINER *parent = (CCONTAINER *)VARGOPT(parent, 0);
@@ -954,9 +954,9 @@ GB_DESC CFormDesc[] =
 	GB_DECLARE("Form", sizeof(CFORM)), GB_INHERITS("Window"),
 	GB_AUTO_CREATABLE(),
 
-	GB_STATIC_METHOD("Main", 0, CFORM_main, 0),
-	GB_STATIC_METHOD("Load", 0, CFORM_load, "[(Parent)Container;]"),
-	GB_METHOD("_new", 0, CFORM_new, 0),
+	GB_STATIC_METHOD("Main", 0, Form_Main, 0),
+	GB_STATIC_METHOD("Load", 0, Form_Load, "[(Parent)Container;]"),
+	GB_METHOD("_new", 0, Form_new, 0),
 	
 	FORM_DESCRIPTION,
 

@@ -355,10 +355,7 @@ static gboolean my_key_press_event(GtkWidget *widget, GdkEventKey *event)
 
   /* handle mnemonics and accelerators */
   if (!handled)
-	{
-		fprintf(stderr, "activate shortcut\n");
     handled = gtk_window_activate_key(window, event);
-	}
 
   return handled;
 }
