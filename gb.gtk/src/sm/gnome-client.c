@@ -124,7 +124,8 @@ static void gt_ungrab(void)
 #if GTK_CHECK_VERSION(3, 22, 0)
 	gdk_seat_ungrab(gdk_display_get_default_seat(gdk_display_get_default()));
 #elif defined(GTK3)
-	GdkDevice *keyboard = gdk_device_get_associated_device(get_pointer());
+	GdkDevice *pointer = gt_get_pointer();
+	GdkDevice *keyboard = gdk_device_get_associated_device(pointer);
 	gdk_device_ungrab(pointer, GDK_CURRENT_TIME);
 	gdk_device_ungrab(keyboard, GDK_CURRENT_TIME);
 #else
