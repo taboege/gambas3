@@ -317,7 +317,7 @@ void SUBR_print(ushort code)
 	{
 		PARAM++;
 		//PRINT_value(PARAM);
-		VALUE_to_string(PARAM, &addr, &len);
+		VALUE_to_local_string(PARAM, &addr, &len);
 		if (len == 1 && *addr == '\n')
 			STREAM_write_eol(_stream);
 		else

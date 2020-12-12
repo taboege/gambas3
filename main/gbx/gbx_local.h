@@ -68,9 +68,9 @@ typedef
 		char decimal_point;
 		char currency_decimal_point;
 		const char *thousand_sep;
-		int len_thousand_sep;
+		uchar len_thousand_sep;
 		const char *currency_thousand_sep;
-		int len_currency_thousand_sep;
+		uchar len_currency_thousand_sep;
 		char group_size;
 		char currency_group_size;
 		unsigned char currency_flag;
@@ -87,12 +87,13 @@ typedef
 		char *medium_time;
 		char *short_time;
 		char *general_date;
+		char *standard_date;
 		char *general_currency;
 		char *intl_currency;
 		char *true_str;
-		int len_true_str;
+		uchar len_true_str;
 		char *false_str;
-		int len_false_str;
+		uchar len_false_str;
 		unsigned rtl : 1;
 		unsigned date_many_sep : 1;
 		unsigned date_tail_sep : 1;
