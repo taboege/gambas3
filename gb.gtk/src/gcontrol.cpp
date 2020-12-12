@@ -2084,7 +2084,7 @@ void gControl::updateStyleSheet()
 	char *css_str;
 	int s;
 	gColor fg;
-	char buffer[16];
+	char buffer[32];
 
 	wid = getStyleSheetWidget();
 	context = gtk_widget_get_style_context(wid);
