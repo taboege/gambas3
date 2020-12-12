@@ -318,6 +318,7 @@ static char *get_languages(void)
 
 static void free_local_info(void)
 {
+	STRING_free(&LOCAL_local.standard_date);
 	STRING_free(&LOCAL_local.long_date);
 	STRING_free(&LOCAL_local.medium_date);
 	STRING_free(&LOCAL_local.short_date);
