@@ -852,9 +852,9 @@ static void fill_local_info(void)
 
 	STRING_free(&fmt);
 	
-	LOCAL_local.standard_date = STRING_new(LOCAL_local.medium_date, STRING_length(LOCAL_local.medium_date));
+	LOCAL_local.standard_date = STRING_copy(LOCAL_local.medium_date);
 	LOCAL_local.standard_date = STRING_add_char(LOCAL_local.standard_date, ' ');
-	LOCAL_local.standard_date = STRING_add(LOCAL_local.standard_date, LOCAL_local.medium_time, STRING_length(LOCAL_local.medium_time));
+	LOCAL_local.standard_date = STRING_add_string(LOCAL_local.standard_date, LOCAL_local.long_time);
 
 	#ifdef DEBUG_DATE
 	fprintf(stderr, "date_tail_sep = %d\n", LOCAL_local.date_tail_sep);
