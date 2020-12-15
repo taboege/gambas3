@@ -2,8 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gb.gui.base 3.15.90\n"
-"POT-Creation-Date: 2020-11-18 18:38 UTC\n"
-"PO-Revision-Date: 2020-11-18 18:38 UTC\n"
+"POT-Creation-Date: 2020-12-15 13:48 UTC\n"
+"PO-Revision-Date: 2020-12-15 13:48 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
@@ -66,13 +66,9 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: FMessage.class:26 Message.class:33
+#: FMessage.class:34 Message.class:37
 msgid "OK"
 msgstr "确定"
-
-#: FMessage.form:23 FTreeView.form:27
-msgid "Menu1"
-msgstr ""
 
 #: FMessage.form:27
 msgid "Copy message"
@@ -134,7 +130,7 @@ msgstr ""
 msgid "Toggle view"
 msgstr ""
 
-#: FTestMouseWheel.form:29
+#: FTestMouseWheel.form:31
 msgid ""
 "vfdg\n"
 "df\n"
@@ -149,6 +145,14 @@ msgid ""
 "sdf\n"
 "g\n"
 "sdf"
+msgstr ""
+
+#: FTestMouseWheel.form:47
+msgid "ok"
+msgstr ""
+
+#: FTreeView.form:27
+msgid "Menu1"
 msgstr ""
 
 #: FTreeView.form:31
@@ -167,9 +171,9 @@ msgstr ""
 msgid "Menu5"
 msgstr ""
 
-#: FTreeView.form:52
+#: FTreeView.form:52 Message.class:61
 msgid "Delete"
-msgstr ""
+msgstr "删除"
 
 #: FTreeView.form:62
 msgid "Drag"
@@ -226,3 +230,15 @@ msgstr "&1 MB"
 #: Main.module:55
 msgid "&1 GiB"
 msgstr "&1 GB"
+
+#: Message.class:43
+msgid "Apply"
+msgstr "应用"
+
+#: Message.class:43
+msgid "Cancel"
+msgstr "取消"
+
+#: Message.class:49
+msgid "Yes"
+msgstr "是"

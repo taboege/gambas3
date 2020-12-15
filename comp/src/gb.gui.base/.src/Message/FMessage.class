@@ -2,7 +2,7 @@
 
 Static Private $iButton As Integer
 
-Public Sub Run(sIcon As String, sText As String, aButton As String[]) As Integer
+Public Sub Run(sIcon As String, sText As String, aButton As String[], aDefault As String[]) As Integer
 
   Dim DS As Integer = Desktop.Scale
   Dim sTitle As String
@@ -21,14 +21,17 @@ Public Sub Run(sIcon As String, sText As String, aButton As String[]) As Integer
   Message.Title = ""
   Me.Title = sTitle
   
-  Do
-    If aButton.Count = 0 Then
-      aButton = [("OK")]
-      Break
+  While I < aButton.Count
+    If Not Trim(aButton[I]) Then
+      aButton.Remove(I)
+    Else
+      Inc I
     Endif
-    If aButton.Last Then Break
-    aButton.Pop()
-  Loop
+  Wend
+  
+  If aButton.Count < aDefault.Count Then aButton = aDefault
+  
+  If aButton.Count = 0 Then aButton = [("OK")]
   
   hPict = Picture["icon:/64/" & sIcon]
   If Not hPict Then hPict = Picture["./gb.gui.base/message" &/ sIcon & ".png"]
@@ -52,8 +55,11 @@ Public Sub Run(sIcon As String, sText As String, aButton As String[]) As Integer
     hButton.W = Max(DS * 14, hButton.Font.TextWidth(hButton.Text) + DS * 2)
     H = Max(H, hButton.Font.TextHeight(hButton.Text))
     WB += hButton.W + DS
-    If I = 0 Then hButton.SetFocus()
-    If I = aButton.Max Then hButton.Cancel = True
+    'If I = 0 Then hButton.SetFocus()
+    If I = aButton.Max Then 
+      hButton.Cancel = True
+      hButton.SetFocus
+    Endif
   Next
   hSpace = New Spring(panButton)
   panButton.H = Max(H, DS * 4)
@@ -65,7 +71,7 @@ Public Sub Run(sIcon As String, sText As String, aButton As String[]) As Integer
   
   If Application.ActiveWindow Then Me.SkipTaskbar = True
   
-  $iButton = aButton.Max
+  $iButton = -1
   
   iBusy = Application.Busy
   Application.Busy = 0
@@ -104,3 +110,8 @@ Public Sub mnuCopy_Click()
 
 End
 
+Public Sub Form_Close()
+
+  If $iButton < 0 Then Stop Event
+
+End
