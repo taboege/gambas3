@@ -84,6 +84,7 @@ LOCAL_INFO LOCAL_default = {
 	"hh:nn AM/PM",
 	"hh:nn",
 	"mm/dd/yyyy hh:nn:ss",
+	"mm/dd/yyyy hh:nn:ss",
 	"(#,##0.##)",
 	"(#,##0.##)",
 	"True", 4,
@@ -317,6 +318,7 @@ static char *get_languages(void)
 
 static void free_local_info(void)
 {
+	STRING_free(&LOCAL_local.standard_date);
 	STRING_free(&LOCAL_local.long_date);
 	STRING_free(&LOCAL_local.medium_date);
 	STRING_free(&LOCAL_local.short_date);
@@ -849,6 +851,10 @@ static void fill_local_info(void)
 	LOCAL_local.time_many_sep = LOCAL_local.time_sep[LOCAL_local.time_order[0]] != LOCAL_local.time_sep[LOCAL_local.time_order[1]];
 
 	STRING_free(&fmt);
+	
+	LOCAL_local.standard_date = STRING_new(LOCAL_local.medium_date, STRING_length(LOCAL_local.medium_date));
+	LOCAL_local.standard_date = STRING_add_char(LOCAL_local.standard_date, ' ');
+	LOCAL_local.standard_date = STRING_add(LOCAL_local.standard_date, LOCAL_local.medium_time, STRING_length(LOCAL_local.medium_time));
 
 	#ifdef DEBUG_DATE
 	fprintf(stderr, "date_tail_sep = %d\n", LOCAL_local.date_tail_sep);
@@ -1776,8 +1782,8 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 			break;
 
 		case LF_STANDARD:
-			fmt_type = LF_GENERAL_DATE;
-			// continue;
+			fmt = local_current->standard_date;
+			break;
 			
 		case LF_GENERAL_DATE:
 			if (date->year == 0)

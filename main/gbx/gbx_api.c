@@ -320,7 +320,7 @@ const void *const GAMBAS_DebugApi[] =
 	(void *)ERROR_get_message,
 	(void *)ERROR_save,
 	(void *)ERROR_restore,
-	(void *)VALUE_to_string,
+	(void *)VALUE_to_local_string,
 	(void *)LOCAL_format_date,
 	(void *)LOCAL_format_number,
 	(void *)DEBUG_get_value,
