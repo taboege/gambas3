@@ -216,7 +216,7 @@ Public Sub gvwProc_Draw(X As Integer, Y As Integer, Width As Integer, Height As 
     Paint.Font.Italic = True
   Endif
   
-  If hSymbol And If hSymbol.NotPublic Then Paint.Background = Color.Merge(Paint.Background, Color.TextBackground)
+  If hSymbol And If hSymbol.NotPublic Then Paint.Background = Color.Merge(Paint.Background, Color.TextBackground, 0.3)
   
   If Row = $iInit Then Paint.DrawTextShadow(sName, X + 2, Y, Width - 4, Height, Align.Left)
   Paint.DrawText(sName, X + 2, Y, Width - 4, Height, Align.Left)

@@ -222,8 +222,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gambas3 3.15.90\n"
-"POT-Creation-Date: 2020-11-27 01:24 UTC\n"
-"PO-Revision-Date: 2020-10-16 10:53 UTC\n"
+"POT-Creation-Date: 2020-12-15 12:37 UTC\n"
+"PO-Revision-Date: 2020-12-04 02:54 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -420,7 +420,7 @@ msgstr "Ce composant n'est pas encore stable."
 msgid "This component is deprecated."
 msgstr "Ce composant est déprécié."
 
-#: CComponent.class:602 CVersionControlGit.class:486 FProjectVersion.class:287
+#: CComponent.class:602 CVersionControlGit.class:501 FProjectVersion.class:287
 msgid "Author"
 msgstr "Auteur"
 
@@ -989,7 +989,7 @@ msgstr "ici"
 msgid "IDE extensions"
 msgstr "Extension de l'EDI"
 
-#: CProjectList.class:553 CVersionControlGit.class:423
+#: CProjectList.class:553 CVersionControlGit.class:438
 #: CWaitingAnimation.class:63 FColorChooser.form:68 FComponentChooser.form:97
 #: FConflict.class:197 FConnectionEditor.class:470 FCrash.form:97
 #: FCreateFile.form:204 FDebugExpr.form:46 FDebugInfo.form:409
@@ -1091,7 +1091,7 @@ msgstr "Impossible de décompresser l'archive source."
 msgid "Abort"
 msgstr "Abandonner"
 
-#: CSoftware.class:361 FMain.class:2775 FMenu.class:88
+#: CSoftware.class:361 FMain.class:2776 FMenu.class:88
 msgid "Ignore"
 msgstr "Ignorer"
 
@@ -1143,71 +1143,71 @@ msgstr "l'année dernière"
 msgid "on &1"
 msgstr "en &1"
 
-#: CVersionControlGit.class:316
+#: CVersionControlGit.class:331
 msgid "Unable to push the project."
 msgstr "Impossible d'envoyer le projet."
 
-#: CVersionControlGit.class:330 CVersionControlSubversion.class:300
+#: CVersionControlGit.class:345 CVersionControlSubversion.class:300
 msgid "Local root path"
 msgstr "Répertoire racine local"
 
-#: CVersionControlGit.class:333
+#: CVersionControlGit.class:348
 msgid "Last commit"
 msgstr "Dernière publication"
 
-#: CVersionControlGit.class:334 CVersionControlSubversion.class:302
+#: CVersionControlGit.class:349 CVersionControlSubversion.class:302
 msgid "Last commit author"
 msgstr "Auteur de la dernière publication"
 
-#: CVersionControlGit.class:335 CVersionControlSubversion.class:303
+#: CVersionControlGit.class:350 CVersionControlSubversion.class:303
 msgid "Last commit date"
 msgstr "Date de la dernière publication"
 
-#: CVersionControlGit.class:342
+#: CVersionControlGit.class:357
 msgid "Current branch"
 msgstr "Branche courante"
 
-#: CVersionControlGit.class:343
+#: CVersionControlGit.class:358
 msgid "Origin"
 msgstr "Origine"
 
-#: CVersionControlGit.class:350
+#: CVersionControlGit.class:365
 msgid "The current branch is up to date."
 msgstr "La branche courante est à-jour."
 
-#: CVersionControlGit.class:352
+#: CVersionControlGit.class:367
 msgid "One file to commit in the current branch."
 msgstr "Un fichier à publier dans la branche courante."
 
-#: CVersionControlGit.class:354
+#: CVersionControlGit.class:369
 msgid "&1 files to commit in the current branch."
 msgstr "&1 fichiers à publier dans la branche courante."
 
-#: CVersionControlGit.class:361
+#: CVersionControlGit.class:376
 msgid "None in the current project."
 msgstr "Aucun dans le projet courant."
 
-#: CVersionControlGit.class:363
+#: CVersionControlGit.class:378
 msgid "One in the current project."
 msgstr "Un dans le projet courant"
 
-#: CVersionControlGit.class:365
+#: CVersionControlGit.class:380
 msgid "&1 in the current project."
 msgstr "&1 dans le projet courant."
 
-#: CVersionControlGit.class:369
+#: CVersionControlGit.class:384
 msgid "Status"
 msgstr "État"
 
-#: CVersionControlGit.class:372 CVersionControlSubversion.class:318
+#: CVersionControlGit.class:387 CVersionControlSubversion.class:318
 msgid "Remote repository URL"
 msgstr "URL du référentiel distant"
 
-#: CVersionControlGit.class:423
+#: CVersionControlGit.class:438
 msgid "A new Git repository will be created for this project."
 msgstr "Un nouveau référentiel Git sera créé pour ce projet."
 
-#: CVersionControlGit.class:423 Design.module:532 FColorChooser.form:62
+#: CVersionControlGit.class:438 Design.module:532 FColorChooser.form:62
 #: FConnectionEditor.class:707 FCrash.form:91 FCreateFile.form:210
 #: FFarmConfig.form:33 FFarmLogin.form:121 FFieldChooser.form:138
 #: FFontChooser.form:34 FGotoLine.form:17 FImageOffsetSelection.form:27
@@ -1224,11 +1224,11 @@ msgstr "Un nouveau référentiel Git sera créé pour ce projet."
 msgid "OK"
 msgstr "OK"
 
-#: CVersionControlGit.class:461
+#: CVersionControlGit.class:476
 msgid "Solve conflict."
 msgstr "Résolution du conflit."
 
-#: CVersionControlGit.class:486 FConnectionEditor.class:837
+#: CVersionControlGit.class:501 FConnectionEditor.class:837
 #: FProjectVersion.class:290 MConnection.module:141
 msgid "Date"
 msgstr "Date"
@@ -1331,7 +1331,7 @@ msgid "Run"
 msgstr "Démarrer"
 
 #: FArguments.form:46 FConflict.form:166 FConflictEditor.form:306
-#: FDebugInfo.form:416 FEditor.form:346 FFileInfoVC.form:70
+#: FDebugInfo.form:416 FEditor.form:346 FFileInfoVC.form:81
 #: FFileProperty.form:46 FForm.form:438 FImageEditor.form:392 FMain.form:406
 #: FPatch.form:88 FProjectVersion.form:322 FSystemInfo.form:44
 #: FTestSuite.form:170 FTextEditor.form:342 FTips.form:83 FTranslate.form:411
@@ -1922,7 +1922,7 @@ msgstr "Effacer"
 msgid "Fields"
 msgstr "Champs"
 
-#: FConnectionEditor.form:325 FMain.class:2209 FMakeInstall.form:756
+#: FConnectionEditor.form:325 FMain.class:2210 FMakeInstall.form:756
 #: FProjectProperty.form:688 FPublish.form:158
 msgid "Add"
 msgstr "Ajouter"
@@ -2552,7 +2552,7 @@ msgstr "Le fichier n'est pas versionné, et doit être ajouté au référentiel.
 msgid "This file has not been modified since the last commit."
 msgstr "Ce fichier est inchangé depuis la dernière publication."
 
-#: FFileInfoVC.class:82 FMain.class:1232 FMakeInstall.class:361
+#: FFileInfoVC.class:82 FMain.class:1233 FMakeInstall.class:361
 #: FProjectVersion.class:211 FSave.form:21 Project.module:3616
 #: VersionControl.module:429
 msgid "Continue"
@@ -2562,17 +2562,21 @@ msgstr "Continuer"
 msgid "You are going to cancel your changes!"
 msgstr "Tous les changements vont être annulés !"
 
-#: FFileInfoVC.form:25 FProjectVersion.form:299 FVersionControl.form:37
+#: FFileInfoVC.form:26 FProjectVersion.form:299 FVersionControl.form:37
 msgid "Changes"
 msgstr "Modifications"
 
-#: FFileInfoVC.form:41 FVersionControl.form:56
+#: FFileInfoVC.form:44 FVersionControl.form:56
 msgid "History"
 msgstr "Historique"
 
-#: FFileInfoVC.form:59
+#: FFileInfoVC.form:64
 msgid "Undo changes"
 msgstr "Annuler les changements"
+
+#: FFileInfoVC.form:71
+msgid "Display changes in history"
+msgstr "Afficher les changements dans l'historique"
 
 #: FFileProperty.class:30
 msgid "Gambas &1"
@@ -3437,11 +3441,11 @@ msgstr "Trier dans l'ordre des chemins"
 msgid "&Clear history"
 msgstr "&Effacer l'historique"
 
-#: FMain.class:959
+#: FMain.class:960
 msgid "New folder"
 msgstr "Nouveau dossier"
 
-#: FMain.class:1030
+#: FMain.class:1031
 msgid ""
 "The GNU translation tools are not installed on your system.\n"
 "\n"
@@ -3451,39 +3455,39 @@ msgstr ""
 "\n"
 "Veuillez les installer pour pouvoir effectuer la traduction."
 
-#: FMain.class:1765
+#: FMain.class:1766
 msgid "Unable to drop file into the project."
 msgstr "Impossible de déposer le fichier à l'intérieur du projet."
 
-#: FMain.class:1890
+#: FMain.class:1891
 msgid "All backup or generated files will be removed from the project directory."
 msgstr "Les fichiers de sauvegarde et les fichiers générés du projet vont être supprimés."
 
-#: FMain.class:1890
+#: FMain.class:1891
 msgid "Clean"
 msgstr "Nettoyer"
 
-#: FMain.class:2209
+#: FMain.class:2210
 msgid "Do you really want to add every file to the repository?"
 msgstr "Voulez-vous vraiment ajouter tous les fichiers au référentiel ?"
 
-#: FMain.class:2349
+#: FMain.class:2350
 msgid "Choose a profile"
 msgstr "Choisissez un profilage"
 
-#: FMain.class:2350
+#: FMain.class:2351
 msgid "Profile for &1 project"
 msgstr "Profilage pour le projet &1"
 
-#: FMain.class:2602 FProperty.class:1033
+#: FMain.class:2603 FProperty.class:1033
 msgid "Select a file"
 msgstr "Choisissez un fichier"
 
-#: FMain.class:2617
+#: FMain.class:2618
 msgid "This file is located inside the project."
 msgstr "Le fichier est situé à l'intérieur du projet."
 
-#: FMain.class:2775 Project.module:880
+#: FMain.class:2776 Project.module:880
 msgid ""
 "The file has been modified.\n"
 "\n"

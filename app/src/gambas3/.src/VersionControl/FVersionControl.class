@@ -161,9 +161,7 @@ Public Sub tabVersionControl_Click()
     Case 1
       
     Case 2
-      If edtHistory.IsVoid() Then
-        edtHistory.FillWithHistory(Project.Dir)
-      Endif
+      If edtHistory.IsVoid() Then edtHistory.FillWithHistory(Project.Dir)
       
     Case 3
       Try trmShell.Exec(["bash"], ["PWD=" & Project.Dir])
@@ -190,3 +188,4 @@ Public Sub btnCommitPush_Click()
   DoCommit
 
 End
+

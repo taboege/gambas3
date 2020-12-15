@@ -34,10 +34,22 @@ Private Sub RunShell(sCmd As String, Optional bSilent As Boolean) As String
   
 End
 
+Private Sub FindRoot() As String
+
+  Dim sDir As String
+
+  sDir = Project.Dir
+  While Len(sDir) > 1
+    If Exist(sDir &/ ".git/HEAD") Then Return sDir
+    sDir = File.Dir(sDir)
+  Wend
+
+End
 
 Public Sub Check() As Boolean
   
   Dim sResult As String
+  Dim sRoot As String
   
   Init()
   
@@ -53,9 +65,9 @@ Public Sub Check() As Boolean
       $bCanControl = sResult Begins "??"
 
       If Not $bCanControl Then
-        sResult = RunShell("git rev-parse --show-toplevel")
-        If Process.LastValue = 0 Then 
-          $sRoot = Trim(sResult)
+        sRoot = FindRoot()
+        If sRoot Then
+          $sRoot = sRoot
           $bHasRemote = RunShell("git remote show")
           Return True
         Endif
@@ -159,14 +171,17 @@ Public Sub Diff(sPath As String, Optional bFull As Boolean, bNoWhiteSpace As Boo
 
 End
 
-Public Sub History(sPath As String, Optional (bFull) As Boolean) As String
+Public Sub History(sPath As String, Optional bFull As Boolean) As String
   
   Dim sCmd As String
+  Dim sFull As String
+  
+  If bFull Then sFull = "-p "
   
   If IsDir(sPath) Then
-    sCmd = "cd " & Shell(sPath) & " && git log --date=rfc2822 ."
+    sCmd = "cd " & Shell(sPath) & " && git log --date=rfc2822 " & sFull & "."
   Else
-    sCmd = "cd " & Shell(File.Dir(sPath)) & " && git log --date=rfc2822 " & Shell(File.Name(sPath))
+    sCmd = "cd " & Shell(File.Dir(sPath)) & " && git log --date=rfc2822 " & sFull & Shell(File.Name(sPath))
   Endif
   
   Return VersionControl.Shell(sCmd)
@@ -486,6 +501,7 @@ Public Sub HighlightHistory(Text As String)
     $iPadHistory = Max(Max(String.Len(("Date")), String.Len(("Author"))), String.Len("Commit"))
   Endif
   
+  TextHighlighter.Alternate = True
   If Text Begins "commit " Then 
     TextHighlighter.TextAfter = String.PadRight("Commit", $iPadHistory) & " : " & Mid$(Text, 8)
     TextHighlighter.Add(Highlight.DataType, String.Len(TextHighlighter.TextAfter))
@@ -496,8 +512,10 @@ Public Sub HighlightHistory(Text As String)
   Else If Text Begins "Date: " Then
     TextHighlighter.TextAfter = String.PadRight(("Date"), $iPadHistory) & " : " & FormatDate(Mid$(Text, 7))
     TextHighlighter.Add(Highlight.Preprocessor, String.Len(TextHighlighter.TextAfter))
-  Else 
-    TextHighlighter.Add(Highlight.Normal, iLen)
+  Else
+    TextHighlighter.Alternate = False
+    TextHighlighter["diff"].Run(Text)
+    'TextHighlighter.Add(Highlight.Normal, iLen)
   Endif
   
 End
