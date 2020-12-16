@@ -4,7 +4,7 @@ Inherits UserControl
 
 Export
 
-Public Const _Properties As String = "*,Border=True,AutoResize=True,Limit=1000,Blink,ShowScrollBar,ReadOnly"
+Public Const _Properties As String = "*,Border=True,AutoResize=True,Limit=1000,Blink,ShowScrollBar,ReadOnly,WindowCommands"
 Public Const _DrawWith As String = "-"
 Public Const _Group As String = "View"
 
@@ -66,6 +66,8 @@ Property Read CharWidth As Integer
 Property Read LineHeight As Integer
 '' Return or set if the terminal is read-only.
 Property ReadOnly As Boolean
+'' Return or set if terminal can be effected by XTerm 't' escape sequences.
+Property WindowCommands As Boolean Use $bWindowCommands
 
 Static Private $cShortcut As Collection
 
