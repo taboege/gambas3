@@ -461,11 +461,11 @@ HANDLE_REMOVED:
 
 End
 
-Public Sub FillWithHistory(sPath As String)
+Public Sub FillWithHistory(sPath As String, Optional bFull As Boolean)
   
   Inc Application.Busy
   Me.Clear
-  Me.Text = VersionControl.History(sPath)
+  Me.Text = VersionControl.History(sPath, bFull)
   Me.SetFocus
   Me.Reset
   Dec Application.Busy

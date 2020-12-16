@@ -120,11 +120,15 @@ Public Sub tabInfo_Click()
     
     Case 0
       
+      btnRevert.Show
+      chkShowHistoryChanges.Hide
       LoadVersionControlInfo
     
     Case 1
     
-      edtHistory.FillWithHistory($sPath)
+      btnRevert.Hide
+      chkShowHistoryChanges.Show
+      If edtHistory.IsVoid() Then edtHistory.FillWithHistory($sPath)
     
   End Select
   
@@ -145,5 +149,11 @@ End
 Public Sub edtHistory_KeyPress()
 
   If Key.Code = Key.Escape Then Me.Close
+
+End
+
+Public Sub chkShowHistoryChanges_Click()
+
+  edtHistory.FillWithHistory($sPath, chkShowHistoryChanges.Value)
 
 End

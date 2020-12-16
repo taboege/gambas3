@@ -6,7 +6,8 @@
   Arrangement = Arrange.Vertical
   Margin = True
   { mnuPopup Menu
-    Text = ("Menu1")
+    #Translate = False
+    Text = "Menu1"
     Visible = False
     { mnuCopy Menu
       Text = ("Copy message")

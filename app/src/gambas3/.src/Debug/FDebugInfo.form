@@ -74,11 +74,22 @@
           { Separator4 Separator
             MoveScaled(4,11,30,0)
           }
-          { cvwVariable ColumnView
-            MoveScaled(2,13,42,18)
+          { splVariable HSplit
+            MoveScaled(3,12,67,19)
             Expand = True
-            Header = False
-            Border = False
+            { cvwVariable ColumnView
+              MoveScaled(4,2,27,15)
+              Expand = True
+              Header = False
+              Border = False
+            }
+            { cvwObject ColumnView cvwVariable
+              Name = "cvwObject"
+              MoveScaled(34,2,24,14)
+              Expand = True
+              Header = False
+              Border = False
+            }
           }
         }
       }

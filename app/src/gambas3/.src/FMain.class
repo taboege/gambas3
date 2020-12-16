@@ -935,6 +935,7 @@ Private Sub Rename(sKey As String)
   Dim iLen As Integer
   Dim sExt As String
   
+  If $bInRename Then Return
   $bInRename = True
   tvwProject[sKey].Rename
   
@@ -1673,7 +1674,7 @@ RENAME_FAILED:
 End
 
 Public Sub mnuRenameFile_Click()
-  
+
   Rename(tvwProject.Key)
   
 End
