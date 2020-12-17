@@ -921,7 +921,9 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 	GString *pango = g_string_new("");
 	const char *p, *p_end, *p_markup;
 	char c;
-	char *token, *markup, **attr;
+	const char *token;
+	const char *markup;
+	char **attr;
 	const char *pp;
 	gsize len;
 	bool start_token = false;
@@ -932,6 +934,8 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 	int size_stack_ptr = 0;
 	bool newline = true;
 	bool inside_par = false;
+	
+	//fprintf(stderr, "gt_html_to_pango_string: %.*s\n", len_html, html);
 	
 	p_end = &html[len_html < 0 ? strlen(html) : len_html];
 	p_markup = NULL;
@@ -995,7 +999,19 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 			
 			markup = g_strndup(p_markup, len);
 			attr = g_strsplit(markup, " ", -1);
-			token = attr[0];
+			token = NULL;
+			
+			for (pt = (const char **)attr; *pt; pt++)
+			{
+				if ((*pt)[0])
+				{
+					token = *pt;
+					break;
+				}
+			}
+			
+			if (!token)
+				goto __FOUND_TOKEN;
 			
 			for (pt = title; *pt; pt += 2)
 			{
@@ -1131,7 +1147,7 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 
 		__FOUND_TOKEN:
 		
-			g_free(token);
+			g_strfreev(attr);
 			p_markup = NULL;
 			continue;	
 		}
@@ -1236,7 +1252,7 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 RETURN_STRING:
 	
 	p = g_string_free(pango, false);
-	//fprintf(stderr, "pango: '%s'\n", p);
+	//fprintf(stderr, "==> '%s'\n", p);
 	return (char *)p;
 }
 
