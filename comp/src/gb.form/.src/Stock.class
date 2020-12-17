@@ -177,8 +177,6 @@ End
 ' TODO: Vérifier les thèmes
 ' FIXME: Mettre à jour
 
-
-
 Static Private Sub SearchTheme(sDesktop As String)
   
   'Dim hFile As File
@@ -724,6 +722,8 @@ End
 Static Private Sub GetAllThemePath(sMap As String, aPath As String[], sTheme As String)
   
   Dim sPath As String
+  
+  If $bDebug Then Error "gb.form: searching directories for icon theme '"; sTheme; "'"
   
   For Each sTheme In GetInheritance(aPath, LCase(sTheme))
     For Each sPath In aPath
