@@ -52,18 +52,14 @@ void gSlider::update()
 	
 	//gtk_range_set_adjustment(GTK_RANGE(widget), NULL);
 	
-	if (!isScrollBar())
+	max = _max + _page_step;
+	/*if (!isScrollBar())
 	{
-		max = _max;
 		#ifndef GTK3
 		if (max == _min)
 			max = _min + 1;
 		#endif
-	}
-	else
-	{
-		max = _max + _page_step;
-	}
+	}*/
 	
 	gtk_adjustment_configure(adj, value, _min, max, _step, _page_step, _page_step);
 	

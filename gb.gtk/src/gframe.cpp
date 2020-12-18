@@ -123,6 +123,8 @@ gPanel::gPanel(gContainer *parent) : gContainer(parent)
 	create();
 }
 
+#ifdef GTK3
+#else
 void gPanel::setBackground(gColor color)
 {
 	bool set = _bg_set;
@@ -132,6 +134,7 @@ void gPanel::setBackground(gColor color)
 	if (set != _bg_set)
 		create();
 }
+#endif
 
 /****************************************************************************
 

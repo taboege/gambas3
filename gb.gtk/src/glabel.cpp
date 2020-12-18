@@ -58,7 +58,7 @@ static gboolean cb_draw(GtkWidget *draw, cairo_t *cr, gLabel *d)
 
 	pango_layout_get_pixel_size(d->layout, &lw, &lh);
 
-	if (!d->markup || !d->wrap())
+	if (!d->markup() || !d->wrap())
 	{
 		switch (xa)
 		{
@@ -124,7 +124,7 @@ static gboolean cb_expose(GtkWidget *draw, GdkEventExpose *e, gLabel *d)
 		case 2: pango_layout_set_alignment(d->layout, PANGO_ALIGN_RIGHT); break;
 	}
 
-	if (!d->markup || !d->wrap())
+	if (!d->markup() || !d->wrap())
 	{
 		switch (xa)
 		{
@@ -161,7 +161,7 @@ static gboolean cb_expose(GtkWidget *draw, GdkEventExpose *e, gLabel *d)
 gLabel::gLabel(gContainer *parent) : gControl(parent)
 {
 	textdata = NULL;
-	markup = false;
+	_markup = false;
 	_autoresize = false;
 	_mask_dirty = false;
 	_transparent = false;
@@ -191,22 +191,22 @@ void gLabel::updateLayout()
 	char *bpango;
 	
 	if (!textdata) 
-		pango_layout_set_text(layout,"",-1);
+		pango_layout_set_text(layout, "", 0);
 	else
 	{
-		if (markup)
+		if (_markup)
 		{
 			bpango = gt_html_to_pango_string(textdata, -1, false);
 			if (!bpango)
-				pango_layout_set_text(layout,"",-1);
+				pango_layout_set_text(layout, "", 0);
 			else
 			{
-				pango_layout_set_markup(layout,bpango,-1);
+				pango_layout_set_markup(layout, bpango, -1);
 				g_free(bpango);
 			}
 		}
 		else
-			pango_layout_set_text(layout,textdata,-1);
+			pango_layout_set_text(layout, textdata, -1);
 	}
 	
 	gt_add_layout_from_font(layout, font());
@@ -224,7 +224,7 @@ void gLabel::updateSize(bool adjust, bool noresize_width)
 	
 	fw = getFrameWidth() + getFramePadding();
 
-	if (markup && _wrap)
+	if (_markup && _wrap)
 	{
 		w = width() - fw * 2;
 		if (w < 0)
@@ -238,9 +238,9 @@ void gLabel::updateSize(bool adjust, bool noresize_width)
 	
 	pango_layout_get_pixel_size(layout, &w, &h);
 
-	if (!adjust && _wrap)
+	/*if (!adjust && _wrap)
 		w = width();
-	else
+	else*/
 		w += fw * 2;
 
 	h += fw * 2;
@@ -252,7 +252,7 @@ void gLabel::updateSize(bool adjust, bool noresize_width)
 		h = height();
 	
 	_locked = true;
-	resize(w, h);	
+	resize(w, h);
 	_locked = false;
 }
 
@@ -305,11 +305,11 @@ void gLabel::setText(const char *vl)
 	refresh();
 }
 
-void gLabel::enableMarkup(bool vl)
+void gLabel::setMarkup(bool vl)
 {
-	if (markup != vl)
+	if (_markup != vl)
 	{
-		markup = vl;
+		_markup = vl;
 		updateSize();
 		refresh();
 	}
@@ -350,10 +350,14 @@ void gLabel::setAlignment(int al)
 
 bool gLabel::resize(int w, int h)
 {
+	int oldw = width();
+	
 	if (gControl::resize(w, h))
 		return true;
 	
-	updateSize(false);
+	if (autoResize() && !_locked && markup() && oldw != width())
+		updateSize(false);
+	
 	return false;
 }
 
