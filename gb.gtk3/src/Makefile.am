@@ -14,7 +14,7 @@ gb_gtk3_la_SOURCES = \
 	gb.gtk.h gb.gtk.patch.h widgets.h font-parser.h font-parser.cpp \
 	gtools.cpp gcolor.h \
 	gfont.cpp gpicture.cpp \
-	gdesktop.cpp gmessage.cpp \
+	gdesktop.cpp gdialog.cpp \
 	gcontrol.cpp gcontainer.cpp gseparator.cpp \
 	gbutton.cpp gslider.cpp glabel.cpp gsignals.cpp \
 	gmoviebox.cpp gcombobox.cpp gtextbox.cpp gtextarea.cpp \
@@ -56,7 +56,6 @@ gb_gtk3_la_SOURCES = \
 	gdesktop.h \
 	gpicture.h \
 	gfont.h \
-	gmessage.h \
 	gdialog.h \
 	gcontrol.h \
 	gseparator.h \

@@ -37,7 +37,6 @@
 #include "gdesktop.h"
 #include "gkey.h"
 #include "gmenu.h"
-#include "gmessage.h"
 #include "gdialog.h"
 #include "gmouse.h"
 #include "gmainwindow.h"

@@ -32,7 +32,6 @@
 #include "gdesktop.h"
 #include "gkey.h"
 #include "gmenu.h"
-#include "gmessage.h"
 #include "gdialog.h"
 #include "gclipboard.h"
 #include "gmouse.h"
@@ -1028,6 +1027,11 @@ void gApplication::init(int *argc, char ***argv)
 
 	gtk_init(argc, argv);
 	
+	getStyleName();
+
+	settings = gtk_settings_get_default();
+	g_signal_connect(G_OBJECT(settings), "notify::gtk-theme-name", G_CALLBACK(cb_theme_changed), 0);
+	
 	session_manager_init(argc, argv);
 	g_signal_connect(gnome_master_client(), "save-yourself", G_CALLBACK(master_client_save_yourself), NULL);
 	g_signal_connect(gnome_master_client(), "die", G_CALLBACK(master_client_die), NULL);
@@ -1047,11 +1051,6 @@ void gApplication::init(int *argc, char ***argv)
 	if (env && strcmp(env, "0"))
 		_debug_keypress = true;
 
-	getStyleName();
-
-	settings = gtk_settings_get_default();
-	g_signal_connect(G_OBJECT(settings), "notify::gtk-theme-name", G_CALLBACK(cb_theme_changed), 0);
-	
 #ifdef GTK3
 	// Override theme
 	
@@ -1075,7 +1074,6 @@ void gApplication::exit()
 	gKey::exit();
 	gTrayIcon::exit();
   gDesktop::exit();
-  gMessage::exit();
   gDialog::exit();
   gFont::exit();
   gt_exit();
