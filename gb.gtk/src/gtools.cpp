@@ -1053,7 +1053,7 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 			{
 				if ((end_token || inside_par) && p[1])
 				{
-					g_string_append(pango, "\n\n");
+					g_string_append(pango, "\n");
 					newline = true;
 				}
 				inside_par = start_token;
@@ -1132,6 +1132,15 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 					g_string_append(pango, "<span foreground=\"blue\"><u>");
 				else if (end_token && !start_token)
 					g_string_append(pango, "</u></span>");
+				goto __FOUND_TOKEN;
+			}
+			
+			if (!strcasecmp(token, "code"))
+			{
+				if (start_token && !end_token)
+					g_string_append(pango, "<tt>");
+				else if (end_token && !start_token)
+					g_string_append(pango, "</tt>");
 				goto __FOUND_TOKEN;
 			}
 			
