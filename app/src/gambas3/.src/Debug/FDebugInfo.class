@@ -1427,6 +1427,7 @@ End
 
 Public Sub btnVcCommit_Click()
 
+  If Project.Compile() Then Return
   FVersionControl.Run
 
 End
