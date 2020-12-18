@@ -1307,7 +1307,7 @@ End
 
 Public Sub Editors_Scroll()
 
-  $hCompletion.Hide
+  $hCompletion.Position()
 
 End
 

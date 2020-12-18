@@ -127,3 +127,9 @@ Public Sub GetWord(sLine As String, iPos As Integer) As String
 Catch
 
 End
+
+Public Sub Position()
+  
+  FCompletion.Position(GetEditor())
+  
+End

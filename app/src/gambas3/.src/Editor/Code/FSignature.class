@@ -95,6 +95,13 @@ Private Sub UpdateSignature(Optional hForm As FEditor)
   
 End
 
+Public Sub Position(hForm As FEditor)
+  
+  If hForm.GetEditor() <> $hEditor Then Return
+  UpdateSignature(hForm)
+  
+End
+
 
 Public Sub Open(hForm As FEditor, iCol As Integer, hSymbol As CSymbolInfo, iArg As Integer)
   

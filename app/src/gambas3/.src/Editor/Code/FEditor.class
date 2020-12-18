@@ -2204,8 +2204,8 @@ End
 
 Public Sub Editors_Scroll()
 
-  $hCompletion.Hide
-  HideSignature
+  $hCompletion.Position()
+  FSignature.Position(Me)
   HideMessage
 
 End
