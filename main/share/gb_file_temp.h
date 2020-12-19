@@ -546,6 +546,9 @@ void FILE_stat(const char *path, FILE_STAT *info, bool follow)
 	info->hidden = (*FILE_get_name(path) == '.');
 	info->uid = buf.st_uid;
 	info->gid = buf.st_gid;
+	info->device = buf.st_dev;
+	info->blkdev = S_ISBLK(buf.st_mode);
+	info->chrdev = S_ISCHR(buf.st_mode);
 }
 
 char *FILE_mode_to_string(mode_t mode)

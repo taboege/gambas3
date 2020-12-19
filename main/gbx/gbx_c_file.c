@@ -32,9 +32,11 @@
 #include <grp.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
+#include <sys/sysmacros.h>
 #include <termios.h>
 
 #include "gb_common.h"
+#include "gb_common_buffer.h"
 #include "gb_list.h"
 #include "gb_file.h"
 
@@ -366,34 +368,23 @@ BEGIN_PROPERTY(Stat_Auth)
 
 END_PROPERTY
 
-#if 0
-BEGIN_METHOD(CFILE_access, GB_INTEGER who; GB_INTEGER access)
 
-	bool ret;
-	int access = VARGOPT(access, GB_STAT_READ);
-	int who = VARG(who);
-	int mode = THIS_STAT->info.mode;
+BEGIN_PROPERTY(Stat_Device)
 
-	if ((access & GB_STAT_READ) == 0)
-		mode &= ~(S_IRUSR | S_IRGRP | S_IROTH);
-	if ((access & GB_STAT_WRITE) == 0)
-		mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
-	if ((access & GB_STAT_EXEC) == 0)
-		mode &= ~(S_IXUSR | S_IXGRP | S_IXOTH);
-
-	switch(who)
+	dev_t dev = THIS_STAT->info.device;
+	int len;
+	
+	if (dev == 0)
+		GB_ReturnNull();
+	else
 	{
-		case GB_STAT_USER: ret = mode & S_IRWXU; break;
-		case GB_STAT_GROUP: ret = mode & S_IRWXG; break;
-		case GB_STAT_OTHER: ret = mode & S_IRWXO; break;
-		default: ret = FALSE; break;
+		len = sprintf(COMMON_buffer, "/%s/%d:%d", THIS_STAT->info.chrdev ? "char" : "block", major(dev), minor(dev));
+		GB_ReturnNewString(COMMON_buffer, len);
 	}
 
-	GB_ReturnBoolean(ret);
+END_PROPERTY
 
-END_METHOD
-#endif
-
+//--------------------------------------------------------------------------
 
 static void return_perm(CSTAT *_object, int rf, int wf, int xf)
 {
@@ -413,25 +404,25 @@ static void return_perm(CSTAT *_object, int rf, int wf, int xf)
 }
 
 
-BEGIN_PROPERTY(CFILE_perm_user)
+BEGIN_PROPERTY(StatPerm_User)
 
 	return_perm(THIS_STAT, S_IRUSR, S_IWUSR, S_IXUSR);
 
 END_PROPERTY
 
-BEGIN_PROPERTY(CFILE_perm_group)
+BEGIN_PROPERTY(StatPerm_Group)
 
 	return_perm(THIS_STAT, S_IRGRP, S_IWGRP, S_IXGRP);
 
 END_PROPERTY
 
-BEGIN_PROPERTY(CFILE_perm_other)
+BEGIN_PROPERTY(StatPerm_Other)
 
 	return_perm(THIS_STAT, S_IROTH, S_IWOTH, S_IXOTH);
 
 END_PROPERTY
 
-BEGIN_METHOD(CFILE_perm_get, GB_STRING user)
+BEGIN_METHOD(StatPerm_get, GB_STRING user)
 
 	char *who;
 	char *user = GB_ToZeroString(ARG(user));
@@ -743,7 +734,7 @@ BEGIN_METHOD(File_RealPath, GB_STRING path)
 
 END_METHOD
 
-//---------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 BEGIN_PROPERTY(Stream_Handle)
 
@@ -1073,10 +1064,10 @@ GB_DESC StatPermDesc[] =
 {
 	GB_DECLARE_VIRTUAL(".Stat.Perm"),
 
-	GB_METHOD("_get", "s", CFILE_perm_get, "(UserOrGroup)s"),
-	GB_PROPERTY_READ("User", "s", CFILE_perm_user),
-	GB_PROPERTY_READ("Group", "s", CFILE_perm_group),
-	GB_PROPERTY_READ("Other", "s", CFILE_perm_other),
+	GB_METHOD("_get", "s", StatPerm_get, "(UserOrGroup)s"),
+	GB_PROPERTY_READ("User", "s", StatPerm_User),
+	GB_PROPERTY_READ("Group", "s", StatPerm_Group),
+	GB_PROPERTY_READ("Other", "s", StatPerm_Other),
 
 	GB_END_DECLARE
 };
@@ -1106,6 +1097,7 @@ GB_DESC StatDesc[] =
 	GB_PROPERTY_READ("Path", "s", Stat_Path),
 	GB_PROPERTY_READ("Link", "s", Stat_Link),
 	GB_PROPERTY_READ("Auth", "s", Stat_Auth),
+	GB_PROPERTY_READ("Device", "s", Stat_Device),
 
 	GB_END_DECLARE
 };
