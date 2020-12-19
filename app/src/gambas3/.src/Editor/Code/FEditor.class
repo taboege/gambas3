@@ -188,7 +188,9 @@ Public Function Save() As Boolean
 
   ResetIfModified
 
-  Editors_Scroll
+  $hCompletion.Hide
+  HideSignature
+  HideMessage
   
   Save.Begin(Path)
 

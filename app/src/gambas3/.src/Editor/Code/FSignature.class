@@ -96,9 +96,8 @@ Private Sub UpdateSignature(Optional hForm As FEditor)
 End
 
 Public Sub Position(hForm As FEditor)
-  
-  If hForm.GetEditor() <> $hEditor Then Return
-  UpdateSignature(hForm)
+
+  If VisibleFrom(hForm.GetEditor()) Then UpdateSignature(hForm)
   
 End
 

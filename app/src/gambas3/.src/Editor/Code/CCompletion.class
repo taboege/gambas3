@@ -129,7 +129,10 @@ Catch
 End
 
 Public Sub Position()
+
+  Dim hEditor As TextEditor = GetEditor()
   
-  FCompletion.Position(GetEditor())
+  If Not FCompletion.VisibleFrom(hEditor) Then Return
+  FCompletion.Position(hEditor)
   
 End
