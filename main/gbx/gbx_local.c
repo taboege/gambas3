@@ -1269,6 +1269,9 @@ bool LOCAL_format_number(double number, int fmt_type, const char *fmt, int len_f
 
 		break;
 	}
+	
+	if (before > 0 && before_zero == 0)
+		before_zero = 1;
 
 	if (pos >= len_fmt)
 		goto _FORMAT;
