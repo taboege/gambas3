@@ -863,7 +863,7 @@ void gMainWindow::setVisible(bool vl)
 		{
 			//fprintf(stderr, "focus = %s\n", focus->name());
 			focus->setFocus();
-			focus = 0;
+			focus = NULL;
 		}
 
 		if (isSkipTaskBar())
