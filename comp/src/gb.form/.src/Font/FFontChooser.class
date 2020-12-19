@@ -26,6 +26,7 @@ Public Sub _new()
   Inc $iNoChange
   $bNoRefresh = True
   $bShowFont = True
+  Me.Proxy = txtFilter
   
   'lstSize.List = ["6", "7", "8", "9", "10", "11", "12", "13", "14", "16", "18", "20", "24", "28", "32", "36", "40", "48", "56", "64", "72", "80", "96", "112", "128"]
   
@@ -284,8 +285,11 @@ Private Sub EnsureFontVisible() As Boolean
   If Not tvwFamily.Exist(sKey) Then sKey = Family
   If Not tvwFamily.Exist(sKey) Then Return True
 
-  tvwFamily[sKey].Selected = True
-  tvwFamily[sKey].EnsureVisible
+  With tvwFamily[sKey]
+    .Selected = True
+    'tvwFamily[sKey].EnsureVisible
+    tvwFamily.ScrollY = .Y - (tvwFamily.ClientH - .W) \ 2
+  End With
 
 End
 
@@ -391,7 +395,7 @@ Private Sub RefreshExample()
   
 End
 
-Public Sub tvwFamily_Click()
+Public Sub tvwFamily_Select()
 
   If Not tvwFamily.Current Then Return
 
@@ -585,6 +589,8 @@ Public Sub panBorder_BeforeArrange()
 
   RefreshExample
   
+  Me.Proxy = If(txtFilter.Visible, txtFilter, cmbFamily)
+  
 End
 
 Public Sub SetShowRelative(bRelative As Boolean)
@@ -624,5 +630,35 @@ End
 Public Sub txtFilter_Filter()
 
   RefreshFamily
+
+End
+
+Public Sub txtFilter_KeyPress()
+
+  Dim hGridView As Container
+  Dim hScrollArea As Control
+  
+  If Key.Normal Then
+    If Key.Code = Key.Down Or If Key.Code = Key.Up Then
+      hGridView = tvwFamily.Children[0]
+      hScrollArea = hGridView.Children[0]
+      Object.Raise(hScrollArea, "KeyPress")
+      Stop Event
+    Else If Key.Code = Key.Return Or If Key.Code = Key.Enter Then
+      If tvwFamily.Current.Children Then
+        hGridView = tvwFamily.Children[0]
+        hScrollArea = hGridView.Children[0]
+        Object.Raise(hGridView, "KeyPress")
+        Stop Event
+      Else
+        GetParent()._Activate()
+      Endif
+    Endif
+  Endif
+End
+
+Public Sub tvwFamily_GotFocus()
+
+  txtFilter.SetFocus
 
 End

@@ -26,6 +26,7 @@ Private frmChooser As FFontChooser
 Public Sub _new()
 
   frmChooser = New FFontChooser(Me)
+  Me.Proxy = frmChooser
   'Object.Attach(frmChooser, ME, "frmChooser")
 
 End
