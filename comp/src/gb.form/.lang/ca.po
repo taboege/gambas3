@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gb.form 3.14.90\n"
-"POT-Creation-Date: 2020-06-06 18:12 UTC\n"
+"POT-Creation-Date: 2020-12-19 01:25 UTC\n"
 "PO-Revision-Date: 2020-06-06 18:12 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: ca\n"
@@ -47,15 +47,15 @@ msgstr ""
 msgid "Sort colors"
 msgstr ""
 
-#: DirView.class:531
+#: DirView.class:535
 msgid "Cannot rename directory."
 msgstr "No es pot canviar el nom del directori."
 
-#: DirView.class:562
+#: DirView.class:566
 msgid "New folder"
 msgstr "Nova carpeta"
 
-#: DirView.class:581
+#: DirView.class:585
 msgid "Cannot create directory."
 msgstr "No es pot crear el directori."
 
@@ -67,19 +67,19 @@ msgstr ""
 msgid "Toggle Filechooser Detailed View"
 msgstr ""
 
-#: FCalendar.form:47
+#: FCalendar.form:48
 msgid "Today"
 msgstr "Avui"
 
-#: FCalendar.form:53
+#: FCalendar.form:54
 msgid "Previous month"
 msgstr "Mes anterior"
 
-#: FCalendar.form:59
+#: FCalendar.form:60
 msgid "Next month"
 msgstr "Mes següent"
 
-#: FCalendar.form:143
+#: FCalendar.form:147
 msgid "Apply"
 msgstr ""
 
@@ -95,140 +95,140 @@ msgstr ""
 msgid "All files (*)"
 msgstr "Tots els fitxers (*)"
 
-#: FDirChooser.class:974
+#: FDirChooser.class:976
 msgid "&Bookmark current directory"
 msgstr "Crea adreça d'&interès del directori actual"
 
-#: FDirChooser.class:982
+#: FDirChooser.class:984
 msgid "&Edit bookmarks..."
 msgstr "&Edita les adreces d'interès..."
 
-#: FDirChooser.class:991
+#: FDirChooser.class:993
 msgid "Show &details"
 msgstr "Mostra els &detalls"
 
-#: FDirChooser.class:997
+#: FDirChooser.class:999
 msgid "Show &hidden files"
 msgstr "Mostra els fitxers &ocults"
 
-#: FDirChooser.class:1003
+#: FDirChooser.class:1005
 msgid "Show &image preview"
 msgstr ""
 
-#: FDirChooser.class:1011
+#: FDirChooser.class:1013
 msgid "&Rename"
 msgstr ""
 
-#: FDirChooser.class:1016
+#: FDirChooser.class:1018
 msgid "Copy"
 msgstr "Copia"
 
-#: FDirChooser.class:1021
+#: FDirChooser.class:1023
 msgid "&Delete"
 msgstr ""
 
-#: FDirChooser.class:1033
+#: FDirChooser.class:1035
 msgid "&Uncompress file"
 msgstr "&Descomprimeix el fitxer"
 
-#: FDirChooser.class:1038
+#: FDirChooser.class:1040
 msgid "&Create directory"
 msgstr "&Crea un directori"
 
-#: FDirChooser.class:1043
+#: FDirChooser.class:1045
 msgid "Open in &file manager..."
 msgstr "Obre amb el gestor de &fitxers..."
 
-#: FDirChooser.class:1048
+#: FDirChooser.class:1050
 msgid "&Refresh"
 msgstr "&Actualitza"
 
-#: FDirChooser.class:1056
+#: FDirChooser.class:1058
 msgid "&Properties"
 msgstr ""
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "Overwrite"
 msgstr "Sobreescriure"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "Overwrite all"
 msgstr "Sobreescriure-ho tot"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "This file or directory already exists."
 msgstr "Aquest fitxer o directori ja existeix."
 
-#: FDirChooser.class:1291
+#: FDirChooser.class:1293
 msgid "Cannot list archive contents"
 msgstr ""
 
-#: FDirChooser.class:1325
+#: FDirChooser.class:1327
 msgid "Cannot uncompress file."
 msgstr "No es pot descomprimir el fitxer."
 
-#: FDirChooser.class:1325
+#: FDirChooser.class:1327
 msgid "Unknown archive."
 msgstr "Fitxer desconegut."
 
-#: FDirChooser.class:1386
+#: FDirChooser.class:1388
 msgid "Delete file"
 msgstr ""
 
-#: FDirChooser.class:1387
+#: FDirChooser.class:1389
 msgid "Do you really want to delete that file?"
 msgstr ""
 
-#: FDirChooser.class:1394
+#: FDirChooser.class:1396
 msgid "Unable to delete file."
 msgstr ""
 
-#: FDirChooser.class:1404
+#: FDirChooser.class:1406
 msgid "Delete directory"
 msgstr ""
 
-#: FDirChooser.class:1405
+#: FDirChooser.class:1407
 msgid "Do you really want to delete that directory?"
 msgstr ""
 
-#: FDirChooser.class:1412
+#: FDirChooser.class:1414
 msgid "Unable to delete directory."
 msgstr ""
 
-#: FDirChooser.form:66
+#: FDirChooser.form:68
 msgid "Parent directory"
 msgstr ""
 
-#: FDirChooser.form:72
+#: FDirChooser.form:74
 msgid "Root directory"
 msgstr ""
 
-#: FDirChooser.form:133
+#: FDirChooser.form:139
 msgid "Image preview"
 msgstr ""
 
-#: FDirChooser.form:141
+#: FDirChooser.form:147
 msgid "Detailed view"
 msgstr ""
 
-#: FDirChooser.form:149
+#: FDirChooser.form:155
 msgid "File properties"
 msgstr ""
 
-#: FDirChooser.form:155
+#: FDirChooser.form:161
 msgid "Show files"
 msgstr "Mostra els fitxers"
 
-#: FDirChooser.form:174
+#: FDirChooser.form:181
 msgid "Bookmarks"
 msgstr "Adreces d'interès"
 
-#: FDirChooser.form:236 FInputBox.form:45 FWizard.class:76
+#: FDirChooser.form:248 FInputBox.form:45 FWizard.class:76 Form1.form:36
 msgid "OK"
 msgstr "D'acord"
 
-#: FDirChooser.form:242 FEditBookmark.class:119 FInputBox.form:51
-#: FSidePanel.class:1149 FWizard.form:53
+#: FDirChooser.form:254 FEditBookmark.class:119 FInputBox.form:51
+#: FSidePanel.class:1149 FWizard.form:52 Form1.form:42
 msgid "Cancel"
 msgstr "Canceŀla"
 
@@ -285,7 +285,8 @@ msgid "ComboBox1"
 msgstr ""
 
 #: FDocumentView.form:101 FMain.form:85 FTestBalloon.form:18
-#: FTestCompletion.form:23 FTestMessageView.form:26 FTestWizard.form:22
+#: FTestCompletion.form:23 FTestMenuButton.form:148 FTestMessageView.form:26
+#: FTestWizard.form:24
 msgid "Button1"
 msgstr ""
 
@@ -297,7 +298,7 @@ msgstr ""
 msgid "Autocenter"
 msgstr ""
 
-#: FEditBookmark.class:23 FileView.class:138
+#: FEditBookmark.class:23 FileView.class:143
 msgid "Name"
 msgstr "Nom"
 
@@ -325,7 +326,7 @@ msgstr "Avall"
 msgid "Remove"
 msgstr "Suprimeix"
 
-#: FEditBookmark.form:57 FFileProperties.form:270 MessageView.class:51
+#: FEditBookmark.form:57 FFileProperties.form:270 MessageView.class:53
 msgid "Close"
 msgstr "Tanca"
 
@@ -389,11 +390,11 @@ msgstr ""
 msgid "Directory"
 msgstr "Directori"
 
-#: FFileProperties.form:120 FileView.class:140
+#: FFileProperties.form:120 FileView.class:145
 msgid "Size"
 msgstr "Mida"
 
-#: FFileProperties.form:132 FileView.class:142
+#: FFileProperties.form:132 FileView.class:147
 msgid "Last modified"
 msgstr "Última modificació"
 
@@ -418,27 +419,27 @@ msgstr "Vista prèvia"
 msgid "Errors"
 msgstr ""
 
-#: FFontChooser.class:297
+#: FFontChooser.class:334
 msgid "How quickly daft jumping zebras vex"
 msgstr "Jove xef, porti whisky amb quinze glaçons d'hidrogen, coi!"
 
-#: FFontChooser.form:55
+#: FFontChooser.form:96
 msgid "Bold"
 msgstr "Negreta"
 
-#: FFontChooser.form:62
+#: FFontChooser.form:103
 msgid "Italic"
 msgstr "Cursiva"
 
-#: FFontChooser.form:69
+#: FFontChooser.form:110
 msgid "Underline"
 msgstr "Subratllat"
 
-#: FFontChooser.form:76
+#: FFontChooser.form:117
 msgid "Strikeout"
 msgstr "Barrat"
 
-#: FFontChooser.form:85
+#: FFontChooser.form:126
 msgid "Relative"
 msgstr ""
 
@@ -486,11 +487,11 @@ msgstr ""
 msgid "Move item down"
 msgstr ""
 
-#: FMain.form:29 FTestFileChooser.form:31 FTestMenuButton.form:39 FWiki.form:20
+#: FMain.form:29 FTestFileChooser.form:31 FTestMenuButton.form:40 FWiki.form:20
 msgid "Menu2"
 msgstr ""
 
-#: FMain.form:33 FTestFileChooser.form:36 FTestMenuButton.form:43 FWiki.form:24
+#: FMain.form:33 FTestFileChooser.form:36 FTestMenuButton.form:44 FWiki.form:24
 msgid "Menu3"
 msgstr ""
 
@@ -559,7 +560,7 @@ msgstr ""
 msgid "Button2"
 msgstr ""
 
-#: FTestDateChooser.form:47
+#: FTestDateChooser.form:33
 msgid "Enable"
 msgstr ""
 
@@ -567,19 +568,19 @@ msgstr ""
 msgid "Expander"
 msgstr ""
 
-#: FTestFileChooser.form:28 FTestMenuButton.form:35
+#: FTestFileChooser.form:28 FTestMenuButton.form:36
 msgid "Menu1"
 msgstr ""
 
-#: FTestFileChooser.form:41 FTestMenuButton.form:69
+#: FTestFileChooser.form:41 FTestMenuButton.form:70
 msgid "Menu7"
 msgstr ""
 
-#: FTestFileChooser.form:49 FTestMenuButton.form:52 FWiki.form:28
+#: FTestFileChooser.form:49 FTestMenuButton.form:53 FWiki.form:28
 msgid "Menu4"
 msgstr ""
 
-#: FTestFileChooser.form:54 FTestMenuButton.form:56 FWiki.form:32
+#: FTestFileChooser.form:54 FTestMenuButton.form:57 FWiki.form:32
 msgid "Menu5"
 msgstr ""
 
@@ -587,35 +588,35 @@ msgstr ""
 msgid "Balloon"
 msgstr ""
 
-#: FTestMenuButton.form:31
+#: FTestMenuButton.form:32
 msgid "Project"
 msgstr ""
 
-#: FTestMenuButton.form:48
+#: FTestMenuButton.form:49
 msgid "View"
 msgstr ""
 
-#: FTestMenuButton.form:60
+#: FTestMenuButton.form:61
 msgid "Menu6"
 msgstr ""
 
-#: FTestMenuButton.form:65
+#: FTestMenuButton.form:66
 msgid "Tools"
 msgstr ""
 
-#: FTestMenuButton.form:73
+#: FTestMenuButton.form:74
 msgid "Menu8"
 msgstr ""
 
-#: FTestMenuButton.form:77
+#: FTestMenuButton.form:78
 msgid "Menu9"
 msgstr ""
 
-#: FTestMenuButton.form:80
+#: FTestMenuButton.form:81
 msgid "Menu10"
 msgstr ""
 
-#: FTestMenuButton.form:84
+#: FTestMenuButton.form:85
 msgid "Menu11"
 msgstr ""
 
@@ -651,23 +652,19 @@ msgstr ""
 msgid "Hello world!"
 msgstr ""
 
-#: FTestWizard.form:18
+#: FTestWizard.form:20
 msgid "Étape n°1"
 msgstr ""
 
-#: FTestWizard.form:25
-msgid "Étape n°2"
+#: FTestWizard.form:27
+msgid "Ceci est une longue étape"
 msgstr ""
 
-#: FTestWizard.form:29
-msgid "LCDLabel1"
-msgstr ""
-
-#: FTestWizard.form:32
+#: FTestWizard.form:33
 msgid "Étape n°3"
 msgstr ""
 
-#: FTestWizard.form:34
+#: FTestWizard.form:35
 msgid "Étape n°4"
 msgstr ""
 
@@ -675,15 +672,19 @@ msgstr ""
 msgid "&Next"
 msgstr "&Següent"
 
-#: FWizard.form:59 MessageView.class:48
+#: FWizard.form:58 MessageView.class:50
 msgid "Next"
 msgstr "Següent"
 
-#: FWizard.form:65
+#: FWizard.form:64
 msgid "Previous"
 msgstr "Previ"
 
-#: FileView.class:1081
+#: FileView.class:159
+msgid "No file in this folder."
+msgstr ""
+
+#: FileView.class:1134
 msgid "Cannot rename file."
 msgstr ""
 

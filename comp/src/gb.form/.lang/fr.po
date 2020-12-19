@@ -26,9 +26,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gb.form 3.14.90\n"
-"POT-Creation-Date: 2020-11-27 01:20 UTC\n"
-"PO-Revision-Date: 2020-06-25 01:21 UTC\n"
+"Project-Id-Version: gb.form 3.15.90\n"
+"POT-Creation-Date: 2020-12-19 01:25 UTC\n"
+"PO-Revision-Date: 2020-12-19 01:25 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -243,12 +243,12 @@ msgstr "Afficher les fichiers"
 msgid "Bookmarks"
 msgstr "Signets"
 
-#: FDirChooser.form:248 FInputBox.form:45 FWizard.class:76 Form1.form:32
+#: FDirChooser.form:248 FInputBox.form:45 FWizard.class:76 Form1.form:36
 msgid "OK"
 msgstr "OK"
 
 #: FDirChooser.form:254 FEditBookmark.class:119 FInputBox.form:51
-#: FSidePanel.class:1149 FWizard.form:52 Form1.form:38
+#: FSidePanel.class:1149 FWizard.form:52 Form1.form:42
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -438,27 +438,27 @@ msgstr "Aperçu"
 msgid "Errors"
 msgstr "Erreurs"
 
-#: FFontChooser.class:297
+#: FFontChooser.class:334
 msgid "How quickly daft jumping zebras vex"
 msgstr "Portez ce vieux whisky au juge blond qui fume"
 
-#: FFontChooser.form:55
+#: FFontChooser.form:96
 msgid "Bold"
 msgstr "Gras"
 
-#: FFontChooser.form:62
+#: FFontChooser.form:103
 msgid "Italic"
 msgstr "Italique"
 
-#: FFontChooser.form:69
+#: FFontChooser.form:110
 msgid "Underline"
 msgstr "Souligné"
 
-#: FFontChooser.form:76
+#: FFontChooser.form:117
 msgid "Strikeout"
 msgstr "Barré"
 
-#: FFontChooser.form:85
+#: FFontChooser.form:126
 msgid "Relative"
 msgstr "Relatif"
 
