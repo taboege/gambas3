@@ -34,7 +34,7 @@ Public Sub _new(hDrawingArea As DrawingArea, Optional bHasTear As Boolean)
   $hObs = New Observer(hDrawingArea) As "dwgWelcome"
   
   dNow = Now
-  If dNow >= Date(Year(dNow), 12, 25) Then
+  If dNow >= Date(Year(dNow), 12, 21) Then
   
     hSnowFlake = Image.Load("welcome/snowflake.png")
     $aImage = New Image[8]
