@@ -550,20 +550,19 @@ Private Sub DrawText(sText As String, SX As Integer, X As Integer, Y As Integer)
   
 End
 
-Private Sub DrawMatch(X As Integer, Y As Integer, H As Integer, XM As Integer, YM As Integer, bOther As Boolean)
+Private Sub DrawMatch(X As Integer, Y As Integer, H As Integer, XM As Integer, YM As Integer, (bOther) As Boolean)
   
-  'Dim sCar As String
   Dim XY As Point
   Dim WW As Integer
   
-  If Not $bShowCursor Then Return
+  If Not $bShowCursor And If Not bOther And If Me.HasFocus Then Return
   XY = LinePos(YM, XM)
   WW = TextWidth($hDoc.Lines[YM], XM + 1, 1)
-  If bOther Then
+  'If bOther Then
     Paint.FillRect(X + XY.X, Y + XY.Y, WW, H, $iMatchColor)
-  Else
-    Paint.FillRect(X + XY.X, Y + XY.Y + H - 2, WW, 2, $iMatchColor)
-  Endif
+  'Else
+  '  Paint.FillRect(X + XY.X, Y + XY.Y + H - 2, WW, 2, $iMatchColor)
+  'Endif
   
 End
 
@@ -1178,18 +1177,20 @@ Private Sub DrawLine(X As Integer, Y As Integer, Width As Integer, Height As Int
   
   ' Cursor
   
-  If Row = $Y And If $bShowCursor And If Me.HasFocus And If Not $bHideCursor Then
-    If $bOverwrite Then
-      sCar = String.Mid$($hDoc.Lines[$Y], $X + 1, 1)
-      If sCar = "\t" Then
-        WC = $iTabWidth
+  If Row = $Y And If Not $bHideCursor Then
+    If $bShowCursor Or If Not Me.HasFocus Then
+      If $bOverwrite Then
+        sCar = String.Mid$($hDoc.Lines[$Y], $X + 1, 1)
+        If sCar = "\t" Then
+          WC = $iTabWidth
+        Else
+          WC = Max($iSpaceWidth, $hFont.TextWidth(sCar))
+        Endif
       Else
-        WC = Max($iSpaceWidth, $hFont.TextWidth(sCar))
+        WC = 2
       Endif
-    Else
-      WC = 2
+      Paint.FillRect(X + $XY.X, Y + $XY.Y, WC, H, Color.SetAlpha($iForeground, 128))
     Endif
-    Paint.FillRect(X + $XY.X, Y + $XY.Y, WC, H, Color.SetAlpha($iForeground, 128))
   Endif
   
   ' Diff text
@@ -1439,12 +1440,16 @@ Fast Private Sub TextWidth(sText As String, iStart As Integer, iLength As Intege
   Dim aText As String[]
   Dim I As Integer
   Dim W As Float
+  Dim fCharWidth As Float
+  
+  fCharWidth = $fCharWidth
+  If Not IsAscii(sText) Then fCharWidth = 0
   
   I = InStr(sText, "\t", iStart) - iStart
   
   If I < 0 Or If I >= iLength Then
-    If $fCharWidth Then
-      Return $fCharWidth * iLength
+    If fCharWidth Then
+      Return fCharWidth * iLength
     Else
       Return $hFont.TextWidth(String.Mid$(sText, iStart, iLength))
     Endif
@@ -1453,13 +1458,13 @@ Fast Private Sub TextWidth(sText As String, iStart As Integer, iLength As Intege
   If iLength <= 0 Then Return 0
   aText = Split(String.Mid$(sText, iStart, iLength), "\t")
   
-  If $fCharWidth Then
+  If fCharWidth Then
     
     For I = 0 To aText.Max - 1
-      W += $fCharWidth * String.Len(aText[I])
+      W += fCharWidth * String.Len(aText[I])
       W = (CInt(W + $iTabWidth) \ $iTabWidth) * $iTabWidth
     Next
-    W += $fCharWidth * String.Len(aText[aText.Max])
+    W += fCharWidth * String.Len(aText[aText.Max])
     
   Else
     
