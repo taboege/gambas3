@@ -37,7 +37,6 @@
 #include "gdesktop.h"
 #include "gkey.h"
 #include "gmenu.h"
-#include "gmessage.h"
 #include "gdialog.h"
 #include "gmouse.h"
 #include "gmainwindow.h"
@@ -864,7 +863,7 @@ void gMainWindow::setVisible(bool vl)
 		{
 			//fprintf(stderr, "focus = %s\n", focus->name());
 			focus->setFocus();
-			focus = 0;
+			focus = NULL;
 		}
 
 		if (isSkipTaskBar())

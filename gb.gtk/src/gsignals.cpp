@@ -396,3 +396,4 @@ void gControl::initSignals()
 	borderSignals();
 	widgetSignals();
 }
+

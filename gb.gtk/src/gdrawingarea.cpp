@@ -168,7 +168,11 @@ void gDrawingArea::create(void)
 		doReparent = true;
 	}
 
+#ifdef GTK3
 	if (_cached || _use_tablet)
+#else
+	if (_cached || _use_tablet || background() != COLOR_DEFAULT)
+#endif
 	{
 		createBorder(gtk_event_box_new());
 		widget = gtk_fixed_new();
@@ -185,7 +189,9 @@ void gDrawingArea::create(void)
 
 	realize(false);
 
-	g_signal_connect(G_OBJECT(border), "size-allocate", G_CALLBACK(cb_size), (gpointer)this);
+	if (_cached)
+		g_signal_connect(G_OBJECT(border), "size-allocate", G_CALLBACK(cb_size), (gpointer)this);
+	
 	ON_DRAW_BEFORE(border, this, cb_expose, cb_draw);
 
 	updateUseTablet();
@@ -463,3 +469,16 @@ void gDrawingArea::updateFont()
 	gContainer::updateFont();
 	emit(SIGNAL(onFontChange));
 }
+
+#ifdef GTK3
+#else
+void gDrawingArea::setBackground(gColor color)
+{
+	bool set = background() != COLOR_DEFAULT;
+	
+	gContainer::setBackground(color);
+	
+	if (set != (background() != COLOR_DEFAULT))
+		create();
+}
+#endif

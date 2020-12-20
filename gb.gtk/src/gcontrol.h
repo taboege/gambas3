@@ -341,7 +341,7 @@ public:
 	void drawBackground(GdkEventExpose *e);
 #endif
 	
-	void createBorder(GtkWidget *new_border, bool keep_widget = false);
+	virtual void createBorder(GtkWidget *new_border, bool keep_widget = false);
 	void createWidget();
 	
 	virtual int minimumHeight() const;

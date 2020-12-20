@@ -137,6 +137,8 @@ public:
 	void hideHiddenChildren();
 	virtual GtkWidget *getContainer();
 
+	virtual void createBorder(GtkWidget *new_border, bool keep_widget = false);
+	
 	static int _arrangement_level;
 
 private:

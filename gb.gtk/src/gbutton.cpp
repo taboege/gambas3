@@ -190,8 +190,9 @@ static gboolean button_expose(GtkWidget *wid, GdkEventExpose *e, gButton *data)
 			
 			switch (f)
 			{
-				//case GTK_STATE_NORMAL:
-				//case GTK_STATE_ACTIVE: state=GTK_CELL_RENDERER_PRELIT; break;
+				case GTK_STATE_PRELIGHT: 
+					state = GTK_CELL_RENDERER_PRELIT;
+					break;
 				//case GTK_STATE_PRELIGHT: state=GTK_CELL_RENDERER_PRELIT; break;
 				case GTK_STATE_SELECTED: 
 					state = GTK_CELL_RENDERER_SELECTED; 

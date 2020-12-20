@@ -34,7 +34,9 @@ public:
 
 	int getBorder() { return getFrameBorder(); }
 	void setBorder(int vl) { setFrameBorder(vl); }
+#ifndef GTK3
 	virtual void setBackground(gColor color = COLOR_DEFAULT);
+#endif
 
 private:
 

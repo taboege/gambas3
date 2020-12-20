@@ -889,3 +889,9 @@ void gContainer::setProxyContainer(gContainer *proxy)
 	
 	updateDesignChildren();
 }
+
+void gContainer::createBorder(GtkWidget *new_border, bool keep_widget)
+{
+	gControl::createBorder(new_border, keep_widget);
+	_cb_map = false;
+}

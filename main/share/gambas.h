@@ -935,7 +935,10 @@ typedef
 		int64_t size;
 		uid_t uid;
 		gid_t gid;
-		char hidden;
+		dev_t device;
+		unsigned hidden : 1;
+		unsigned blkdev : 1;
+		unsigned chrdev : 1;
 		}
 	GB_FILE_STAT;
 

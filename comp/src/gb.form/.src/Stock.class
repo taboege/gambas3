@@ -177,8 +177,6 @@ End
 ' TODO: Vérifier les thèmes
 ' FIXME: Mettre à jour
 
-
-
 Static Private Sub SearchTheme(sDesktop As String)
   
   'Dim hFile As File
@@ -209,10 +207,19 @@ Static Private Sub SearchTheme(sDesktop As String)
       
     Case "mate"
       
-      If Not sTheme Then Try Exec ["mateconftool-2", "-g", "/desktop/mate/interface/icon_theme"] To sTheme
+      If Not sTheme Then 
+        Try Exec ["dconf", "read", "/org/mate/desktop/interface/icon-theme"] To sTheme
+        If sTheme Then
+          sTheme = Trim(sTheme)
+          If sTheme Begins "'" Then sTheme = Chr$(34) & Mid$(sTheme, 2, -1) & Chr$(34)
+          sTheme = UnQuote(sTheme)
+        Else
+          Try Exec ["mateconftool-2", "-g", "/desktop/mate/interface/icon_theme"] To sTheme
+          sTheme = Trim(sTheme)
+        Endif
+      Endif
       
       If sTheme Then 
-        sTheme = Trim(sTheme)
         GetAllThemePath("gnome", $aRoots, sTheme)
       Endif
       
@@ -724,6 +731,8 @@ End
 Static Private Sub GetAllThemePath(sMap As String, aPath As String[], sTheme As String)
   
   Dim sPath As String
+  
+  If $bDebug Then Error "gb.form: searching directories for icon theme '"; sTheme; "'"
   
   For Each sTheme In GetInheritance(aPath, LCase(sTheme))
     For Each sPath In aPath

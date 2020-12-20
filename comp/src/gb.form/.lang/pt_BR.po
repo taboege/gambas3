@@ -1,9 +1,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gb.form 3.14.90\n"
-"PO-Revision-Date: 2020-06-12 00:26 UTC\n"
-"Last-Translator: Gen Braga <gen.braga1@gmail.com>\n"
+"Project-Id-Version: gb.form 3.15.90\n"
+"PO-Revision-Date: 2020-12-19 01:30 UTC\n"
+"Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -53,19 +53,19 @@ msgstr "Nova pasta"
 msgid "Cannot create directory."
 msgstr "Não foi possível criar o diretório."
 
-#: FCalendar.form:47
+#: FCalendar.form:48
 msgid "Today"
 msgstr "Hoje"
 
-#: FCalendar.form:53
+#: FCalendar.form:54
 msgid "Previous month"
 msgstr "Mês anterior"
 
-#: FCalendar.form:59
+#: FCalendar.form:60
 msgid "Next month"
 msgstr "Próximo mês"
 
-#: FCalendar.form:143
+#: FCalendar.form:147
 msgid "Apply"
 msgstr "Aplicar"
 
@@ -81,143 +81,143 @@ msgstr "Diretório não encontrado."
 msgid "All files (*)"
 msgstr "Todos os arquivos (*)"
 
-#: FDirChooser.class:974
+#: FDirChooser.class:976
 msgid "&Bookmark current directory"
 msgstr "&Diretório corrente como favorito"
 
-#: FDirChooser.class:982
+#: FDirChooser.class:984
 msgid "&Edit bookmarks..."
 msgstr "&Editar favoritos..."
 
-#: FDirChooser.class:991
+#: FDirChooser.class:993
 msgid "Show &details"
 msgstr "Exibir &detalhes"
 
-#: FDirChooser.class:997
+#: FDirChooser.class:999
 msgid "Show &hidden files"
 msgstr "Exibir arquivos &ocultos"
 
-#: FDirChooser.class:1003
+#: FDirChooser.class:1005
 msgid "Show &image preview"
 msgstr "Exibir visualização de &imagem"
 
-#: FDirChooser.class:1011
+#: FDirChooser.class:1013
 msgid "&Rename"
 msgstr "&Renomear"
 
-#: FDirChooser.class:1016
+#: FDirChooser.class:1018
 msgid "Copy"
 msgstr "Copiar"
 
-#: FDirChooser.class:1021
+#: FDirChooser.class:1023
 msgid "&Delete"
 msgstr "&Excluir"
 
-#: FDirChooser.class:1033
+#: FDirChooser.class:1035
 msgid "&Uncompress file"
 msgstr "&Descomprimir arquivo"
 
-#: FDirChooser.class:1038
+#: FDirChooser.class:1040
 msgid "&Create directory"
 msgstr "&Criar diretório"
 
-#: FDirChooser.class:1043
+#: FDirChooser.class:1045
 msgid "Open in &file manager..."
 msgstr "Abrir no gerenciador de &arquivos"
 
-#: FDirChooser.class:1048
+#: FDirChooser.class:1050
 msgid "&Refresh"
 msgstr "&Atualizar"
 
-#: FDirChooser.class:1056
+#: FDirChooser.class:1058
 msgid "&Properties"
 msgstr "&Propriedades"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "Overwrite"
 msgstr "Sobrescrever"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "Overwrite all"
 msgstr "Sobrescrever tudo"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "This file or directory already exists."
 msgstr "Este arquivo ou diretório já existe."
 
-#: FDirChooser.class:1291
+#: FDirChooser.class:1293
 msgid "Cannot list archive contents"
 msgstr "Não foi possível listar o conteúdo do arquivo"
 
-#: FDirChooser.class:1325
+#: FDirChooser.class:1327
 msgid "Cannot uncompress file."
 msgstr "Não foi possível descomprimir o arquivo."
 
-#: FDirChooser.class:1325
+#: FDirChooser.class:1327
 msgid "Unknown archive."
 msgstr "Arquivo desconhecido."
 
-#: FDirChooser.class:1386
+#: FDirChooser.class:1388
 msgid "Delete file"
 msgstr "Excluir arquivo"
 
-#: FDirChooser.class:1387
+#: FDirChooser.class:1389
 msgid "Do you really want to delete that file?"
 msgstr "Você realmente deseja excluir aquele arquivo?"
 
-#: FDirChooser.class:1394
+#: FDirChooser.class:1396
 msgid "Unable to delete file."
 msgstr "Não foi possível excluir o arquivo."
 
-#: FDirChooser.class:1404
+#: FDirChooser.class:1406
 msgid "Delete directory"
 msgstr "Excluir diretório"
 
-#: FDirChooser.class:1405
+#: FDirChooser.class:1407
 msgid "Do you really want to delete that directory?"
 msgstr "Você realmente deseja excluir aquele diretório?"
 
-#: FDirChooser.class:1412
+#: FDirChooser.class:1414
 msgid "Unable to delete directory."
 msgstr "Não foi possível excluir o diretório."
 
-#: FDirChooser.form:66
+#: FDirChooser.form:68
 msgid "Parent directory"
 msgstr "Diretório pai"
 
-#: FDirChooser.form:72
+#: FDirChooser.form:74
 msgid "Root directory"
 msgstr "Diretório raiz"
 
-#: FDirChooser.form:133
+#: FDirChooser.form:139
 msgid "Image preview"
 msgstr "Pré-visualização de imagem"
 
-#: FDirChooser.form:141
+#: FDirChooser.form:147
 msgid "Detailed view"
 msgstr "Visão detalhada"
 
-#: FDirChooser.form:149
+#: FDirChooser.form:155
 msgid "File properties"
 msgstr "Propriedades do arquivo"
 
-#: FDirChooser.form:155
+#: FDirChooser.form:161
 msgid "Show files"
 msgstr "Exibir arquivos"
 
-#: FDirChooser.form:174
+#: FDirChooser.form:181
 msgid "Bookmarks"
 msgstr "Favoritos"
 
-#: FDirChooser.form:236 FInputBox.form:45 FWizard.class:76
+#: FDirChooser.form:248 FInputBox.form:45 FWizard.class:76
 msgid "OK"
 msgstr "OK"
 
-#: FDirChooser.form:242 FEditBookmark.class:119 FInputBox.form:51 FSidePanel.class:1149 FWizard.form:53
+#: FDirChooser.form:254 FEditBookmark.class:119 FInputBox.form:51 FSidePanel.class:1149 FWizard.form:52
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: FEditBookmark.class:23 FileView.class:140
+#: FEditBookmark.class:23 FileView.class:143
 msgid "Name"
 msgstr "Nome"
 
@@ -245,7 +245,7 @@ msgstr "Para baixo"
 msgid "Remove"
 msgstr "Remover"
 
-#: FEditBookmark.form:57 FFileProperties.form:270 MessageView.class:51
+#: FEditBookmark.form:57 FFileProperties.form:270 MessageView.class:53
 msgid "Close"
 msgstr "Fechar"
 
@@ -311,11 +311,11 @@ msgstr ""
 msgid "Directory"
 msgstr "Diretório"
 
-#: FFileProperties.form:120 FileView.class:142
+#: FFileProperties.form:120 FileView.class:145
 msgid "Size"
 msgstr "Tamanho"
 
-#: FFileProperties.form:132 FileView.class:144
+#: FFileProperties.form:132 FileView.class:147
 msgid "Last modified"
 msgstr "Última modificação"
 
@@ -339,28 +339,27 @@ msgstr "Visualização"
 msgid "Errors"
 msgstr "Erros"
 
-# gb-ignore
-#: FFontChooser.class:297
+#: FFontChooser.class:334
 msgid "How quickly daft jumping zebras vex"
-msgstr ""
+msgstr "Alguém diz que recebeu hoje o fax vindo do New York Post"
 
-#: FFontChooser.form:55
+#: FFontChooser.form:96
 msgid "Bold"
 msgstr "Negrito"
 
-#: FFontChooser.form:62
+#: FFontChooser.form:103
 msgid "Italic"
 msgstr "Itálico"
 
-#: FFontChooser.form:69
+#: FFontChooser.form:110
 msgid "Underline"
 msgstr "Sublinhado"
 
-#: FFontChooser.form:76
+#: FFontChooser.form:117
 msgid "Strikeout"
 msgstr "Tachado"
 
-#: FFontChooser.form:85
+#: FFontChooser.form:126
 msgid "Relative"
 msgstr "Relativo"
 
@@ -400,15 +399,19 @@ msgstr "Transparente"
 msgid "&Next"
 msgstr "&Próximo"
 
-#: FWizard.form:59 MessageView.class:48
+#: FWizard.form:58 MessageView.class:50
 msgid "Next"
 msgstr "Próximo"
 
-#: FWizard.form:65
+#: FWizard.form:64
 msgid "Previous"
 msgstr "Anterior"
 
-#: FileView.class:1114
+#: FileView.class:159
+msgid "No file in this folder."
+msgstr ""
+
+#: FileView.class:1134
 msgid "Cannot rename file."
 msgstr "Não foi possível renomear o arquivo."
 

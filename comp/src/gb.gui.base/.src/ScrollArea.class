@@ -109,6 +109,10 @@ Private Sub LoadFades()
 End
 
 
+Public Sub _OnBackgroundChange()
+  
+End
+
 Public Sub _new()
   
   Me.Arrangement = Arrange.None
@@ -877,6 +881,7 @@ Private Sub Background_Write(Value As Integer)
   $hHBar.Background = Value
   $hVBar.Background = Value
   $hCorner.Background = Value
+  Me._OnBackgroundChange()
   $hDrawingArea.Refresh
 
 End

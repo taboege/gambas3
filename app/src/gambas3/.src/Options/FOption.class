@@ -555,7 +555,7 @@ Private Sub UpdateOfflineHelp()
 
   MHelp.ReadConfig
   panDownloadHelp.Visible = btnOfflineHelp.Value
-  panProxyConfig.Visible = Not panDownloadHelp.Visible
+  panProxyConfig.Visible = False 'Not panDownloadHelp.Visible
   UpdateDocumentationState
 
 End

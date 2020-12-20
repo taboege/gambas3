@@ -188,7 +188,9 @@ Public Function Save() As Boolean
 
   ResetIfModified
 
-  Editors_Scroll
+  $hCompletion.Hide
+  HideSignature
+  HideMessage
   
   Save.Begin(Path)
 
@@ -2204,8 +2206,8 @@ End
 
 Public Sub Editors_Scroll()
 
-  $hCompletion.Hide
-  HideSignature
+  $hCompletion.Position()
+  FSignature.Position(Me)
   HideMessage
 
 End

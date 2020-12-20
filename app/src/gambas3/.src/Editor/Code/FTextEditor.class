@@ -198,6 +198,8 @@ Public Function Save(Optional bForce As Boolean) As Boolean
   
   If Not $bModify And If Not bForce Then Return
   
+  $hCompletion.Hide
+  
   If $bShowCompress Then
     If Action[".compress", Me].Value Then
       bCompress = True
@@ -1307,7 +1309,7 @@ End
 
 Public Sub Editors_Scroll()
 
-  $hCompletion.Hide
+  $hCompletion.Position()
 
 End
 

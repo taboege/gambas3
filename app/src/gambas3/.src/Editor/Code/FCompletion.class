@@ -68,15 +68,63 @@ Private Function GetClass() As String
   
 End
 
-Public Sub Open(hForm As Object, sMode As String, Optional sClass As String, Optional bStatic As Boolean, Optional bHidden As Boolean)
+Public Sub Position(hEditor As TextEditor)
 
+  Dim hPos As Point
   Dim iX As Integer
   Dim iY As Integer
-  Dim iPos As Integer
   Dim hCont As Container
+  
+  If hEditor <> $hEditor Then Return
+
+  hPos = $hEditor.ToPos($hEditor.Line, $iCol)
+  
+  iX = $hEditor.X + hPos.X
+
+  iX = Max(0, Min(iX, $hEditor.Window.ClientW - Me.Width))
+
+  iY = hPos.Y + $hEditor.LineHeight
+
+  If (iY + Me.Height) > ($hEditor.Y + $hEditor.H) Then
+    iY = $hEditor.Y + $hEditor.ToPosY() - Me.Height
+    If iY < 0 Then
+      Me.Height += iY
+      iY = 0
+    Endif
+    panResizeBottom.Hide
+    panResizeTop.Show
+  Else
+    panResizeBottom.Show
+    panResizeTop.Hide
+  Endif
+
+  iY += $hEditor.Y
+  hCont = $hEditor.Parent
+  Do
+    If hCont Is Form Then Break
+    iX += hCont.X
+    iY += hCont.Y
+    hCont = hCont.Parent
+  Loop
+  
+  Dec Application.Busy
+
+  If Me.Parent = $hForm And If iX = Me.X And iY = Me.Y And Me.Visible Then Return
+  
+  Me.Reparent($hForm, iX, iY)
+  If Not Me.Visible Then
+    Me.Show
+    Me.Raise
+  Endif
+  
+End
+
+
+Public Sub Open(hForm As Object, sMode As String, Optional sClass As String, Optional bStatic As Boolean, Optional bHidden As Boolean)
+
+  Dim iPos As Integer
   Dim sText As String
   Dim W, H As Integer
-  Dim hPos As Point
 
   If hForm.GetEditor() <> $hEditor Then HideFrom($hEditor)
   $bHideLater = False
@@ -203,43 +251,7 @@ Public Sub Open(hForm As Object, sMode As String, Optional sClass As String, Opt
     sText &= Key.Text
   Endif
 
-  hPos = $hEditor.ToPos($hEditor.Line, $iCol)
-  
-  iX = $hEditor.X + hPos.X
-
-  iX = Max(0, Min(iX, $hEditor.Window.ClientW - Me.Width))
-
-  iY = hPos.Y + $hEditor.LineHeight
-
-  If (iY + Me.Height) > ($hEditor.Y + $hEditor.H) Then
-    iY = $hEditor.Y + $hEditor.ToPosY() - Me.Height
-    If iY < 0 Then
-      Me.Height += iY
-      iY = 0
-    Endif
-    panResizeBottom.Hide
-    panResizeTop.Show
-  Else
-    panResizeBottom.Show
-    panResizeTop.Hide
-  Endif
-
-  iY += $hEditor.Y
-  hCont = $hEditor.Parent
-  Do
-    If hCont Is Form Then Break
-    iX += hCont.X
-    iY += hCont.Y
-    hCont = hCont.Parent
-  Loop
-  
-  Dec Application.Busy
-
-  If Me.Parent = hForm And If iX = Me.X And iY = Me.Y And Me.Visible Then Return
-  
-  Me.Reparent(hForm, iX, iY)
-  Me.Show
-  Me.Raise
+  Position($hEditor)
   
   $hEditor.SetFocus
 

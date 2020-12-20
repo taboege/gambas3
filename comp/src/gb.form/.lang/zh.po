@@ -2,6 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gb.form 3.15.90\n"
+"POT-Creation-Date: 2020-12-19 01:25 UTC\n"
 "PO-Revision-Date: 2020-11-18 18:23 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: zh\n"
@@ -52,6 +53,14 @@ msgstr "新建文件夹"
 #: DirView.class:585
 msgid "Cannot create directory."
 msgstr "不能创建目录。"
+
+#: FBugFileView.form:32
+msgid "Toggle Fileview Detailed View"
+msgstr ""
+
+#: FBugFileView.form:37
+msgid "Toggle Filechooser Detailed View"
+msgstr ""
 
 #: FCalendar.form:48
 msgid "Today"
@@ -189,33 +198,100 @@ msgstr "上级目录"
 msgid "Root directory"
 msgstr "根目录"
 
-#: FDirChooser.form:140
+#: FDirChooser.form:139
 msgid "Image preview"
 msgstr "图像预览"
 
-#: FDirChooser.form:148
+#: FDirChooser.form:147
 msgid "Detailed view"
 msgstr "查看细节"
 
-#: FDirChooser.form:156
+#: FDirChooser.form:155
 msgid "File properties"
 msgstr "文件属性"
 
-#: FDirChooser.form:162
+#: FDirChooser.form:161
 msgid "Show files"
 msgstr "显示文件"
 
-#: FDirChooser.form:182
+#: FDirChooser.form:181
 msgid "Bookmarks"
 msgstr "书签"
 
-#: FDirChooser.form:249 FInputBox.form:45 FWizard.class:76
+#: FDirChooser.form:248 FInputBox.form:45 FWizard.class:76 Form1.form:36
 msgid "OK"
 msgstr "确定"
 
-#: FDirChooser.form:255 FEditBookmark.class:119 FInputBox.form:51 FSidePanel.class:1149 FWizard.form:52
+#: FDirChooser.form:254 FEditBookmark.class:119 FInputBox.form:51
+#: FSidePanel.class:1149 FWizard.form:52 Form1.form:42
 msgid "Cancel"
 msgstr "取消"
+
+#: FDocumentView.form:51
+msgid "Zoom :"
+msgstr ""
+
+#: FDocumentView.form:56
+msgid "Show Shadow"
+msgstr ""
+
+#: FDocumentView.form:66 FTestTabPanel.form:64
+msgid "Padding"
+msgstr ""
+
+#: FDocumentView.form:71
+msgid "Spacing"
+msgstr ""
+
+#: FDocumentView.form:80
+msgid "Scale Mode"
+msgstr ""
+
+#: FDocumentView.form:89
+msgid "Goto :"
+msgstr ""
+
+#: FDocumentView.form:95
+msgid "Column"
+msgstr ""
+
+#: FDocumentView.form:95
+msgid "Fill"
+msgstr ""
+
+#: FDocumentView.form:95
+msgid "Horizontal"
+msgstr ""
+
+#: FDocumentView.form:95
+msgid "None"
+msgstr ""
+
+#: FDocumentView.form:95
+msgid "Row"
+msgstr ""
+
+#: FDocumentView.form:95
+msgid "Vertical"
+msgstr ""
+
+#: FDocumentView.form:96 FMain.form:69
+msgid "ComboBox1"
+msgstr ""
+
+#: FDocumentView.form:101 FMain.form:85 FTestBalloon.form:18
+#: FTestCompletion.form:23 FTestMenuButton.form:148 FTestMessageView.form:26
+#: FTestWizard.form:24
+msgid "Button1"
+msgstr ""
+
+#: FDocumentView.form:110
+msgid "Columns"
+msgstr ""
+
+#: FDocumentView.form:120
+msgid "Autocenter"
+msgstr ""
 
 #: FEditBookmark.class:23 FileView.class:143
 msgid "Name"
@@ -342,29 +418,53 @@ msgstr "预览"
 msgid "Errors"
 msgstr "错误"
 
-#: FFontChooser.class:297
+#: FFontChooser.class:334
 msgid "How quickly daft jumping zebras vex"
 msgstr "One CHINA, One family. 一个中国，一个家。"
 
-#: FFontChooser.form:55
+#: FFontChooser.form:96
 msgid "Bold"
 msgstr "粗体"
 
-#: FFontChooser.form:62
+#: FFontChooser.form:103
 msgid "Italic"
 msgstr "斜体"
 
-#: FFontChooser.form:69
+#: FFontChooser.form:110
 msgid "Underline"
 msgstr "下划线"
 
-#: FFontChooser.form:76
+#: FFontChooser.form:117
 msgid "Strikeout"
 msgstr "删除线"
 
-#: FFontChooser.form:85
+#: FFontChooser.form:126
 msgid "Relative"
 msgstr "相对尺寸"
+
+#: FIconPanel.form:18
+msgid "Item 0"
+msgstr ""
+
+#: FIconPanel.form:23
+msgid "Toto"
+msgstr ""
+
+#: FIconPanel.form:26
+msgid "Item 1"
+msgstr ""
+
+#: FIconPanel.form:28
+msgid "Item 2"
+msgstr ""
+
+#: FIconPanel.form:35
+msgid "Item 3"
+msgstr ""
+
+#: FLCDLabel.form:15
+msgid "12:34"
+msgstr ""
 
 #: FListEditor.class:262
 msgid "Add"
@@ -386,6 +486,43 @@ msgstr "上移条目"
 msgid "Move item down"
 msgstr "下移条目"
 
+#: FMain.form:29 FTestFileChooser.form:31 FTestMenuButton.form:40 FWiki.form:20
+msgid "Menu2"
+msgstr ""
+
+#: FMain.form:33 FTestFileChooser.form:36 FTestMenuButton.form:44 FWiki.form:24
+msgid "Menu3"
+msgstr ""
+
+#: FMain.form:68
+msgid "Élément 1"
+msgstr ""
+
+#: FMain.form:68
+msgid "Élément 2"
+msgstr ""
+
+#: FMain.form:68
+msgid "Élément 3"
+msgstr ""
+
+#: FMain.form:68
+msgid "Élément 4"
+msgstr ""
+
+#: FMain.form:74
+msgid "ComboBox2"
+msgstr ""
+
+#: FMain.form:80 FSwitchButton.form:35 FTestBalloon.form:12
+#: FTestFileChooser.form:86
+msgid "TextBox1"
+msgstr ""
+
+#: FMain.form:90 Form2.form:121
+msgid "MenuButton1"
+msgstr ""
+
 #: FMessage.form:39
 msgid "Do not display this message again"
 msgstr "不再显示该信息"
@@ -397,6 +534,138 @@ msgstr "隐藏"
 #: FSidePanel.class:1143
 msgid "Transparent"
 msgstr "透明"
+
+#: FSpinBar.form:24
+msgid "Test"
+msgstr ""
+
+#: FSwitchButton.form:51 FTestFileChooser.form:81
+msgid "Label1"
+msgstr ""
+
+#: FSwitchButton.form:58
+msgid "Label2"
+msgstr ""
+
+#: FTestBalloon.form:17
+msgid "Ceci est une bulle d'aide"
+msgstr ""
+
+#: FTestColorChooser.form:20
+msgid "Resizable"
+msgstr ""
+
+#: FTestCompletion.form:28
+msgid "Button2"
+msgstr ""
+
+#: FTestDateChooser.form:33
+msgid "Enable"
+msgstr ""
+
+#: FTestExpander.form:16
+msgid "Expander"
+msgstr ""
+
+#: FTestFileChooser.form:28 FTestMenuButton.form:36
+msgid "Menu1"
+msgstr ""
+
+#: FTestFileChooser.form:41 FTestMenuButton.form:70
+msgid "Menu7"
+msgstr ""
+
+#: FTestFileChooser.form:49 FTestMenuButton.form:53 FWiki.form:28
+msgid "Menu4"
+msgstr ""
+
+#: FTestFileChooser.form:54 FTestMenuButton.form:57 FWiki.form:32
+msgid "Menu5"
+msgstr ""
+
+#: FTestFileChooser.form:76
+msgid "Balloon"
+msgstr ""
+
+#: FTestMenuButton.form:32
+msgid "Project"
+msgstr ""
+
+#: FTestMenuButton.form:49
+msgid "View"
+msgstr ""
+
+#: FTestMenuButton.form:61
+msgid "Menu6"
+msgstr ""
+
+#: FTestMenuButton.form:66
+msgid "Tools"
+msgstr ""
+
+#: FTestMenuButton.form:74
+msgid "Menu8"
+msgstr ""
+
+#: FTestMenuButton.form:78
+msgid "Menu9"
+msgstr ""
+
+#: FTestMenuButton.form:81
+msgid "Menu10"
+msgstr ""
+
+#: FTestMenuButton.form:85
+msgid "Menu11"
+msgstr ""
+
+#: FTestMenuButton.form:124
+msgid "Menu button"
+msgstr ""
+
+#: FTestTabPanel.form:41
+msgid "Text"
+msgstr ""
+
+#: FTestTabPanel.form:54
+msgid "Border"
+msgstr ""
+
+#: FTestTabPanel.form:59
+msgid "Orientation"
+msgstr ""
+
+#: FTestToolPanel.form:13
+msgid "Toolbar &0"
+msgstr ""
+
+#: FTestToolPanel.form:15
+msgid "Toolbar &1"
+msgstr ""
+
+#: FTestToolPanel.form:17
+msgid "Toolbar &2"
+msgstr ""
+
+#: FTestValueBox.form:15
+msgid "Hello world!"
+msgstr ""
+
+#: FTestWizard.form:20
+msgid "Étape n°1"
+msgstr ""
+
+#: FTestWizard.form:27
+msgid "Ceci est une longue étape"
+msgstr ""
+
+#: FTestWizard.form:33
+msgid "Étape n°3"
+msgstr ""
+
+#: FTestWizard.form:35
+msgid "Étape n°4"
+msgstr ""
 
 #: FWizard.class:88
 msgid "&Next"
@@ -417,6 +686,10 @@ msgstr "该目录中没有文件。"
 #: FileView.class:1134
 msgid "Cannot rename file."
 msgstr "不能重命名文件。"
+
+#: Form2.form:126
+msgid "ButtonBox2"
+msgstr ""
 
 #: Help.module:71
 msgid "A file or directory name cannot be void."
@@ -441,4 +714,3 @@ msgstr "&1 GB"
 #: Wizard.class:86
 msgid "Step #&1"
 msgstr "步骤#&1"
-

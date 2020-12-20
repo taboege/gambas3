@@ -39,6 +39,7 @@ public:
 	bool autoResize() const { return _autoresize; }
 	int padding() const { return getFramePadding(); }
 	bool wrap() const { return _wrap; }
+	bool markup() const { return _markup; }
 
 	void setAlignment(int al);
 	void setBorder(int vl) { setFrameBorder(vl); }
@@ -49,7 +50,7 @@ public:
 	void setWrap(bool vl);
 
 //"Methods"
-	void enableMarkup(bool vl);
+	void setMarkup(bool vl);
 	void adjust();
 	virtual bool resize(int w, int h);
 	virtual void afterRefresh();
@@ -62,7 +63,7 @@ public:
 	void updateLayout();
 	PangoLayout *layout;
 	int align,lay_x,lay_y;
-	unsigned markup : 1;
+	unsigned _markup : 1;
 	unsigned _autoresize : 1;
 	unsigned _transparent : 1;
 	unsigned _mask_dirty : 1;
