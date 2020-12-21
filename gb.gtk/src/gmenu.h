@@ -63,6 +63,7 @@ public:
 	void *parent() const { return pr; }
 	gMenu *parentMenu() const { return _toplevel ? NULL : (gMenu *)pr; }
 	bool isClosed() const { return !_opened; }
+	bool isDestroyed() const { return _destroyed; }
 
 	void setChecked(bool vl);
 	void setToggle(bool vl);
@@ -126,6 +127,7 @@ public:
 	gMenuStyle style() const { return _style; }
   void hideSeparators();
 	void willBeDeletedLater();
+	void destroyNow() { _delete_later = false; destroy(); }
 	void updateRadio();
 	void updateChecked();
 	void updatePicture();
@@ -139,6 +141,8 @@ public:
 	void removeParent();
 	
 	bool ignoreSignal();
+	
+	static void cleanRemovedMenus();
 
 private:
 
@@ -171,6 +175,7 @@ private:
   void update();
   void updateVisible();
 	void updateShortcut();
+	void dispose();
 };
 
 #endif

@@ -34,6 +34,7 @@
 #include "gdesktop.h"
 #include "gdrag.h"
 #include "gmouse.h"
+#include "gmenu.h"
 
 #ifdef GTK3
 #else
@@ -289,6 +290,8 @@ void gControl::cleanRemovedControls()
 	GList *iter;
 	gControl *control;
 
+	gMenu::cleanRemovedMenus();
+	
 	if (!controls_destroyed) return;
 
 	for(;;)
