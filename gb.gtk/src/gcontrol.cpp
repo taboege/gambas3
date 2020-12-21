@@ -46,6 +46,7 @@
 #include "gdesktop.h"
 #include "gdrag.h"
 #include "gmouse.h"
+#include "gmenu.h"
 #include "gcontrol.h"
 
 //#define DEBUG_FOCUS 1
@@ -294,6 +295,8 @@ void gControl::cleanRemovedControls()
 	GList *iter;
 	gControl *control;
 
+	gMenu::cleanRemovedMenus();
+	
 	if (!controls_destroyed) return;
 
 	for(;;)
