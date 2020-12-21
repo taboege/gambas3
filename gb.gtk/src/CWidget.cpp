@@ -391,6 +391,7 @@ int CWIDGET_check(void *_object)
 Embedder
 
 **************************************************************************************/
+#ifndef GTK3
 
 BEGIN_METHOD(CPLUGIN_new, GB_OBJECT parent)
 
@@ -419,6 +420,7 @@ BEGIN_METHOD_VOID(CPLUGIN_discard)
 
 END_METHOD
 
+#endif
 
 /**************************************************************************************
 
@@ -790,13 +792,13 @@ END_PROPERTY
 BEGIN_PROPERTY(Control_Parent)
 
 	gContainer *parent = CONTROL->parent();
-	
+
 	if (parent)
 	{
 		while (parent->proxyContainerFor())
 			parent = parent->proxyContainerFor();
 	}
-	
+
 	GB.ReturnObject(GetObject(parent));
 
 END_PROPERTY
@@ -1032,6 +1034,7 @@ GB_DESC CWidgetDesc[] =
 	GB_END_DECLARE
 };
 
+#ifndef GTK3
 GB_DESC CPluginDesc[] =
 {
 	GB_DECLARE("Embedder", sizeof(CPLUGIN)), GB_INHERITS("Control"),
@@ -1051,5 +1054,4 @@ GB_DESC CPluginDesc[] =
 
 	GB_END_DECLARE
 };
-
-
+#endif

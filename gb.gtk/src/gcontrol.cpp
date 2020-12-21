@@ -23,29 +23,23 @@
 
 #include <unistd.h>
 
-#ifndef GAMBAS_DIRECTFB
-#ifdef GDK_WINDOWING_X11
-#include <gdk/gdkx.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xutil.h>
-#include <X11/keysymdef.h>
-#include <X11/X.h>
-#endif
-#endif
-
 #include "widgets.h"
 #include "gapplication.h"
 #include "gbutton.h"
 #include "gdrawingarea.h"
 #include "gmainwindow.h"
 #include "gmoviebox.h"
-#include "gplugin.h"
 #include "gscrollbar.h"
 #include "gslider.h"
 #include "gdesktop.h"
 #include "gdrag.h"
 #include "gmouse.h"
+
+#ifdef GTK3
+#else
+#include "gplugin.h"
+#endif
+
 #include "gcontrol.h"
 
 static GList *controls = NULL;
@@ -65,9 +59,9 @@ typedef
 #endif
 	}
 	PATCH_FUNCS;
-	
+
 #endif
-	
+
 #if 0
 static const char *_cursor_fdiag[] =
 {
@@ -123,6 +117,62 @@ static const char *_cursor_bdiag[] =
 // Geometry optimization hack - Sometimes fails, so it is disabled...
 #define GEOMETRY_OPTIMIZATION 0
 
+#ifdef GTK3
+
+struct _GtkLayoutPrivate
+{
+  /* Properties */
+  guint width;
+  guint height;
+
+  GtkAdjustment *hadjustment;
+  GtkAdjustment *vadjustment;
+
+  /* GtkScrollablePolicy needs to be checked when
+   * driving the scrollable adjustment values */
+  guint hscroll_policy : 1;
+  guint vscroll_policy : 1;
+
+  /* Properties */
+
+  GdkVisibilityState visibility;
+  GdkWindow *bin_window;
+
+  GList *children;
+
+  gint scroll_x;
+  gint scroll_y;
+
+  guint freeze_count;
+};
+
+struct _GtkFixedPrivate
+{
+  GList *children;
+};
+
+typedef struct _GtkLayoutChild GtkLayoutChild;
+
+struct _GtkLayoutChild {
+  GtkWidget *widget;
+  gint x;
+  gint y;
+};
+
+#define GET_CHILDREN_LIST(_widget) 
+
+#else
+
+typedef struct _GtkLayoutChild   GtkLayoutChild;
+
+struct _GtkLayoutChild {
+  GtkWidget *widget;
+  gint x;
+  gint y;
+};
+
+#endif
+
 
 #ifdef GTK3
 static gboolean cb_frame_draw(GtkWidget *wid, cairo_t *cr, gControl *control)
@@ -152,6 +202,7 @@ static gboolean cb_background_expose(GtkWidget *wid, GdkEventExpose *e, gControl
 }
 #endif
 
+#ifndef GTK3
 
 /****************************************************************************
 
@@ -240,7 +291,7 @@ void gPlugin::discard()
 	stub("no-X11/gPlugin:discard()");
 	#endif
 }
-
+#endif
 
 /*****************************************************************
 
@@ -359,7 +410,7 @@ gControl::~gControl()
 
 	/*if (pr)
 		pr->remove(this);*/
-	
+
 	if (win && win->focus == this)
 		win->focus = NULL;
 
@@ -387,7 +438,7 @@ gControl::~gControl()
 	if (_css)
 		g_object_unref(_css);
 #endif
-	
+
 	//fprintf(stderr, "~gControl: %s\n", name());
 
 	if (_name)
@@ -437,7 +488,7 @@ bool gControl::isReallyVisible()
 {
 	if (!isTopLevel() && !topLevel()->isReallyVisible())
 		return false;
-	
+
 #if GTK_CHECK_VERSION(2, 20, 0)
 	return gtk_widget_get_mapped(border);
 #else
@@ -733,11 +784,11 @@ void gControl::setIgnore (bool vl)
 void gControl::setTooltip(char *vl)
 {
 	char *pango;
-	
+
 	if (_tooltip) g_free(_tooltip);
 	_tooltip = NULL;
 	if (vl) _tooltip = g_strdup(vl);
-	
+
 	if (_tooltip)
 	{
 		pango = gt_html_to_pango_string(_tooltip, -1, false);
@@ -928,11 +979,11 @@ GdkCursor *gControl::getGdkCursor()
 			case GDK_HAND2: name = "pointer"; break;
 			default: name = "default";
 		}
-		
+
 		cr = gdk_cursor_new_from_name(gdk_display_get_default(), name);
 		if (!cr)
 			cr = gdk_cursor_new_for_display(gdk_display_get_default(), (GdkCursorType)m);
-		
+
 		/*
 		if (m < GDK_LAST_CURSOR)
 		{
@@ -1011,9 +1062,12 @@ gMainWindow* gControl::topLevel()
 	return (gMainWindow *)child;
 }
 
-int gControl::handle()
+long gControl::handle()
 {
-	#ifdef GDK_WINDOWING_X11
+#ifdef GTK3
+	GdkWindow *window = gtk_widget_get_window(border);
+	return PLATFORM.Window.GetId(window);
+#else
 	if (MAIN_display_x11)
 	{
 		GdkWindow *window = gtk_widget_get_window(border);
@@ -1021,10 +1075,7 @@ int gControl::handle()
 	}
 	else
 		return 0;
-	#else
-	stub("no-X11/gControl::handle()");
-	return 0;
-	#endif
+#endif
 }
 
 /*****************************************************************
@@ -1159,106 +1210,94 @@ gControl* gControl::previous()
 }
 
 
-void gControl::lower()
+static int find_child_fixed(GtkFixedChild *data, GtkWidget *widget)
 {
-	gpointer *p;
-	GList *chd;
-	GtkWidget *child;
-	gControl *br;
-	int x,y;
-	GtkContainer *parent;
-
-	if (!pr) return;
-
-	/*if (gtk_widget_get_has_window(border))
-	{
-		gdk_window_lower(gtk_widget_get_window(border));
-		if (gtk_widget_get_window(widget))
-			gdk_window_lower(gtk_widget_get_window(widget));
-	}
-	else*/
-	{
-		//fprintf(stderr, "gb.gtk: warning: gControl::lower(): no window\n");
-
-		if (!(chd=gtk_container_get_children(GTK_CONTAINER(pr->getContainer())))) return;
-
-		chd = g_list_first(chd);
-
-		while(chd)
-		{
-			child = (GtkWidget*)chd->data;
-
-			br = gt_get_control(child);
-
-			if (br && br != this)
-			{
-				x = br->x();
-				y = br->y();
-				parent = GTK_CONTAINER(gtk_widget_get_parent(br->border));
-				g_object_ref(G_OBJECT(br->border));
-				gtk_container_remove(parent, br->border);
-				gtk_container_add(parent, br->border);
-
-				if (GTK_IS_LAYOUT(parent))
-					gtk_layout_move(GTK_LAYOUT(parent), br->border, x, y);
-				else
-					gtk_fixed_move(GTK_FIXED(parent), br->border, x, y);
-
-				g_object_unref(G_OBJECT(br->border));
-			}
-
-			chd = g_list_next(chd);
-		}
-	}
-
-	g_ptr_array_remove(pr->_children, this);
-
-	g_ptr_array_add(pr->_children, NULL);
-	p = pr->_children->pdata;
-	memmove(&p[1], &p[0], (pr->_children->len - 1) * sizeof(gpointer));
-	p[0] = this;
-
-	//pr->ch_list = g_list_remove(pr->ch_list, this);
-	//pr->ch_list = g_list_prepend(pr->ch_list, this);
-	pr->updateFocusChain();
-	pr->performArrange();
+	return !(data->widget == widget);
+}
+	
+static int find_child_layout(GtkLayoutChild *data, GtkWidget *widget)
+{
+	return !(data->widget == widget);
 }
 
-void gControl::raise()
+static GList **get_children_list(GtkContainer *parent)
 {
-	int x, y;
-	GtkContainer *parent;
-
-	if (!pr) return;
-
-	x = left();
-	y = top();
-	parent = GTK_CONTAINER(gtk_widget_get_parent(border));
-	g_object_ref(G_OBJECT(border));
-	gtk_container_remove(parent, border);
-	gtk_container_add(parent, border);
-
-	//pr->moveChild(this, x, y);
+#ifdef GTK3
 	if (GTK_IS_LAYOUT(parent))
-		gtk_layout_move(GTK_LAYOUT(parent), border, x, y);
+		return &((GtkLayout *)parent)->priv->children;
 	else
-		gtk_fixed_move(GTK_FIXED(parent), border, x, y);
+		return &((GtkFixed *)parent)->priv->children;
+#else
+	if (GTK_IS_LAYOUT(parent))
+		return &((GtkLayout *)parent)->children;
+	else
+		return &((GtkFixed *)parent)->children;
+#endif
+}
 
-	g_object_unref(G_OBJECT(border));
+void gControl::restack(bool raise)
+{
+	GtkContainer *parent;
+	GList **children;
+	GList *find;
+	gpointer *p;
 
+	if (!pr) 
+		return;
+
+	parent = GTK_CONTAINER(gtk_widget_get_parent(border));
+	
+	//fprintf(stderr, "%s: %s -> %s (%s%s)\n", raise ? "raise" : "lower", name(), pr->name(), GTK_IS_LAYOUT(parent) ? "L" : "F", gtk_widget_get_has_window(border) ? "W" : "");
+	
+	children = get_children_list(parent);
+	
+	if (GTK_IS_LAYOUT(parent))
+		find = g_list_find_custom(*children, border, (GCompareFunc)find_child_layout);
+	else if (GTK_IS_FIXED(parent))
+		find = g_list_find_custom(*children, border, (GCompareFunc)find_child_fixed);
+	else
+		return;
+	
+	*children = g_list_remove_link(*children, find);
+	if (raise)
+		*children = g_list_concat(*children, find);
+	else
+		*children = g_list_concat(find, *children);
+	
+	if (gtk_widget_get_has_window(border))
+	{
+		if (raise)
+			gdk_window_raise(gtk_widget_get_window(border));
+		else
+			gdk_window_lower(gtk_widget_get_window(border));
+	}
+	
 	g_ptr_array_remove(pr->_children, this);
-	g_ptr_array_add(pr->_children, this);
+	
+	if (raise)
+	{
+		g_ptr_array_add(pr->_children, this);
+	}
+	else
+	{
+		g_ptr_array_add(pr->_children, NULL);
+		p = pr->_children->pdata;
+		memmove(&p[1], &p[0], (pr->_children->len - 1) * sizeof(gpointer));
+		p[0] = this;
+	}
+	
+	if (isVisible())
+	{
+		gtk_widget_hide(border);
+		gtk_widget_show(border);
+	}
 
-	pr->updateFocusChain();
 	pr->performArrange();
+	pr->refresh();
 }
 
 void gControl::setNext(gControl *ctrl)
 {
-	#ifdef GAMBAS_DIRECTFB
-	stub("DIRECTFB/gControl::setNext()");
-	#else
-	Window stack[2];
 	GPtrArray *ch;
 	uint i;
 
@@ -1272,12 +1311,7 @@ void gControl::setNext(gControl *ctrl)
 		return;
 
 	if (gtk_widget_get_has_window(ctrl->border) && gtk_widget_get_has_window(border))
-	{
-		stack[0] = GDK_WINDOW_XID(gtk_widget_get_window(ctrl->border));
-		stack[1] = GDK_WINDOW_XID(gtk_widget_get_window(border));
-
-		XRestackWindows(GDK_WINDOW_XDISPLAY(gtk_widget_get_window(border)), stack, 2 );
-	}
+		gdk_window_restack(gtk_widget_get_window(border), gtk_widget_get_window(ctrl->border), FALSE);
 
 	ch = pr->_children;
 	g_ptr_array_remove(ch, this);
@@ -1295,7 +1329,6 @@ void gControl::setNext(gControl *ctrl)
 
 	pr->updateFocusChain();
 	pr->performArrange();
-	#endif
 }
 
 void gControl::setPrevious(gControl *ctrl)
@@ -1565,7 +1598,7 @@ static bool must_patch(GtkWidget *widget)
 	parent = gtk_widget_get_parent(widget);
 	if (!parent)
 		return false;
-	
+
 	if (GTK_IS_SCROLLED_WINDOW(parent))
 	{
 		parent = gtk_widget_get_parent(parent);
@@ -1644,7 +1677,7 @@ static void _name##size_allocate(GtkWidget *widget, GtkAllocation *allocation) \
 
 #else
 
-#define PATCH_DECLARE_SIZE(_type, _name) 
+#define PATCH_DECLARE_SIZE(_type, _name)
 
 #endif
 
@@ -1760,7 +1793,6 @@ PATCH_DECLARE(GTK_TYPE_SCROLLED_WINDOW)
 PATCH_DECLARE(GTK_TYPE_CHECK_BUTTON)
 PATCH_DECLARE(GTK_TYPE_RADIO_BUTTON)
 PATCH_DECLARE(GTK_TYPE_NOTEBOOK)
-PATCH_DECLARE(GTK_TYPE_SOCKET)
 PATCH_DECLARE(GTK_TYPE_TEXT_VIEW)
 PATCH_DECLARE(GTK_TYPE_SCROLLBAR)
 PATCH_DECLARE(GTK_TYPE_SCALE)
@@ -1823,7 +1855,7 @@ void gControl::realize(bool make_frame)
 	}
 
 	//fprintf(stderr, "realize: %p %p\n", border, widget);
-	
+
 #ifdef GTK3
 
 	PATCH_CLASS(border, GTK_TYPE_WINDOW)
@@ -1839,11 +1871,10 @@ void gControl::realize(bool make_frame)
 	else PATCH_CLASS(border, GTK_TYPE_CHECK_BUTTON)
 	else PATCH_CLASS(border, GTK_TYPE_RADIO_BUTTON)
 	else PATCH_CLASS(border, GTK_TYPE_NOTEBOOK)
-	else PATCH_CLASS(border, GTK_TYPE_SOCKET)
 	else PATCH_CLASS(border, GTK_TYPE_TEXT_VIEW)
 	else PATCH_CLASS(border, GTK_TYPE_SCROLLBAR)
 	else PATCH_CLASS(border, GTK_TYPE_SCALE)
-	else 
+	else
 	{
 		fprintf(stderr, "gb.gtk3: warning: class %s was not patched\n", G_OBJECT_TYPE_NAME(border));
 	}
@@ -2049,17 +2080,17 @@ GtkWidget *gControl::getStyleSheetWidget()
 void gControl::updateStyleSheet()
 {
 	static int count = 0;
-	
+
 	GtkWidget *wid;
 	GtkStyleContext *context;
 	char *css = NULL;
 	const char *name;
 	char buffer[128];
 	int s;
-	
+
 	wid = getStyleSheetWidget();
 	context = gtk_widget_get_style_context(wid);
-	
+
 	if (_bg == COLOR_DEFAULT && _fg == COLOR_DEFAULT && !_font)
 	{
 		if (_css)
@@ -2072,16 +2103,16 @@ void gControl::updateStyleSheet()
 			count++;
 			sprintf(buffer, "g%d", count);
 			gtk_widget_set_name(wid, buffer);
-			
+
 			_css = GTK_STYLE_PROVIDER(gtk_css_provider_new());
 		}
 		else
 			gtk_style_context_remove_provider(context, _css);
-		
+
 		name = gtk_widget_get_name(wid);
 		sprintf(buffer, "#%s {\ntransition:none;\n", name);
 		g_stradd(&css, buffer);
-		
+
 		if (_bg != COLOR_DEFAULT)
 		{
 			g_stradd(&css, "background-color:");
@@ -2089,7 +2120,7 @@ void gControl::updateStyleSheet()
 			g_stradd(&css, buffer);
 			g_stradd(&css, ";\nbackground-image:none;\n");
 		}
-		
+
 		if (_fg != COLOR_DEFAULT)
 		{
 			g_stradd(&css, "color:");
@@ -2097,7 +2128,7 @@ void gControl::updateStyleSheet()
 			g_stradd(&css, buffer);
 			g_stradd(&css, ";\n");
 		}
-		
+
 		if (_font)
 		{
 			if (_font->_name_set)
@@ -2106,7 +2137,7 @@ void gControl::updateStyleSheet()
 				g_stradd(&css, _font->name());
 				g_stradd(&css, "\";\n");
 			}
-			
+
 			if (_font->_size_set)
 			{
 				g_stradd(&css, "font-size:");
@@ -2121,7 +2152,7 @@ void gControl::updateStyleSheet()
 				g_stradd(&css, _font->bold() ? "bold" : "normal");
 				g_stradd(&css, ";\n");
 			}
-			
+
 			if (_font->_italic_set)
 			{
 				g_stradd(&css, "font-style:");
@@ -2141,11 +2172,11 @@ void gControl::updateStyleSheet()
 				g_stradd(&css, ";\n");
 			}
 		}
-		
+
 		g_stradd(&css, "}\n");
-		
+
 		//fprintf(stderr, "---- %s\n%s", _name, css);
-		
+
 		gtk_css_provider_load_from_data(GTK_CSS_PROVIDER(_css), css, -1, NULL);
 		gtk_style_context_add_provider(context, _css, GTK_STYLE_PROVIDER_PRIORITY_USER + 10);
 	}
@@ -2442,7 +2473,7 @@ void gControl::updateScrollBar()
 {
 	if (!_scroll)
 		return;
-	
+
 	switch(_scrollbar)
 	{
 		case SCROLL_NONE:
@@ -2598,7 +2629,7 @@ void gControl::emitEnterEvent(bool no_leave)
 	gContainer *cont;
 
 	//fprintf(stderr, "start enter %s\n", name());
-	
+
 	if (parent())
 		parent()->emitEnterEvent(true);
 
@@ -2612,19 +2643,19 @@ void gControl::emitEnterEvent(bool no_leave)
 	}
 
 	gApplication::_enter = this;
-	
+
 	if (gApplication::_leave)
 	{
 		if (gApplication::_leave == this || gApplication::_leave->isAncestorOf(this))
 			gApplication::_leave = NULL;
 	}
-	
+
 	if (_inside)
 		return;
 	_inside = true;
 
 	//fprintf(stderr, "end enter %s\n", name());
-	
+
 	setMouse(mouse());
 
 	if (gApplication::_ignore_until_next_enter)
@@ -2643,12 +2674,12 @@ void gControl::emitLeaveEvent()
 {
 	if (gApplication::_enter == this)
 		gApplication::_enter = NULL;
-					
+
 	if (!_inside)
 		return;
 
 	//fprintf(stderr, "start leave %s\n", name());
-	
+
 	if (isContainer())
 	{
 		gContainer *cont = (gContainer *)this;
@@ -2661,7 +2692,7 @@ void gControl::emitLeaveEvent()
 	_inside = false;
 
 	//fprintf(stderr, "end leave %s\n", name());
-	
+
 	if (parent()) parent()->setMouse(parent()->mouse());
 
 	if (gApplication::_ignore_until_next_enter)
@@ -2736,11 +2767,11 @@ void gControl::setCanFocus(bool vl)
 {
 	if (vl == canFocus())
 		return;
-	
+
 	gtk_widget_set_can_focus(widget, vl);
-	
+
 	/*_has_input_method = vl;
-	
+
 	if (_input_method && !vl)
 	{
 		g_object_unref(_input_method);
@@ -2750,7 +2781,7 @@ void gControl::setCanFocus(bool vl)
 	{
 		_input_method = gtk_im_multicontext_new();
 	}*/
-	
+
 	if (pr)
 		pr->updateFocusChain();
 }

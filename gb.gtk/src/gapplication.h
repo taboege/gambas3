@@ -24,8 +24,11 @@
 #ifndef __GAPPLICATION_H
 #define __GAPPLICATION_H
 
+#ifndef GTK3
+#include <X11/Xlib.h>
 typedef
 	void (*X11_EVENT_FILTER)(XEvent *);
+#endif
 
 class gControl;
 class gMainWindow;
@@ -51,7 +54,7 @@ public:
 	static gControl* previousControl() { return _previous_control; }
 	static void setActiveControl(gControl *control, bool on);
 	static void handleFocusNow();
-	
+
 	static void suspendEvents(bool vl);
 	static void enableEvents();
 	static bool userEvents();
@@ -61,7 +64,7 @@ public:
 	static bool areTooltipsEnabled();
 
 	static int dblClickTime();
-	
+
 	static void setDefaultTitle(const char *title);
 	static char *defaultTitle() { return _title; }
 
@@ -79,26 +82,28 @@ public:
 	static void updateLastEventTime();
 
 	static bool (*onKeyEvent)(int type);
-	
+
 	static int getScrollbarSize();
 	static int getScrollbarSpacing();
 	static int getFrameWidth();
 	static int getInnerWidth();
 	static void getBoxFrame(int *w, int *h);
 	static char *getStyleName();
-	
+
 	static void grabPopup();
 	static void ungrabPopup();
-	
+
 	static void setMainWindow(gMainWindow *win);
 	static gMainWindow *mainWindow() { return _main_window; }
-	
+
 	static void checkHoveredControl(gControl *control);
 
+	#ifndef GTK3
 	static void setEventFilter(X11_EVENT_FILTER filter);
+	#endif
 
 	static void setButtonGrab(gControl *grab) { _button_grab = grab; }
-	
+
 	static bool fix_breeze;
 	static bool fix_oxygen;
 

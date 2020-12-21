@@ -1,7 +1,7 @@
 COMPONENT = gb.gtk3
 include $(top_srcdir)/component.am
 
-##SUBDIRS = . @GTKOPENGL_DIR@
+SUBDIRS = . @GTK3X11_DIR@ @GTK3WAYLAND_DIR@
 
 gblib_LTLIBRARIES = gb.gtk3.la
 
@@ -62,7 +62,6 @@ gb_gtk3_la_SOURCES = \
 	gcontrol.h \
 	gseparator.h \
 	gtrayicon.h \
-	gplugin.h \
 	glabel.h \
 	gbutton.h \
 	gmoviebox.h \
@@ -83,19 +82,4 @@ gb_gtk3_la_SOURCES = \
 	gtools.h kentities.h \
 	gprinter.h gprinter.cpp \
 	gglarea.h gglarea.cpp \
-	x11.h x11.c \
-	desktop.h desktop.c \
-	sm/bonobo-macros.h \
-	sm/gnome-macros.h \
-	sm/gnome-uidefs.h \
-	sm/libgnomeui.h \
-	sm/libgnomeuiP.h \
-	sm/gnome-client.h \
-	sm/gnome-client.c \
-	sm/gnome-ice.h \
-	sm/gnome-ice.c \
-	sm/gnome-marshal.h \
-	sm/gnome-marshal.c \
-	sm/gnometypebuiltins.h \
-	sm/gnometypebuiltins.c \
-	sm/sm.h
+	desktop.h desktop.c

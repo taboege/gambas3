@@ -2,7 +2,6 @@
 
   main.h
 
-  (c) Daniel Campos Fernández <dcamposf@gmail.com>
   (c) Benoît Minisini <g4mba5@gmail.com>
 
   This program is free software; you can redistribute it and/or modify
@@ -25,40 +24,18 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
+#include "gb_common.h"
 #include "gambas.h"
-#include "gb.image.h"
-#include "gb.geom.h"
-#include "gb.gtk.h"
-#include "gb.gtk.platform.h"
-#include "widgets.h"
-#include "CWidget.h"
+#include "../gb.gtk.platform.h"
+#include <gdk/gdkx.h>
+#include <gtk/gtkx.h>
+
+typedef
+	void (*X11_EVENT_FILTER)(XEvent *);
 
 #ifndef __MAIN_C
-extern const GB_INTERFACE *GB_PTR;
-extern IMAGE_INTERFACE IMAGE;
-extern GEOM_INTERFACE GEOM;
-extern GTK_PLATFORM_INTERFACE PLATFORM;
-
-extern GB_CLASS CLASS_Control;
-extern GB_CLASS CLASS_ContainerChildren;
-extern GB_CLASS CLASS_Picture;
-extern GB_CLASS CLASS_Image;
-extern GB_CLASS CLASS_DrawingArea;
-extern GB_CLASS CLASS_Menu;
-extern GB_CLASS CLASS_Window;
-extern GB_CLASS CLASS_Printer;
-extern GB_CLASS CLASS_SvgImage;
-
-extern bool MAIN_debug_busy;
-extern bool MAIN_rtl;
-extern const char *MAIN_platform;
+extern "C" const GB_INTERFACE *GB_PTR;
 #endif
-
 #define GB (*GB_PTR)
 
-void MAIN_do_iteration(bool do_not_block);
-void MAIN_do_iteration_just_events();
-void MAIN_check_quit();
-
 #endif
-

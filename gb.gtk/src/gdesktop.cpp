@@ -24,13 +24,8 @@
 #include "widgets.h"
 #include "gb.form.font.h"
 
-#ifndef GAMBAS_DIRECTFB
-#ifdef GDK_WINDOWING_X11
-#include <gdk/gdkx.h>
-#include <X11/X.h>
-#include <X11/Xlib.h>
+#ifndef GTK3
 #include "x11.h"
-#endif
 #endif
 
 #include "gapplication.h"
@@ -173,7 +168,7 @@ __OK:
 
 	if (rgba.alpha < 0.05)
 		rgba.alpha = 1;
-	
+
 	return gt_to_color(&rgba);
 }
 #else
@@ -258,10 +253,10 @@ gColor gDesktop::tooltipForeground()
 	gColor bg = gDesktop::tooltipBackground();
 	int lfg = get_luminance(fg);
 	int lbg = get_luminance(bg);
-	
+
 	if (abs(lfg - lbg) > 64)
 		return fg;
-	
+
 	gt_color_to_rgb(fg, &r, &g, &b);
 	gt_rgb_to_hsv(r, g, b, &h, &s, &v);
 	v = 255 - v;

@@ -26,12 +26,10 @@
 
 #include "widgets.h"
 
-#ifdef GDK_WINDOWING_X11
-#include <X11/extensions/shape.h>
-#endif
-
+#ifndef GTK3
 #include "x11.h"
 #include "sm/sm.h"
+#endif
 
 #include "gapplication.h"
 #include "gdesktop.h"
@@ -53,7 +51,7 @@ static gboolean cb_frame(GtkWidget *widget,GdkEventWindowState *event,gMainWindo
 	CHECK_STATE(_maximized, GDK_WINDOW_STATE_MAXIMIZED);
 	CHECK_STATE(sticky, GDK_WINDOW_STATE_STICKY);
 	CHECK_STATE(_fullscreen, GDK_WINDOW_STATE_FULLSCREEN);
-	
+
 	if (event->changed_mask & GDK_WINDOW_STATE_ABOVE)
 	{
 		if (event->new_window_state & GDK_WINDOW_STATE_ABOVE)
@@ -70,17 +68,17 @@ static gboolean cb_frame(GtkWidget *widget,GdkEventWindowState *event,gMainWindo
 	}
 
 	data->performArrange();
-	
+
 	if (event->changed_mask & (GDK_WINDOW_STATE_ICONIFIED | GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN | GDK_WINDOW_STATE_STICKY | GDK_WINDOW_STATE_ABOVE | GDK_WINDOW_STATE_BELOW))
 		data->emit(SIGNAL(data->onState));
-	
+
 	return false;
 }
 
 static gboolean cb_show(GtkWidget *widget, gMainWindow *data)
 {
 	data->emitOpen();
-	
+
 	if (data->opened)
 	{
 		data->setGeometryHints();
@@ -106,7 +104,7 @@ static gboolean cb_hide(GtkWidget *widget, gMainWindow *data)
 		data->emit(SIGNAL(data->onHide));
 		data->_not_spontaneous = false;
 	}
-	
+
 	return false;
 	//if (data == gDesktop::activeWindow())
 	//	gMainWindow::setActiveWindow(NULL);
@@ -123,14 +121,14 @@ static gboolean cb_close(GtkWidget *widget,GdkEvent *event, gMainWindow *data)
 {
 	if (!gMainWindow::_current || data == gMainWindow::_current)
 		data->doClose();
-	
+
 	return true;
 }
 
 static gboolean cb_configure(GtkWidget *widget, GdkEventConfigure *event, gMainWindow *data)
 {
 	gint x, y;
-	
+
 	if (data->opened)
 	{
 		if (data->isTopLevel())
@@ -142,16 +140,16 @@ static gboolean cb_configure(GtkWidget *widget, GdkEventConfigure *event, gMainW
 			x = event->x;
 			y = event->y;
 		}
-		
+
 		//fprintf(stderr, "cb_configure: %s: (%d %d %d %d) -> (%d %d %d %d) window = %p resized = %d send_event = %d\n", data->name(), data->bufX, data->bufY, data->bufW, data->bufH, x, y, event->width, event->height, event->window, data->_resized, event->send_event);
-	
+
 		if (x != data->bufX || y != data->bufY)
 		{
 			data->bufX = x;
 			data->bufY = y;
 			if (data->onMove) data->onMove(data);
 		}
-		
+
 		if ((event->width != data->bufW) || (event->height != data->bufH) || (data->_resized) || !event->window)
 		{
 			//BREAKPOINT();
@@ -161,7 +159,7 @@ static gboolean cb_configure(GtkWidget *widget, GdkEventConfigure *event, gMainW
 			data->emitResize();
 		}
 	}
-	
+
 	return false;
 }
 
@@ -246,7 +244,6 @@ void gMainWindow::initialize()
 	//fprintf(stderr, "new window: %p in %p\n", this, parent());
 
 	stack = 0;
-	_type = 0;
 	accel = NULL;
 	_default = NULL;
 	_cancel = NULL;
@@ -295,14 +292,14 @@ void gMainWindow::initialize()
 	onDeactivate = NULL;
 	onState = NULL;
 	onFontChange = NULL;
-	
+
 	accel = gtk_accel_group_new();
 }
 
 void gMainWindow::initWindow()
 {
 	//resize(200,150);
-	
+
 	if (!isTopLevel())
 	{
 		g_signal_connect(G_OBJECT(border), "configure-event", G_CALLBACK(cb_configure), (gpointer)this);
@@ -322,13 +319,13 @@ void gMainWindow::initWindow()
 		g_signal_connect(G_OBJECT(border), "configure-event", G_CALLBACK(cb_configure),(gpointer)this);
 		g_signal_connect(G_OBJECT(border), "delete-event", G_CALLBACK(cb_close),(gpointer)this);
 		g_signal_connect(G_OBJECT(border), "window-state-event", G_CALLBACK(cb_frame),(gpointer)this);
-		
+
 		gtk_widget_add_events(widget,GDK_BUTTON_MOTION_MASK | GDK_STRUCTURE_MASK);
 		ON_DRAW_BEFORE(border, this, cb_expose, cb_draw);
 	}
-	
+
 	gtk_window_add_accel_group(GTK_WINDOW(topLevel()->border), accel);
-	
+
 	have_cursor = true; //parent() == 0 && !_xembed;
 }
 
@@ -355,44 +352,29 @@ gMainWindow::gMainWindow(int plug) : gContainer(NULL)
 {
   initialize();
 	g_typ = Type_gMainWindow;
-	
+
 	windows = g_list_append(windows, (gpointer)this);
-	
+
 	_xembed = plug != 0;
-	
+
 	if (_xembed)
-		border = gtk_plug_new(plug);
+	{
+		#ifdef GTK3
+			border = PLATFORM.CreatePlug(plug);
+			if (!border)
+				return;
+		#else
+			border = gtk_plug_new(plug);
+		#endif
+	}
 	else
 		border = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	
 	widget = gtk_fixed_new(); //gtk_layout_new(0,0);
 
-#if 0 //def GTK3
-	static bool patch = FALSE;
-
-	if (!patch)
-	{
-		GtkWidgetClass *klass;
-
-		klass = (GtkWidgetClass *)GTK_FIXED_GET_CLASS(widget);
-		old_fixed_get_preferred_width = klass->get_preferred_width;
-		klass->get_preferred_width = gtk_fixed_get_preferred_width;
-		old_fixed_get_preferred_height = klass->get_preferred_height;
-		klass->get_preferred_height = gtk_fixed_get_preferred_height;
-		/*klass = (GtkWidgetClass *)GTK_FIXED_GET_CLASS(border);
-		old_window_get_preferred_width = klass->get_preferred_width;
-		klass->get_preferred_width = gtk_window_get_preferred_width;
-		old_window_get_preferred_height = klass->get_preferred_height;
-		klass->get_preferred_height = gtk_window_get_preferred_height;*/
-
-		patch = true;
-	}
-#endif
-	
 	realize(false);
 	initWindow();
-	
+
 	gtk_widget_realize(border);
 	gtk_widget_show(widget);
 	gtk_widget_set_size_request(border, 1, 1);
@@ -404,7 +386,7 @@ gMainWindow::gMainWindow(gContainer *par) : gContainer(par)
 {
 	initialize();
 	g_typ = Type_gMainWindow;
-	
+
 #ifdef GTK3
 	//border = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	border = gtk_fixed_new();
@@ -412,7 +394,7 @@ gMainWindow::gMainWindow(gContainer *par) : gContainer(par)
 	border = gtk_alignment_new(0, 0, 1, 1);
 #endif
 	widget = gtk_fixed_new();
-	
+
 	realize(false);
 	initWindow();
 
@@ -422,6 +404,9 @@ gMainWindow::gMainWindow(gContainer *par) : gContainer(par)
 gMainWindow::~gMainWindow()
 {
 	//fprintf(stderr, "delete window %p %s\n", this, name());
+	
+	if (!border)
+		return;
 
 	gApplication::handleFocusNow();
 
@@ -432,19 +417,19 @@ gMainWindow::~gMainWindow()
 		if (GTK_IS_WINDOW(border) && isModal())
 			gApplication::exitLoop(this);
 	}
-	
+
 	gPicture::assign(&_picture);
 	gPicture::assign(&_icon);
 	if (_title) g_free(_title);
 	g_object_unref(accel);
 	if (_style) g_object_unref(_style);
-	
+
 	if (_active == this)
 		_active = NULL;
-	
+
 	if (gApplication::mainWindow() == this)
 		gApplication::setMainWindow(NULL);
-	
+
 	windows = g_list_remove(windows, (gpointer)this);
 }
 
@@ -507,15 +492,15 @@ void gMainWindow::setRealForeground(gColor color)
 void gMainWindow::move(int x, int y)
 {
 	//gint ox, oy;
-	
+
 	if (isTopLevel())
 	{
 		if (!_moved && (x || y))
 			_moved = true;
-		
-		if (x == bufX && y == bufY) 
+
+		if (x == bufX && y == bufY)
 			return;
-	
+
 		/*#ifdef GDK_WINDOWING_X11
 		gdk_window_get_origin(gtk_widget_get_window(border), &ox, &oy);
 		ox = x + ox - bufX;
@@ -531,7 +516,7 @@ void gMainWindow::move(int x, int y)
 		bufX = x;
 		bufY = y;
 		//#endif
-		
+
 		gtk_window_move(GTK_WINDOW(border), x, y);
 	}
 	else
@@ -545,21 +530,21 @@ void gMainWindow::resize(int w, int h)
 {
 	if (w == bufW && h == bufH)
 		return;
-		
+
 	_resized = true;
-		
+
 	if (isTopLevel())
 	{
 		//fprintf(stderr, "gMainWindow::resize: %d %d %s\n", w, h, name());
 		//gdk_window_enable_synchronized_configure (border->window);
-		
+
 		bufW = w < 0 ? 0 : w;
 		bufH = h < 0 ? 0 : h;
-		
+
 		if (w < 1 || h < 1)
 		{
 			if (visible)
-				gtk_widget_hide(border);			
+				gtk_widget_hide(border);
 		}
 		else
 		{
@@ -592,12 +577,12 @@ void gMainWindow::moveResize(int x, int y, int w, int h)
 void gMainWindow::emitOpen()
 {
 	//fprintf(stderr, "emit Open: %p (%d %d) %d resizable = %d fullscreen = %d\n", this, width(), height(), opened, isResizable(), fullscreen());
-	
+
 	if (!opened)
 	{
 		opened = true;
 		//_no_resize_event = true; // If the event loop is run during emitOpen(), some spurious configure events are received.
-		
+
 		if (!_min_w && !_min_h)
 		{
 			_min_w = width();
@@ -606,17 +591,17 @@ void gMainWindow::emitOpen()
 
 
 		gtk_widget_realize(border);
-			
+
 		performArrange();
 		emit(SIGNAL(onOpen));
 		if (opened)
 		{
-			//fprintf(stderr, "emit Move & Resize: %p\n", this);			
+			//fprintf(stderr, "emit Move & Resize: %p\n", this);
 			emit(SIGNAL(onMove));
 			emitResize();
 		}
 	}
-	
+
 	//_no_resize_event = false;
 }
 
@@ -648,15 +633,15 @@ void gMainWindow::setVisible(bool vl)
 	if (vl)
 	{
 		bool arr = !isVisible();
-	
+
 		emitOpen();
 		if (!opened)
 			return;
-		
+
 		_not_spontaneous = !visible;
 		visible = true;
 		_hidden = false;
-		
+
 		setTransparent(_transparent); // must not call gtk_window_present!
 
 		if (isTopLevel())
@@ -667,7 +652,7 @@ void gMainWindow::setVisible(bool vl)
 				gtk_window_group_add_window(gApplication::currentGroup(), GTK_WINDOW(border));
 				fprintf(stderr, "-> %p\n", gtk_window_get_group(GTK_WINDOW(border)));
 			}*/
-			
+
 			// Thanks for Ubuntu's GTK+ patching :-(
 			#ifndef GTK3
 			//gtk_window_set_has_resize_grip(GTK_WINDOW(border), false);
@@ -676,7 +661,7 @@ void gMainWindow::setVisible(bool vl)
 			#endif
 
 			gtk_window_move(GTK_WINDOW(border), bufX, bufY);
-			
+
 			if (isPopup())
 			{
 				gtk_widget_show_now(border);
@@ -689,21 +674,22 @@ void gMainWindow::setVisible(bool vl)
 
 			if (!_title || !*_title)
 				gtk_window_set_title(GTK_WINDOW(border), gApplication::defaultTitle());
-			
+
 			if (isUtility())
 			{
 				gMainWindow *parent = _current;
-				
+
 				if (!parent && gApplication::mainWindow() && gApplication::mainWindow() != this)
 					parent = gApplication::mainWindow();
-				
+
 				if (parent)
 					gtk_window_set_transient_for(GTK_WINDOW(border), GTK_WINDOW(parent->border));
-				
+
 				if (!_no_take_focus)
 					present();
 			}
 
+			#ifndef GTK3
 			if (gApplication::mainWindow() == this)
 			{
 				int desktop = session_manager_get_desktop();
@@ -714,22 +700,23 @@ void gMainWindow::setVisible(bool vl)
 					session_manager_set_desktop(-1);
 				}
 			}
+			#endif
 		}
-		else 
+		else
 		{
 			gtk_widget_show(border);
 			parent()->performArrange();
 		}
-		
+
 		drawMask();
-		
+
 		if (focus)
 		{
 			//fprintf(stderr, "focus = %s\n", focus->name());
 			focus->setFocus();
 			focus = 0;
 		}
-		
+
 		if (skipTaskBar())
 			_activate = true;
 
@@ -740,10 +727,10 @@ void gMainWindow::setVisible(bool vl)
 	{
 		if (this == _active)
 			focus = gApplication::activeControl();
-			
+
 		_not_spontaneous = visible;
 		gContainer::setVisible(false);
-		
+
 		if (_popup)
 			gApplication::exitLoop(this);
 
@@ -756,7 +743,7 @@ void gMainWindow::setVisible(bool vl)
 void gMainWindow::setMinimized(bool vl)
 {
 	if (!isTopLevel()) return;
-	
+
 	_minimized = vl;
 	if (vl) gtk_window_iconify(GTK_WINDOW(border));
 	else    gtk_window_deiconify(GTK_WINDOW(border));
@@ -768,7 +755,7 @@ void gMainWindow::setMaximized(bool vl)
 		return;
 
 	_maximized = vl;
-	
+
 	if (vl)
 		gtk_window_maximize(GTK_WINDOW(border));
 	else
@@ -779,9 +766,9 @@ void gMainWindow::setFullscreen(bool vl)
 {
 	if (!isTopLevel())
 		return;
-	
+
 	_fullscreen = vl;
-	
+
 	if (vl)
 	{
 		gtk_window_fullscreen(GTK_WINDOW(border));
@@ -796,14 +783,14 @@ void gMainWindow::center()
 {
 	GdkRectangle rect;
 	int x, y;
-	
+
 	if (!isTopLevel()) return;
-	
+
 	gDesktop::availableGeometry(screen(), &rect);
-	
+
 	x = rect.x + (rect.width - width()) / 2;
 	y = rect.y + (rect.height - height()) / 2;
-	
+
 	move(x, y);
 }
 
@@ -818,17 +805,17 @@ void gMainWindow::showModal()
 {
   gMainWindow *save;
   gMainWindow *parent;
-	
+
 	if (!isTopLevel()) return;
 	if (isModal()) return;
-	
+
 	//show();
 
 	gtk_window_set_modal(GTK_WINDOW(border), true);
   center();
 	//show();
 	gtk_grab_add(border);
-	
+
 	parent = _current;
 	if (!parent)
 	{
@@ -836,17 +823,17 @@ void gMainWindow::showModal()
 		if (!parent)
 			parent = _active;
 	}
-	
+
 	if (parent)
 		gtk_window_set_transient_for(GTK_WINDOW(border), GTK_WINDOW(parent->topLevel()->border));
-	
+
 	save = _current;
 	_current = this;
 
 	gApplication::enterLoop(this, true);
-	
+
 	_current = save;
-	
+
 	gtk_grab_remove(border);
 	gtk_window_set_modal(GTK_WINDOW(border), false);
 
@@ -862,40 +849,40 @@ void gMainWindow::showPopup(int x, int y)
 	bool has_border;
 	int oldx, oldy;
 	//int type;
-	
+
 	if (!isTopLevel()) return;
 	if (isModal()) return;
-	
+
 	//gtk_widget_unrealize(border);
 	//((GtkWindow *)border)->type = GTK_WINDOW_POPUP;
 	//gtk_widget_realize(border);
 
 	oldx = left();
 	oldy = top();
-	
+
 	has_border = gtk_window_get_decorated(GTK_WINDOW(border));
 	//type = getType();
-	
+
 	//setType(_NET_WM_WINDOW_TYPE_COMBO);
 	gtk_window_set_decorated(GTK_WINDOW(border), false);
 	//gtk_window_set_type_hint(GTK_WINDOW(border), GDK_WINDOW_TYPE_HINT_POPUP_MENU);
-	
+
   move(x, y);
 	gtk_window_resize(GTK_WINDOW(border), bufW, bufH);
 	raise();
 	setFocus();
-	
+
 	//reparent(NULL, x, y, GTK_WINDOW_POPUP);
 
 	_popup = true;
 	save = _current;
 	_current = this;
-	
+
 	gApplication::enterPopup(this);
-	
+
 	_current = save;
 	_popup = false;
-	
+
 	if (!persistent)
 	{
 		destroyNow();
@@ -903,12 +890,12 @@ void gMainWindow::showPopup(int x, int y)
 	else
 	{
 		hide();
-		
+
 		//gdk_window_set_override_redirect(gtk_widget_get_window(GTK_WINDOW(border)), false);
 		gtk_window_set_decorated(GTK_WINDOW(border), has_border);
 		//setType(type);
 		//gtk_window_set_type_hint(GTK_WINDOW(border), type);
-		
+
 		move(oldx, oldy);
 	}
 }
@@ -950,7 +937,7 @@ const char* gMainWindow::text()
 
 bool gMainWindow::skipTaskBar()
 {
-	if (!isTopLevel()) 
+	if (!isTopLevel())
 		return false;
 	else
 		return _skip_taskbar;
@@ -961,7 +948,7 @@ void gMainWindow::setText(const char *txt)
 {
 	if (_title) g_free(_title);
 	_title = g_strdup(txt);
-	
+
 	if (isTopLevel())
 		gtk_window_set_title(GTK_WINDOW(border), txt);
 }
@@ -984,22 +971,17 @@ bool gMainWindow::isResizable()
 
 void gMainWindow::setBorder(bool b)
 {
-	if (!isTopLevel()) 
+	if (!isTopLevel())
 		return;
-	
+
 	gtk_window_set_decorated(GTK_WINDOW(border), b);
-	/*#ifdef GDK_WINDOWING_X11
-	XSetWindowAttributes attr;
-	attr.override_redirect = !b;
-	XChangeWindowAttributes(GDK_WINDOW_XDISPLAY(border->window), GDK_WINDOW_XID(border->window), CWOverrideRedirect, &attr);
-	#endif*/
 }
 
 void gMainWindow::setResizable(bool b)
 {
-	if (!isTopLevel()) 
+	if (!isTopLevel())
 		return;
-	
+
 	if (b == isResizable())
 		return;
 
@@ -1020,14 +1002,14 @@ void gMainWindow::setSkipTaskBar(bool b)
 {
 	GdkPixbuf *buf;
 	gPicture *pic;
-	
+
 	if (!isTopLevel()) return NULL;
-	
+
 	buf=gtk_window_get_icon(GTK_WINDOW(border));
 	if (!buf) return NULL;
-	
+
 	pic=gPicture::fromPixbuf(buf);
-	
+
 	return pic;
 }*/
 
@@ -1042,7 +1024,7 @@ void gMainWindow::setIcon(gPicture *pic)
 bool gMainWindow::topOnly()
 {
 	if (!isTopLevel()) return false;
-	
+
 	return top_only;
 }
 
@@ -1059,7 +1041,7 @@ void gMainWindow::setMask(bool vl)
 {
 	if (_mask == vl)
 		return;
-		
+
 	_mask = vl;
 	drawMask();
 }
@@ -1077,21 +1059,20 @@ void gMainWindow::remap()
 
 	gtk_widget_unmap(border);
 	gtk_widget_map(border);
-	
+
 	if (_skip_taskbar) { setSkipTaskBar(false);	setSkipTaskBar(true); }
 	if (top_only) { setTopOnly(false); setTopOnly(true); }
 	if (sticky) { setSticky(false); setSticky(true); }
 	if (stack) { setStacking(0); setStacking(stack); }
-	X11_set_window_type(handle(), _type);
 }
 
 void gMainWindow::drawMask()
 {
 	bool do_remap = false;
-	 
+
 	if (!isVisible())
 		return;
-	
+
 #ifdef GTK3
 
 	cairo_region_t *mask;
@@ -1129,9 +1110,9 @@ void gMainWindow::drawMask()
 		gtk_widget_set_app_paintable(border, FALSE);
 		setRealBackground(background());
 	}
-	
+
 	_masked = mask != NULL;
-	
+
 	if (do_remap)
 		remap();
 	else
@@ -1159,14 +1140,14 @@ bool gMainWindow::doClose()
 {
 	if (_closing)
 		return false;
-	
+
 	if (opened)
 	{
 		if (isModal() && !gApplication::hasLoop(this))
 			return true;
-		
+
 		_closing = true;
-		if (onClose) 
+		if (onClose)
 		{
 			if (!onClose(this))
 				opened = false;
@@ -1174,16 +1155,16 @@ bool gMainWindow::doClose()
 		else
 			opened = false;
 		_closing = false;
-		
+
 		if (!opened && isModal())
 			gApplication::exitLoop(this);
   }
-  
+
   if (!opened) // && !modal())
   {
 		if (_active == this)
 			setActiveWindow(NULL);
-		
+
   	if (!isModal())
   	{
 			if (persistent)
@@ -1207,7 +1188,7 @@ static void hide_hidden_children(gContainer *cont)
 {
 	int i;
 	gControl *child;
-	
+
 	for (i = 0;; i++)
 	{
 		child = cont->child(i);
@@ -1225,24 +1206,24 @@ void gMainWindow::reparent(gContainer *newpr, int x, int y)
 	GtkWidget *new_border;
 	int w, h;
 	gColor fg, bg;
-	
+
 	if (_xembed)
 		return;
 
 	bg = background();
 	fg = foreground();
-	
+
 	if (isTopLevel() && newpr)
 	{
 		gtk_window_remove_accel_group(GTK_WINDOW(topLevel()->border), accel);
-		
+
 		new_border = gtk_event_box_new();
 		gt_widget_reparent(widget, new_border);
 		embedMenuBar(new_border);
 		_no_delete = true;
 		gtk_widget_destroy(border);
 		_no_delete = false;
-		
+
 		border = new_border;
 		registerControl();
 		setCanFocus(false);
@@ -1250,19 +1231,19 @@ void gMainWindow::reparent(gContainer *newpr, int x, int y)
 		setParent(newpr);
 		connectParent();
 		borderSignals();
-		initWindow();	
-		
+		initWindow();
+
 		setBackground(bg);
 		setForeground(fg);
 		setFont(font());
-		
+
 		checkMenuBar();
-		
+
 		bufX = bufY = 0;
 		move(x, y);
-		
+
 		gtk_widget_set_size_request(border, width(), height());
-		
+
 		// Hidden children are incorrectly shown. Fix that!
 		hideHiddenChildren();
 	}
@@ -1289,25 +1270,25 @@ void gMainWindow::reparent(gContainer *newpr, int x, int y)
 			parent()->arrange();
 			setParent(NULL);
 		}
-		initWindow();	
+		initWindow();
 		borderSignals();
 		setBackground(bg);
 		setForeground(fg);
 		setFont(font());
-		
+
 		move(x, y);
 		w = width();
 		h = height();
 		bufW = bufH = -1;
 		gtk_widget_set_size_request(border, 1, 1);
 		resize(w, h);
-		
+
 		hideHiddenChildren();
 		_popup = false; //type == GTK_WINDOW_POPUP;
 	}
 	else
 	{
-		gContainer::reparent(newpr, x, y);	
+		gContainer::reparent(newpr, x, y);
 	}
 }
 
@@ -1317,7 +1298,7 @@ int gMainWindow::controlCount()
 	GList *list = gControl::controlList();
 	gControl *ctrl;
 	int n = 0;
-	
+
 	while (list)
 	{
 		ctrl = (gControl *)list->data;
@@ -1325,7 +1306,7 @@ int gMainWindow::controlCount()
 			n++;
 		list = g_list_next(list);
 	}
-	
+
 	return n;
 }
 
@@ -1333,7 +1314,7 @@ gControl *gMainWindow::getControl(char *name)
 {
 	GList *list = gControl::controlList();
 	gControl *ctrl;
-	
+
 	while (list)
 	{
 		ctrl = (gControl *)list->data;
@@ -1341,7 +1322,7 @@ gControl *gMainWindow::getControl(char *name)
 			return ctrl;
 		list = g_list_next(list);
 	}
-	
+
 	return NULL;
 }
 
@@ -1350,7 +1331,7 @@ gControl *gMainWindow::getControl(int index)
 	GList *list = gControl::controlList();
 	gControl *ctrl;
 	int i = 0;
-	
+
 	while (list)
 	{
 		ctrl = (gControl *)list->data;
@@ -1362,7 +1343,7 @@ gControl *gMainWindow::getControl(int index)
 		}
 		list = g_list_next(list);
 	}
-	
+
 	return NULL;
 }
 
@@ -1414,7 +1395,7 @@ int gMainWindow::menuBarHeight()
 #endif
 		//fprintf(stderr, "menuBarHeight: %d\n", h);
 	}
-	
+
 	return h;
 }
 
@@ -1430,17 +1411,17 @@ void gMainWindow::setActiveWindow(gControl *control)
 {
 	gMainWindow *window = control ? control->window() : NULL;
 	gMainWindow *old = _active;
-	
+
 	if (window == _active)
 		return;
-		
+
 	_active = window;
-	
+
 	//fprintf(stderr, "setActiveWindow: %p %s\n", _active, _active ? _active->name() : "");
-	
+
 	if (old)
 		old->emit(SIGNAL(old->onDeactivate));
-		
+
 	if (window)
 		window->emit(SIGNAL(window->onActivate));
 }
@@ -1457,7 +1438,7 @@ void gMainWindow::setUtility(bool v)
 
 	if (!isTopLevel())
 		return;
-	
+
 	// TODO: works only if the window is not mapped!
 
 	_utility = v;
@@ -1494,14 +1475,14 @@ void gMainWindow::configure()
 	static GB_FUNCTION _init_menubar_shortcut_func;
 
 	int h;
-	
+
 	if (bufW < 1 || bufH < 1)
 		return;
-	
+
 	if (_initMenuBar != isMenuBarVisible())
 	{
 		_initMenuBar = !_initMenuBar;
-		
+
 		if (!init)
 		{
 			GB.GetFunction(&_init_menubar_shortcut_func, (void *)GB.FindClass("_Gui"), "_InitMenuBarShortcut", NULL, NULL);
@@ -1513,9 +1494,9 @@ void gMainWindow::configure()
 	}
 
 	h = menuBarHeight();
-	
+
 	//fprintf(stderr, "configure: %s: %d %d - %d %d\n", name(), isMenuBarVisible(), h, width(), height());
-	
+
 	if (isMenuBarVisible())
 	{
 		gtk_fixed_move(layout, GTK_WIDGET(menuBar), 0, 0);
@@ -1540,15 +1521,15 @@ bool gMainWindow::setMenuBarVisible(bool v)
 {
 	if (_showMenuBar == v)
 		return TRUE;
-	
+
 	_showMenuBar = v;
-	
+
 	if (!menuBar)
 		return TRUE;
-	
+
 	configure();
 	performArrange();
-	
+
 	return FALSE;
 }
 
@@ -1571,7 +1552,7 @@ void gMainWindow::checkMenuBar()
 	gMenu *menu;
 
 	//fprintf(stderr, "gMainWindow::checkMenuBar\n");
-	
+
 	if (menuBar)
 	{
 		_hideMenuBar = true;
@@ -1587,7 +1568,7 @@ void gMainWindow::checkMenuBar()
 			}
 		}
 	}
-		
+
 	configure();
 	performArrange();
 }
@@ -1600,24 +1581,24 @@ void gMainWindow::embedMenuBar(GtkWidget *border)
 		layout = GTK_FIXED(gtk_fixed_new());
 
 		g_object_ref(G_OBJECT(menuBar));
-		
+
 		if (gtk_widget_get_parent(GTK_WIDGET(menuBar)))
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(menuBar))), GTK_WIDGET(menuBar));
-	
+
 		gtk_fixed_put(layout, GTK_WIDGET(menuBar), 0, 0);
 
 		g_object_unref(G_OBJECT(menuBar));
-	
+
 		gt_widget_reparent(widget, GTK_WIDGET(layout));
 		gtk_container_add(GTK_CONTAINER(border), GTK_WIDGET(layout));
-	
+
 		gtk_widget_show(GTK_WIDGET(menuBar));
 		gtk_widget_show(GTK_WIDGET(layout));
 		gtk_widget_show(GTK_WIDGET(widget));
-		
+
 		gMenu::updateFont(this);
 		gMenu::updateColor(this);
-		
+
 		checkMenuBar();
 	}
 }
@@ -1659,7 +1640,7 @@ void gMainWindow::emitResize()
 {
 	if (bufW == _resize_last_w && bufH == _resize_last_h)
 		return;
-	
+
 	_resize_last_w = bufW;
 	_resize_last_h = bufH;
 	configure();

@@ -58,4 +58,3 @@ void MAIN_do_iteration_just_events();
 void MAIN_check_quit();
 
 #endif
-

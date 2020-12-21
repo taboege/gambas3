@@ -58,7 +58,7 @@ public:
 	bool expand() const { return expa; }
 	bool ignore() const { return igno; }
 	bool hovered();
-	virtual int handle();
+	virtual long handle();
 	
 	int left() const { return bufX; }
 	int x() const { return left(); }
@@ -157,8 +157,9 @@ public:
 	
 	virtual void reparent(gContainer *newpr, int x, int y);
 	void hide() { setVisible(false); }
-	void lower();
-	void raise();
+	void lower() { restack(false); }
+	void raise() { restack(true); }
+	virtual void restack(bool raise);
 	virtual void move(int x, int y);
 	virtual void resize(int w, int h);
 	virtual void moveResize(int x, int y, int w, int h);

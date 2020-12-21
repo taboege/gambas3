@@ -17,7 +17,7 @@ GB_COMPONENT_PKG_CONFIG(
 
 GB_COMPONENT_PKG_CONFIG(
   qt5x11, QT5X11, gb.qt5.x11, [x11],
-  'Qt5Core >= 5.3.0' Qt5Gui Qt5Widgets Qt5X11Extras x11
+  'Qt5Core >= 5.3.0' Qt5Gui Qt5Widgets Qt5X11Extras x11-xcb
 )
 
 GB_COMPONENT_PKG_CONFIG(
@@ -27,7 +27,7 @@ GB_COMPONENT_PKG_CONFIG(
 
 GB_COMPONENT_PKG_CONFIG(
   qt5webkit, QT5WEBKIT, gb.qt5.webkit, [webkit],
-  'Qt5Core >= 5.3.0' Qt5Gui Qt5Widgets Qt5Network Qt5Xml Qt5WebKit Qt5WebKitWidgets Qt5PrintSupport x11
+  'Qt5Core >= 5.3.0' Qt5Gui Qt5Widgets Qt5Network Qt5Xml Qt5WebKit Qt5WebKitWidgets Qt5PrintSupport
 )
 
 pkg-config --atleast-version 5.4.0 Qt5Core
