@@ -78,21 +78,9 @@ int EXPORT GB_INIT(void)
 	
 	if (use == USE_NOTHING)
 	{
-		use = USE_GB_QT5;
-		
-		env = getenv("KDE_FULL_SESSION");
-		
-		if (env && !strcmp(env, "true"))
-		{
-			env = getenv("KDE_SESSION_VERSION");
-			if (env)
-			{
-				if (strcmp(env, "4") == 0)
-					use = USE_GB_QT4;
-				else if (strcmp(env, "5") == 0)
-					use = USE_GB_QT5;
-			}
-		}
+		use = GUI_should_use();
+		if (use == USE_NOTHING)
+			use = USE_GB_QT5;
 	}
 
 	if (_debug)
