@@ -28,9 +28,9 @@
 #include "gambas.h"
 #include "gb.image.h"
 #include "gb.geom.h"
+#include "widgets.h"
 #include "gb.gtk.h"
 #include "gb.gtk.platform.h"
-#include "widgets.h"
 #include "CWidget.h"
 
 #ifndef __MAIN_C

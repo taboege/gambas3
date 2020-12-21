@@ -250,11 +250,7 @@ GB_DESC *GB_CLASSES[] EXPORT =
 	NULL
 };
 
-#ifdef GTK3
 void *GB_GTK3_1[] EXPORT =
-#else
-void *GB_GTK_1[] EXPORT =
-#endif
 {
 	(void *)GTK_INTERFACE_VERSION,
 	(void *)GTK_CreateControl,
@@ -390,8 +386,10 @@ static void load_platform(void)
 	const char *comp;
 
 	GdkDisplay *display = gdk_display_get_default();
+	//fprintf(stderr, "display = %p\n", display);
 	
 	#ifdef GDK_WINDOWING_WAYLAND
+		//fprintf(stderr, "checking wayland\n");
 	  if (GDK_IS_WAYLAND_DISPLAY(display))
 	    {
 				MAIN_platform = "wayland";
@@ -400,6 +398,7 @@ static void load_platform(void)
 	  else
 	#endif
 	#ifdef GDK_WINDOWING_X11
+		//fprintf(stderr, "checking x11\n");
 	  if (GDK_IS_X11_DISPLAY(display))
 	    {
 				MAIN_platform = "x11";
@@ -407,6 +406,7 @@ static void load_platform(void)
 	    }
 	  else
 	#endif
+		//if (!MAIN_platform)
 		{
 			fprintf(stderr, "gb.gtk3: error: unsupported platform\n");
 			abort();
@@ -454,11 +454,11 @@ static void hook_main(int *argc, char ***argv)
 	if (init)
 		return;
 
-	load_platform();
+	gApplication::init(argc, argv);
 
+	load_platform();
 	PLATFORM.Init();
 
-	gApplication::init(argc, argv);
 	gApplication::setDefaultTitle(GB.Application.Title());
 	gDesktop::init();
 
@@ -582,11 +582,7 @@ static void hook_wait(int duration)
 
 	if (duration && gKey::isValid())
 	{
-#ifdef GTK3
 		fprintf(stderr, "gb.gtk3: warning: calling the event loop during a keyboard event handler is ignored\n");
-#else
-		fprintf(stderr, "gb.gtk: warning: calling the event loop during a keyboard event handler is ignored\n");
-#endif
 		return;
 	}
 
