@@ -1000,6 +1000,7 @@ static void do_nothing()
 {
 }
 
+#ifndef GTK3
 static gboolean master_client_save_yourself(GnomeClient *client, gint phase, GnomeSaveStyle save_style, gboolean is_shutting_down, GnomeInteractStyle interact_style, gboolean fast, gpointer user_data)
 {
 	if (gApplication::mainWindow())
@@ -1020,6 +1021,7 @@ static void master_client_die(GnomeClient *client, gpointer user_data)
 	gApplication::quit();
 	MAIN_check_quit();
 }
+#endif
 
 static void cb_theme_changed(GtkSettings *settings, GParamSpec *param, gpointer data)
 {
