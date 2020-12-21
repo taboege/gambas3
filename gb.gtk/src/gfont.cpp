@@ -236,10 +236,31 @@ void gFont::realize()
 {
 	ct = NULL;
 	_height = 0;
+	_metrics = NULL;
 
 	reset();
 	
 	_nfont++;  
+}
+
+PangoFontMetrics *gFont::metrics()
+{
+	if (!_metrics)
+	{
+		PangoFontDescription *desc = pango_context_get_font_description(ct);
+		_metrics = pango_context_get_metrics(ct, desc, NULL);
+	}
+	
+	return _metrics;
+}
+
+void gFont::invalidateMetrics()
+{
+	if (_metrics)
+	{
+		pango_font_metrics_unref(_metrics);
+		_metrics = NULL;
+	}
 }
 
 void gFont::initFlags()
@@ -252,6 +273,8 @@ void gFont::initFlags()
 	_size_set = comp->size() != size();
 	_strikeout_set = comp->strikeout() != strikeout();
 	_underline_set = comp->underline() != underline();
+
+	checkMustFixSpacing();
 }
 
 void gFont::create()
@@ -282,6 +305,8 @@ void gFont::create()
 	pango_context_set_font_description(ct, sty->font_desc);
 	
 #endif
+	
+	checkMustFixSpacing();
 }
 
 gFont::gFont() : gShare()
@@ -364,28 +389,17 @@ gFont::~gFont()
 
 int gFont::ascent()
 {
-	PangoFontDescription *desc = pango_context_get_font_description(ct);
-	PangoFontMetrics *metric = pango_context_get_metrics(ct,desc,NULL);
-	
-	//fprintf(stderr, "ascent: %d\n", pango_font_metrics_get_ascent(metric));
-	return gt_pango_to_pixel(pango_font_metrics_get_ascent(metric));
+	return gt_pango_to_pixel(pango_font_metrics_get_ascent(metrics()));
 }
 
 float gFont::ascentF()
 {
-	PangoFontDescription *desc = pango_context_get_font_description(ct);
-	PangoFontMetrics *metric = pango_context_get_metrics(ct,desc,NULL);
-	
-	return (float)pango_font_metrics_get_ascent(metric) / PANGO_SCALE;
+	return (float)pango_font_metrics_get_ascent(metrics()) / PANGO_SCALE;
 }
 
 int gFont::descent()
 {
-	PangoFontDescription *desc = pango_context_get_font_description(ct);
-	PangoFontMetrics *metric = pango_context_get_metrics(ct,desc,NULL);
-	
-	//fprintf(stderr, "descent: %d\n", pango_font_metrics_get_descent(metric));
-	return gt_pango_to_pixel(pango_font_metrics_get_descent(metric));
+	return gt_pango_to_pixel(pango_font_metrics_get_descent(metrics()));
 }
 
 bool gFont::bold()
@@ -407,6 +421,7 @@ void gFont::setBold(bool vl)
 		pango_font_description_set_weight(desc,PANGO_WEIGHT_NORMAL);
 	
 	_bold_set = true;
+	invalidateMetrics();
 }
 
 bool gFont::italic()
@@ -426,6 +441,7 @@ void gFont::setItalic(bool vl)
 		pango_font_description_set_style(desc,PANGO_STYLE_NORMAL);
 		
 	_italic_set = true;
+	invalidateMetrics();
 }
 
 char* gFont::name()
@@ -439,10 +455,13 @@ void gFont::setName(char *nm)
 {
 	PangoFontDescription *desc = pango_context_get_font_description(ct);
 	
-	pango_font_description_set_family (desc,nm);
+	pango_font_description_set_family(desc, nm);
 	
 	_name_set = true;
 	_height = 0;
+	invalidateMetrics();
+	
+	checkMustFixSpacing();
 }
 
 double gFont::size()
@@ -469,6 +488,7 @@ void gFont::setSize(double sz)
 	
 	_size_set = true;
 	_height = 0;
+	invalidateMetrics();
 }
 
 void gFont::setGrade(int grade)
@@ -541,18 +561,24 @@ const char *gFont::toFullString()
 void gFont::textSize(const char *text, int len, float *w, float *h)
 {
 	PangoLayout *ly;
-	int tw = 0, th = 0;
+	PangoRectangle rect = { 0 };
 	
 	if (text && len)
 	{
 		ly = pango_layout_new(ct);
 		pango_layout_set_text(ly, text, len);	
-		pango_layout_get_size(ly, &tw, &th);
+		gt_set_layout_from_font(ly, this);
+		pango_layout_get_extents(ly, NULL, &rect);
 		g_object_unref(ly);
 	}
 	
-	if (w) *w = (float)tw / PANGO_SCALE;
-	if (h) *h = (float)th / PANGO_SCALE;
+	if (w) *w = (float)rect.width / PANGO_SCALE;
+	if (h)
+	{
+		*h = (float)rect.height / PANGO_SCALE;
+		if (mustFixSpacing())
+			*h += 1;
+	}
 }
 
 int gFont::width(const char *text, int len)
@@ -735,4 +761,9 @@ void gFont::richTextSize(const char *txt, int len, float sw, float *w, float *h)
 	
 	if (w) *w = (float)tw / PANGO_SCALE;
 	if (h) *h = (float)th / PANGO_SCALE;
+}
+
+void gFont::checkMustFixSpacing()
+{
+	_must_fix_spacing = ::strcmp(name(), "Gambas") == 0;
 }

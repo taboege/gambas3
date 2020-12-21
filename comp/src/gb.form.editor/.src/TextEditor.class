@@ -4,7 +4,7 @@ Export
 
 Inherits UserControl
 
-Public Const _Properties As String = "*,Border=True,ShowPreview,ScrollBar{Scroll.*}=Both,Highlight{None;Custom;C;CPlusPlus;CSS;Diff;Gambas;HTML;JavaScript;SQL;WebPage}=None,Mode{None;Custom;C;CPlusPlus;CSS;Diff;Gambas;HTML;JavaScript;SQL;WebPage}=None,ReadOnly,TabSize{Range:2;64}=2,TabIndent,Wrap,ShowPosition,ShowLimit,ShowCurrent,ShowLineNumber,ShowModified,ShowBraces,ShowIcon,ShowExpand,ShowCursor=True,ShowSpaces,ShowIndent,CloseBraces,CloseStrings"
+Public Const _Properties As String = "*,Border=True,ShowPreview,ScrollBar{Scroll.*}=Both,Highlight{None;Custom;C;CPlusPlus;CSS;Diff;Gambas;HTML;JavaScript;SQL;WebPage;Sh}=None,Mode{None;Custom;C;CPlusPlus;CSS;Diff;Gambas;HTML;JavaScript;SQL;WebPage;Sh}=None,ReadOnly,TabSize{Range:2;64}=2,TabIndent,Wrap,ShowPosition,ShowLimit,ShowCurrent,ShowLineNumber,ShowModified,ShowBraces,ShowIcon,ShowExpand,ShowCursor=True,ShowSpaces,ShowIndent,CloseBraces,CloseStrings"
 Public Const _DrawWith As String = "-"
 Public Const _DefaultEvent As String = "Change"
 Public Const _Similar As String = "TextArea"
@@ -392,7 +392,7 @@ Private Sub Init()
   
   $bShowCursor = True
   GotoCenter(0, 0)
-  
+
   Refresh
   
 End
@@ -462,7 +462,7 @@ Private Sub UpdateMargin()
     $iWidthLineNumber = (CInt(Log10($hDoc.Count + $iLineNumberOffset)) + 1) * Me.Parent.Font.TextWidth("9") * $LH / Me.Parent.Font.Height + 8
     MW += $iWidthLineNumber
   Endif
-  If $bShowIcon Or If $bShowExpand And Len($hDoc.Highlight) > 0 Then
+  If $bShowIcon Or If $bShowExpand And $hDoc.HasHighlight() Then
     $iPosIcon = MW
     MW += $LH
   Endif
@@ -475,7 +475,7 @@ Private Sub UpdateMargin()
   
   If MW <> $MW Then
     $MW = MW
-    '$hView._SetShadowOffset(0, 0, $MW - $iWidthModified, 0)
+    $hView._SetShadowOffset(0, 0, $MW - $iWidthModified, 0)
     If $cLineLayout Then
       _UpdateAllHeight
       UpdateWidth
@@ -550,17 +550,19 @@ Private Sub DrawText(sText As String, SX As Integer, X As Integer, Y As Integer)
   
 End
 
-Private Sub DrawMatch(X As Integer, Y As Integer, H As Integer, XM As Integer, YM As Integer)
+Private Sub DrawMatch(X As Integer, Y As Integer, H As Integer, XM As Integer, YM As Integer, (bOther) As Boolean)
   
-  'Dim sCar As String
   Dim XY As Point
   Dim WW As Integer
   
-  If Not $bShowCursor Then Return
+  If Not $bShowCursor And If Not bOther And If Me.HasFocus Then Return
   XY = LinePos(YM, XM)
   WW = TextWidth($hDoc.Lines[YM], XM + 1, 1)
-  'Paint.FillRect(X + XY.X, Y + XY.Y + H - 1, WW, 1, $iForeground)
-  Paint.FillRect(X + XY.X, Y + XY.Y, WW, H, $iMatchColor)
+  'If bOther Then
+    Paint.FillRect(X + XY.X, Y + XY.Y, WW, H, $iMatchColor)
+  'Else
+  '  Paint.FillRect(X + XY.X, Y + XY.Y + H - 2, WW, 2, $iMatchColor)
+  'Endif
   
 End
 
@@ -1064,8 +1066,8 @@ Private Sub DrawLine(X As Integer, Y As Integer, Width As Integer, Height As Int
   ' Matching characters
   
   If $YM >= 0 Then
-    If Row = $YMO Then DrawMatch(X, Y, H, $XMO, $YMO)
-    If Row = $YM Then DrawMatch(X, Y, H, $XM, $YM)
+    If Row = $YMO Then DrawMatch(X, Y, H, $XMO, $YMO, False)
+    If Row = $YM Then DrawMatch(X, Y, H, $XM, $YM, True)
   Endif
   
   ' Text
@@ -1175,18 +1177,20 @@ Private Sub DrawLine(X As Integer, Y As Integer, Width As Integer, Height As Int
   
   ' Cursor
   
-  If Row = $Y And If $bShowCursor And If Me.HasFocus And If Not $bHideCursor Then
-    If $bOverwrite Then
-      sCar = String.Mid$($hDoc.Lines[$Y], $X + 1, 1)
-      If sCar = "\t" Then
-        WC = $iTabWidth
+  If Row = $Y And If Not $bHideCursor Then
+    If $bShowCursor Or If Not Me.HasFocus Then
+      If $bOverwrite Then
+        sCar = String.Mid$($hDoc.Lines[$Y], $X + 1, 1)
+        If sCar = "\t" Then
+          WC = $iTabWidth
+        Else
+          WC = Max($iSpaceWidth, $hFont.TextWidth(sCar))
+        Endif
       Else
-        WC = Max($iSpaceWidth, $hFont.TextWidth(sCar))
+        WC = 2
       Endif
-    Else
-      WC = 2
+      Paint.FillRect(X + $XY.X, Y + $XY.Y, WC, H, Color.SetAlpha($iForeground, 128))
     Endif
-    Paint.FillRect(X + $XY.X, Y + $XY.Y, WC, H, Color.SetAlpha($iForeground, 128))
   Endif
   
   ' Diff text
@@ -1334,7 +1338,7 @@ Private Sub DrawMargin(X As Integer, Y As Integer, Width As Integer, Height As I
   
   ' Margin
   
-  'Paint.FillRect(X, Y, $MW, Height, $iBackground)
+  Paint.FillRect(X, Y, $MW, Height, $iBackground)
   
   If $bShowIcon Or If $bShowExpand Then
     
@@ -1436,12 +1440,16 @@ Fast Private Sub TextWidth(sText As String, iStart As Integer, iLength As Intege
   Dim aText As String[]
   Dim I As Integer
   Dim W As Float
+  Dim fCharWidth As Float
+  
+  fCharWidth = $fCharWidth
+  If Not IsAscii(sText) Then fCharWidth = 0
   
   I = InStr(sText, "\t", iStart) - iStart
   
   If I < 0 Or If I >= iLength Then
-    If $fCharWidth Then
-      Return $fCharWidth * iLength
+    If fCharWidth Then
+      Return fCharWidth * iLength
     Else
       Return $hFont.TextWidth(String.Mid$(sText, iStart, iLength))
     Endif
@@ -1450,13 +1458,13 @@ Fast Private Sub TextWidth(sText As String, iStart As Integer, iLength As Intege
   If iLength <= 0 Then Return 0
   aText = Split(String.Mid$(sText, iStart, iLength), "\t")
   
-  If $fCharWidth Then
+  If fCharWidth Then
     
     For I = 0 To aText.Max - 1
-      W += $fCharWidth * String.Len(aText[I])
+      W += fCharWidth * String.Len(aText[I])
       W = (CInt(W + $iTabWidth) \ $iTabWidth) * $iTabWidth
     Next
-    W += $fCharWidth * String.Len(aText[aText.Max])
+    W += fCharWidth * String.Len(aText[aText.Max])
     
   Else
     
@@ -1689,6 +1697,7 @@ Public Sub View_KeyPress()
           Goto($X + 1, $Y, Key.Shift)
         Endif
       Endif
+      Goto STOP_EVENT
       
     Case Key.Left
       '$X = NormalizeColumn($X, $Y)
@@ -1705,6 +1714,7 @@ Public Sub View_KeyPress()
           Goto($X - 1, $Y, Key.Shift)
         Endif
       Endif
+      Goto STOP_EVENT
       
     Case Key.Up
       If Key.Alt Then
@@ -1725,6 +1735,7 @@ Public Sub View_KeyPress()
       Else
         GotoXY($X0 + $MW - $hView.ScrollX, $hRows._GetRowY($Y) - $hView.ScrollY + $XY.Y - $hRows.H, Key.Shift)
       Endif
+      Goto STOP_EVENT
       
     Case Key.Down
       If Key.Alt Then
@@ -1748,6 +1759,7 @@ Public Sub View_KeyPress()
         GotoXY(X, $hRows._GetRowY($Y) - $hView.ScrollY + $XY.Y + $hRows.H, Key.Shift)
         ' ?? If $Y = Y Then GotoXY(X, $hRows._GetRowY($Y + 1) - $hView.ScrollY, Key.Shift)
       Endif
+      Goto STOP_EVENT
       
     Case Key.Home
       If Key.Control Then
@@ -1768,6 +1780,7 @@ Public Sub View_KeyPress()
           Goto(P, $Y, Key.Shift)
         Endif
       Endif
+      Goto STOP_EVENT
       
     Case Key.End
       If Key.Control Then
@@ -1789,6 +1802,7 @@ Public Sub View_KeyPress()
           Goto(P, $Y, Key.Shift)
         Endif
       Endif
+      Goto STOP_EVENT
       
     Case Key.PageUp
       'Y = RealToView($Y)
@@ -1798,6 +1812,7 @@ Public Sub View_KeyPress()
       If Not Key.Control And If Not Key.Alt And If Not Key.Meta Then
         If GotoXY($X0 + $MW - $hView.ScrollX, $hRows._GetRowY($Y) + $XY.Y - $hView.ClientH - $hView.ScrollY, Key.Shift) Then
           Goto(0, 0, Key.Shift)
+          Goto STOP_EVENT
         Endif
       Endif
       
@@ -1813,6 +1828,7 @@ Public Sub View_KeyPress()
       If Not Key.Control And If Not Key.Alt And If Not Key.Meta Then
         If GotoXY($X0 + $MW - $hView.ScrollX, $hRows._GetRowY($Y) + $XY.Y + $hView.ClientH - $hView.ScrollY, Key.Shift) Then
           Goto(-1, $hDoc.Max, Key.Shift)
+          Goto STOP_EVENT
         Endif
       Endif
       
@@ -1848,6 +1864,7 @@ Public Sub View_KeyPress()
       Endif
       'If Not $bPrint Then $bOverwrite = True
       $bOverwrite = bSaveOverwrite
+      Goto STOP_EVENT
       
     Case Key.BackSpace
       If Key.Control Then
@@ -1858,6 +1875,7 @@ Public Sub View_KeyPress()
         If $hDoc._Mode And If $hDoc._Mode.OnKeyPress(Me) Then Goto STOP_EVENT
         DeleteLeft
       Endif
+      Goto STOP_EVENT
       
     Case Key.Delete
       If Key.Control Then
@@ -1867,6 +1885,7 @@ Public Sub View_KeyPress()
         If $bReadOnly Then Goto STOP_EVENT
         DeleteRight
       Endif
+      Goto STOP_EVENT
       
     Case Key.Tab
       If Key.Control Then
@@ -1875,14 +1894,19 @@ Public Sub View_KeyPress()
       Else
         DoIndent(Key.Shift)
       Endif
+      Goto STOP_EVENT
       
     Case Key.BackTab
       DoIndent(True)
+      Goto STOP_EVENT
       
     Case Key.Insert
       Me.Overwrite = Not $bOverwrite
+      Goto STOP_EVENT
       
   End Select
+  
+  Return
   
 STOP_EVENT:
   

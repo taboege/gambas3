@@ -77,7 +77,7 @@ static void get_client_area(gContainer *cont, int *x, int *y, int *w, int *h)
 }
 
 
-BEGIN_PROPERTY(Container_X)
+BEGIN_PROPERTY(Container_ClientX)
 
 	int x;
 	get_client_area(WIDGET, &x, NULL, NULL, NULL);
@@ -86,7 +86,7 @@ BEGIN_PROPERTY(Container_X)
 END_PROPERTY
 
 
-BEGIN_PROPERTY(Container_Y)
+BEGIN_PROPERTY(Container_ClientY)
 
 	int y;
 	get_client_area(WIDGET, NULL, &y, NULL, NULL);
@@ -159,9 +159,9 @@ END_PROPERTY
 BEGIN_PROPERTY(Container_Indent)
 
 	if (READ_PROPERTY)
-		GB.ReturnInteger(WIDGET->indent());
+		GB.ReturnBoolean(WIDGET->indent());
 	else
-		WIDGET->setMargin(VPROP(GB_INTEGER));
+		WIDGET->setIndent(VPROP(GB_BOOLEAN));
 
 END_PROPERTY
 
@@ -176,9 +176,9 @@ BEGIN_PROPERTY(Container_Invert)
 END_PROPERTY
 
 
-BEGIN_METHOD(Container_Find, GB_INTEGER x; GB_INTEGER y)
+BEGIN_METHOD(Container_FindChild, GB_INTEGER x; GB_INTEGER y)
 
-	gControl *child = WIDGET->find(VARG(x), VARG(y));
+	gControl *child = WIDGET->proxyContainer()->find(VARG(x), VARG(y));
 	
 	if (child)
 		GB.ReturnObject(child->hFree);
@@ -215,7 +215,7 @@ BEGIN_METHOD(Container_unknown, GB_VALUE x; GB_VALUE y)
 	if (GB.Conv(ARG(x), GB_T_INTEGER) || GB.Conv(ARG(y), GB_T_INTEGER))
 		return;
 	
-	Container_Find(_object, _param);
+	Container_FindChild(_object, _param);
 	
 	GB.ReturnConvVariant();
 
@@ -346,14 +346,14 @@ GB_DESC ContainerDesc[] =
 
 	GB_PROPERTY_READ("Children", "ContainerChildren", Container_Children),
 
-	GB_PROPERTY_READ("ClientX", "i", Container_X),
-	GB_PROPERTY_READ("ClientY", "i", Container_Y),
+	GB_PROPERTY_READ("ClientX", "i", Container_ClientX),
+	GB_PROPERTY_READ("ClientY", "i", Container_ClientY),
 	GB_PROPERTY_READ("ClientW", "i", Container_ClientWidth),
 	GB_PROPERTY_READ("ClientWidth", "i", Container_ClientWidth),
 	GB_PROPERTY_READ("ClientH", "i", Container_ClientHeight),
 	GB_PROPERTY_READ("ClientHeight", "i", Container_ClientHeight),
 
-	GB_METHOD("FindChild", "Control", Container_Find, "(X)i(Y)i"),
+	GB_METHOD("FindChild", "Control", Container_FindChild, "(X)i(Y)i"),
 	GB_METHOD("_unknown", "v", Container_unknown, "."),
 
 	CONTAINER_DESCRIPTION,
@@ -376,8 +376,7 @@ BEGIN_METHOD(UserControl_new, GB_OBJECT parent)
 	InitControl(new gPanel(CONTAINER(VARG(parent))), (CWIDGET*)THIS);
 	
 	PANEL->setArrange(ARRANGE_FILL);
-	PANEL->setUser(true);
-
+	PANEL->setUser();
 	THIS_UC->container = THIS;
 
 END_METHOD
@@ -462,7 +461,6 @@ BEGIN_PROPERTY(UserContainer_Container)
 		UserControl_Container(_object, _param);
 
 		WIDGET_CONT->setFullArrangement(&THIS_UC->save);
-		//qDebug("(%s %p): arrangement = %08X", GB.GetClassName(THIS), THIS, after->arrangement);
 	}
 
 END_PROPERTY
@@ -536,10 +534,10 @@ END_PROPERTY
 BEGIN_PROPERTY(UserContainer_Indent)
 	
 	if (READ_PROPERTY)
-		GB.ReturnInteger(WIDGET_CONT->indent());
+		GB.ReturnBoolean(WIDGET_CONT->indent());
 	else
 	{
-		WIDGET_CONT->setIndent(VPROP(GB_INTEGER));
+		WIDGET_CONT->setIndent(VPROP(GB_BOOLEAN));
 		THIS_UC->save = WIDGET_CONT->fullArrangement();
 	}
 	

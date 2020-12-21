@@ -302,6 +302,7 @@ Private Sub DoLayout()
   'Dim fOldZoom As Float = $fZoom
   
   If $iCount = 0 Then Return
+  'If $hView.H <> Me.H Or If $hView.W <> Me.W Then Return
   $fCenter = 0
   
   'TODO: go

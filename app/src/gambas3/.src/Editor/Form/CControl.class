@@ -297,6 +297,7 @@ Private Function CreateControl(sName As String, sClass As String, hParent As Obj
   'IF hCtrl IS UserControl OR NOT hCtrl IS Container THEN
   'Try hCtrl.Tracking = True
   hCtrl.Raise
+  hCtrl.Name = sName
   Try hCtrl.Design = True
   
   Return hCtrl
@@ -936,9 +937,17 @@ End
 
 Public Sub UpdateName()
   
-  If Virtual Then Return
+  Dim sClass As String
   
-  Select Case Object.Type(Control)
+  If Virtual Then Return
+
+  If Kind = "WebView" Then
+    sClass = Kind
+  Else
+    sClass = Object.Type(Control)
+  Endif
+  
+  Select Case sClass
 
     Case "ListBox"
       Control[0].Text = Name
@@ -1001,6 +1010,8 @@ Public Sub UpdateName()
       Endif
 
   End Select
+  
+Catch
   
 End
 

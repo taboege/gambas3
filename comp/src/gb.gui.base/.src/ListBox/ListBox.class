@@ -35,6 +35,7 @@ Private $hView As GridView
 Private $aText As New String[]
 Private $bSorted As Boolean
 Private $hSortTimer As Timer
+Private $hTimerClick As Timer
 
 Public Sub _new()
   
@@ -190,14 +191,23 @@ Public Sub GridView_Select()
   
   'If $bNoEvent Then Return
   If $hView.Row < 0 Then Return
-  
+
   Raise Select
   
 End
 
-Public Sub GridView_Change()
+Public Sub TimerClick_Timer()
   
   Raise Click
+  $hTimerClick = Null
+  
+End
+
+
+Public Sub GridView_Change()
+  
+  $hTimerClick = New Timer As "TimerClick"
+  $hTimerClick.Trigger
   
 End
 
@@ -360,7 +370,8 @@ End
 
 Private Sub Index_Write(Value As Integer)
 
-  Try $hView.Row = Value
+  If Value < -1 Or If Value >= $aText.Count Then Error.Raise("Bad index")
+  $hView.Row = Value
 
 End
 

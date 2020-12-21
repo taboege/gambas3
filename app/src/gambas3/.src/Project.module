@@ -249,20 +249,20 @@ End
 
 Public Sub InitWebView()
 
-  Dim sPath As String
+  'Dim sPath As String
   Dim hDefaultFont As Font
   Dim hFixedFont As Font
 
-  If Not WebSettings.Cache.Path Then
-    sPath = "~/.cache"
-    Try Mkdir sPath
-    sPath &/= "gambas3"
-    Try Mkdir sPath
-    sPath &/= "help"
-    Try Mkdir sPath
-    WebSettings.Cache.Path = sPath
-    WebSettings.Cache.Enabled = True
-  Endif
+  ' If Not WebSettings.Cache.Path Then
+  '   sPath = "~/.cache"
+  '   Try Mkdir sPath
+  '   sPath &/= "gambas3"
+  '   Try Mkdir sPath
+  '   sPath &/= "help"
+  '   Try Mkdir sPath
+  '   WebSettings.Cache.Path = sPath
+  '   WebSettings.Cache.Enabled = True
+  ' Endif
 
   'WebSettings.Fonts.StandardFont = Application.Font.Name
   'hFont = Font[Settings["/Editor/Font", Application.Font]]
@@ -270,9 +270,9 @@ Public Sub InitWebView()
   hDefaultFont = Font[Settings["/Browser/Font"]]
   hFixedFont = Font[Settings["/Browser/FixedFont", DEFAULT_FONT]]
   
-  WebSettings.Fonts.SerifFont = hDefaultFont.Name
-  WebSettings.Fonts.SansSerifFont = hDefaultFont.Name
-  WebSettings.Fonts.DefaultFontSize = hDefaultFont.Size
+  WebSettings.Fonts.Serif = hDefaultFont.Name
+  WebSettings.Fonts.SansSerif = hDefaultFont.Name
+  WebSettings.Fonts.DefaultSize = hDefaultFont.Size
 
   ' sFont = Replace(sDefaultFont, "Sans", "Mono")
   ' If sFont = sDefaultFont Or If Not Fonts.Exist(sFont) Then
@@ -285,8 +285,8 @@ Public Sub InitWebView()
   '   Endif
   ' Endif
   
-  WebSettings.Fonts.FixedFont = hFixedFont.Name
-  WebSettings.Fonts.DefaultFixedFontSize = hFixedFont.Size
+  WebSettings.Fonts.Fixed = hFixedFont.Name
+  WebSettings.Fonts.DefaultFixedSize = hFixedFont.Size
 
 End
 
@@ -463,7 +463,7 @@ Catch
 
 End
 
-Private Sub LastOpenedFiles()
+Private Sub LoadLastOpenedFiles()
 
   Dim nOpen As Integer
   Dim iInd As Integer
@@ -793,7 +793,7 @@ _INIT_AGAIN:
     If sStatus And If Left(sStatus) <> "?" And If Left(sStatus) <> "D" Then VersionControl.RemoveFile(sPath)
   Endif 
 
-  If Not IsFake() And If Settings["/RestoreFiles", 1] Then LastOpenedFiles
+  If Not IsFake() And If Settings["/RestoreFiles", 1] Then LoadLastOpenedFiles
   
   RecentFiles = New String[]
   CPosition.Clear
@@ -1764,14 +1764,9 @@ Private Sub InitProjectFilter()
 
     $cProjectFilter = New Collection
 
-    For Each sFile In RDir(Project.Dir)
-
+    For Each sFile In Browse(Project.Dir)
+      
       sPath = Project.Dir &/ sFile
-
-      If IsDir(sPath) Then Continue
-      If Right(sPath) = "~" Then Continue
-      If Left(File.Name(sFile)) = "." Then Continue
-      If InStr(sPath, "/.svn/") Then Continue
 
       sFile = File.Name(sFile)
       If sPath Begins (Project.Dir &/ ".src") Then sFile = File.BaseName(sFile)
@@ -2822,6 +2817,17 @@ Public Sub MakeDir(sDir As String) As Boolean
 
 End
 
+Public Sub IsForbiddenDirectory(sDir As String) As Boolean
+
+  Dim sName As String
+  
+  sName = File.Name(sDir)
+  If sName = "CVS" Or If sName = "CVSROOT" Then Return True
+  If sName = ".svn" Then Return True
+  
+End
+
+
 Public Function InsertDirectory(sDir As String, Optional bNoVerCtrl As Boolean) As Boolean
 
   Dim sPath As String
@@ -2829,6 +2835,11 @@ Public Function InsertDirectory(sDir As String, Optional bNoVerCtrl As Boolean) 
 
   If Exist(sDir) Then
     FMain.ShowWarning(("Directory already exists."))
+    Return True
+  Endif
+  
+  If IsForbiddenDirectory(File.Name(sDir)) Then
+    FMain.ShowWarning(("Forbidden directory name."))
     Return True
   Endif
 
@@ -2839,14 +2850,12 @@ Public Function InsertDirectory(sDir As String, Optional bNoVerCtrl As Boolean) 
       Try Mkdir sPath
       If Error Then
         Message.Error(Error.Text)
-        Return False
+        Return True
       Endif
       If Not bNoVerCtrl Then VersionControl.AddDir(sPath)
       RefreshKey(sPath)
     Endif
   Next
-
-  Return True
 
 End
 
@@ -3068,7 +3077,7 @@ Public Function MakeExecutable(Optional bDoNotIncVersion As Boolean, Optional bS
     Return True
   Endif
 
-  bDoNotIncVersion = bDoNotIncVersion Or Project.Config["/Executable/DoNotIncrementVersion", False]
+  bDoNotIncVersion = bDoNotIncVersion Or Project.Config["/Executable/DoNotIncrementVersion", False] Or Project.VersionFile
 
   If Not bDoNotIncVersion And If Project.TimeStamp = Project.ExecTimeStamp Then
     If Message.Warning(("No change has been detected.") & "\n\n" & ("Do you really want to increment the project version and make the executable again?"), ("Make executable"), ("Cancel")) = 2 Then 
@@ -3344,8 +3353,18 @@ Public Sub ReadProject(Optional bConvert As Boolean)
           Arguments = [Split(UnQuote(sVal), "\n")]
         Endif
         
+      Case "argumentlist"
+        Arguments = Settings.FromString(sVal)
+        
       Case "currentargument"
-        If Left(sVal) = "[" Then CurrentArgument = Settings.FromString(sVal)
+        If Left(sVal) = "[" Then
+          CurrentArgument = Settings.FromString(sVal)
+        Else
+          Try CurrentArgument = Arguments[CInt(sVal)]
+        Endif
+
+      Case "currentargumentlist"
+        CurrentArgument = Settings.FromString(sVal)
 
       Case "environment"
         Environment = Split(UnQuote(sVal), "\n")
@@ -3713,7 +3732,7 @@ Public Sub WriteProject(Optional bComponentDoNotChange As Boolean, Optional bMak
 
   If Arguments.Count Then 
     Print #hFile, "Arguments="; Settings.ToString(Arguments)
-    If CurrentArgument And If CurrentArgument.Count Then Print #hFile, "CurrentArgument="; Settings.ToString(CurrentArgument)
+    If CurrentArgument And If CurrentArgument.Count Then Print #hFile, "CurrentArgumentList="; Settings.ToString(CurrentArgument)
   Endif
   If Environment.Count Then Print #hFile, "Environment="; Quote(Environment.Join("\n"))
 
@@ -4329,7 +4348,7 @@ Public Sub RefreshKey(sKey As String, Optional sOld As String)
 
 End
 
-Public Sub RenameFile(sPath As String, sNewName As String)
+Public Sub RenameFile(sPath As String, sNewName As String) As Boolean
 
   Dim sName As String
   Dim sExt As String
@@ -4401,9 +4420,10 @@ Public Sub RenameFile(sPath As String, sNewName As String)
 
 Catch
 
-  sMsg = Error.Text & "\n" & Error.Backtrace.Join(" ")
+  sMsg = Error.Text '& "\n" & Error.Backtrace.Join(" ")
   RefreshKey(sPath)
   FMain.ShowError(Subst(("Unable to rename '&1'") & "\n\n" & sMsg, File.Name(sPath)), sPath)
+  Return True
 
 End
 
@@ -5634,7 +5654,7 @@ Public Sub SetCurrentPopup(hMenu As Menu)
   Try $hCurrentPopup.Enabled = False
   $hCurrentPopup = hMenu
   Try $hCurrentPopup.Enabled = True
-  'Debug $hCurrentPopup.Name;; $hCurrentPopup.Window.Title
+  'Debug $hCurrentPopup.Window.Name; "."; $hCurrentPopup.Name
 
 End
 
@@ -6719,5 +6739,36 @@ Public Sub SaveAsExtern()
   Files[hForm.Path] = hForm
   
   hForm.Save(True)
+  
+End
+
+Public Sub Browse(sRoot As String, Optional bWithDir As Boolean) As String[]
+  
+  Dim aDir As New String[]
+  Dim aResult As New String[]
+  Dim sFile As String
+  Dim sPath As String
+  Dim sDir As String
+  
+  aDir.Add("")
+  While aDir.Count
+    sDir = aDir[0]
+    aDir.Remove(0)
+    If IsForbiddenDirectory(sRoot &/ sDir) Then Continue
+    For Each sFile In Dir(sRoot &/ sDir)
+      sPath = sDir &/ sFile
+      If Right(sFile) = "~" Then Continue
+      If IsDir(sRoot &/ sPath) Then
+        aDir.Add(sPath)
+        If bWithDir Then aResult.Add(sPath)
+      Else
+        If sFile Begins "." Then Continue
+        aResult.Add(sPath)
+      Endif
+    Next
+    
+  Wend
+  
+  Return aResult
   
 End

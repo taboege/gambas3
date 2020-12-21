@@ -48,18 +48,20 @@ public:
 	bool checked() const { return _checked; }
 	bool toggle() const { return _toggle; }
 	bool radio() const { return _radio; }
-	bool enabled();
-	gMenu* childMenu(int pos);
-	int childCount();
+	bool isEnabled() const { return !_disabled; }
+	bool isFullyEnabled() const;
+	gMenu *child(int index) const;
+	int childCount() const;
 	char* shortcut() const { return _shortcut; }
 	char* text() const { return _text; }
 	bool isVisible();
 	gPicture* picture() const { return _picture; }
 	gMainWindow* window();
 	char *name() const { return _name; }
-	bool topLevel() const { return top_level; }
+	bool isTopLevel() const { return _toplevel; }
 	bool isSeparator() const { return _style == SEPARATOR; }
 	void *parent() const { return pr; }
+	gMenu *parentMenu() const { return _toplevel ? NULL : (gMenu *)pr; }
 	bool isClosed() const { return !_opened; }
 
 	void setChecked(bool vl);
@@ -76,9 +78,9 @@ public:
 	bool action() const { return _action; }
 	void setAction(bool v) { _action = v; }
 	void setFont();
-	void setColor();
+	//void setColor();
 	
-	void setProxy(gMenu *menu);
+	bool setProxy(gMenu *menu);
 	gMenu *proxy() const { return _proxy; }
 
 //"Methods"
@@ -96,45 +98,68 @@ public:
 	void (*onHide)(gMenu *sender);
 
 //"Private"
-	enum gMenuStyle { NOTHING, SEPARATOR, MENU };
+	enum gMenuStyle { NOTHING, SEPARATOR, CHECK, NORMAL };
 	
 	void *pr;
-	bool stop_signal;
-	GtkAccelGroup *accel;
-	GtkMenu *child;
+
 	GtkMenuItem *menu;
 	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *aclbl;
+	//GtkWidget *check;
 	GtkWidget *image;
-	GtkWidget *check;
+	GtkWidget *label;
+	GtkWidget *shlabel;
+
+	GtkMenu *_popup;
+
 	GtkSizeGroup *sizeGroup;
+	GtkAccelGroup *accel;
+
 	gMenu *_proxy;
 	unsigned _opened : 1;
+	unsigned _exec: 1;
+	unsigned _disabled : 1;
+	unsigned _mapping : 1;
+	unsigned _proxy_for : 1;
+	unsigned _ignore_signal : 1;
 
 	void initialize();
 	gMenuStyle style() const { return _style; }
   void hideSeparators();
-	void willBeDeletedLater() { _delete_later = TRUE; }
-	void setRadio();
+	void willBeDeletedLater();
+	void updateRadio();
+	void updateChecked();
+	void updatePicture();
 	GtkMenu *getSubMenu();
 	void ensureChildMenu();
+	void updateShortcutRecursive();
+	GtkSizeGroup *getSizeGroup();
+	
+	void insert(gMenu *child);
+	void remove(gMenu *child);
+	void removeParent();
+	
+	bool ignoreSignal();
 
 private:
 
 	gMenuStyle _style, _oldstyle;
 	char *_name;
   gPicture *_picture;
-	char *_shortcut;
 	char *_text;
+	
+	char *_shortcut;
+	guint _shortcut_key;
+	GdkModifierType _shortcut_mods;
 
+	GPtrArray *_children;
+	
 	unsigned _checked : 1;
 	unsigned _toggle : 1;
 	unsigned _radio : 1;
 	unsigned _no_update : 1;
 	unsigned _destroyed : 1;
 	unsigned _delete_later : 1;
-	unsigned top_level : 1;
+	unsigned _toplevel : 1;
 	unsigned _action : 1;
 	unsigned _visible : 1;
 
@@ -145,6 +170,7 @@ private:
 	void doPopup(bool move, int x = 0, int y = 0);
   void update();
   void updateVisible();
+	void updateShortcut();
 };
 
 #endif

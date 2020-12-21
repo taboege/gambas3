@@ -166,7 +166,6 @@
       { panGeneral HPanel
         MoveScaled(0,10,84,54)
         Expand = True
-        AutoResize = True
         Spacing = True
         { Label16 Label
           MoveScaled(0,0,16,4)

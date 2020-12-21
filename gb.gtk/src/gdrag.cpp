@@ -389,13 +389,17 @@ gControl *gDrag::drag(gControl *source, GtkTargetList *list)
 		if (icon != _icon->getPixbuf())
 			g_object_unref(G_OBJECT(icon));
 	}
-
+	
+	source->_dragging = true;
+	
 	_end = false;
 	while (!_end)
 		MAIN_do_iteration(true);
-
-	gtk_target_list_unref(list);
-
+	
+	source->_dragging = false;
+	
+	gtk_target_list_unref(list);	
+	
 	dest = _destination;
 	cancel();
 

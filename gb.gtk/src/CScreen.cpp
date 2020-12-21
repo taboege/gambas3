@@ -274,6 +274,7 @@ END_PROPERTY
 BEGIN_METHOD_VOID(Application_exit)
 
 	GB.FreeString(&CAPPLICATION_Theme);
+	GB.StoreObject(NULL, POINTER(&CAPPLICATION_Restart));
 	free_screens();
 
 END_METHOD
@@ -316,7 +317,7 @@ BEGIN_PROPERTY(Application_DarkTheme)
 	if (!_init)
 	{
 		_init = TRUE;
-		bg = gDesktop::bgColor();
+		bg = gDesktop::getColor(gDesktop::BACKGROUND);
 		if (IMAGE.GetLuminance(bg) >= 128)
 		{
 			env = getenv("GB_GUI_DARK_THEME");

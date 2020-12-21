@@ -68,6 +68,8 @@ typedef
 		int last_resize_w;
 		int last_resize_h;
 		unsigned toplevel : 1;
+		unsigned persistent : 1;
+		unsigned closed : 1;
 		unsigned embedded : 1;
 		unsigned xembed : 1;
 		unsigned stacking : 2;

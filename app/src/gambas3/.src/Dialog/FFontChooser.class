@@ -31,6 +31,7 @@ Public Sub Form_Open()
 
   dlgFont.FixedOnly = $bShowFixed
   dlgFont.SelectedFont = $sFont
+  dlgFont.SetFocus
 
 End
 

@@ -138,7 +138,7 @@ static void set_mouse(QWidget *w, int mouse, void *cursor)
 	}
 }
 
-static void set_design_object(CWIDGET *_object)
+/*static void set_design_object(CWIDGET *_object)
 {
 	if (CWIDGET_test_flag(THIS, WF_DESIGN))
 		return;
@@ -170,33 +170,30 @@ static void set_design_recursive(QWidget *w, bool set = false)
 		if (child->isWidgetType())
 			set_design_recursive((QWidget *)child, true);
 	}
-}
+}*/
 
-static void set_design(CWIDGET *_object)
+void CWIDGET_set_design(CWIDGET *_object, bool ignore)
 {
-	CWIDGET *cont;
-
-	if (GB.Is(THIS, CLASS_UserControl))
-		set_design_recursive(WIDGET);
-	else if (!GB.Is(THIS, CLASS_Container))
-		set_design_object(THIS);
-
-	CWIDGET_set_flag(THIS, WF_DESIGN_LEADER);
+	if (THIS->flag.design)
+		return;
 	
+	//fprintf(stderr, "CWIDGET_set_design: %s %d\n", THIS->name, ignore);
+	
+	CWidget::removeFocusPolicy(WIDGET);
+	set_mouse(WIDGET, CMOUSE_DEFAULT, 0);
+	
+	THIS->flag.design = true;
+	THIS->flag.design_ignore = ignore;
+
 	if (GB.Is(THIS, CLASS_Container))
 	{
-		//qDebug("(%s %p - %p): LEADER / %p %p", GB.GetClassName(THIS), THIS, WIDGET, QCONTAINER(THIS), CWidget::getReal(QCONTAINER(THIS)));
-
-		cont = CWidget::get(QCONTAINER(THIS));
-		//debugObject(cont);		
-		if (cont && cont != THIS)
-			set_design_object(cont);
-	}
-
-	if (GB.Is(THIS, CLASS_TabStrip))
-	{
-		THIS->flag.fillBackground = TRUE;
-		CWIDGET_reset_color(THIS);
+		if (GB.Is(THIS, CLASS_TabStrip))
+		{
+			THIS->flag.fillBackground = TRUE;
+			CWIDGET_reset_color(THIS);
+		}
+		
+		CCONTAINER_update_design((CCONTAINER *)THIS);
 	}
 }
 
@@ -292,7 +289,7 @@ void CWIDGET_register_proxy(void *_object, void *proxy)
 
 int CWIDGET_check(void *_object)
 {
-	return WIDGET == NULL || CWIDGET_test_flag(THIS, WF_DELETED);
+	return WIDGET == NULL || THIS->flag.deleted;
 }
 
 static QWidget *get_viewport(QWidget *w)
@@ -307,14 +304,14 @@ static QWidget *get_viewport(QWidget *w)
 		return 0;
 }
 
-void CWIDGET_update_design(CWIDGET *_object)
+/*void CWIDGET_update_design(CWIDGET *_object)
 {
 	if (!CWIDGET_test_flag(THIS, WF_DESIGN) && !CWIDGET_test_flag(THIS, WF_DESIGN_LEADER))
 		return;
 
 	//qDebug("CWIDGET_update_design: %s %p", GB.GetClassName(THIS), THIS);
 	set_design(THIS);
-}
+}*/
 
 void CWIDGET_init_name(CWIDGET *_object)
 {
@@ -421,13 +418,13 @@ void CWIDGET_new(QWidget *w, void *_object, bool no_show, bool no_filter, bool n
 	//qDebug("CWIDGET_new: %s %p: %p in (%s %p)", GB.GetClassName(THIS), THIS, w, p ? GB.GetClassName(CWidget::get(p)) : "", CWidget::get(p));
 
 	THIS->widget = w;
-	THIS->level = MAIN_loop_level;
+	//THIS->level = MAIN_loop_level;
 
 	if (!no_init)
 		CWIDGET_init_name(THIS);	
 
 	if (qobject_cast<QAbstractScrollArea *>(w)) // || qobject_cast<Q3ScrollView *>(w))
-		CWIDGET_set_flag(THIS, WF_SCROLLVIEW);
+		THIS->flag.scrollview = TRUE;
 
 	//w->setAttribute(Qt::WA_PaintOnScreen, true);
 	
@@ -540,7 +537,7 @@ void CWIDGET_destroy(CWIDGET *_object)
 	if (!THIS || !WIDGET)
 		return;
 
-	if (CWIDGET_test_flag(THIS, WF_DELETED))
+	if (THIS->flag.deleted)
 		return;
 	
 	if (THIS->flag.dragging)
@@ -557,7 +554,7 @@ void CWIDGET_destroy(CWIDGET *_object)
 	//qDebug("CWIDGET_destroy: %s %p", GB.GetClassName(THIS), THIS);
 
 	CWIDGET_set_visible(THIS, false);
-	CWIDGET_set_flag(THIS, WF_DELETED);
+	THIS->flag.deleted = true;
 
 	WIDGET->deleteLater();
 }
@@ -875,9 +872,9 @@ void CWIDGET_check_hovered()
 }
 #endif
 
-bool CWIDGET_is_design(CWIDGET *_object)
+bool CWIDGET_is_design(void *_object)
 {
-	return CWIDGET_test_flag(THIS, WF_DESIGN) || CWIDGET_test_flag(THIS, WF_DESIGN_LEADER);
+	return THIS->flag.design && !THIS->flag.no_design;
 }
 
 static void _cleanup_CWIDGET_raise_event_action(intptr_t object)
@@ -1018,18 +1015,14 @@ END_PROPERTY
 BEGIN_PROPERTY(Control_Design)
 
 	if (READ_PROPERTY)
-	{
 		GB.ReturnBoolean(CWIDGET_is_design(THIS));
-		return;
-	}
-
-	if (VPROP(GB_BOOLEAN))
+	else
 	{
-		set_design(THIS);
-		//CWIDGET_set_flag(THIS, WF_DESIGN);
+		if (VPROP(GB_BOOLEAN))
+			CWIDGET_set_design(THIS);
+		else if (CWIDGET_is_design(THIS))
+			GB.Error("Design property cannot be reset");
 	}
-	else if (CWIDGET_test_flag(_object, WF_DESIGN) || CWIDGET_test_flag(_object, WF_DESIGN_LEADER))
-		GB.Error("Design property cannot be reset");
 
 END_PROPERTY
 
@@ -1166,7 +1159,7 @@ void CWIDGET_set_visible(CWIDGET *_object, bool v)
 		QWIDGET(_object)->hide();
 	}
 	
-	if (arrange)
+	if (arrange && !THIS->flag.ignore)
 		arrange_parent(THIS);
 }
 
@@ -1332,7 +1325,7 @@ END_PROPERTY
 BEGIN_METHOD_VOID(Control_Refresh) //, GB_INTEGER x; GB_INTEGER y; GB_INTEGER w; GB_INTEGER h)
 
 	QWIDGET(_object)->update();
-	if (CWIDGET_test_flag(THIS, WF_SCROLLVIEW))
+	if (THIS->flag.scrollview)
 		get_viewport(WIDGET)->update();
 
 END_METHOD
@@ -1533,7 +1526,7 @@ void CWIDGET_reset_color(CWIDGET *_object)
 
 			w->setPalette(palette);
 		}
-		else if (qobject_cast<QSpinBox *>(w))
+		/*else if (qobject_cast<QSpinBox *>(w))
 		{
 			palette = QPalette();
 
@@ -1544,19 +1537,36 @@ void CWIDGET_reset_color(CWIDGET *_object)
 				palette.setColor(QPalette::Text, TO_QCOLOR(fg));
 
 			w->setPalette(palette);
-		}
+		}*/
 		else
 		{
 			palette = QPalette();
 		
 			if (bg != COLOR_DEFAULT)
-				palette.setColor(w->backgroundRole(), TO_QCOLOR(bg));
+			{
+				/*if (GB.Is(THIS, CLASS_Container))
+				{
+					palette.setColor(QPalette::Base, TO_QCOLOR(bg));
+					palette.setColor(QPalette::Window, TO_QCOLOR(bg));
+					palette.setColor(QPalette::Button, TO_QCOLOR(bg));
+				}
+				else*/
+					palette.setColor(w->backgroundRole(), TO_QCOLOR(bg));
+			}
 			
 			if (fg != COLOR_DEFAULT)
-				palette.setColor(w->foregroundRole(), TO_QCOLOR(fg));
+			{
+				if (GB.Is(THIS, CLASS_Container))
+				{
+					palette.setColor(QPalette::Text, TO_QCOLOR(fg));
+					palette.setColor(QPalette::WindowText, TO_QCOLOR(fg));
+					palette.setColor(QPalette::ButtonText, TO_QCOLOR(fg));
+				}
+				else
+					palette.setColor(w->foregroundRole(), TO_QCOLOR(fg));
+			}
 		
 			w->setAutoFillBackground(!THIS->flag.noBackground && (THIS->flag.fillBackground || ((THIS_EXT && THIS_EXT->bg != COLOR_DEFAULT) && w->backgroundRole() == QPalette::Window)));
-			//qDebug("%s: %d bg role = %d", THIS->name, w->autoFillBackground(), w->backgroundRole());
 			w->setPalette(palette);
 		}
 
@@ -1869,7 +1879,7 @@ BEGIN_PROPERTY(Control_Drop)
 	else
 	{
 		THIS->flag.drop = VPROP(GB_BOOLEAN);
-		if (CWIDGET_test_flag(THIS, WF_SCROLLVIEW))
+		if (THIS->flag.scrollview)
 			get_viewport(WIDGET)->setAcceptDrops(VPROP(GB_BOOLEAN));
 		else
 			WIDGET->setAcceptDrops(VPROP(GB_BOOLEAN));
@@ -2179,8 +2189,8 @@ CWIDGET *CWidget::getRealExisting(QObject *o)
 {
 	CWIDGET *_object = dict[o];
 	
-	if (THIS && CWIDGET_test_flag(THIS, WF_DELETED))
-		_object = 0;
+	if (THIS && THIS->flag.deleted)
+		_object = NULL;
 	
 	return _object;
 }
@@ -2195,7 +2205,7 @@ CWIDGET *CWidget::getDesign(QObject *o)
 
 	real = true;
 
-	while (o)
+	/*while (o)
 	{
 		ob = dict[o];
 		if (ob)
@@ -2209,14 +2219,14 @@ CWIDGET *CWidget::getDesign(QObject *o)
 
 	if (!o)
 		return NULL;
-
-	if (!CWIDGET_test_flag(ob, WF_DESIGN))
-		return ob;
+	
+	if (!ob->flag.design_ignore)
+		return ob;*/
 
 	while (o)
 	{
 		ob = dict[o];
-		if (ob && CWIDGET_test_flag(ob, WF_DESIGN_LEADER))
+		if (ob && !ob->flag.design_ignore)
 			return ob;
 		if (((QWidget *)o)->isWindow())
 			return NULL;
@@ -2452,6 +2462,7 @@ static void post_focus_change(void *)
 		control = _old_active_control;
 		while (control)
 		{
+			//fprintf(stderr, "post_focus_change: %s lost focus\n", control->name);
 			GB.Raise(control, EVENT_LostFocus, 0);
 			control = (CWIDGET *)(EXT(control) ? EXT(control)->proxy_for : NULL);
 		}
@@ -2462,6 +2473,7 @@ static void post_focus_change(void *)
 		control = current;
 		while (control)
 		{
+			//fprintf(stderr, "post_focus_change: %s got focus\n", control->name);
 			GB.Raise(control, EVENT_GotFocus, 0);
 			control = (CWIDGET *)(EXT(control) ? EXT(control)->proxy_for : NULL);
 		}
@@ -2490,7 +2502,7 @@ void CWIDGET_handle_focus(CWIDGET *control, bool on)
 	if (on == (CWIDGET_active_control == control))
 		return;
 	
-	//qDebug("CWIDGET_handle_focus: %s %d", control->name, on);
+	//fprintf(stderr, "CWIDGET_handle_focus: %s %d\n", control->name, on);
 	
 	if (CWIDGET_active_control && !_focus_change)
 		CWIDGET_previous_control = CWIDGET_active_control;
@@ -2568,7 +2580,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 			jump = &&__DRAG_LEAVE; break;
 		case QEvent::DeferredDelete:
 			control = CWidget::getDesign(widget);
-			if (!control || CWIDGET_test_flag(control, WF_DELETED))
+			if (!control || control->flag.deleted)
 			{
 				QObject::eventFilter(widget, event); 
 				return false;
@@ -2594,7 +2606,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 	//}
 
 	real = CWidget::real;
-	design = CWIDGET_test_flag(control, WF_DESIGN); // && !GB.Is(control, CLASS_Container);
+	design = CWIDGET_is_design(control); //CWIDGET_test_flag(control, WF_DESIGN); // && !GB.Is(control, CLASS_Container);
 	original = event->spontaneous();
 	
 	goto *jump;
@@ -2713,7 +2725,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 		if (!real)
 		{
 			CWIDGET *cont = CWidget::get(widget);
-			if (CWIDGET_test_flag(cont, WF_SCROLLVIEW))
+			if (cont->flag.scrollview)
 			{
 				if (qobject_cast<QScrollBar *>(widget))
 					goto _STANDARD;
@@ -2880,7 +2892,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 		if (!real)
 		{
 			CWIDGET *cont = CWidget::get(widget);
-			if (CWIDGET_test_flag(cont, WF_SCROLLVIEW))
+			if (cont->flag.scrollview)
 			{
 				if (qobject_cast<QScrollBar *>(widget))
 					goto _STANDARD;
@@ -2985,12 +2997,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 
 		if (MAIN_key_debug)
 		{
-#ifdef QT5
-			qDebug("gb.qt5"
-#else
-			qDebug("gb.qt4"
-#endif
-				": %s: real = %d original = %d no_keyboard = %d",
+			qDebug(QT_NAME ": %s: real = %d original = %d no_keyboard = %d",
 				(type == QEvent::KeyRelease ? "KeyRelease" :
 				 (type == QEvent::KeyPress ? "KeyPress" : "?")),
 				real, original, control->flag.no_keyboard);
@@ -3018,8 +3025,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 		
 		if (MAIN_key_debug)
 		{
-			qDebug("       " 
-				"(%s %s) -> %d `%s' %s",
+			qDebug(QT_NAME ": (%s %s) -> %d `%s' %s",
 				GB.GetClassName(control), control->name,
 				kevent->key(), (const char *)kevent->text().toLatin1(), kevent->isAutoRepeat() ? "AR" : "--");
 		}
@@ -3092,12 +3098,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 
 		if (MAIN_key_debug)
 		{
-#ifdef QT5
-			qDebug("gb.qt5"
-#else
-			qDebug("gb.qt4"
-#endif
-				": InputMethod: real = %d original = %d no_keyboard = %d",
+			qDebug(QT_NAME ": InputMethod: real = %d original = %d no_keyboard = %d",
 				real, original, control->flag.no_keyboard);
 		}
 		
@@ -3110,8 +3111,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 		{
 			if (MAIN_key_debug)
 			{
-				qDebug("       " 
-					"(%s %s) -> `%s'",
+				qDebug(QT_NAME ": (%s %s) -> `%s'",
 					GB.GetClassName(control), control->name,
 					(const char *)imevent->commitString().toUtf8());
 			}
@@ -3281,7 +3281,7 @@ bool CWidget::eventFilter(QObject *widget, QEvent *event)
 	
 	__NEXT:
 	
-	if (!control || CWIDGET_test_flag(control, WF_DELETED))
+	if (!control || control->flag.deleted)
 	{
 		QObject::eventFilter(widget, event); 
 		return (type != QEvent::DeferredDelete);

@@ -24,11 +24,17 @@ GB_COMPONENT_PKG_CONFIG(
   'gtk+-3.0 >= 3.4' gdk-wayland-3.0
 )
 
+GB_COMPONENT_PKG_CONFIG(
+  gtk3webview, GTK3WEBVIEW, gb.gtk3.webview, [webview],
+  'gtk+-3.0 >= 3.4' 'webkit2gtk-4.0 >= 2.28'
+)
+
 AC_OUTPUT( \
 Makefile \
 src/Makefile \
 src/x11/Makefile \
 src/wayland/Makefile \
+src/webview/Makefile
 )
 
 GB_PRINT_MESSAGES

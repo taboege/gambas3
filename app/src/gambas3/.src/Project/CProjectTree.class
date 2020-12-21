@@ -447,7 +447,7 @@ Public Sub RefreshSources()
   
   Sources = New Collection(gb.IgnoreCase)
   
-  For Each sPath In RDir($sSourceDir, "*", gb.File + gb.Directory, True)
+  For Each sPath In Project.Browse($sSourceDir)
     If CModule.Ext.Exist(File.Ext(sPath)) Then
       sName = File.Name(sPath)
       Sources[sName] = $sSourceDir &/ sPath
@@ -464,9 +464,8 @@ Public Sub CheckDuplicates() As String[]
   Dim sName As String
   Dim sDup As String
   
-  For Each sPath In RDir($sSourceDir, "*", gb.File, True)
+  For Each sPath In Project.Browse($sSourceDir)
     sName = File.Name(sPath)
-    If sName Ends "~" Then Continue
     sDup = cName[sName]
     If Not sDup Then
       cName[sName] = sPath

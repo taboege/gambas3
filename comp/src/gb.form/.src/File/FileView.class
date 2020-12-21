@@ -16,9 +16,10 @@ Event Menu
 Event Icon(Path As String)
 
 Property {Dir} As String
+Property Current As String
+Property Read Path As String
 Property ShowHidden As Boolean
 Property ShowDirectory As Boolean
-Property Current As String
 Property Mode As Integer
 Property ShowDetailed As Boolean
 Property ShowPreview As Boolean
@@ -1255,4 +1256,11 @@ Public Sub View_Draw(X As Integer, Y As Integer, Width As Integer, Height As Int
   Y += H * 1.25
   Paint.DrawText(sAuth, X, Y, Width, Height, Align.TopNormal)
   
+End
+
+Private Function Path_Read() As String
+
+  Dim sCurrent As String = Current_Read()
+  If sCurrent Then Return $sDir &/ sCurrent
+
 End

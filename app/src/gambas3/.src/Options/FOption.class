@@ -555,7 +555,7 @@ Private Sub UpdateOfflineHelp()
 
   MHelp.ReadConfig
   panDownloadHelp.Visible = btnOfflineHelp.Value
-  panProxyConfig.Visible = Not panDownloadHelp.Visible
+  panProxyConfig.Visible = False 'Not panDownloadHelp.Visible
   UpdateDocumentationState
 
 End
@@ -1191,7 +1191,8 @@ Public Sub btnInstallFont_Click()
   
   If Not Exist(sDir) Then Mkdir sDir
   
-  For Each sFont In ["GambasMedium-12.bdf", "GambasBold-12.bdf", "GambasMedium-13.bdf", "GambasBold-13.bdf", "GambasMedium-16.bdf", "GambasBold-16.bdf"]
+  'For Each sFont In ["GambasMedium-12.bdf", "GambasBold-12.bdf", "GambasMedium-13.bdf", "GambasBold-13.bdf", "GambasMedium-16.bdf", "GambasBold-16.bdf"]
+  For Each sFont In Dir("font", "*.otb")
     Try Kill sDir &/ sFont
     Try Copy "font" &/ sFont To sDir &/ sFont
   Next
@@ -1697,12 +1698,12 @@ Private Sub SaveLayout(Optional sFile As String)
   Shell.MkDir(File.Dir(sPath))
   hSettings = New Settings(sPath, "Gambas IDE layout")
   
-  hSettings["Toolbar/Main"] = ToolBar.GetLayout("main")
-  hSettings["Toolbar/Editor"] = ToolBar.GetLayout("editor")
-  hSettings["Toolbar/Text"] = ToolBar.GetLayout("text")
-  hSettings["Toolbar/Connection"] = ToolBar.GetLayout("connection")
-  hSettings["Toolbar/Form"] = ToolBar.GetLayout("form")
-  hSettings["Toolbar/Image"] = ToolBar.GetLayout("image")
+  hSettings["Toolbar/Main"] = ToolBar.GetLayout("FMain.main")
+  hSettings["Toolbar/Editor"] = ToolBar.GetLayout("FEditor.editor")
+  hSettings["Toolbar/Text"] = ToolBar.GetLayout("FTextEditor.text")
+  hSettings["Toolbar/Connection"] = ToolBar.GetLayout("FConnectionEditor.connection")
+  hSettings["Toolbar/Form"] = ToolBar.GetLayout("FForm.form")
+  hSettings["Toolbar/Image"] = ToolBar.GetLayout("FImageEditor.image")
   hSettings["ShowMenus"] = Settings["/ShowMenus"]
   hSettings["Toolbox/Size"] = Settings["/Toolbox/Size"]
   hSettings["CloseWithMiddleClick"] = Settings["/CloseWithMiddleClick"]
@@ -1748,13 +1749,9 @@ Private Sub LoadLayout(sName As String)
   
   RefreshWindow
   
-  For Each sSlot In hSettings.Keys
-    For Each sKey In hSettings.Keys[sSlot]
-      vVal = hSettings[sSlot &/ sKey]
-      If sSlot = "Toolbar" Then
-        ToolBar.SetLayout(LCase(sKey), vVal)
-      Endif
-    Next
+  For Each sKey In hSettings.Keys["Toolbar"]
+    vVal = hSettings[sSlot &/ sKey]
+    ToolBar.SetLayout(sKey, vVal)
   Next
   
 Finally

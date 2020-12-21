@@ -254,7 +254,7 @@ gTabStripPage::gTabStripPage(gTabStrip *tab)
 	
 	//fix = gtk_event_box_new(); 
 	
-	hbox = gtk_hbox_new(false, 4);
+	hbox = gtk_hbox_new(false, gDesktop::scale() * 3 / 4);
 	fix = hbox;
 	//gtk_box_set_spacing(GTK_BOX(hbox), 4);
 	//gtk_container_add(GTK_CONTAINER(fix), hbox);
@@ -274,6 +274,10 @@ gTabStripPage::gTabStripPage(gTabStrip *tab)
 	
 	g_object_ref(widget);
 	g_object_ref(fix);
+	
+	#ifdef GTK3
+	gt_patch_control(widget, NULL);
+	#endif
 	
 	_visible = false;
 	_picture = NULL;
@@ -478,10 +482,10 @@ void gTabStripPage::updateButton()
 
 gTabStrip::gTabStrip(gContainer *parent) : gContainer(parent)
 {
-	g_typ = Type_gTabStrip;
 	_pages = g_ptr_array_new();
 	_textFont = NULL;
 	_closable = false;
+	_no_design = true;
 	
 	onClick = NULL;
 	onClose = NULL;

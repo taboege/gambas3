@@ -34,11 +34,11 @@ struct gContainerArrangement
 	unsigned margin : 1;
 	unsigned spacing : 1;
 	unsigned padding : 8;
-	unsigned indent : 4;
+	unsigned indent : 1;
 	unsigned dirty : 1;
 	unsigned autoresize : 1;
 	unsigned invert : 1;
-	unsigned _reserved: 9;
+	unsigned _reserved: 12;
 }; 
 
 class gContainer : public gControl
@@ -46,7 +46,7 @@ class gContainer : public gControl
 public:
 	gContainer();
 	gContainer(gContainer *parent);
-	~gContainer();
+	virtual ~gContainer();
 
 	int arrange() const { return arrangement.mode; }
 	bool autoResize() const { return arrangement.autoresize; }
@@ -54,7 +54,7 @@ public:
 	int padding() const { return arrangement.padding; }
 	bool spacing() const { return arrangement.spacing; }
 	bool margin() const { return arrangement.margin; }
-	int indent() const { return arrangement.indent; }
+	bool indent() const { return arrangement.indent; }
 	bool invert() const { return arrangement.invert; }
 	
 	virtual int clientWidth();
@@ -67,16 +67,18 @@ public:
 	virtual int containerHeight();
 
 	void setArrange(int vl);
-	void setUser(bool vl);
+	void setUser();
 	void setAutoResize(bool vl);
 	void setPadding(int vl);
 	void setSpacing(bool vl);
 	void setMargin(bool vl);
-	void setIndent(int vl);
+	void setIndent(bool vl);
 	void setInvert(bool vl);
 
 	virtual int childCount() const;
 	virtual gControl *child(int index) const;
+	gControl *firstChild() const { return child(0); };
+	gControl *lastChild() const { return child(childCount() - 1); }
 	
 	int childIndex(gControl *ch) const;
 	
@@ -89,6 +91,7 @@ public:
 	void setFullArrangement(gContainerArrangement *arr);
 	
 	virtual void performArrange();
+	void decide(gControl *control, bool *width, bool *height);
 	void getMaxSize(int xc, int yc, int wc, int hc, int *w, int *h);
 
 #ifndef GTK3
@@ -102,18 +105,21 @@ public:
 	bool hasBackground() const;
 	bool hasForeground() const;
 
-	virtual void resize(int w, int h);
+	virtual bool resize(int w, int h);
 
 	virtual void setVisible(bool vl);
 
 	gContainer *proxyContainer() { return _proxyContainer ? _proxyContainer : this; }
-	void setProxyContainer(gContainer *proxy) { if (_proxyContainer != this) _proxyContainer = proxy; else _proxyContainer = NULL; }
+	void setProxyContainer(gContainer *proxy);
 	gContainer *proxyContainerFor() { return _proxyContainerFor; }
 	void setProxyContainerFor(gContainer *proxy) { if (proxy != this) _proxyContainerFor = proxy; else _proxyContainerFor = NULL; }
 	
+	virtual void setDesign(bool ignore = false);
+	
 	void disableArrangement();
 	void enableArrangement();
-
+	bool isArrangementEnabled() const { return _no_arrangement == 0; }
+	
 //"Signals"
 	void (*onArrange)(gContainer *sender);
 	void (*onBeforeArrange)(gContainer *sender);
@@ -130,18 +136,22 @@ public:
 	virtual void reparent(gContainer *newpr, int x, int y);
 	void hideHiddenChildren();
 	virtual GtkWidget *getContainer();
-	gControl *findFirstFocus();	
-	void updateFocusChain();
 
+	virtual void createBorder(GtkWidget *new_border, bool keep_widget = false);
+	
 	static int _arrangement_level;
 
 private:
-  void initialize();
+
+	void initialize();
+	void updateDesignChildren();
+
 	gContainerArrangement arrangement;
   gContainer *_proxyContainer;
   gContainer *_proxyContainerFor;
 	unsigned _did_arrangement : 1;
-	unsigned _no_arrangement : 7;
+	unsigned _cb_map : 1;
+	unsigned _no_arrangement : 6;
 };
 
 #endif

@@ -64,7 +64,8 @@ Static Public _CurrentPopup As WebForm
 
 Static Private _Current As WebForm
 
-Private Const LOG_ENABLED As Boolean = True
+'Private Const LOG_ENABLED As Boolean = True
+Static Private $bLogEnabled As Boolean
 
 Static Private $iRequestProcess As Integer
 Static Private $bSendCookie As Boolean
@@ -76,8 +77,6 @@ Static Private $iEventLoopLevel As Integer
 
 Static Private $aJavascript As New String[]
 Static Private $aJavascriptBefore As New String[]
-Static Private $aJavascriptFiles As String[]
-Static Private $aJavascriptExternFiles As String[]
 
 Public _Loaded As Boolean
 Public _Window As Integer
@@ -97,11 +96,16 @@ Private $vEventLoopReturn As Variant
 Private $hMenuBar As WebMenuBar
 Private $hContents As WebContainer
 
+Private $aJavascriptFiles As String[]
+Private $aJavascriptExternFiles As String[]
+Private $aHeaders As String[]
+
 'Private $bOpened As Boolean
 
 Static Public Sub _init()
   
   System.Language = Request.Language
+  $bLogEnabled = Env["GB_WEB_GUI_DEBUG"] = "1"
   
 End
 
@@ -109,7 +113,7 @@ Static Public Sub PrintLog(sLog As String)
 
   Dim hFile As File
 
-  If Not LOG_ENABLED Then Return
+  If Not $bLogEnabled Then Return
   'If Not $bDebug Then Return
   hFile = Open Session.Path &/ "error.log" For Append
   For Each sLog In Split(sLog, "\n")
@@ -1352,5 +1356,18 @@ End
 Public Sub _GetMenuBar() As WebMenuBar
   
   Return $hMenuBar
+  
+End
+
+Public Sub AddHeader(Header As String)
+  
+  If Not $aHeaders Then $aHeaders = New String[]
+  $aHeaders.Add(Trim(Header))
+  
+End
+
+Public Sub _GetHeaders() As String[]
+  
+  Return $aHeaders
   
 End

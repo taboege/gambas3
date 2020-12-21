@@ -19,11 +19,14 @@ Private $bShowLabel As Boolean
 
 Private $sSplitFont As String
 Private $aSplitFont As String[]
+Private $bShowFont As Boolean
 
 Public Sub _new()
 
   Inc $iNoChange
   $bNoRefresh = True
+  $bShowFont = True
+  Me.Proxy = txtFilter
   
   'lstSize.List = ["6", "7", "8", "9", "10", "11", "12", "13", "14", "16", "18", "20", "24", "28", "32", "36", "40", "48", "56", "64", "72", "80", "96", "112", "128"]
   
@@ -135,6 +138,9 @@ Private Sub FillFamily()
   Dim hParent As Menu
   Dim iCount As Variant
   Dim cParent As New Collection
+  Dim sFilter As String
+  
+  sFilter = Trim(txtFilter.Text)
   
   tvwFamily.Clear
   
@@ -146,6 +152,8 @@ Private Sub FillFamily()
     If ShowFixed Then
       If Not Font[sFont].Fixed Then Continue
     Endif
+    
+    If sFilter And If InStr(sFont, sFilter, 1, gb.IgnoreCase) = 0 Then Continue
     
     For I = 16 DownTo 1
       sParentFont = SplitFont(sFont, I)
@@ -183,7 +191,10 @@ Private Sub FillFamily()
     Next
     
     If sParentFont And If tvwFamily[sParentFont].Children = 0 Then
-      tvwFamily[sParentFont].Foreground = Color.LightForeground
+      With tvwFamily[sParentFont]
+        .Foreground = Color.LightForeground
+        If aFont.Count <= 20 Then .Expanded = True
+      End With
       If cFont[sParentFont] >= 1000 Then
         tvwFamily.Add("." & sParentFont, sParentFont,, sParentFont)
       Endif
@@ -191,6 +202,28 @@ Private Sub FillFamily()
     
     tvwFamily.Add(sFont, sFont,, sParentFont)
     cParent[sFont] = True
+    
+  Next
+  
+  UpdateShowFont
+  
+End
+
+Private Sub UpdateShowFont()
+
+  Dim sKey As String
+  
+  If Not $bShowFont Then Return  
+
+  For Each sKey In tvwFamily.Keys
+    
+    With tvwFamily[sKey]
+      If .Children = 0 Then 
+        If sKey Begins "." Then sKey = Mid$(sKey, 2)
+        .Font = Font[sKey & ",+4"]
+        '.Text = "\n" & .Text & "\n"
+      Endif
+    End With
     
   Next
   
@@ -206,22 +239,16 @@ Public Sub RefreshFamily()
 
   If $bNoRefresh Then Return
 
-  sKey = Family 'lstFamily.Current.Key
-
   Inc $iNoChange
 
   If tvwFamily.Visible Then
 
     FillFamily
-
-    Try tvwFamily[sKey].Selected = True
-    If Error Then
-      tvwFamily.MoveFirst
-      tvwFamily.Item.Selected = True
+    If EnsureFontVisible() Then
+      tvwFamily.MoveFirst()
+      Try Family = tvwFamily.Item.Key
+      EnsureFontVisible
     Endif
-    
-    Family = tvwFamily.Key
-    Try tvwFamily.Current.EnsureVisible
     
   Else
     
@@ -231,7 +258,7 @@ Public Sub RefreshFamily()
       hFont = Font[sFamily]
       If ShowFixed And Not hFont.Fixed Then Continue
       cmbFamily.Add(sFamily)
-      If sFamily = sKey Then bExist = True
+      If sFamily = Family Then bExist = True
     Next
   
     If bExist Then
@@ -250,6 +277,21 @@ Public Sub RefreshFamily()
 
 End
 
+Private Sub EnsureFontVisible() As Boolean
+
+  Dim sKey As String
+
+  sKey = "." & Family
+  If Not tvwFamily.Exist(sKey) Then sKey = Family
+  If Not tvwFamily.Exist(sKey) Then Return True
+
+  With tvwFamily[sKey]
+    .Selected = True
+    'tvwFamily[sKey].EnsureVisible
+    tvwFamily.ScrollY = .Y - (tvwFamily.ClientH - .W) \ 2
+  End With
+
+End
 
 Public Sub SetFont(sFont As String)
 
@@ -277,8 +319,7 @@ Public Sub SetFont(sFont As String)
 
   btnRelative.Value = bRelative
 
-  Try tvwFamily[Family].Selected = True
-  Try tvwFamily[Family].EnsureVisible
+  EnsureFontVisible
 
   btnBold.Value = Bold
   btnItalic.Value = Italic
@@ -294,7 +335,7 @@ Public Sub SetFont(sFont As String)
     txtSize.Value = Size
   Endif
   
-  txtExample.Text = ("How quickly daft jumping zebras vex") & "\n0123456789 àéîöùÀÉÎÖÙ"
+  txtExample.Text = ("How quickly daft jumping zebras vex") & "\n0123456789 àéîöùÀÉÎÖÙ [({*%#"
 
   RefreshExample
 
@@ -335,10 +376,11 @@ Private Sub RefreshExample()
   
   If sFont = $sLast And If txtExample.Expand = cmbFamily.Visible Then Return
   
-  If txtExample.Visible Then
+  If panExample.Visible Then
+    txtFamily.Text = Family
     txtExample.Font = Font[GetFont()]
-    txtExample.H = Max(Desktop.Scale * 4, Min(Desktop.Scale * 16, txtExample.Font.Size * 5))
-    txtExample.Expand = cmbFamily.Visible
+    panExample.H = Max(Desktop.Scale * 4, Min(Desktop.Scale * 16, txtExample.Font.Height * 2)) + txtFamily.H + 1 + Desktop.Scale * 2
+    panExample.Expand = cmbFamily.Visible
   Endif
   
   Size = Font[sFont].Size
@@ -351,11 +393,9 @@ Private Sub RefreshExample()
 
   $sLast = sFont
   
-  lblFont.Text = sFont
-
 End
 
-Public Sub tvwFamily_Click()
+Public Sub tvwFamily_Select()
 
   If Not tvwFamily.Current Then Return
 
@@ -403,12 +443,6 @@ Public Sub txtSize_Change()
 
 End
 
-
-Public Sub lstFamily_DblClick()
-
-  GetParent()._Activate
-
-End
 
 Private Sub UpdateRelative()
 
@@ -483,7 +517,7 @@ End
 
 Public Sub panFont_Arrange()
 
-  If (panFont.W - txtSize.W - txtSize.X) < 64 Then
+  If (panFont.W - txtSize.W - sldSize.X) < 64 Then
     sldSize.Hide
   Else
     sldSize.Show
@@ -525,7 +559,6 @@ Public Sub panBorder_BeforeArrange()
     If txtExample.Visible Then
       tvwFamily.Hide
       sepFamily.Hide
-      lblFont.Hide
       sepToolbar.Hide
       cmbFamily.Show
       cmbFamily.Lower
@@ -533,10 +566,10 @@ Public Sub panBorder_BeforeArrange()
     Endif
   
     If panBorder.H < (Desktop.Scale * 14) Then
-      txtExample.Hide
+      panExample.Hide
       sepExample.Hide
     Else
-      txtExample.Show
+      panExample.Show
       sepExample.Show
     Endif
     
@@ -544,19 +577,19 @@ Public Sub panBorder_BeforeArrange()
   
     If cmbFamily.Visible Then
       cmbFamily.Hide
-      txtExample.Show
+      panExample.Show
       sepExample.Show
       tvwFamily.Show
       sepFamily.Show
-      lblFont.Show
       sepToolbar.Show
-      lblFont.Lower
       RefreshFamily
     Endif
   
   Endif
 
   RefreshExample
+  
+  Me.Proxy = If(txtFilter.Visible, txtFilter, cmbFamily)
   
 End
 
@@ -571,4 +604,61 @@ Public Sub GetShowRelative() As Boolean
   
   Return btnRelative.Visible
   
+End
+
+Public Sub tvwFamily_Activate()
+
+  If tvwFamily.Current.Children Then Return
+  GetParent()._Activate()
+
+End
+
+Public Sub SetShowFont(bShow As Boolean)
+  
+  If $bShowFont = bShow Then Return
+  $bShowFont = bShow
+  UpdateShowFont
+  
+End
+
+Public Sub HasShowFont() As Boolean
+
+  Return $bShowFont
+  
+End
+
+Public Sub txtFilter_Filter()
+
+  RefreshFamily
+
+End
+
+Public Sub txtFilter_KeyPress()
+
+  Dim hGridView As Container
+  Dim hScrollArea As Control
+  
+  If Key.Normal Then
+    If Key.Code = Key.Down Or If Key.Code = Key.Up Then
+      hGridView = tvwFamily.Children[0]
+      hScrollArea = hGridView.Children[0]
+      Object.Raise(hScrollArea, "KeyPress")
+      Stop Event
+    Else If Key.Code = Key.Return Or If Key.Code = Key.Enter Then
+      If tvwFamily.Current.Children Then
+        hGridView = tvwFamily.Children[0]
+        hScrollArea = hGridView.Children[0]
+        Object.Raise(hGridView, "KeyPress")
+        Stop Event
+      Else
+        GetParent()._Activate()
+      Endif
+    Endif
+  Endif
+End
+
+Public Sub tvwFamily_GotFocus()
+
+  txtFilter.SetFocus
+
 End

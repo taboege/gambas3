@@ -165,15 +165,16 @@ void gDrawingArea::create(void)
 			gtk_container_remove(GTK_CONTAINER(widget), ch);
 		}
 
-		_no_delete = true;
-		gtk_widget_destroy(border);
-		_no_delete = false;
 		doReparent = true;
 	}
 
+#ifdef GTK3
 	if (_cached || _use_tablet)
+#else
+	if (_cached || _use_tablet || background() != COLOR_DEFAULT)
+#endif
 	{
-		border = gtk_event_box_new();
+		createBorder(gtk_event_box_new());
 		widget = gtk_fixed_new();
 		box = widget;
 		gtk_widget_set_app_paintable(border, TRUE);
@@ -181,13 +182,16 @@ void gDrawingArea::create(void)
 	}
 	else
 	{
-		border = widget = gtk_fixed_new();
+		createBorder(gtk_fixed_new());
+		widget = border;
 		box = NULL;
 	}
 
 	realize(false);
 
-	g_signal_connect(G_OBJECT(border), "size-allocate", G_CALLBACK(cb_size), (gpointer)this);
+	if (_cached)
+		g_signal_connect(G_OBJECT(border), "size-allocate", G_CALLBACK(cb_size), (gpointer)this);
+	
 	ON_DRAW_BEFORE(border, this, cb_expose, cb_draw);
 
 	updateUseTablet();
@@ -220,6 +224,7 @@ void gDrawingArea::create(void)
 
 gDrawingArea::gDrawingArea(gContainer *parent) : gContainer(parent)
 {
+	_is_drawingarea = true;
 	_cached = false;
 	buffer = NULL;
 	box = NULL;
@@ -231,8 +236,6 @@ gDrawingArea::gDrawingArea(gContainer *parent) : gContainer(parent)
 	onExpose = NULL;
 	onFontChange = NULL;
 
-	g_typ = Type_gDrawingArea;
-
 	create();
 }
 
@@ -242,12 +245,12 @@ gDrawingArea::~gDrawingArea()
 		UNREF_BUFFER();
 }
 
-void gDrawingArea::resize(int w, int h)
+/*void gDrawingArea::resize(int w, int h)
 {
 	// TODO Do not resize cache if the DrawingArea is being painted
 	gContainer::resize(w,h);
 	//updateCache();
-}
+}*/
 
 void gDrawingArea::updateEventMask()
 {
@@ -466,3 +469,16 @@ void gDrawingArea::updateFont()
 	gContainer::updateFont();
 	emit(SIGNAL(onFontChange));
 }
+
+#ifdef GTK3
+#else
+void gDrawingArea::setBackground(gColor color)
+{
+	bool set = background() != COLOR_DEFAULT;
+	
+	gContainer::setBackground(color);
+	
+	if (set != (background() != COLOR_DEFAULT))
+		create();
+}
+#endif

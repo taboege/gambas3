@@ -2847,41 +2847,43 @@ fprintf(stderr,"[ODBC][%s][%d]\n",__FILE__,__LINE__);
 fprintf(stderr,"\tfield_info\n");
 fflush(stderr);
 #endif
-	SQLCHAR colname[32];
+	SQLCHAR colname[128];
 	SQLCHAR coltype[100];
 	SQLCHAR precision[100];
-	char query[200];
 	SQLHSTMT statHandle;
 	SQLHSTMT statHandle1;
 	SQLRETURN retcode;
 	//SQLRETURN V_OD_erg;
 	SQLLEN auton=SQL_FALSE;
 	int i;
+	int size_query = 32 + strlen(table) + strlen(field);
+	char query[size_query];
 
 	ODBC_CONN *han = (ODBC_CONN *)db->handle;
 	ODBC_CONN *han1 = (ODBC_CONN *)db->handle;
 
 	*precision = 0;
 
-	strncpy((char *)&query[0], "SELECT ",7);
+	/*strncpy((char *)&query[0], "SELECT ",7);
 	strncpy((char *)&query[7], field,strlen(field));
 	strncpy((char *)&query[strlen(field)+7], " FROM ",6);
 	strncpy((char *)&query[strlen(field)+13], table,strlen(table));
 	query[strlen(field)+14+strlen(table)]='\0';
-	strncpy((char *)&query[strlen(field)+13+strlen(table)],"\0\n\0\n",4);
+	strncpy((char *)&query[strlen(field)+13+strlen(table)],"\0\n\0\n",4);*/
 
+	snprintf(query, size_query, "SELECT %s FROM %s", field, table);
 
 	for (i = 0; i < 100; i++)
 		coltype[i] = '\0';
 
-	retcode =SQLAllocHandle(SQL_HANDLE_STMT, (ODBC_CONN *) han->odbcHandle, &statHandle);
+	retcode = SQLAllocHandle(SQL_HANDLE_STMT, (ODBC_CONN *) han->odbcHandle, &statHandle);
 
 	if ((retcode != SQL_SUCCESS) && (retcode != SQL_SUCCESS_WITH_INFO))
 	{
 		return retcode;
 	}
 
-	retcode =SQLAllocHandle(SQL_HANDLE_STMT, (ODBC_CONN *) han1->odbcHandle, &statHandle1);
+	retcode = SQLAllocHandle(SQL_HANDLE_STMT, (ODBC_CONN *) han1->odbcHandle, &statHandle1);
 
 	if ((retcode != SQL_SUCCESS) && (retcode != SQL_SUCCESS_WITH_INFO))
 	{
@@ -2894,29 +2896,23 @@ fflush(stderr);
 		return retcode;
 	}
 
-	retcode=SQLColAttribute (statHandle1,1,SQL_DESC_AUTO_UNIQUE_VALUE,NULL,0,NULL,&auton);
+	retcode = SQLColAttribute (statHandle1,1,SQL_DESC_AUTO_UNIQUE_VALUE,NULL,0,NULL,&auton);
 
 	SQLFreeHandle(SQL_HANDLE_STMT, statHandle1);
 
 	if (!SQL_SUCCEEDED(retcode = SQLColumns(statHandle, NULL, 0, NULL, 0, (SQLCHAR *) table, SQL_NTS, NULL,0)))
 		return -1;
 
-
-
 	while (SQL_SUCCEEDED(SQLFetch(statHandle)))
 	{
 		SQLGetData(statHandle, SQLColumns_COLUMN_NAME, SQL_C_CHAR, colname, sizeof(colname), 0);
 
-
-		if (strcmp((char *) colname, field) == 0)
+		if (strcmp((char *)colname, field) == 0)
 		{
 			SQL_SUCCEEDED(SQLGetData(statHandle, SQLColumns_SQL_DATA_TYPE, SQL_C_CHAR, coltype, sizeof(coltype), 0));
 			SQL_SUCCEEDED(SQLGetData(statHandle, SQLColumns_COLUMN_SIZE, SQL_C_CHAR, precision, sizeof(precision), 0));
-
-
 			break;
 		}
-
 	}
 
 	info->name = NULL;

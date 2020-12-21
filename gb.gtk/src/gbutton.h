@@ -39,8 +39,9 @@ public:
 	bool getBorder();
 	bool isCancel();
 	bool isDefault();
-	const char* text();
-	gPicture* picture();
+	const char *text() const { return bufText; }
+	bool hasText() const { return bufText && *bufText; }
+	gPicture *picture();
 	bool value();
 	bool isToggle();
 	bool isRadio();
@@ -74,7 +75,7 @@ public:
 	void (*onClick)(gControl *sender);
 
 //"Private"
-	int type;
+	char type;
 	char *bufText;
 	GtkWidget *_label;
 	GtkCellRenderer *rendtxt;
@@ -93,8 +94,6 @@ public:
 	void unsetOtherRadioButtons();
 	virtual int minimumHeight();
 	virtual void updateSize();
-	
-	static bool isButton(gControl *control) { return control->getClass() == Type_gButton && ((gButton *)control)->type == Button; }
 };
 
 #endif

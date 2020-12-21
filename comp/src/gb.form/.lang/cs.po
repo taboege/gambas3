@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gb.form 3.14.90\n"
-"POT-Creation-Date: 2020-06-06 18:08 UTC\n"
+"POT-Creation-Date: 2020-12-19 01:25 UTC\n"
 "PO-Revision-Date: 2020-06-06 18:06 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: cs\n"
@@ -42,15 +42,15 @@ msgstr ""
 msgid "Sort colors"
 msgstr ""
 
-#: DirView.class:531
+#: DirView.class:535
 msgid "Cannot rename directory."
 msgstr "Nelze přejmenovat adresář."
 
-#: DirView.class:562
+#: DirView.class:566
 msgid "New folder"
 msgstr "Nová složka"
 
-#: DirView.class:581
+#: DirView.class:585
 msgid "Cannot create directory."
 msgstr "Nelze vytvořit adresář."
 
@@ -62,19 +62,19 @@ msgstr ""
 msgid "Toggle Filechooser Detailed View"
 msgstr ""
 
-#: FCalendar.form:47
+#: FCalendar.form:48
 msgid "Today"
 msgstr "Dnes"
 
-#: FCalendar.form:53
+#: FCalendar.form:54
 msgid "Previous month"
 msgstr "Předchozí měsíc"
 
-#: FCalendar.form:59
+#: FCalendar.form:60
 msgid "Next month"
 msgstr "Následující měsíc"
 
-#: FCalendar.form:143
+#: FCalendar.form:147
 msgid "Apply"
 msgstr "Aplikovat"
 
@@ -90,141 +90,141 @@ msgstr ""
 msgid "All files (*)"
 msgstr "Všechny soubory (*)"
 
-#: FDirChooser.class:974
+#: FDirChooser.class:976
 msgid "&Bookmark current directory"
 msgstr "Přidat adresář do &záložek"
 
-#: FDirChooser.class:982
+#: FDirChooser.class:984
 msgid "&Edit bookmarks..."
 msgstr "Upravit &záložky..."
 
-#: FDirChooser.class:991
+#: FDirChooser.class:993
 msgid "Show &details"
 msgstr "Zobrazit &detaily"
 
-#: FDirChooser.class:997
+#: FDirChooser.class:999
 msgid "Show &hidden files"
 msgstr "Zobrazit &skryté soubory"
 
-#: FDirChooser.class:1003
+#: FDirChooser.class:1005
 msgid "Show &image preview"
 msgstr "Zobrazit &náhled obrázku"
 
-#: FDirChooser.class:1011
+#: FDirChooser.class:1013
 msgid "&Rename"
 msgstr "Pře&jmenovat"
 
-#: FDirChooser.class:1016
+#: FDirChooser.class:1018
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: FDirChooser.class:1021
+#: FDirChooser.class:1023
 msgid "&Delete"
 msgstr "S&mazat"
 
-#: FDirChooser.class:1033
+#: FDirChooser.class:1035
 msgid "&Uncompress file"
 msgstr "&Rozbalit soubor"
 
-#: FDirChooser.class:1038
+#: FDirChooser.class:1040
 msgid "&Create directory"
 msgstr "Vy&tvořit adresář"
 
-#: FDirChooser.class:1043
+#: FDirChooser.class:1045
 msgid "Open in &file manager..."
 msgstr "Otevřít v &souborevém manageru..."
 
-#: FDirChooser.class:1048
+#: FDirChooser.class:1050
 msgid "&Refresh"
 msgstr "&Obnovit"
 
-#: FDirChooser.class:1056
+#: FDirChooser.class:1058
 msgid "&Properties"
 msgstr "&Vlastnosti"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "Overwrite"
 msgstr "Přepsat"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "Overwrite all"
 msgstr "Vše přepsat"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "This file or directory already exists."
 msgstr "Tento soubor nebo adresář již existuje."
 
-#: FDirChooser.class:1291
+#: FDirChooser.class:1293
 msgid "Cannot list archive contents"
 msgstr ""
 
-#: FDirChooser.class:1325
+#: FDirChooser.class:1327
 msgid "Cannot uncompress file."
 msgstr "Nelze rozbalit soubor."
 
-#: FDirChooser.class:1325
+#: FDirChooser.class:1327
 msgid "Unknown archive."
 msgstr "Neznámí archív."
 
-#: FDirChooser.class:1386
+#: FDirChooser.class:1388
 msgid "Delete file"
 msgstr "Smazat soubor"
 
-#: FDirChooser.class:1387
+#: FDirChooser.class:1389
 msgid "Do you really want to delete that file?"
 msgstr "Opravdu chcete smazat tento soubor?"
 
-#: FDirChooser.class:1394
+#: FDirChooser.class:1396
 msgid "Unable to delete file."
 msgstr "Soubor nelze odstranit."
 
-#: FDirChooser.class:1404
+#: FDirChooser.class:1406
 msgid "Delete directory"
 msgstr ""
 
-#: FDirChooser.class:1405
+#: FDirChooser.class:1407
 msgid "Do you really want to delete that directory?"
 msgstr ""
 
-#: FDirChooser.class:1412
+#: FDirChooser.class:1414
 msgid "Unable to delete directory."
 msgstr ""
 
-#: FDirChooser.form:66
+#: FDirChooser.form:68
 msgid "Parent directory"
 msgstr "Rodičovský adresář"
 
-#: FDirChooser.form:72
+#: FDirChooser.form:74
 msgid "Root directory"
 msgstr ""
 
-#: FDirChooser.form:133
+#: FDirChooser.form:139
 msgid "Image preview"
 msgstr "Náhled obrázku"
 
-#: FDirChooser.form:141
+#: FDirChooser.form:147
 msgid "Detailed view"
 msgstr ""
 
-#: FDirChooser.form:149
+#: FDirChooser.form:155
 msgid "File properties"
 msgstr ""
 
-#: FDirChooser.form:155
+#: FDirChooser.form:161
 msgid "Show files"
 msgstr "Zobrazit soubory"
 
-#: FDirChooser.form:174
+#: FDirChooser.form:181
 msgid "Bookmarks"
 msgstr "Záložky"
 
 # gb-ignore
-#: FDirChooser.form:236 FInputBox.form:45 FWizard.class:76
+#: FDirChooser.form:248 FInputBox.form:45 FWizard.class:76 Form1.form:36
 msgid "OK"
 msgstr ""
 
-#: FDirChooser.form:242 FEditBookmark.class:119 FInputBox.form:51
-#: FSidePanel.class:1149 FWizard.form:53
+#: FDirChooser.form:254 FEditBookmark.class:119 FInputBox.form:51
+#: FSidePanel.class:1149 FWizard.form:52 Form1.form:42
 msgid "Cancel"
 msgstr "Zrušit"
 
@@ -281,7 +281,8 @@ msgid "ComboBox1"
 msgstr ""
 
 #: FDocumentView.form:101 FMain.form:85 FTestBalloon.form:18
-#: FTestCompletion.form:23 FTestMessageView.form:26 FTestWizard.form:22
+#: FTestCompletion.form:23 FTestMenuButton.form:148 FTestMessageView.form:26
+#: FTestWizard.form:24
 msgid "Button1"
 msgstr ""
 
@@ -293,7 +294,7 @@ msgstr ""
 msgid "Autocenter"
 msgstr ""
 
-#: FEditBookmark.class:23 FileView.class:138
+#: FEditBookmark.class:23 FileView.class:143
 msgid "Name"
 msgstr "Název"
 
@@ -321,7 +322,7 @@ msgstr "Dolů"
 msgid "Remove"
 msgstr "Odebrat"
 
-#: FEditBookmark.form:57 FFileProperties.form:270 MessageView.class:51
+#: FEditBookmark.form:57 FFileProperties.form:270 MessageView.class:53
 msgid "Close"
 msgstr "Zavřít"
 
@@ -387,11 +388,11 @@ msgstr ""
 msgid "Directory"
 msgstr "Adresář"
 
-#: FFileProperties.form:120 FileView.class:140
+#: FFileProperties.form:120 FileView.class:145
 msgid "Size"
 msgstr "Velikost"
 
-#: FFileProperties.form:132 FileView.class:142
+#: FFileProperties.form:132 FileView.class:147
 msgid "Last modified"
 msgstr "Poslední změna"
 
@@ -415,27 +416,27 @@ msgstr "Náhled"
 msgid "Errors"
 msgstr "Chyby"
 
-#: FFontChooser.class:297
+#: FFontChooser.class:334
 msgid "How quickly daft jumping zebras vex"
 msgstr "Příliš žluťoučký kůň úpěl ďábelské ódy"
 
-#: FFontChooser.form:55
+#: FFontChooser.form:96
 msgid "Bold"
 msgstr "Tučné"
 
-#: FFontChooser.form:62
+#: FFontChooser.form:103
 msgid "Italic"
 msgstr "Kurzíva"
 
-#: FFontChooser.form:69
+#: FFontChooser.form:110
 msgid "Underline"
 msgstr "Podtržené"
 
-#: FFontChooser.form:76
+#: FFontChooser.form:117
 msgid "Strikeout"
 msgstr "Přeškrknuté"
 
-#: FFontChooser.form:85
+#: FFontChooser.form:126
 msgid "Relative"
 msgstr "Relativní"
 
@@ -483,11 +484,11 @@ msgstr ""
 msgid "Move item down"
 msgstr ""
 
-#: FMain.form:29 FTestFileChooser.form:31 FTestMenuButton.form:39 FWiki.form:20
+#: FMain.form:29 FTestFileChooser.form:31 FTestMenuButton.form:40 FWiki.form:20
 msgid "Menu2"
 msgstr ""
 
-#: FMain.form:33 FTestFileChooser.form:36 FTestMenuButton.form:43 FWiki.form:24
+#: FMain.form:33 FTestFileChooser.form:36 FTestMenuButton.form:44 FWiki.form:24
 msgid "Menu3"
 msgstr ""
 
@@ -556,7 +557,7 @@ msgstr ""
 msgid "Button2"
 msgstr ""
 
-#: FTestDateChooser.form:47
+#: FTestDateChooser.form:33
 msgid "Enable"
 msgstr ""
 
@@ -564,19 +565,19 @@ msgstr ""
 msgid "Expander"
 msgstr ""
 
-#: FTestFileChooser.form:28 FTestMenuButton.form:35
+#: FTestFileChooser.form:28 FTestMenuButton.form:36
 msgid "Menu1"
 msgstr ""
 
-#: FTestFileChooser.form:41 FTestMenuButton.form:69
+#: FTestFileChooser.form:41 FTestMenuButton.form:70
 msgid "Menu7"
 msgstr ""
 
-#: FTestFileChooser.form:49 FTestMenuButton.form:52 FWiki.form:28
+#: FTestFileChooser.form:49 FTestMenuButton.form:53 FWiki.form:28
 msgid "Menu4"
 msgstr ""
 
-#: FTestFileChooser.form:54 FTestMenuButton.form:56 FWiki.form:32
+#: FTestFileChooser.form:54 FTestMenuButton.form:57 FWiki.form:32
 msgid "Menu5"
 msgstr ""
 
@@ -584,35 +585,35 @@ msgstr ""
 msgid "Balloon"
 msgstr ""
 
-#: FTestMenuButton.form:31
+#: FTestMenuButton.form:32
 msgid "Project"
 msgstr ""
 
-#: FTestMenuButton.form:48
+#: FTestMenuButton.form:49
 msgid "View"
 msgstr ""
 
-#: FTestMenuButton.form:60
+#: FTestMenuButton.form:61
 msgid "Menu6"
 msgstr ""
 
-#: FTestMenuButton.form:65
+#: FTestMenuButton.form:66
 msgid "Tools"
 msgstr ""
 
-#: FTestMenuButton.form:73
+#: FTestMenuButton.form:74
 msgid "Menu8"
 msgstr ""
 
-#: FTestMenuButton.form:77
+#: FTestMenuButton.form:78
 msgid "Menu9"
 msgstr ""
 
-#: FTestMenuButton.form:80
+#: FTestMenuButton.form:81
 msgid "Menu10"
 msgstr ""
 
-#: FTestMenuButton.form:84
+#: FTestMenuButton.form:85
 msgid "Menu11"
 msgstr ""
 
@@ -648,23 +649,19 @@ msgstr ""
 msgid "Hello world!"
 msgstr ""
 
-#: FTestWizard.form:18
+#: FTestWizard.form:20
 msgid "Étape n°1"
 msgstr ""
 
-#: FTestWizard.form:25
-msgid "Étape n°2"
+#: FTestWizard.form:27
+msgid "Ceci est une longue étape"
 msgstr ""
 
-#: FTestWizard.form:29
-msgid "LCDLabel1"
-msgstr ""
-
-#: FTestWizard.form:32
+#: FTestWizard.form:33
 msgid "Étape n°3"
 msgstr ""
 
-#: FTestWizard.form:34
+#: FTestWizard.form:35
 msgid "Étape n°4"
 msgstr ""
 
@@ -672,15 +669,19 @@ msgstr ""
 msgid "&Next"
 msgstr "&Další"
 
-#: FWizard.form:59 MessageView.class:48
+#: FWizard.form:58 MessageView.class:50
 msgid "Next"
 msgstr "Další"
 
-#: FWizard.form:65
+#: FWizard.form:64
 msgid "Previous"
 msgstr "Předchozí"
 
-#: FileView.class:1081
+#: FileView.class:159
+msgid "No file in this folder."
+msgstr ""
+
+#: FileView.class:1134
 msgid "Cannot rename file."
 msgstr "Nelze přejmonovat soubor."
 

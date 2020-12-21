@@ -935,6 +935,7 @@ Private Sub Rename(sKey As String)
   Dim iLen As Integer
   Dim sExt As String
   
+  If $bInRename Then Return
   $bInRename = True
   tvwProject[sKey].Rename
   
@@ -962,7 +963,7 @@ Public Sub mnuAddDirectory_Click()
     sPath = GetCurrentDir() &/ ("New folder") & " (" & iInd & ")"
   Wend
   
-  If Not Project.InsertDirectory(sPath, True) Then Return
+  If Project.InsertDirectory(sPath, True) Then Return
   $sDeleteKey = sPath
   
   Rename(sPath)  
@@ -1215,6 +1216,7 @@ Public Sub UpdateMenu()
   Dim bVisible As Boolean
   Dim bEnabled As Boolean
   Dim sAction As String
+  Dim sText As String
   
   bVisible = Not Project.ReadOnly
   bEnabled = Not Project.Running
@@ -1225,6 +1227,12 @@ Public Sub UpdateMenu()
     Action[sAction].Visible = bVisible
     Action[sAction].Enabled = bEnabled
   Next
+  
+  Action["run-with"].Enabled = bEnabled
+  
+  sText = If(Project.Running, ("Continue"), ("Run"))
+  mnuRun.Text = sText
+  Action["start"].Tooltip = sText
   
   UpdateProperty
   
@@ -1295,7 +1303,7 @@ Private Sub UpdateGlobalLayout()
 
   For Each hCtrl In [panDebug, panButton, panProject, tlbMain]
     hCtrl.Visible = Not bWelcome And Not bFake
-    hMenu.Enabled = hMenu.Visible
+    'hCtrl.Enabled = hCtrl.Visible
   Next
   
   'sepMenu.Visible = bWelcome Or Not bFake
@@ -1648,17 +1656,25 @@ Public Sub tvwProject_Rename()
   'DEBUG Before;; tvwProject.Item.Text
   If $sDeleteKey Then
     sNew = File.Dir($sDeleteKey) &/ tvwProject.Item.Text
+    
+    If Project.InsertDirectory(sNew) Then Goto RENAME_FAILED
     Project.DeleteDir(sPath, True)
-    Project.InsertDirectory(sNew)
     $sDeleteKey = ""
   Else
-    Project.RenameFile(sPath, tvwProject.Item.Text)
+    If Project.RenameFile(sPath, tvwProject.Item.Text) Then Goto RENAME_FAILED
   Endif
+  
+  Return
+  
+RENAME_FAILED:
+
+  $sDeleteKey = ""
+  Rename(sPath)
   
 End
 
 Public Sub mnuRenameFile_Click()
-  
+
   Rename(tvwProject.Key)
   
 End
@@ -2027,6 +2043,8 @@ Public Sub mnuEditWith_Show()
   Dim hMenu As Menu
   
   mnuEditWith.Children.Clear
+  If Not mnuEditWith.Tag Then Return
+  
   For Each hProg In mnuEditWith.Tag
     hMenu = New Menu(mnuEditWith) As "mnuEditWithProg"
     hMenu.Caption = hProg.Name & " (" & hProg.ProgramName & ")"
@@ -2680,8 +2698,12 @@ Public Sub mnuSetEnv_Click()
   sValue = Mid(sEnv, iPos + 1)
   
   aEnv = Project.Environment
-  iPos = aEnv.Find(sVar & "=*", gb.Like)
-
+  
+  For iPos = 0 To aEnv.Max
+    If LTrim(aEnv[iPos]) Begins (sVar & "=") Then Break
+  Next
+  If iPos >= aEnv.Count Then iPos = -1
+  
   If Not sValue Then
     If iPos >= 0 Then 
       aEnv.Remove(iPos)
@@ -2866,7 +2888,7 @@ Private Sub UpdateBranchMenu()
       hMenu.Text = sBranch
       hMenu.Tag = sBranch
       hMenu.Radio = True
-      hMenu.Value = sBranch = sCurrent
+      hMenu.Checked = sBranch = sCurrent
     Next
   Endif
 

@@ -21,9 +21,6 @@
 
 ***************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <gtk/gtk.h>
 #include "main.h"
 #include "gambas.h"
 #include "watcher.h"

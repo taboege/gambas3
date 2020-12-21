@@ -74,6 +74,10 @@ public:
 	
 	static void handleClickCount(GdkEvent *event);
 	static int clickCount() { return _isValid ? _click_count : 0; }
+	
+#ifdef GTK3
+	static GdkDevice *getPointer();
+#endif
 
 private:
 	static int _isValid;

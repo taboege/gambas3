@@ -21,7 +21,6 @@
 
 ***************************************************************************/
 
-#include <gtk/gtk.h>
 #include "widgets.h"
 
 #include <stdio.h>
@@ -52,6 +51,11 @@ static gControl* get_next_child_widget (gContainer *gtk_control, int *gtk_list, 
 	return NULL; 
 }
 
+static void cb_map(GtkWidget *widget, gContainer *sender)
+{
+	sender->performArrange();
+}
+
 static void cb_arrange(gContainer *sender)
 {
 	if (sender->onArrange)
@@ -64,8 +68,11 @@ static void cb_before_arrange(gContainer *sender)
 		(*(sender->onBeforeArrange))(sender);
 }
 
-static void resize_container(gControl *cont, int w, int h)
+static void resize_container(gContainer *cont, int w, int h)
 {
+	w += cont->width() - cont->containerWidth();
+	h += cont->height() - cont->containerHeight();
+	
 	if (w >= 0 && h >= 0)
 		cont->resize(w, h);
 }
@@ -78,12 +85,13 @@ static void resize_container(gControl *cont, int w, int h)
 #define GET_WIDGET(_object) _object
 #define GET_CONTAINER(_object) _object
 #define GET_ARRANGEMENT(_object) (((gContainer*)_object)->getArrangement())
-#define IS_EXPAND(_object) (((gControl*)_object)->expand())
-#define IS_IGNORE(_object) (((gControl*)_object)->ignore())
-#define IS_DESIGN(_object) (((gControl*)_object)->design())
+#define IS_EXPAND(_object) (((gControl*)_object)->isExpand())
+#define IS_IGNORE(_object) (((gControl*)_object)->isIgnore())
+#define IS_DESIGN(_object) (((gControl*)_object)->isDesign())
 #define IS_WIDGET_VISIBLE(_widget)  (((gControl*)_widget)->isVisible())
 
-#define CAN_ARRANGE(_object) (IS_WIDGET_VISIBLE(GET_WIDGET(_object)) || (((gControl *)_object)->isTopLevel() && ((gMainWindow *)_object)->opened))
+#define CAN_ARRANGE(_object) (gtk_widget_get_mapped(((gControl *)_object)->border))
+//|| (((gControl *)_object)->isTopLevel() && ((gMainWindow *)_object)->opened))
 
 // BM: ClientX() & ClientY() are relative to the border.
 // We need X & Y relative to the container widget.
@@ -100,7 +108,7 @@ static void resize_container(gControl *cont, int w, int h)
 #define MOVE_WIDGET(_object, _widget, _x, _y)  (((gControl*)_widget)->move( _x, _y))
 #define RESIZE_WIDGET(_object, _widget, _w, _h)  (((gControl*)_widget)->resize( _w, _h))
 #define MOVE_RESIZE_WIDGET(_object, _widget, _x, _y, _w, _h) (((gControl*)_widget)->moveResize( _x, _y, _w, _h))
-#define RESIZE_CONTAINER(_widget, _cont, _w, _h)  resize_container((gControl *)(_cont), _w, _h) 
+#define RESIZE_CONTAINER(_widget, _cont, _w, _h)  resize_container((gContainer *)(_cont), _w, _h) 
 
 #define INIT_CHECK_CHILDREN_LIST(_widget) \
 	gContainer *gtk_control=(gContainer*)_widget; \
@@ -222,6 +230,23 @@ void gContainer::getMaxSize(int xc, int yc, int wc, int hc, int *w, int *h)
 	arr->locked = locked;
 }
 
+void gContainer::decide(gControl *child, bool *width, bool *height)
+{
+	*width = *height = FALSE;
+	
+	if (child->isIgnore() || autoResize())
+		return;
+	
+	if ((arrange() == ARRANGE_VERTICAL)
+	    || (arrange() == ARRANGE_HORIZONTAL && child->isExpand())
+	    || (arrange() == ARRANGE_ROW && child->isExpand()))
+		*width = TRUE;
+	
+	if ((arrange() == ARRANGE_HORIZONTAL)
+	    || (arrange() == ARRANGE_VERTICAL && child->isExpand())
+	    || (arrange() == ARRANGE_COLUMN && child->isExpand()))
+		*height = TRUE;
+}
 
 void gContainer::initialize()
 {
@@ -230,6 +255,7 @@ void gContainer::initialize()
 	radiogroup = NULL;
 	onArrange = NULL;
 	onBeforeArrange = NULL;
+	
 	_proxyContainer = NULL;
 	_proxyContainerFor = NULL;
 	_client_x = -1;
@@ -237,7 +263,9 @@ void gContainer::initialize()
 	_client_w = 0;
 	_client_h = 0;
 	_no_arrangement = 0;
-	//onInsert = NULL;
+	_did_arrangement = false;
+	_cb_map = false;
+	_is_container = true;
 	
 	arrangement.mode = 0;
 	arrangement.spacing = 0;
@@ -270,6 +298,7 @@ gContainer::~gContainer()
 		child(i)->removeParent();
 	
 	g_ptr_array_unref(_children);
+	_children = NULL;
 	
 	if (radiogroup) { g_object_unref(G_OBJECT(radiogroup)); radiogroup=NULL; }
 }
@@ -348,11 +377,9 @@ void gContainer::setMargin(bool vl)
 	}
 }
 
-void gContainer::setIndent(int vl)
+void gContainer::setIndent(bool vl)
 {
-	if (vl < 0)
-		vl = 1;
-	if (vl >= 0 && vl <= 7 && vl != arrangement.indent) 
+	if (vl != arrangement.indent) 
 	{
 		arrangement.indent = vl;
 		performArrange();
@@ -368,13 +395,14 @@ void gContainer::setAutoResize(bool vl)
 	}
 }
 
-void gContainer::setUser(bool vl)
+void gContainer::setUser()
 {
-	if (vl != arrangement.user)
-	{
-		arrangement.user = vl;
-		performArrange();
-	}
+	if (arrangement.user)
+		return;
+	
+	arrangement.user = true;
+	performArrange();
+	updateDesignChildren();
 }
 
 void gContainer::setInvert(bool vl)
@@ -565,17 +593,20 @@ void gContainer::insert(gControl *child, bool realize)
 	g_ptr_array_add(_children, child);
 	
 	if (realize)
-		child->visible = true;
+		child->_visible = true;
     
 	//g_debug("gContainer::insert: visible = %d", isReallyVisible());
 	performArrange();
 	//fprintf(stderr, "--> %d %d %d %d\n", child->x(), child->y(), child->width(), child->height());
-	updateFocusChain();
 
 	if (realize)
 	{
-    gtk_widget_realize(child->border);
-		gtk_widget_show_all(child->border);
+    //gtk_widget_realize(child->border);
+		gtk_widget_show(child->border);
+		if (child->frame)
+			gtk_widget_show(child->frame);
+		if (child->widget != child->border)
+			gtk_widget_show(child->widget);
 	}
 
 #ifndef GTK3
@@ -583,12 +614,14 @@ void gContainer::insert(gControl *child, bool realize)
 	if (hasForeground() && !child->_fg_set) child->setForeground();
 #endif
   child->updateFont();
+	
+	if ((isUser() && isDesign()) || isDesignIgnore())
+		child->setDesign(true);
 }
 
 void gContainer::remove(gControl *child)
 {
 	g_ptr_array_remove(_children, child);
-	updateFocusChain();
 }
 
 
@@ -677,58 +710,38 @@ GtkWidget *gContainer::getContainer()
 	return widget;
 }
 
-gControl *gContainer::findFirstFocus()
+bool gContainer::resize(int w, int h)
 {
-	int i;
-	gControl *ch;
-	
-	for (i = 0; i < childCount(); i++)
+	if (!_cb_map)
 	{
-		ch = child(i);
-		if (ch->isContainer())
-		{
-			ch = ((gContainer *)ch)->findFirstFocus();
-			if (ch)
-				return ch;
-		}
-		else
-		{
-			if (gtk_widget_get_can_focus(ch->widget) && !((ch->getClass() == Type_gButton) && ((gButton *)ch)->hasShortcut()))
-				return ch;
-		}
+		_cb_map = true;
+		g_signal_connect(G_OBJECT(border), "map", G_CALLBACK(cb_map), (gpointer)this);	
 	}
 	
-	return NULL;
-}
+	if (gControl::resize(w, h))
+		return true;
 
-void gContainer::resize(int w, int h)
-{
-	if (w == bufW && h == bufH)
-		return;
-		
 	_client_w = 0;
 	_client_h = 0;
 	
-	gControl::resize(w, h);
 	performArrange();
+	return false;
 }
 
 void gContainer::setVisible(bool vl)
 {
-	bool arr;
+	//bool arr;
 	
 	if (vl == isVisible())
 		return;
 	
-	arr = vl && !isVisible();
-	
 	gControl::setVisible(vl);
 	
-	if (arr)
-		performArrange();
+	/*if (arr)
+		performArrange();*/
 }
 
-void gContainer::updateFocusChain()
+/*void gContainer::updateFocusChain()
 {
 	GList *chain = NULL;
 	int i;
@@ -747,7 +760,7 @@ void gContainer::updateFocusChain()
 	gtk_container_set_focus_chain(GTK_CONTAINER(widget), chain);
 	
 	g_list_free(chain);
-}
+}*/
 
 void gContainer::updateFont()
 {
@@ -839,4 +852,46 @@ void gContainer::clear()
 			break;
 		ch->destroy();
 	}
+}
+
+void gContainer::updateDesignChildren()
+{
+	int i;
+	gContainer *cont;
+
+	if (!isDesign())
+		return;
+	
+	if (!isUser() && !isDesignIgnore())
+		return;
+	
+	cont = isDesignIgnore() ? this : proxyContainer();
+	
+	for (i = 0; i < cont->childCount(); i++)
+		cont->child(i)->setDesign(true);
+}
+
+void gContainer::setDesign(bool ignore)
+{
+	if (isDesign())
+		return;
+	
+	gControl::setDesign(ignore);
+	updateDesignChildren();
+}
+
+void gContainer::setProxyContainer(gContainer *proxy)
+{
+	if (_proxyContainer != this)
+		_proxyContainer = proxy;
+	else
+		_proxyContainer = NULL;
+	
+	updateDesignChildren();
+}
+
+void gContainer::createBorder(GtkWidget *new_border, bool keep_widget)
+{
+	gControl::createBorder(new_border, keep_widget);
+	_cb_map = false;
 }

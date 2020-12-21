@@ -30,6 +30,11 @@ GB_COMPONENT_PKG_CONFIG(
   'Qt5Core >= 5.3.0' Qt5Gui Qt5Widgets Qt5Network Qt5Xml Qt5WebKit Qt5WebKitWidgets Qt5PrintSupport
 )
 
+GB_COMPONENT_PKG_CONFIG(
+  qt5webview, QT5WEBVIEW, gb.qt5.webview, [webview],
+  'Qt5Core >= 5.5.0' Qt5WebEngineWidgets
+)
+
 pkg-config --atleast-version 5.4.0 Qt5Core
 if test $? != 0; then
 	AC_DEFINE_UNQUOTED(QT_OLD_OPENGL, 1, Use deprecated OpenGL widget)
@@ -58,6 +63,7 @@ src/Makefile \
 src/x11/Makefile \
 src/wayland/Makefile \
 src/webkit/Makefile \
+src/webview/Makefile \
 src/opengl/Makefile \
 src/ext/Makefile \
 )

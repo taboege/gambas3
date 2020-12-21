@@ -31,6 +31,8 @@
 // HTML character entities
 #include "kentities.h"
 
+#include "CKey.h"
+
 void stub(const char *function)
 {
 	printf("gb.gtk: warning: %s not yet implemented\n", function);
@@ -82,7 +84,7 @@ void fill_gdk_color(GdkColor *gcol, gColor color, GdkColormap *cmap)
 }
 #endif
 
-gColor get_gdk_color(GdkColor *gcol)
+gColor gt_gdkcolor_to_color(GdkColor *gcol)
 {
 	return gt_rgb_to_color(SCALE(gcol->red), SCALE(gcol->green), SCALE(gcol->blue));
 }
@@ -161,7 +163,7 @@ gColor get_gdk_fg_color(GtkWidget *wid, bool enabled)
 	GtkStyle* st;
 
 	st=gtk_widget_get_style(wid);
-	return get_gdk_color(&st->fg[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
+	return gt_gdkcolor_to_color(&st->fg[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
 }
 #endif
 
@@ -180,7 +182,7 @@ gColor get_gdk_bg_color(GtkWidget *wid, bool enabled)
 	GtkStyle* st;
 
 	st=gtk_widget_get_style(wid);	
-	return get_gdk_color(&st->bg[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
+	return gt_gdkcolor_to_color(&st->bg[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
 }
 #endif
 
@@ -199,7 +201,7 @@ gColor get_gdk_text_color(GtkWidget *wid, bool enabled)
 	GtkStyle* st;
 
 	st=gtk_widget_get_style(wid);	
-	return get_gdk_color(&st->text[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
+	return gt_gdkcolor_to_color(&st->text[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
 }
 #endif
 
@@ -218,7 +220,7 @@ gColor get_gdk_base_color(GtkWidget *wid, bool enabled)
 	GtkStyle* st;
 
 	st=gtk_widget_get_style(wid);
-	return get_gdk_color(&st->base[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
+	return gt_gdkcolor_to_color(&st->base[enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE]);
 }
 #endif
 
@@ -771,75 +773,49 @@ void g_stradd(gchar **res, const gchar *s)
   }
 }
 
-GdkPixbuf *gt_pixbuf_create_disabled(GdkPixbuf *img)
-{
-  gint w, h;
-  guchar *r, *g, *b, *end;
-  GdkPixbuf *dimg;
-
-  dimg = gdk_pixbuf_copy(img);
-  w = gdk_pixbuf_get_width(dimg);
-  h = gdk_pixbuf_get_height(dimg);
-  r = gdk_pixbuf_get_pixels(dimg);
-  g = r + 1;
-  b = r + 2;
-  end = r + w * h * gdk_pixbuf_get_n_channels(img);
-  
-	while (r != end) 
-	{
-    *r = *g = *b = 0x80 | (((*r + *b) >> 1) + *g) >> 2; // (r + b + g) / 3
-
-    r += 4;
-    g += 4;
-    b += 4;
-	}
-	
-	return dimg;
-}
-
 void gt_shortcut_parse(char *shortcut, guint *key, GdkModifierType *mods)
 {
-	gchar **cads;
-	gchar *res;
-	int bucle;
+	char **tokens;
+	char *token;
+	int i;
+	int m;
 	
-	res = NULL;
+	*key = 0;
+	*mods = (GdkModifierType)0;
+	
+	m = 0;
 	
 	if (!shortcut || !*shortcut)
-	{
-		*key = 0;
 		return;
+	
+	tokens = g_strsplit(shortcut, "+", 0);
+	
+	i = 0;
+	while (tokens[i])
+	{
+		g_strstrip(tokens[i]);
+		i++;
 	}
 	
-	cads = g_strsplit(shortcut, "+", 0);
-	
-	bucle = 0;
-	while (cads[bucle])
+	for (i = 0; (token = tokens[i]); i++)
 	{
-		g_strstrip(cads[bucle]);
-		bucle++;
-	}
-	
-  bucle = 0;
-	while (cads[bucle])
-	{
-		if (!strcasecmp(cads[bucle],"ctrl"))
-		  g_stradd(&res, "<Ctrl>");
-		else if (!strcasecmp(cads[bucle],"shift"))
-		  g_stradd(&res, "<Shift>");
-		else if (!strcasecmp(cads[bucle],"alt"))
-		  g_stradd(&res, "<Alt>");
+		if (!strcasecmp(token, "ctrl") || !strcasecmp(token, "control"))
+			m |= GDK_CONTROL_MASK;
+		else if (!strcasecmp(token, "shift"))
+			m |= GDK_SHIFT_MASK;
+		else if (!strcasecmp(token, "alt"))
+			m |= GDK_MOD1_MASK;
 		else
-		  g_stradd(&res, cads[bucle]);
-		
-		bucle++;
+		{
+		  *key = KEY_get_keyval_from_name(token);
+			*mods = (GdkModifierType)m;
+			break;
+		}
 	}
 	
-	g_strfreev(cads);
-	gtk_accelerator_parse(res, key, mods);
+	g_strfreev(tokens);
 	
-	if (res)
-	 g_free(res);
+	//fprintf(stderr, "gt_shortcut_parse: %s -> %d / %d\n", shortcut, *key, m);
 }
 
 #define MAX_FREE_LATER 16
@@ -911,6 +887,19 @@ static void add_space(GString *str)
 		g_string_append_c(str, ' ');
 }
 
+
+static void add_attr(GString *pango, const char *attr, const char *value)
+{
+	bool add_quote = *value != '"' && *value !='\'';
+	
+	g_string_append_c(pango, ' ');
+	g_string_append(pango, attr);
+	g_string_append_c(pango, '=');
+	if (add_quote) g_string_append_c(pango, '"');
+	g_string_append(pango, value);
+	if (add_quote) g_string_append_c(pango, '"');
+}
+
 char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_break)
 {
 	static const char *title[] =
@@ -932,7 +921,9 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 	GString *pango = g_string_new("");
 	const char *p, *p_end, *p_markup;
 	char c;
-	char *token, *markup, **attr;
+	const char *token;
+	const char *markup;
+	char **attr;
 	const char *pp;
 	gsize len;
 	bool start_token = false;
@@ -944,8 +935,17 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 	bool newline = true;
 	bool inside_par = false;
 	
+	//fprintf(stderr, "gt_html_to_pango_string: %.*s\n", len_html, html);
+	
 	p_end = &html[len_html < 0 ? strlen(html) : len_html];
 	p_markup = NULL;
+	
+	if (len_html == 0)
+		goto RETURN_STRING;
+	
+	// Sometimes the first markup is not taken into account.
+	// This is a workaround for this bug:
+	g_string_append_unichar(pango, 0xFEFF);
 	
 	for (p = html;; p++)
 	{
@@ -991,7 +991,7 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 			if (len <= 0)
 			{
 				g_string_append(pango, "&lt;");
-				if (end_token) g_string_append(pango, "/");
+				if (end_token) g_string_append_c(pango, '/');
 				g_string_append(pango, "&gt;");
 				p_markup = NULL;
 				continue;
@@ -999,7 +999,19 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 			
 			markup = g_strndup(p_markup, len);
 			attr = g_strsplit(markup, " ", -1);
-			token = attr[0];
+			token = NULL;
+			
+			for (pt = (const char **)attr; *pt; pt++)
+			{
+				if ((*pt)[0])
+				{
+					token = *pt;
+					break;
+				}
+			}
+			
+			if (!token)
+				goto __FOUND_TOKEN;
 			
 			for (pt = title; *pt; pt += 2)
 			{
@@ -1031,7 +1043,7 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 			{
 				if (start_token)
 				{
-					g_string_append(pango, "\n");
+					g_string_append_c(pango, '\n');
 					newline = true;
 				}
 				goto __FOUND_TOKEN;
@@ -1041,7 +1053,7 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 			{
 				if ((end_token || inside_par) && p[1])
 				{
-					g_string_append(pango, "\n\n");
+					g_string_append(pango, "\n");
 					newline = true;
 				}
 				inside_par = start_token;
@@ -1071,13 +1083,11 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 					{
 						if (!strncasecmp(*pt, "color=", 6))
 						{
-							g_string_append(pango, " foreground=");
-							g_string_append(pango, *pt + 6);
+							add_attr(pango, "foreground", *pt + 6);
 						}
 						else if (!strncasecmp(*pt, "face=", 5))
 						{
-							g_string_append(pango, " face=");
-							g_string_append(pango, *pt + 5);
+							add_attr(pango, "face", *pt + 5);
 						}
 						else if (!strncasecmp(*pt, "size=", 5))
 						{
@@ -1106,12 +1116,12 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 							else if (size > 6)
 								size = 6;
 							
-							g_string_append(pango, "\"");
+							g_string_append_c(pango, '"');
 							g_string_append(pango, size_name[size]);
-							g_string_append(pango, "\"");
+							g_string_append_c(pango, '"');
 						}
 					}
-					g_string_append(pango, ">");
+					g_string_append_c(pango, '>');
 				}
 				goto __FOUND_TOKEN;
 			}
@@ -1122,6 +1132,15 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 					g_string_append(pango, "<span foreground=\"blue\"><u>");
 				else if (end_token && !start_token)
 					g_string_append(pango, "</u></span>");
+				goto __FOUND_TOKEN;
+			}
+			
+			if (!strcasecmp(token, "code"))
+			{
+				if (start_token && !end_token)
+					g_string_append(pango, "<tt>");
+				else if (end_token && !start_token)
+					g_string_append(pango, "</tt>");
 				goto __FOUND_TOKEN;
 			}
 			
@@ -1137,7 +1156,7 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 
 		__FOUND_TOKEN:
 		
-			g_free(token);
+			g_strfreev(attr);
 			p_markup = NULL;
 			continue;	
 		}
@@ -1146,6 +1165,12 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 		{
 			if (!newline)
 				add_space(pango);
+			continue;
+		}
+		
+		if (c == '\r')
+		{
+			add_space(pango);
 			continue;
 		}
 		
@@ -1233,12 +1258,10 @@ char *gt_html_to_pango_string(const char *html, int len_html, bool newline_are_b
 		}
 	}
 	
-	// Sometimes the first markup is not taken into account.
-	// This is a workaround for this bug:
-	g_string_prepend_unichar(pango, 0xFEFF);
+RETURN_STRING:
 	
 	p = g_string_free(pango, false);
-	//fprintf(stderr, "pango: '%s'\n", p);
+	//fprintf(stderr, "==> '%s'\n", p);
 	return (char *)p;
 }
 
@@ -1563,11 +1586,38 @@ void gt_pixbuf_make_gray(GdkPixbuf *pixbuf)
 		p[0] = p[1] = p[2] = (p[0] * 11 + p[1] * 16 + p[2] * 5) / 32;
 }
 
+GdkPixbuf *gt_pixbuf_create_disabled(GdkPixbuf *img)
+{
+  gint w, h;
+  guchar *r, *g, *b, *end;
+  GdkPixbuf *dimg;
+
+  dimg = gdk_pixbuf_copy(img);
+  w = gdk_pixbuf_get_width(dimg);
+  h = gdk_pixbuf_get_height(dimg);
+  r = gdk_pixbuf_get_pixels(dimg);
+  g = r + 1;
+  b = r + 2;
+  end = r + w * h * gdk_pixbuf_get_n_channels(img);
+  
+	while (r != end) 
+	{
+		*r = *g = *b = (*r * 11 + *g * 16 + *b * 5) / 32;
+    r += 4;
+    g += 4;
+    b += 4;
+	}
+	
+	return dimg;
+}
+
+
+
 static void disabled_handler(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer data)
 {
 	// Print only debugging messages
-	if (log_level & G_LOG_LEVEL_DEBUG)
-		g_log_default_handler(log_domain, log_level, message, data);
+	//if (log_level & G_LOG_LEVEL_DEBUG)
+	//	g_log_default_handler(log_domain, log_level, message, data);
 }
 
 static GLogFunc old_handler = NULL;
@@ -1634,6 +1684,12 @@ static void set_layout_from_font(PangoLayout *layout, gFont *font, bool add, int
 	if (font->strikeout())
 	{
 		attr = pango_attr_strikethrough_new(true);
+		pango_attr_list_insert(attrs, attr);
+	}
+	
+	if (font->mustFixSpacing())
+	{
+		attr = pango_attr_letter_spacing_new(PANGO_SCALE);
 		pango_attr_list_insert(attrs, attr);
 	}
 	
@@ -2008,8 +2064,7 @@ void gt_cairo_draw_pixbuf(cairo_t *cr, GdkPixbuf *pixbuf, float x, float y, floa
 #define NUM_STYLES 12
 
 #ifdef GTK3
-static int _style_context_loaded = 0;
-static GtkStyleContext *_style_context[NUM_STYLES];
+static GtkStyleContext *_style[NUM_STYLES] = { 0 };
 #else
 static int _style_loaded = 0;
 static GtkStyle *_style[NUM_STYLES];
@@ -2050,7 +2105,7 @@ const char *gt_get_style_class(GType type)
 	static const char *_class[] = {
 		GTK_STYLE_CLASS_DEFAULT, GTK_STYLE_CLASS_ENTRY, GTK_STYLE_CLASS_BACKGROUND, GTK_STYLE_CLASS_TOOLTIP,
 		GTK_STYLE_CLASS_SCROLLBAR, GTK_STYLE_CLASS_DEFAULT, GTK_STYLE_CLASS_CHECK, GTK_STYLE_CLASS_RADIO,
-		GTK_STYLE_CLASS_FRAME, GTK_STYLE_CLASS_BACKGROUND, GTK_STYLE_CLASS_BUTTON, GTK_STYLE_CLASS_DEFAULT
+		GTK_STYLE_CLASS_FRAME, GTK_STYLE_CLASS_BACKGROUND, GTK_STYLE_CLASS_BUTTON, GTK_STYLE_CLASS_BACKGROUND
 	};
 
 	int index = type_to_index(type);
@@ -2060,33 +2115,47 @@ const char *gt_get_style_class(GType type)
 		return _class[index];
 }
 
-GtkStyleContext *gt_get_style(GType type)
+GtkStyleContext *gt_get_style(GType type, const char *node, const char *more_klass)
 {
-	int index = type_to_index(type);
-	if (index < 0)
-		return NULL;
+	int index;
+	GtkStyleContext *style;
 
-	if ((_style_context_loaded & (1 << index)) == 0)
+	if (!node && !more_klass)
 	{
-		GtkStyleContext *style = gtk_style_context_new();
-		GtkWidgetPath *path = gtk_widget_path_new();
-		const char *klass = gt_get_style_class(type);
-
-		if (klass)
-			gtk_style_context_add_class(style, klass);
-
-		gtk_widget_path_append_type(path, type);
-#if GTK_CHECK_VERSION(3, 20, 0)
-		gtk_widget_path_iter_set_object_name(path, -1, klass);
-#endif
-		gtk_style_context_set_path(style, path);
-		//gtk_widget_path_unref(path);
-
-		_style_context[index] = style;
-		_style_context_loaded |= (1 << index);
+		index = type_to_index(type);
+		style = _style[index];
+		if (style)
+			return style;
 	}
+	
+	GtkWidgetPath *path = gtk_widget_path_new();
+	const char *klass = gt_get_style_class(type);
 
-	return _style_context[index];
+	style = gtk_style_context_new();
+	
+	if (klass)
+		gtk_style_context_add_class(style, klass);
+
+	if (more_klass)
+		gtk_style_context_add_class(style, more_klass);
+
+	gtk_widget_path_append_type(path, type);
+
+	#if GTK_CHECK_VERSION(3, 20, 0)
+	gtk_widget_path_iter_set_object_name(path, -1, klass);
+	if (node)
+	{
+		gtk_widget_path_append_type(path, type);
+		gtk_widget_path_iter_set_object_name(path, 1, node);
+	}
+#endif
+
+	gtk_style_context_set_path(style, path);
+
+	if (!node && !more_klass)
+		_style[index] = style;
+	
+	return style;
 }
 
 #else
@@ -2254,7 +2323,15 @@ bool gt_grab(GtkWidget *widget, bool owner_event, guint32 time)
 	GdkWindow *win = gtk_widget_get_window(widget);
 	int ret;
 
-#ifdef GTK3
+#if GDK_MAJOR_VERSION > 3 || (GDK_MAJOR_VERSION == 3 && GDK_MINOR_VERSION >= 20)
+
+	GdkSeat *seat = gdk_display_get_default_seat(gdk_display_get_default());
+
+	ret = gdk_seat_grab(seat, win, GDK_SEAT_CAPABILITY_ALL, owner_event, gdk_window_get_cursor(win), NULL, NULL, NULL);
+	if (ret == GDK_GRAB_SUCCESS)
+		return FALSE;
+
+#elif defined(GTK3)
 
 	GdkDevice *pointer = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_display_get_default()));
 	GdkDevice *keyboard = gdk_device_get_associated_device(pointer);
@@ -2306,15 +2383,24 @@ bool gt_grab(GtkWidget *widget, bool owner_event, guint32 time)
 
 void gt_ungrab(void)
 {
-#ifdef GTK3
+#if GDK_MAJOR_VERSION > 3 || (GDK_MAJOR_VERSION == 3 && GDK_MINOR_VERSION >= 20)
+
+	GdkSeat *seat = gdk_display_get_default_seat(gdk_display_get_default());
+	gdk_seat_ungrab(seat);
+
+#elif defined(GTK3)
+	
 	GdkDevice *pointer = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_display_get_default()));
 	GdkDevice *keyboard = gdk_device_get_associated_device(pointer);
 
 	gdk_device_ungrab(pointer, GDK_CURRENT_TIME);
 	gdk_device_ungrab(keyboard, GDK_CURRENT_TIME);
+	
 #else
+	
 	gdk_pointer_ungrab(GDK_CURRENT_TIME);
 	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
+	
 #endif
 }
 
@@ -2330,5 +2416,32 @@ void gt_widget_reparent(GtkWidget *widget, GtkWidget *new_parent)
   gtk_container_remove(GTK_CONTAINER(parent), widget);
   gtk_container_add(GTK_CONTAINER(new_parent), widget);
   g_object_unref(widget);
+}
+#endif
+
+void gt_on_theme_change()
+{
+	int i;
+	
+	for (i = 0; i < NUM_STYLES; i++)
+	{
+		g_object_unref(G_OBJECT(_style[i]));
+		_style[i] = NULL;
+	}
+}
+
+#if GTK_CHECK_VERSION(3, 22, 0)
+int gt_find_monitor(GdkMonitor *monitor)
+{
+	GdkDisplay *display = gdk_display_get_default();
+	int i;
+	
+	for (i = 0; i < gdk_display_get_n_monitors(display); i++)
+	{
+		if (gdk_display_get_monitor(display, i) == monitor)
+			return i;
+	}
+	
+	return -1;
 }
 #endif
