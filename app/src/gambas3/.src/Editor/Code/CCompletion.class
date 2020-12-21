@@ -127,3 +127,12 @@ Public Sub GetWord(sLine As String, iPos As Integer) As String
 Catch
 
 End
+
+Public Sub Position()
+
+  Dim hEditor As TextEditor = GetEditor()
+  
+  If Not FCompletion.VisibleFrom(hEditor) Then Return
+  FCompletion.Position(hEditor)
+  
+End

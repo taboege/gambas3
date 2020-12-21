@@ -12,15 +12,47 @@
       Visible = False
       ReadOnly = True
     }
-    { lblFont Label
-      MoveScaled(3,1,32,4)
-      Padding = 4
+    { txtFilter ButtonBox
+      MoveScaled(5,7,69,4)
+      Border = False
+      Button = False
+      ClearButton = True
+      Filter = True
+    }
+    { sepFamily Separator
+      MoveScaled(17,14,35,0)
+    }
+    { tvwFamily TreeView
+      MoveScaled(5,16,66,14)
+      Expand = True
+      Border = False
+      ScrollBar = Scroll.Vertical
+    }
+    { sepExample Separator
+      MoveScaled(16,34,35,0)
+    }
+    { panExample Panel
+      MoveScaled(4,35,62.875,10.875)
+      Background = Color.TextBackground
+      Arrangement = Arrange.Vertical
+      Margin = True
+      { txtFamily Label
+        MoveScaled(9,0,36,3)
+        Background = Color.TextBackground
+        Foreground = Color.LightForeground
+      }
+      { txtExample Label
+        MoveScaled(0,5,62,5)
+        Background = Color.TextBackground
+        Foreground = Color.TextForeground
+        Expand = True
+      }
     }
     { sepToolbar Separator
-      MoveScaled(3,7,35,0)
+      MoveScaled(3,48,35,0)
     }
     { panFont HBox
-      MoveScaled(3,8,71,4)
+      MoveScaled(3,49,71,4)
       { panStyle HBox
         MoveScaled(0,0,16,4)
         { btnBold ToolButton
@@ -56,33 +88,17 @@
       { Panel1 Panel
         MoveScaled(29,0,1,4)
       }
-      { txtSize SpinBox
-        MoveScaled(31,0,7,4)
-        Background = Color.Background
-        Border = False
-      }
       { sldSize Slider
-        MoveScaled(42,0,28,4)
+        MoveScaled(32,0,23,4)
         Expand = True
       }
-    }
-    { sepFamily Separator
-      MoveScaled(17,14,35,0)
-    }
-    { tvwFamily TreeView
-      MoveScaled(5,16,66,14)
-      Expand = True
-      Border = False
-      ScrollBar = Scroll.Vertical
-    }
-    { sepExample Separator
-      MoveScaled(16,34,35,0)
-    }
-    { txtExample Label
-      MoveScaled(6,37,62,8)
-      Background = Color.TextBackground
-      Foreground = Color.TextForeground
-      Alignment = Align.Center
+      { Panel2 Panel
+        MoveScaled(57,0,1,4)
+      }
+      { txtSize SpinBox
+        MoveScaled(62,0,7,4)
+        Background = Color.Background
+      }
     }
   }
 }

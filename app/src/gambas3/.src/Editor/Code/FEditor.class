@@ -188,7 +188,9 @@ Public Function Save() As Boolean
 
   ResetIfModified
 
-  Editors_Scroll
+  $hCompletion.Hide
+  HideSignature
+  HideMessage
   
   Save.Begin(Path)
 
@@ -437,7 +439,7 @@ End
 
 Public Sub Editors_Menu()
 
-  If Mouse.Control Then Return
+  'If Mouse.Control Then Return
 
   mnuEditor.Popup
 
@@ -986,9 +988,8 @@ Static Public Function IsCurrentProc() As Boolean
 
   For iPos = 0 To aLine.Count - 1
 
-    If aLine[iPos] = "FAST" Then
-      Continue
-    Endif
+    If aLine[iPos] = "FAST" Then Continue
+    If aLine[iPos] = "UNSAFE" Then Continue
 
     If aLine[iPos] = "PUBLIC" Then
       $bPublic = True
@@ -2205,8 +2206,8 @@ End
 
 Public Sub Editors_Scroll()
 
-  $hCompletion.Hide
-  HideSignature
+  $hCompletion.Position()
+  FSignature.Position(Me)
   HideMessage
 
 End
@@ -2439,9 +2440,11 @@ Private Sub FindDefinition() As Boolean
           If aSym.Count = 2 And If aSym[1] = ":" And If aSym[0] == sKeyWord Then
             CPosition.SaveCurrent(Me)
             GotoCenter(iLine)
-            Return
+            Break
           Endif
         Wend
+        
+        Return
         
       Endif
     Endif

@@ -115,6 +115,7 @@ const void *const GAMBAS_Api[] =
 	(void *)GB_GetLastEventName,
 	(void *)CTIMER_raise,
 	(void *)GB_Stopped,
+	(void *)GB_IsRaiseLocked,
 
 	(void *)GB_NParam,
 	(void *)GB_Conv,
@@ -146,6 +147,7 @@ const void *const GAMBAS_Api[] =
 	(void *)GB_New,
 	(void *)CLASS_auto_create,
 	(void *)GB_CheckObject,
+	(void *)OBJECT_is_locked,
 
 	(void *)GB_GetEnum,
 	(void *)GB_StopEnum,
@@ -315,10 +317,10 @@ const void *const GAMBAS_DebugApi[] =
 {
 	(void *)GB_DebugGetExec,
 	(void *)STACK_get_frame,
-	(void *)ERROR_print_at,
+	(void *)ERROR_get_message,
 	(void *)ERROR_save,
 	(void *)ERROR_restore,
-	(void *)VALUE_to_string,
+	(void *)VALUE_to_local_string,
 	(void *)LOCAL_format_date,
 	(void *)LOCAL_format_number,
 	(void *)DEBUG_get_value,
@@ -749,6 +751,25 @@ bool GB_CanRaise(void *object, int event_id)
 	return (func_id != 0);
 }
 
+bool GB_IsRaiseLocked(void *object)
+{
+	COBSERVER *obs;
+
+	if (GAMBAS_DoNotRaiseEvent)
+		return TRUE;
+	
+	if (!object || !OBJECT_has_events(object))
+		return TRUE;
+
+	LIST_for_each(obs, OBJECT_event(object)->observer)
+	{
+		if (OBJECT_active_parent(obs))
+			return FALSE;
+	}
+	
+	return OBJECT_active_parent(object) == NULL;
+}
+
 
 static int get_event_func_id(ushort *event_tab, int event_id)
 {
@@ -771,6 +792,7 @@ static bool raise_event(OBJECT *observer, void *object, int func_id, int nparam)
 	CLASS_DESC_METHOD *desc;
 	void *old_last;
 	bool result;
+	uint stack_barrier;
 
 	func_id--;
 
@@ -802,13 +824,15 @@ static bool raise_event(OBJECT *observer, void *object, int func_id, int nparam)
 	stop_event = GAMBAS_StopEvent;
 	GAMBAS_StopEvent = FALSE;
 
+	stack_barrier = STACK_push_barrier();
+	
 	TRY
 	{
 		EXEC_public_desc(class, observer, desc, nparam);
 	}
 	CATCH 
 	{
-		if (ERROR->info.code && ERROR->info.code != E_ABORT)
+		if (ERROR->info.code && ERROR->info.code != E_ABORT) // && !STACK_has_error_handler())
 		{
 			ERROR_hook();
 
@@ -824,10 +848,15 @@ static bool raise_event(OBJECT *observer, void *object, int func_id, int nparam)
 			}
 		}
 		else
+		{
+			EVENT_Last = old_last;
+			GAMBAS_StopEvent = stop_event;
+			STACK_pop_barrier(stack_barrier);
 			PROPAGATE();
+		}
 	}
 	END_TRY
-
+	
 	if (RP->type == T_VOID)
 		result = FALSE;
 	else
@@ -836,10 +865,9 @@ static bool raise_event(OBJECT *observer, void *object, int func_id, int nparam)
 	if (GAMBAS_StopEvent)
 		result = TRUE;
 
-	GAMBAS_StopEvent = stop_event;
-
-	//OBJECT_UNREF(object, "raise_event");
 	EVENT_Last = old_last;
+	GAMBAS_StopEvent = stop_event;
+	STACK_pop_barrier(stack_barrier);
 
 	EXEC_release_return_value();
 
@@ -880,7 +908,7 @@ bool GB_Raise(void *object, int event_id, int nparam, ...)
 {
 	OBJECT *parent;
 	int func_id;
-	int result;
+	bool result;
 	va_list args;
 	bool arg;
 	COBSERVER *obs;
@@ -1632,7 +1660,10 @@ void GB_ReturnPtr(GB_TYPE type, void *value)
 void GB_ReturnSelf(void *object)
 {
 	if (object)
-		GB_ReturnObject(object);
+	{
+		TEMP.type = T_OBJECT;
+		TEMP._object.object = object;
+	}
 	else
 	{
 		TEMP.type = T_CLASS;
@@ -2472,7 +2503,7 @@ bool GB_Serialize(const char *path, GB_VALUE *value)
 
 	CATCH_ERROR
 	{
-		STREAM_open(&stream, path, STO_CREATE);
+		STREAM_open(&stream, path, GB_ST_CREATE);
 		STREAM_write_type(&stream, T_VARIANT, (VALUE *)value);
 		STREAM_close(&stream);
 	}
@@ -2485,7 +2516,7 @@ bool GB_UnSerialize(const char *path, GB_VALUE *value)
 
 	CATCH_ERROR
 	{
-		STREAM_open(&stream, path, STO_READ);
+		STREAM_open(&stream, path, GB_ST_READ);
 		STREAM_read_type(&stream, T_VARIANT, (VALUE *)value);
 		STREAM_close(&stream);
 	}

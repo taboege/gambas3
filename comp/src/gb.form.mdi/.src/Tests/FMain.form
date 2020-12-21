@@ -5,16 +5,17 @@
   Arrangement = Arrange.Vertical
   { ToolBar1 ToolBar
     MoveScaled(0,0,45,5)
-    Key = "test"
     Separator = True
     { ToolButton1 ToolButton
       MoveScaled(0,0,5,4)
+      Visible = False
       Action = "a"
+      AutoResize = True
+      Text = ("Save")
       Picture = Picture["icon:/22/bookmark"]
     }
     { ToolButton2 ToolButton
       MoveScaled(5,0,4,4)
-      Visible = False
       Action = "b"
       Picture = Picture["icon:/22/computer"]
     }
@@ -86,7 +87,7 @@
 
 { Actions
   { Action a
-    Text = ""
+    Text = "Save"
     Picture = "icon:/22/bookmark"
   }
   { Action b
@@ -104,13 +105,5 @@
   { Action e
     Text = "Hello"
     Picture = "icon:/small/save"
-  }
-}
-
-{ Toolbars
-  { Toolbar test
-    Text = ""
-    List = "a,b,c,d,e"
-    Default = "a,|,d,e"
   }
 }

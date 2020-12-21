@@ -1,7 +1,7 @@
 COMPONENT = gb.gtk3
 include $(top_srcdir)/component.am
 
-##SUBDIRS = . @GTKOPENGL_DIR@
+SUBDIRS = . @GTK3WEBVIEW_DIR@
 
 gblib_LTLIBRARIES = gb.gtk3.la
 
@@ -11,10 +11,10 @@ gb_gtk3_la_CPPFLAGS = @GTK3_INC@ -I$(top_srcdir)/share -DGTK3 -DGTK_DISABLE_SING
 
 gb_gtk3_la_SOURCES = \
 	gtag.h ggambastag.h gshare.h \
-	gb.gtk.h widgets.h font-parser.h font-parser.cpp \
+	gb.gtk.h gb.gtk.patch.h widgets.h font-parser.h font-parser.cpp \
 	gtools.cpp gcolor.h \
 	gfont.cpp gpicture.cpp \
-	gdesktop.cpp gmessage.cpp \
+	gdesktop.cpp gdialog.cpp \
 	gcontrol.cpp gcontainer.cpp gseparator.cpp \
 	gbutton.cpp gslider.cpp glabel.cpp gsignals.cpp \
 	gmoviebox.cpp gcombobox.cpp gtextbox.cpp gtextarea.cpp \
@@ -22,7 +22,6 @@ gb_gtk3_la_SOURCES = \
 	gmenu.cpp gtrayicon.cpp gmainwindow.cpp \
 	gtree.h gtree.cpp \
 	watcher.h watcher.cpp \
-	CStock.cpp CStock.h \
 	CConst.h CConst.cpp CColor.h CColor.cpp \
 	CFont.h CFont.cpp \
 	CKey.h CKey.cpp \
@@ -57,7 +56,6 @@ gb_gtk3_la_SOURCES = \
 	gdesktop.h \
 	gpicture.h \
 	gfont.h \
-	gmessage.h \
 	gdialog.h \
 	gcontrol.h \
 	gseparator.h \

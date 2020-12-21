@@ -35,6 +35,10 @@ Public Sub _new()
     .Columns.Count = 2
   End With
   
+  With cvwObject
+    .Columns.Count = 2
+  End With
+  
   With gvwBreakpoint
     .AddColumn("", DS * 3).Resizable = False
     .AddColumn(("Class"))
@@ -87,6 +91,7 @@ Public Sub Clear()
   
   lvwStack.Clear
   cvwVariable.Clear
+  cvwObject.Clear
   $cRefreshBreakpoint.Clear
   
 End
@@ -154,6 +159,18 @@ Catch
   
 End
 
+Private Sub AddVariableHeader(hView As ColumnView, sKey As String, sText As String)
+
+  If hView.Exist(sKey) Then Return
+  
+  With hView.Add(sKey, sText)
+    .MoveFirst()
+    .Font = lvwStack.Font
+    .Background = Color.SetAlpha(Color.Foreground, 240)
+  End With
+
+End
+
 Public Sub AddResultWatch(sCmd As String, Optional sRes As String, Optional bInstant As Boolean)
   
   Dim sVal As String
@@ -183,12 +200,7 @@ Public Sub AddResultWatch(sCmd As String, Optional sRes As String, Optional bIns
     Endif 
   Else
     
-    If Not cvwVariable.Exist("@") Then
-      With cvwVariable.Add("@", ("Watch expressions"), Picture["icon:/16/watch"])
-        .MoveFirst()
-        .Font = lvwStack.Font
-      End With
-    Endif
+    AddVariableHeader(cvwVariable, "@", ("Watch expressions"))
     
     Try cvwVariable.Add("@" & sCmd, sCmd,, "@").EnsureVisible
     
@@ -281,6 +293,19 @@ Private Sub WatchExpression(sText As String)
   
 End
 
+Private Sub InitFont(hView As ColumnView, fSize As Float)
+
+  Dim sKey As String
+  
+  Project.SetConsoleFont(hView)
+  
+  For Each sKey In hView.Keys
+    If hView[sKey].Font Then hView[sKey].Font.Size = hView.Font.Size * fSize
+  Next
+  hView.Font.Size *= fSize
+  
+End
+
 Public Sub ReadConfig()
   
   'Dim hButton As ToolButton
@@ -288,7 +313,6 @@ Public Sub ReadConfig()
   Dim hFont As Font
   Dim H As Integer
   Dim hChild As Control
-  Dim sKey As String
   Dim fSize As Float
   
   Settings.Read(panDebug)
@@ -303,12 +327,8 @@ Public Sub ReadConfig()
   
   Project.SetNormalFont(lvwStack, fSize)
 
-  Project.SetConsoleFont(cvwVariable)
-  
-  For Each sKey In cvwVariable.Keys
-    If cvwVariable[sKey].Font Then cvwVariable[sKey].Font.Size = cvwVariable.Font.Size * fSize
-  Next
-  cvwVariable.Font.Size *= fSize
+  InitFont(cvwVariable, fSize)
+  InitFont(cvwObject, fSize)
   
   cmbWatch.Font = cvwVariable.Font
   
@@ -329,8 +349,6 @@ Public Sub ReadConfig()
   For Each hChild In panWatch.Children
     If hChild Is PictureBox Or If hChild Is ToolButton Then hChild.W = hChild.H
   Next
-  
-  'btnLocalLayout.Value = Settings["/FDebugInfo/LocalColumnView", 0]
   
 End
 
@@ -389,7 +407,7 @@ End
 
 Public Sub IsEditing() As Boolean
   
-  Return cvwVariable.Renaming
+  If cvwVariable.Renaming Or If cvwObject.Renaming Then Return True
   
 End
 
@@ -1213,24 +1231,25 @@ Public Sub DefineVariable(sLocal As String, sObject As String)
   Dim I As Integer
   Dim sPrefix As String
   
-  If cvwVariable.Count Then vLayout = cvwVariable.Layout
-  
   aLocal = Split(sLocal, " ")
   aObject = Split(sObject, " ")
   
   If sObject <> $sLastObject Then
     
+    If cvwObject.Count Then 
+      vLayout = cvwObject.Layout
+    Else
+      vLayout = Null
+    Endif
+  
     $sLastObject = sObject
     
-    Try cvwVariable.Remove("^")
+    Try cvwObject.Remove("^")
     
-    hBold = cvwVariable.Font.Copy()
+    hBold = cvwObject.Font.Copy()
     hBold.Bold = True
     
-    With cvwVariable.Add("^", ("Current object")) ', Picture["img/16/current.png"])
-      .Expanded = True
-      .Font = lvwStack.Font
-    End With
+    AddVariableHeader(cvwObject, "^", ("Current object"))
     
     sPrefix = " :"
     For I = 0 To aObject.Max
@@ -1254,18 +1273,26 @@ Public Sub DefineVariable(sLocal As String, sObject As String)
       Else
         sVar = Mid$(sVar, 3)
         aObject[I] = sVar
-        With cvwVariable.Add("^" & sVar, sVar, hPict, sParent)
+        With cvwObject.Add("^" & sVar, sVar, hPict, sParent)
           If bBold Then .Font = hBold
         End With
       Endif
     Next
     
-    If cvwVariable["^"].Children = 0 Then cvwVariable.Remove("^")
+    If cvwObject["^"].Children = 0 Then cvwObject.Remove("^")
+    
+    If vLayout Then cvwObject.Layout = vLayout
     
   Endif
   
   If sLocal <> $sLastLocal Then
     
+    If cvwVariable.Count Then 
+      vLayout = cvwVariable.Layout
+    Else
+      vLayout = Null
+    Endif
+  
     $sLastLocal = sLocal
     
     Try cvwVariable.Remove("~")
@@ -1273,10 +1300,7 @@ Public Sub DefineVariable(sLocal As String, sObject As String)
     hBold = cvwVariable.Font.Copy()
     hBold.Bold = True
     
-    With cvwVariable.Add("~", ("Local variables")) ', Picture["img/16/local.png"])
-      .Expanded = True
-      .Font = lvwStack.Font
-    End With
+    AddVariableHeader(cvwVariable, "~", ("Local variables")) 
     
     For Each sVar In aLocal
       cvwVariable.Add("~" & sVar, sVar, Picture["$symbol:symbol"], "~")
@@ -1284,9 +1308,10 @@ Public Sub DefineVariable(sLocal As String, sObject As String)
     
     If cvwVariable["~"].Children = 0 Then cvwVariable.Remove("~")
 
+    If vLayout Then cvwVariable.Layout = vLayout
+    Try cvwVariable["~"].Expanded = True
+    
   Endif
-  
-  If vLayout Then cvwVariable.Layout = vLayout
   
   If wizDebug.Index <> TAB_DEBUG Then Return
   
@@ -1299,71 +1324,29 @@ Public Sub DefineVariable(sLocal As String, sObject As String)
     Design.Command("&V~" & sVar & "\t" & sVar)
   Next
   
-  ' If bFill Then
-  '   
-  '   ClearView(hView)
-  '   
-  '   If hView = tbvLocal Then
-  '     $aLocal = aVar
-  '     $aValLocal = New String[$aLocal.Count]
-  '     cCol = $cLocal
-  '     bSort = True 'chkSortLocal.Value
-  '   Else
-  '     $aObject = aVar
-  '     $aValObject = New String[$aObject.Count]
-  '     cCol = $cObject
-  '     bSort = True 'chkSortObject.Value
-  '   Endif
-  '   
-  '   While iPos <= aVar.Max
-  '     sVar = aVar[iPos]
-  '     If Right(sVar) = ":" Then 
-  '       If iPos = aVar.Max Or If Right(aVar[iPos + 1]) = ":" Then
-  '         aVar.Remove(iPos)
-  '         Continue
-  '       Endif
-  '     Endif
-  '     Inc iPos
-  '   Wend
-  '   
-  '   If bSort Then SortVariable(aVar)
-  '   
-  '   If hView = tbvLocal Then
-  '     UpdateLocal
-  '   Else
-  '     hView.Rows.Count = aVar.Count
-  '   Endif
-  ' 
-  '   For iPos = 0 To aVar.Max
-  '     cCol[aVar[iPos]] = iPos
-  '     If Right(aVar[iPos]) = ":" Then hView[iPos, 0].ColumnSpan = 2
-  '   Next
-  '   
-  ' Endif
-  ' 
-  ' If wizDebug.Index <> iIndex Then Return
-  ' 
-  ' For Each sVar In aVar
-  '   If Right(sVar) = ":" Then Continue
-  '   Design.Command("&" & sCmd & sVar & "\t" & sVar)
-  ' Next
-  '   
-  
 End
 
 Public Sub AddVariable(sVar As String, sValue As String, Optional bAssign As Boolean)
   
-  If Not cvwVariable.Exist(sVar) Then Return
+  Dim hView As ColumnView
+  
+  If cvwVariable.Exist(sVar) Then
+    hView = cvwVariable
+  Else If cvwObject.Exist(sVar) Then
+    hView = cvwObject
+  Else
+    Return
+  Endif
   
   If bAssign Then
     If Left(sValue) = "!" Then
-      With cvwVariable[sVar]
-        Balloon.Error(Mid$(sValue, 2), cvwVariable, Design.BalloonX, Design.BalloonY)
+      With hView[sVar]
+        Balloon.Error(Mid$(sValue, 2), hView, Design.BalloonX, Design.BalloonY)
       End With
     Endif
     Design.Command("&V" & sVar & "\t" & Mid$(sVar, 2))
   Else
-    cvwVariable[sVar][1] = sValue
+    hView[sVar][1] = sValue
   Endif
   
 End
@@ -1372,8 +1355,11 @@ Public Sub cvwVariable_Activate()
   
   Dim sExpr As String 
   Dim sVal As String 
+  Dim hView As ColumnView
   
-  With cvwVariable.Current
+  hView = Last
+  
+  With hView.Current
     
     If .Children Then Return
     
@@ -1424,12 +1410,14 @@ End
 Public Sub cvwVariable_Rename()
   
   Dim sVar As String
+  Dim hView As ColumnView
   
-  With cvwVariable.Current
+  hView = Last
+  With hView.Current
     
     sVar = .Key
     
-    Design.SetBalloon(cvwVariable, cvwVariable.Columns[1].X + Desktop.Scale, .Y + .H / 2)
+    Design.SetBalloon(hView, hView.Columns[1].X + Desktop.Scale, .Y + .H / 2)
     Design.Command("=V" & sVar & "\t" & .Text & " = " & .[1])
     'Design.Command("&V" & sVar & "\t" & .Text)
     
@@ -1439,6 +1427,7 @@ End
 
 Public Sub btnVcCommit_Click()
 
+  If Project.Compile() Then Return
   FVersionControl.Run
 
 End
@@ -1522,7 +1511,7 @@ End
 
 Public Sub cvwVariable_Select()
 
-  Balloon.Hide(cvwVariable)
+  Balloon.Hide(Last)
 
 End
 

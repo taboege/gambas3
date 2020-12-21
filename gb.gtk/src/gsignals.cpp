@@ -34,7 +34,7 @@
 
 //#define DEBUG_DND 1
 
-static void  sg_destroy (GtkWidget *object,gControl *data)
+static void cb_destroy(GtkWidget *object, gControl *data)
 {
 	if (data->_no_delete)
 		return;
@@ -43,7 +43,7 @@ static void  sg_destroy (GtkWidget *object,gControl *data)
 	delete data;
 }
 
-static gboolean sg_menu(GtkWidget *widget, gControl *data)
+static gboolean cb_menu(GtkWidget *widget, gControl *data)
 {
 	if (!gApplication::userEvents()) return false;
 	if (data->onMouseEvent)
@@ -52,7 +52,7 @@ static gboolean sg_menu(GtkWidget *widget, gControl *data)
 		return false;
 }
 
-gboolean gcb_focus_in(GtkWidget *widget,GdkEventFocus *event,gControl *data)
+gboolean gcb_focus_in(GtkWidget *widget, GdkEventFocus *event, gControl *data)
 {
 	if (!gApplication::allEvents()) return false;
 
@@ -63,7 +63,7 @@ gboolean gcb_focus_in(GtkWidget *widget,GdkEventFocus *event,gControl *data)
 	return false;
 }
 
-gboolean gcb_focus_out(GtkWidget *widget,GdkEventFocus *event,gControl *data)
+gboolean gcb_focus_out(GtkWidget *widget, GdkEventFocus *event, gControl *data)
 {	
 	if (!gApplication::allEvents()) return false;
 	
@@ -73,6 +73,41 @@ gboolean gcb_focus_out(GtkWidget *widget,GdkEventFocus *event,gControl *data)
 	
 	return false;
 }
+
+gboolean gcb_focus(GtkWidget *widget, GtkDirectionType direction, gControl *data)
+{
+	gControl *ctrl;
+	
+	data = gApplication::activeControl();
+	if (!data)
+		return true;
+			
+	if (direction == GTK_DIR_TAB_FORWARD || direction == GTK_DIR_TAB_BACKWARD)
+	{
+		ctrl = data;
+		for(;;)
+		{
+			//fprintf(stderr, "cb_focus: %s / %d %d\n", ctrl->name(), ctrl->isEnabled(), ctrl->canFocus());
+			
+			if (direction == GTK_DIR_TAB_FORWARD)
+				ctrl = ctrl->nextFocus();
+			else
+				ctrl = ctrl->previousFocus();
+			
+			if (ctrl->isEnabled() && ctrl->canFocus() && !ctrl->isNoTabFocus() && ctrl->isReallyVisible())
+			{
+				//fprintf(stderr, "cb_focus: --> %s\n", ctrl->name());
+				ctrl->setFocus();
+				break;
+			}
+			if (ctrl == data)
+				break;
+		}
+	}
+
+	return true;
+}
+
 
 
 
@@ -302,7 +337,7 @@ static void cb_show(GtkWidget *widget, gContainer *data)
 
 void gControl::borderSignals()
 {	
-	g_signal_connect(G_OBJECT(border),"destroy",G_CALLBACK(sg_destroy),(gpointer)this);
+	g_signal_connect_after(G_OBJECT(border), "destroy", G_CALLBACK(cb_destroy), (gpointer)this);
 	//g_signal_connect(G_OBJECT(border),"drag-data-received",G_CALLBACK(sg_drag_data_received),(gpointer)this);
 	g_signal_connect(G_OBJECT(border),"drag-motion",G_CALLBACK(sg_drag_motion),(gpointer)this);
 	g_signal_connect(G_OBJECT(border),"drag-leave",G_CALLBACK(sg_drag_leave),(gpointer)this);
@@ -324,7 +359,7 @@ void gControl::borderSignals()
 			g_signal_connect(G_OBJECT(border),"button-release-event",G_CALLBACK(gcb_button_release),(gpointer)this);
 			g_signal_connect(G_OBJECT(border),"button-press-event",G_CALLBACK(gcb_button_press),(gpointer)this);
 		}*/
-		g_signal_connect(G_OBJECT(border),"popup-menu",G_CALLBACK(sg_menu),(gpointer)this);	
+		g_signal_connect(G_OBJECT(border), "popup-menu", G_CALLBACK(cb_menu), (gpointer)this);	
 		//g_signal_connect_after(G_OBJECT(border),"motion-notify-event",G_CALLBACK(sg_motion),(gpointer)this);
 		//g_signal_connect(G_OBJECT(border),"scroll-event",G_CALLBACK(sg_scroll),(gpointer)this);
 	}
@@ -341,13 +376,14 @@ void gControl::widgetSignals()
 			g_signal_connect(G_OBJECT(widget),"button-press-event",G_CALLBACK(gcb_button_press),(gpointer)this);
 		}*/
 		//g_signal_connect(G_OBJECT(widget),"motion-notify-event",G_CALLBACK(sg_motion),(gpointer)this);
-		g_signal_connect(G_OBJECT(widget),"popup-menu",G_CALLBACK(sg_menu),(gpointer)this);
+		g_signal_connect(G_OBJECT(widget), "popup-menu", G_CALLBACK(cb_menu), (gpointer)this);
 	}	
 	
 	g_signal_connect(G_OBJECT(widget), "key-press-event", G_CALLBACK(gcb_key_event), (gpointer)this);
 	g_signal_connect(G_OBJECT(widget), "key-release-event", G_CALLBACK(gcb_key_event), (gpointer)this);
-	g_signal_connect(G_OBJECT(widget), "focus-in-event", G_CALLBACK(gcb_focus_in),(gpointer)this);
-	g_signal_connect(G_OBJECT(widget), "focus-out-event", G_CALLBACK(gcb_focus_out),(gpointer)this);
+	g_signal_connect(G_OBJECT(widget), "focus", G_CALLBACK(gcb_focus), (gpointer)this);
+	g_signal_connect(G_OBJECT(widget), "focus-in-event", G_CALLBACK(gcb_focus_in), (gpointer)this);
+	g_signal_connect(G_OBJECT(widget), "focus-out-event", G_CALLBACK(gcb_focus_out), (gpointer)this);
 	//g_signal_connect(G_OBJECT(widget),"event",G_CALLBACK(sg_event),(gpointer)this);
 	if (widget != border)
 	{
@@ -360,3 +396,4 @@ void gControl::initSignals()
 	borderSignals();
 	widgetSignals();
 }
+

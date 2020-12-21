@@ -611,7 +611,7 @@ static bool analyze(const char *comp, bool include)
 	if (!native && !gambas)
 	{
 		if (!include || !_no_include_warning)
-			warning("component %s not found", name);
+			warning("component not found: %s", name);
 		STR_free(name);
 		return TRUE;
 	}
@@ -755,6 +755,8 @@ static void make_component_list()
 		if (strcmp(FILE_get_ext(name), "component"))
 			continue;
 		name = FILE_get_basename(name);
+		if (strcmp(name, "gb") == 0)
+			continue;
 		*((char **)ARRAY_add(&_components)) = STR_copy(name);
 	}
 

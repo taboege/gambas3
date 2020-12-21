@@ -788,18 +788,18 @@
         { VBox2 HBox
           MoveScaled(1,19,62,4)
           Spacing = True
-          { btnInsertSnippet Button
-            MoveScaled(0,0,17,4)
-            AutoResize = True
-            Text = Shortcut(("New"), "N") & "..."
-            Picture = Picture["icon:/small/new"]
-          }
           { btnImportSnippet Button
             MoveScaled(0,25,17,4)
             Visible = False
             AutoResize = True
             Text = Shortcut(("Import"), "I") & "..."
             Picture = Picture["icon:/small/open"]
+          }
+          { btnInsertSnippet Button
+            MoveScaled(0,0,17,4)
+            AutoResize = True
+            Text = Shortcut(("New"), "N") & "..."
+            Picture = Picture["icon:/small/new"]
           }
           { btnEditSnippet Button
             MoveScaled(18,0,17,4)

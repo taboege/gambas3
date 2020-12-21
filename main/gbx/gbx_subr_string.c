@@ -61,14 +61,24 @@ void SUBR_cat(ushort code)
 			
 			if (PARAM[0].type == T_STRING)
 			{
-				len = PARAM[0]._string.len ;
-				
+				if (len2 == 0)
+				{
+					RELEASE_STRING(&PARAM[0]);
+					RELEASE_STRING(&PARAM[1]);
+					SP -= 2;
+					PC++;
+					return;
+				}
+			
 				str = PARAM[0]._string.addr;
+				len = PARAM[0]._string.len;
+				
 				if (len && PARAM[0]._string.start == 0 && len == STRING_length(str) && STRING_from_ptr(str)->ref == 2)
 				{
 					STRING_from_ptr(str)->ref--;
-					str = STRING_add(str, PARAM[1]._string.addr + PARAM[1]._string.start, len2);
 					
+					str = STRING_add(str, PARAM[1]._string.addr + PARAM[1]._string.start, len2);
+				
 					if (PCODE_is(PC[1], C_POP_LOCAL))
 					{
 						VALUE *bp = &BP[(signed char)PC[1]];
@@ -91,7 +101,7 @@ void SUBR_cat(ushort code)
 						CLASS_VAR *var = &CP->load->dyn[PC[1] & 0x7FF];
 						*(char **)(OP + var->pos) = str;
 					}
-					
+						
 					RELEASE_STRING(&PARAM[1]);
 					SP -= 2;
 					PC++;

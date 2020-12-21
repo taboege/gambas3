@@ -457,7 +457,7 @@ static void combo_set_editable(void *_object, bool ed)
 		QObject::connect(COMBOBOX->lineEdit(), SIGNAL(returnPressed()), &CTextBox::manager, SLOT(onActivate()));
 		//QObject::connect(COMBOBOX->lineEdit(), SIGNAL(selectionChanged()), &CTextBox::manager, SLOT(onSelectionChanged()));
 
-		if (CWIDGET_test_flag(THIS, WF_DESIGN))
+		if (CWIDGET_is_design(THIS))
 		{
 			get(_object, &textbox);
 			//textbox->removeEventFilter(COMBOBOX);
@@ -478,7 +478,7 @@ static void combo_set_editable(void *_object, bool ed)
 	if (hasFocus)
 		COMBOBOX->setFocus();
 
-	if (CWIDGET_test_flag(THIS, WF_DESIGN))
+	if (CWIDGET_is_design(THIS))
 		COMBOBOX->setFocusPolicy(Qt::NoFocus);
 
 	COMBOBOX->blockSignals(false);

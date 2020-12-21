@@ -28,7 +28,7 @@ class gDrawingArea : public gContainer
 {
 public:
 	gDrawingArea(gContainer *parent);
-	~gDrawingArea();
+	virtual ~gDrawingArea();
 
 	int getBorder() const { return getFrameBorder(); }
 	bool cached() const { return _cached; }
@@ -45,8 +45,10 @@ public:
 
 //"Methods"
 	void clear();
-	virtual void resize(int w, int h);
 	virtual void setEnabled(bool vl);
+#ifndef GTK3
+	virtual void setBackground(gColor color = COLOR_DEFAULT);
+#endif
 	virtual void setRealBackground(gColor color);
 	virtual void updateFont();
 

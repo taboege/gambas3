@@ -43,13 +43,13 @@ DECLARE_EVENT(EVENT_Click);
 	GB.Unref(POINTER(&_object));
 }*/
 
-static void txt_raise_change(gTextBox *sender)
+static void cb_change(gTextBox *sender)
 {
 	CWIDGET *_object = GetObject((gControl*)sender);
 	GB.Raise(THIS, EVENT_Change, 0);
 }
 
-static void txt_raise_activate(gTextBox *sender)
+static void cb_activate(gTextBox *sender)
 {
 	CWIDGET *_object = GetObject((gControl*)sender);
 	GB.Raise(THIS, EVENT_Activate, 0);
@@ -71,8 +71,8 @@ static void txt_raise_activate(gTextBox *sender)
 BEGIN_METHOD(TextBox_new, GB_OBJECT parent)
 
 	InitControl(new gTextBox(CONTAINER(VARG(parent))), (CWIDGET*)THIS);
-	TEXTBOX->onChange = txt_raise_change;
-	TEXTBOX->onActivate = txt_raise_activate;
+	TEXTBOX->onChange = cb_change;
+	TEXTBOX->onActivate = cb_activate;
 	
 END_METHOD
 
@@ -262,7 +262,7 @@ END_METHOD
 #undef THIS
 #define THIS ((CCOMBOBOX *)_object)
 
-static void cmb_raise_click(gComboBox *sender)
+static void cb_click(gComboBox *sender)
 {
 	CWIDGET *_object = GetObject((gControl*)sender);
 	if (THIS->click)
@@ -277,9 +277,9 @@ BEGIN_METHOD(ComboBox_new, GB_OBJECT parent)
 
 	InitControl(new gComboBox(CONTAINER(VARG(parent))), (CWIDGET*)THIS);
 	
-	COMBOBOX->onClick = cmb_raise_click;
-	COMBOBOX->onChange = txt_raise_change;
-	COMBOBOX->onActivate = txt_raise_activate;
+	COMBOBOX->onClick = cb_click;
+	COMBOBOX->onChange = cb_change;
+	COMBOBOX->onActivate = cb_activate;
 
 END_METHOD
 
@@ -395,9 +395,7 @@ BEGIN_PROPERTY(ComboBox_List)
 	{
 		GB.Array.New(&array, GB_T_STRING, COMBOBOX->count());
 		for (i = 0; i < COMBOBOX->count(); i++)
-		{
 			*((char **)GB.Array.Get(array, i)) = GB.NewZeroString(COMBOBOX->itemText(i));
-		}
 		
 		GB.ReturnObject(array);
 	}
@@ -414,7 +412,6 @@ BEGIN_PROPERTY(ComboBox_List)
 				COMBOBOX->add(*((char **)GB.Array.Get(array, i)));
 		}
 		COMBOBOX->setText(text);
-		COMBOBOX->unlock();
 
 		GB.FreeString(&text);
 		
@@ -423,6 +420,8 @@ BEGIN_PROPERTY(ComboBox_List)
 			if (COMBOBOX->index() < 0 && COMBOBOX->count() > 0)
 				COMBOBOX->setIndex(0);
 		}
+		
+		COMBOBOX->unlock();
 	}
 
 END_PROPERTY

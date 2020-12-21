@@ -1,9 +1,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gb.form 3.14.90\n"
-"POT-Creation-Date: 2020-06-06 18:10 UTC\n"
-"PO-Revision-Date: 2020-06-06 18:03 UTC\n"
+"Project-Id-Version: gb.form 3.15.90\n"
+"POT-Creation-Date: 2020-12-19 01:25 UTC\n"
+"PO-Revision-Date: 2020-11-18 18:23 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
@@ -42,15 +42,15 @@ msgstr "移除全部颜色"
 msgid "Sort colors"
 msgstr "颜色排序"
 
-#: DirView.class:531
+#: DirView.class:535
 msgid "Cannot rename directory."
 msgstr "不能重命名目录。"
 
-#: DirView.class:562
+#: DirView.class:566
 msgid "New folder"
 msgstr "新建文件夹"
 
-#: DirView.class:581
+#: DirView.class:585
 msgid "Cannot create directory."
 msgstr "不能创建目录。"
 
@@ -62,19 +62,19 @@ msgstr ""
 msgid "Toggle Filechooser Detailed View"
 msgstr ""
 
-#: FCalendar.form:47
+#: FCalendar.form:48
 msgid "Today"
 msgstr "今天"
 
-#: FCalendar.form:53
+#: FCalendar.form:54
 msgid "Previous month"
 msgstr "上一月"
 
-#: FCalendar.form:59
+#: FCalendar.form:60
 msgid "Next month"
 msgstr "下一月"
 
-#: FCalendar.form:143
+#: FCalendar.form:147
 msgid "Apply"
 msgstr "应用"
 
@@ -90,140 +90,140 @@ msgstr "目录未找到。"
 msgid "All files (*)"
 msgstr "所有文件(*)"
 
-#: FDirChooser.class:974
+#: FDirChooser.class:976
 msgid "&Bookmark current directory"
 msgstr "将当前目录加入书签(&B)"
 
-#: FDirChooser.class:982
+#: FDirChooser.class:984
 msgid "&Edit bookmarks..."
 msgstr "编辑书签...(&E)"
 
-#: FDirChooser.class:991
+#: FDirChooser.class:993
 msgid "Show &details"
 msgstr "显示细节(&d)"
 
-#: FDirChooser.class:997
+#: FDirChooser.class:999
 msgid "Show &hidden files"
 msgstr "显示隐藏文件(&h)"
 
-#: FDirChooser.class:1003
+#: FDirChooser.class:1005
 msgid "Show &image preview"
 msgstr "显示图像预览(&i)"
 
-#: FDirChooser.class:1011
+#: FDirChooser.class:1013
 msgid "&Rename"
 msgstr "重命名(&R)"
 
-#: FDirChooser.class:1016
+#: FDirChooser.class:1018
 msgid "Copy"
 msgstr "复制"
 
-#: FDirChooser.class:1021
+#: FDirChooser.class:1023
 msgid "&Delete"
 msgstr "删除(&D)"
 
-#: FDirChooser.class:1033
+#: FDirChooser.class:1035
 msgid "&Uncompress file"
 msgstr "解压缩文件(&U)"
 
-#: FDirChooser.class:1038
+#: FDirChooser.class:1040
 msgid "&Create directory"
 msgstr "创建目录(&C)"
 
-#: FDirChooser.class:1043
+#: FDirChooser.class:1045
 msgid "Open in &file manager..."
 msgstr "用文件管理器打开...（&f）"
 
-#: FDirChooser.class:1048
+#: FDirChooser.class:1050
 msgid "&Refresh"
 msgstr "更新(&R)"
 
-#: FDirChooser.class:1056
+#: FDirChooser.class:1058
 msgid "&Properties"
 msgstr "属性(&P)"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "Overwrite"
 msgstr "覆盖"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "Overwrite all"
 msgstr "全部覆盖"
 
-#: FDirChooser.class:1272
+#: FDirChooser.class:1274
 msgid "This file or directory already exists."
 msgstr "该文件或目录已经存在。"
 
-#: FDirChooser.class:1291
+#: FDirChooser.class:1293
 msgid "Cannot list archive contents"
 msgstr "不能列出文档内容。"
 
-#: FDirChooser.class:1325
+#: FDirChooser.class:1327
 msgid "Cannot uncompress file."
 msgstr "不能解压缩文件。"
 
-#: FDirChooser.class:1325
+#: FDirChooser.class:1327
 msgid "Unknown archive."
 msgstr "未知文档。"
 
-#: FDirChooser.class:1386
+#: FDirChooser.class:1388
 msgid "Delete file"
 msgstr "删除文件"
 
-#: FDirChooser.class:1387
+#: FDirChooser.class:1389
 msgid "Do you really want to delete that file?"
 msgstr "确定要删除文件吗？"
 
-#: FDirChooser.class:1394
+#: FDirChooser.class:1396
 msgid "Unable to delete file."
 msgstr "不能删除文件。"
 
-#: FDirChooser.class:1404
+#: FDirChooser.class:1406
 msgid "Delete directory"
 msgstr "删除目录"
 
-#: FDirChooser.class:1405
+#: FDirChooser.class:1407
 msgid "Do you really want to delete that directory?"
 msgstr "是否确实要删除该目录？"
 
-#: FDirChooser.class:1412
+#: FDirChooser.class:1414
 msgid "Unable to delete directory."
 msgstr "无法删除目录。"
 
-#: FDirChooser.form:66
+#: FDirChooser.form:68
 msgid "Parent directory"
 msgstr "上级目录"
 
-#: FDirChooser.form:72
+#: FDirChooser.form:74
 msgid "Root directory"
 msgstr "根目录"
 
-#: FDirChooser.form:133
+#: FDirChooser.form:139
 msgid "Image preview"
 msgstr "图像预览"
 
-#: FDirChooser.form:141
+#: FDirChooser.form:147
 msgid "Detailed view"
 msgstr "查看细节"
 
-#: FDirChooser.form:149
+#: FDirChooser.form:155
 msgid "File properties"
 msgstr "文件属性"
 
-#: FDirChooser.form:155
+#: FDirChooser.form:161
 msgid "Show files"
 msgstr "显示文件"
 
-#: FDirChooser.form:174
+#: FDirChooser.form:181
 msgid "Bookmarks"
 msgstr "书签"
 
-#: FDirChooser.form:236 FInputBox.form:45 FWizard.class:76
+#: FDirChooser.form:248 FInputBox.form:45 FWizard.class:76 Form1.form:36
 msgid "OK"
 msgstr "确定"
 
-#: FDirChooser.form:242 FEditBookmark.class:119 FInputBox.form:51
-#: FSidePanel.class:1149 FWizard.form:53
+#: FDirChooser.form:254 FEditBookmark.class:119 FInputBox.form:51
+#: FSidePanel.class:1149 FWizard.form:52 Form1.form:42
 msgid "Cancel"
 msgstr "取消"
 
@@ -275,13 +275,13 @@ msgstr ""
 msgid "Vertical"
 msgstr ""
 
-# gb-ignore
 #: FDocumentView.form:96 FMain.form:69
 msgid "ComboBox1"
 msgstr ""
 
 #: FDocumentView.form:101 FMain.form:85 FTestBalloon.form:18
-#: FTestCompletion.form:23 FTestMessageView.form:26 FTestWizard.form:22
+#: FTestCompletion.form:23 FTestMenuButton.form:148 FTestMessageView.form:26
+#: FTestWizard.form:24
 msgid "Button1"
 msgstr ""
 
@@ -293,7 +293,7 @@ msgstr ""
 msgid "Autocenter"
 msgstr ""
 
-#: FEditBookmark.class:23 FileView.class:138
+#: FEditBookmark.class:23 FileView.class:143
 msgid "Name"
 msgstr "名称"
 
@@ -321,7 +321,7 @@ msgstr "下移"
 msgid "Remove"
 msgstr "移除"
 
-#: FEditBookmark.form:57 FFileProperties.form:270 MessageView.class:51
+#: FEditBookmark.form:57 FFileProperties.form:270 MessageView.class:53
 msgid "Close"
 msgstr "关闭"
 
@@ -390,11 +390,11 @@ msgstr "链接"
 msgid "Directory"
 msgstr "目录"
 
-#: FFileProperties.form:120 FileView.class:140
+#: FFileProperties.form:120 FileView.class:145
 msgid "Size"
 msgstr "大小"
 
-#: FFileProperties.form:132 FileView.class:142
+#: FFileProperties.form:132 FileView.class:147
 msgid "Last modified"
 msgstr "最近修改"
 
@@ -418,27 +418,27 @@ msgstr "预览"
 msgid "Errors"
 msgstr "错误"
 
-#: FFontChooser.class:297
+#: FFontChooser.class:334
 msgid "How quickly daft jumping zebras vex"
 msgstr "One CHINA, One family. 一个中国，一个家。"
 
-#: FFontChooser.form:55
+#: FFontChooser.form:96
 msgid "Bold"
 msgstr "粗体"
 
-#: FFontChooser.form:62
+#: FFontChooser.form:103
 msgid "Italic"
 msgstr "斜体"
 
-#: FFontChooser.form:69
+#: FFontChooser.form:110
 msgid "Underline"
 msgstr "下划线"
 
-#: FFontChooser.form:76
+#: FFontChooser.form:117
 msgid "Strikeout"
 msgstr "删除线"
 
-#: FFontChooser.form:85
+#: FFontChooser.form:126
 msgid "Relative"
 msgstr "相对尺寸"
 
@@ -486,11 +486,11 @@ msgstr "上移条目"
 msgid "Move item down"
 msgstr "下移条目"
 
-#: FMain.form:29 FTestFileChooser.form:31 FTestMenuButton.form:39 FWiki.form:20
+#: FMain.form:29 FTestFileChooser.form:31 FTestMenuButton.form:40 FWiki.form:20
 msgid "Menu2"
 msgstr ""
 
-#: FMain.form:33 FTestFileChooser.form:36 FTestMenuButton.form:43 FWiki.form:24
+#: FMain.form:33 FTestFileChooser.form:36 FTestMenuButton.form:44 FWiki.form:24
 msgid "Menu3"
 msgstr ""
 
@@ -559,7 +559,7 @@ msgstr ""
 msgid "Button2"
 msgstr ""
 
-#: FTestDateChooser.form:47
+#: FTestDateChooser.form:33
 msgid "Enable"
 msgstr ""
 
@@ -567,19 +567,19 @@ msgstr ""
 msgid "Expander"
 msgstr ""
 
-#: FTestFileChooser.form:28 FTestMenuButton.form:35
+#: FTestFileChooser.form:28 FTestMenuButton.form:36
 msgid "Menu1"
 msgstr ""
 
-#: FTestFileChooser.form:41 FTestMenuButton.form:69
+#: FTestFileChooser.form:41 FTestMenuButton.form:70
 msgid "Menu7"
 msgstr ""
 
-#: FTestFileChooser.form:49 FTestMenuButton.form:52 FWiki.form:28
+#: FTestFileChooser.form:49 FTestMenuButton.form:53 FWiki.form:28
 msgid "Menu4"
 msgstr ""
 
-#: FTestFileChooser.form:54 FTestMenuButton.form:56 FWiki.form:32
+#: FTestFileChooser.form:54 FTestMenuButton.form:57 FWiki.form:32
 msgid "Menu5"
 msgstr ""
 
@@ -587,35 +587,35 @@ msgstr ""
 msgid "Balloon"
 msgstr ""
 
-#: FTestMenuButton.form:31
+#: FTestMenuButton.form:32
 msgid "Project"
 msgstr ""
 
-#: FTestMenuButton.form:48
+#: FTestMenuButton.form:49
 msgid "View"
 msgstr ""
 
-#: FTestMenuButton.form:60
+#: FTestMenuButton.form:61
 msgid "Menu6"
 msgstr ""
 
-#: FTestMenuButton.form:65
+#: FTestMenuButton.form:66
 msgid "Tools"
 msgstr ""
 
-#: FTestMenuButton.form:73
+#: FTestMenuButton.form:74
 msgid "Menu8"
 msgstr ""
 
-#: FTestMenuButton.form:77
+#: FTestMenuButton.form:78
 msgid "Menu9"
 msgstr ""
 
-#: FTestMenuButton.form:80
+#: FTestMenuButton.form:81
 msgid "Menu10"
 msgstr ""
 
-#: FTestMenuButton.form:84
+#: FTestMenuButton.form:85
 msgid "Menu11"
 msgstr ""
 
@@ -651,23 +651,19 @@ msgstr ""
 msgid "Hello world!"
 msgstr ""
 
-#: FTestWizard.form:18
+#: FTestWizard.form:20
 msgid "Étape n°1"
 msgstr ""
 
-#: FTestWizard.form:25
-msgid "Étape n°2"
+#: FTestWizard.form:27
+msgid "Ceci est une longue étape"
 msgstr ""
 
-#: FTestWizard.form:29
-msgid "LCDLabel1"
-msgstr ""
-
-#: FTestWizard.form:32
+#: FTestWizard.form:33
 msgid "Étape n°3"
 msgstr ""
 
-#: FTestWizard.form:34
+#: FTestWizard.form:35
 msgid "Étape n°4"
 msgstr ""
 
@@ -675,15 +671,19 @@ msgstr ""
 msgid "&Next"
 msgstr "下一个(&N)"
 
-#: FWizard.form:59 MessageView.class:48
+#: FWizard.form:58 MessageView.class:50
 msgid "Next"
 msgstr "下一步"
 
-#: FWizard.form:65
+#: FWizard.form:64
 msgid "Previous"
 msgstr "上一步"
 
-#: FileView.class:1081
+#: FileView.class:159
+msgid "No file in this folder."
+msgstr "该目录中没有文件。"
+
+#: FileView.class:1134
 msgid "Cannot rename file."
 msgstr "不能重命名文件。"
 

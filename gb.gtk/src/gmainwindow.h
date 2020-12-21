@@ -43,16 +43,16 @@ public:
 	int menuCount();
 	bool isModal() const;
 	const char* text();
-	bool topOnly();
-	bool skipTaskBar();
+	bool isTopOnly() const { return isTopLevel() && _top_only; }
+	bool isSkipTaskBar() const { return isTopLevel() && _skip_taskbar; }
 	bool minimized() const { return _minimized; }
 	bool maximized() const { return _maximized; }
 	bool fullscreen() const { return _fullscreen; }
-	bool getSticky();
+	bool isSticky() const { return isTopLevel() && _sticky; };
 	int  getStacking();
-	bool isPersistent() const { return persistent; }
-	bool isOpened() const { return opened; }
-	bool isClosed() const { return !opened; }
+	bool isPersistent() const { return _persistent; }
+	bool isOpened() const { return _opened; }
+	bool isClosed() const { return _closed; }
 	bool isHidden() const { return _hidden; }
 	bool isPopup() const { return _popup; }
 	bool isTransparent() const { return _transparent; }
@@ -110,12 +110,12 @@ public:
 	void showPopup();
 	void showPopup(int x, int y);
 	void activate();
-	void raise();
 	virtual void move(int x, int y);
-	virtual void resize(int w, int h);
-	virtual void moveResize(int x, int y, int w, int h);
+	virtual bool resize(int w, int h);
 	bool close();
 	virtual void reparent(gContainer *newpr, int x, int y);
+	virtual void destroy();
+	virtual void restack(bool raise);
 
 //"Signals"
 	void (*onOpen)(gMainWindow *sender);
@@ -142,23 +142,28 @@ public:
   void initialize();
 	void drawMask();
 	void initWindow();
-	void emitOpen();
+	bool emitOpen();
 	void remap();
-	bool doClose();
+	bool doClose(bool destroying = false);
 	void afterShow();
 	void checkMenuBar();
 	int menuBarHeight();
 	void configure();
 	void embedMenuBar(GtkWidget *border);
 	void emitResize();
+	void emitResizeLater();
 	void setGeometryHints();
 	virtual void updateFont();
 	void present();
+	void setTransientFor();
+	void setType(GtkWindowType type);
+	void calcCsdSize();
+	void createWindow(GtkWidget *new_border);
 	
 	GtkWindowGroup *group;
 	GtkAccelGroup *accel;
 	GtkMenuBar *menuBar;
-	GtkFixed *layout;
+	GtkWidget *layout;
 	int stack;
 	int _type;
 	gPicture *_icon;
@@ -176,12 +181,16 @@ public:
 	int _min_w;
 	int _min_h;
 	
+	int _csd_w;
+	int _csd_h;
+	
 	unsigned _mask : 1;
-	unsigned top_only : 1;
+	unsigned _top_only : 1;
 	unsigned _resized : 1;
-	unsigned persistent : 1;
-	unsigned sticky : 1;
-	unsigned opened : 1;
+	unsigned _persistent : 1;
+	unsigned _sticky : 1;
+	unsigned _opened : 1;
+	unsigned _closed : 1;
 	unsigned _closing : 1;
 	unsigned _not_spontaneous : 1;
 	unsigned _skip_taskbar : 1;
@@ -202,6 +211,7 @@ public:
 	unsigned _resizable : 1;
 	unsigned _unmap : 1;
 	unsigned _initMenuBar : 1;
+	unsigned _grab_on_show : 1;
 };
 
 #endif

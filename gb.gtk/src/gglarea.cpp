@@ -28,8 +28,6 @@
 
 gGLArea::gGLArea(gContainer *parent, void (*init)(GtkWidget *)) : gControl(parent)
 {
-	g_typ = Type_gGLArea;
-
 	border = widget = gtk_event_box_new();
 	gtk_widget_set_can_focus(widget, TRUE);
 	(*init)(widget);

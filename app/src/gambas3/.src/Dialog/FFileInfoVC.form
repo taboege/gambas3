@@ -8,7 +8,7 @@
   { tabInfo TabPanel
     MoveScaled(1,2,59,43)
     Expand = True
-    Arrangement = Arrange.Fill
+    Arrangement = Arrange.Vertical
     Count = 2
     Index = 0
     Text = ("Changes")
@@ -16,10 +16,12 @@
       MoveScaled(2,5,42,6)
       Visible = False
       Font = Font["Italic"]
+      Expand = True
       Padding = 15
     }
     { edtChange TextEditor
       MoveScaled(6,13,40,18)
+      Expand = True
       Border = False
       ReadOnly = True
       Wrap = True
@@ -27,7 +29,8 @@
     Index = 1
     Text = ("History")
     { edtHistory TextEditor
-      MoveScaled(3,4,38,13)
+      MoveScaled(4,4,38,13)
+      Expand = True
       Border = False
       Highlight = "Custom"
       ReadOnly = True
@@ -36,19 +39,25 @@
     Index = 0
   }
   { HBox1 HBox
-    MoveScaled(4,54,51,4)
+    MoveScaled(4,54,78,4)
+    Spacing = True
     { btnRevert Button
       MoveScaled(0,0,18,4)
       AutoResize = True
       Text = Shortcut(("Undo changes"), "U")
       Picture = Picture["icon:/small/undo"]
     }
+    { chkShowHistoryChanges CheckBox
+      MoveScaled(19,0,29,3)
+      AutoResize = True
+      Text = ("Display changes in history")
+    }
     { Panel3 Panel
-      MoveScaled(22,0,3,4)
+      MoveScaled(55,0,1,4)
       Expand = True
     }
     { btnClose Button
-      MoveScaled(32,0,16,4)
+      MoveScaled(61,0,16,4)
       Text = ("Close")
       Picture = Picture["icon:/small/close"]
       Default = True

@@ -42,7 +42,7 @@ BEGIN_METHOD(CTEXTLABEL_new, GB_OBJECT parent)
 	InitControl(new gLabel(CONTAINER(VARG(parent))),(CWIDGET*)THIS);
 	
 	WIDGET->setWrap(true);
-	WIDGET->enableMarkup(true);
+	WIDGET->setMarkup(true);
 	WIDGET->setAlignment(ALIGN_TOP_NORMAL);
 	
 END_METHOD

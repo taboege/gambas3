@@ -53,7 +53,10 @@ Public Sub Main()
   Endif
   
   If Not aFile Then
-    aFile = RDir(sDir).Sort(gb.Natural)
+    ' TODO: Project.Browse
+    'aFile = RDir(sDir).Sort(gb.Natural)
+    aFile = Project.Browse(sDir, True)
+    aFile.Sort(gb.Natural)
     aSort = New String[]
     For Each sPath In aFile
       aSort.Add(File.Name(sPath))
@@ -76,7 +79,6 @@ Public Sub Main()
     Endif
     
     If IsDir(sPath) Then Continue
-    If InStr(sPath, "/.svn/") Then Continue
     
     sExt = LCase(File.Ext(sFile))
     If $aExt.Exist(sExt) Then Continue

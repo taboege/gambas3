@@ -26,39 +26,39 @@ Static Private $sTitle As String
 ' };
 ' 
 
-Static Public Sub _call((Message) As String, Optional Button As String = ("OK")) As Integer
+Static Public Sub _call((Message) As String, Optional Button As String) As Integer
   
   Return Info(Message, Button)
   
 End
 
-Static Public Sub Info((Message) As String, Optional Button As String = ("OK")) As Integer
+Static Public Sub Info((Message) As String, Optional Button As String) As Integer
   
-  Return FMessage.Run("info", Message, [Button])
+  Return FMessage.Run("info", Message, [Button], [("OK")])
   
 End
 
 Static Public Sub Warning((Message) As String, Optional Button1 As String, Button2 As String, Button3 As String) As Integer
   
-  Return FMessage.Run("warning", Message, [Button1, Button2, Button3])
+  Return FMessage.Run("warning", Message, [Button1, Button2, Button3], [("Apply"), ("Cancel")])
   
 End
 
 Static Public Sub Question((Message) As String, Optional Button1 As String, Button2 As String, Button3 As String) As Integer
   
-  Return FMessage.Run("question", Message, [Button1, Button2, Button3])
+  Return FMessage.Run("question", Message, [Button1, Button2, Button3], [("Yes"), ("Cancel")])
   
 End
 
 Static Public Sub Error((Message) As String, Optional Button1 As String, Button2 As String, Button3 As String) As Integer
   
-  Return FMessage.Run("error", Message, [Button1, Button2, Button3])
+  Return FMessage.Run("error", Message, [Button1, Button2, Button3], [("OK")])
   
 End
 
 Static Public Sub Delete((Message) As String, Optional Button1 As String, Button2 As String, Button3 As String) As Integer
   
-  Return FMessage.Run("delete", Message, [Button1, Button2, Button3])
+  Return FMessage.Run("delete", Message, [Button1, Button2, Button3], [("Delete"), ("Cancel")])
   
 End
 

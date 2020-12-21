@@ -403,8 +403,8 @@ Public Function SaveProperty() As Boolean
 
     Case "f"
 
-      If Not IsNumber(sVal) Then Goto _BAD
-      vVal = CFloat(Val(sVal))
+      Try vVal = CFloat(sVal)
+      If Error Then Goto _BAD
 
     Case "d"
 

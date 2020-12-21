@@ -254,11 +254,11 @@ static void resize_container(void *_object, QWidget *cont, int w, int h)
 #define GET_ARRANGEMENT(_object) ((CCONTAINER_ARRANGEMENT *)_object)
 #define IS_EXPAND(_object) (((CWIDGET *)_object)->flag.expand)
 #define IS_IGNORE(_object) (((CWIDGET *)_object)->flag.ignore)
-#define IS_DESIGN(_object) (CWIDGET_test_flag(_object, WF_DESIGN) && CWIDGET_test_flag(_object, WF_DESIGN_LEADER))
+#define IS_DESIGN(_object) (CWIDGET_is_design(_object))
 //#define IS_WIDGET_VISIBLE(_widget) (_widget)->isVisible()
 
 //#define CAN_ARRANGE(_object) ((_object) && !CWIDGET_test_flag(_object, WF_DELETED) && (!GB.Is(_object, CLASS_Window) || (((CWINDOW *)_object)->opened)))
-#define CAN_ARRANGE(_object) ((_object) && ((CWIDGET *)(_object))->flag.shown && !CWIDGET_test_flag(_object, WF_DELETED))
+#define CAN_ARRANGE(_object) ((_object) && ((CWIDGET *)(_object))->flag.shown && !((CWIDGET *)(_object))->flag.deleted)
 
 #if USE_CACHE
 
@@ -472,7 +472,10 @@ void CCONTAINER_insert_child(void *_object)
 {
 	CWIDGET *parent = CWidget::get(WIDGET->parentWidget());
 	if (parent)
+	{
+		CCONTAINER_update_design(parent);
 		GB.Raise(parent, EVENT_Insert, 1, GB_T_OBJECT, THIS);
+	}
 }
 
 void CCONTAINER_decide(CWIDGET *control, bool *width, bool *height)
@@ -493,6 +496,42 @@ void CCONTAINER_decide(CWIDGET *control, bool *width, bool *height)
 	    || (THIS_ARRANGEMENT->mode == ARRANGE_VERTICAL && control->flag.expand)
 	    || (THIS_ARRANGEMENT->mode == ARRANGE_COLUMN && control->flag.expand))
 		*height = TRUE;
+}
+
+void CCONTAINER_update_design(void *_object)
+{
+	QObjectList list;
+	CWIDGET *child;
+	int i;
+
+	if (!THIS->widget.flag.design)
+		return;
+	
+	if (!THIS_ARRANGEMENT->user && !THIS->widget.flag.design_ignore)
+		return;
+	
+	//fprintf(stderr, "CCONTAINER_update_design: %s %d\n", THIS->widget.name, THIS->widget.flag.design_ignore);
+	
+	if (THIS->widget.flag.design_ignore)
+	{
+		list = THIS->widget.widget->children();
+		
+		for (i = 0; i < list.count(); i++)
+		{
+			child = CWidget::getRealExisting(list.at(i));
+			if (child)
+				CWIDGET_set_design(child, true);
+		}
+	}
+	
+	list = CONTAINER->children();
+	
+	for (i = 0; i < list.count(); i++)
+	{
+		child = CWidget::getRealExisting(list.at(i));
+		if (child)
+			CWIDGET_set_design(child, true);
+	}
 }
 
 
@@ -713,7 +752,7 @@ MyContainer::~MyContainer()
 {
 	CWIDGET *_object = CWidget::getReal(this);
 	if (THIS)
-		CWIDGET_set_flag(THIS, WF_DELETED);
+		THIS->widget.flag.deleted = true;
 }
 
 void MyContainer::showEvent(QShowEvent *e)
@@ -807,7 +846,7 @@ static QRect getRect(void *_object)
 	return w->contentsRect();
 }
 
-BEGIN_PROPERTY(Container_X)
+BEGIN_PROPERTY(Container_ClientX)
 
 	#ifdef DEBUG
 	if (!CONTAINER)
@@ -822,7 +861,7 @@ BEGIN_PROPERTY(Container_X)
 END_PROPERTY
 
 
-BEGIN_PROPERTY(Container_Y)
+BEGIN_PROPERTY(Container_ClientY)
 
 	#ifdef DEBUG
 	if (!CONTAINER)
@@ -837,7 +876,7 @@ BEGIN_PROPERTY(Container_Y)
 END_PROPERTY
 
 
-BEGIN_PROPERTY(Container_Width)
+BEGIN_PROPERTY(Container_ClientWidth)
 
 	#ifdef DEBUG
 	if (!CONTAINER)
@@ -849,7 +888,7 @@ BEGIN_PROPERTY(Container_Width)
 END_PROPERTY
 
 
-BEGIN_PROPERTY(Container_Height)
+BEGIN_PROPERTY(Container_ClientHeight)
 
 	#ifdef DEBUG
 	if (!CONTAINER)
@@ -1074,12 +1113,11 @@ END_PROPERTY
 BEGIN_PROPERTY(Container_Indent)
 
   if (READ_PROPERTY)
-    GB.ReturnInteger(THIS_ARRANGEMENT->indent);
+    GB.ReturnBoolean(THIS_ARRANGEMENT->indent);
   else
   {
-  	int val = VPROP(GB_INTEGER);
-		if (val < 0) val = 1;
-  	if (val != THIS_ARRANGEMENT->indent && val >= 0 && val <= 7)
+  	bool val = VPROP(GB_BOOLEAN);
+  	if (val != THIS_ARRANGEMENT->indent)
   	{
     	THIS_ARRANGEMENT->indent = val;
 			arrange_now(CONTAINER);
@@ -1122,6 +1160,7 @@ BEGIN_PROPERTY(UserControl_Container)
 			if (current)
 				CWIDGET_container_for(current, NULL);
 			THIS->container = WIDGET;
+			CCONTAINER_update_design(THIS);
 			CWIDGET_register_proxy(THIS, NULL);
 			return;
 		}
@@ -1152,10 +1191,11 @@ BEGIN_PROPERTY(UserControl_Container)
 			
 			THIS->container = w;
 
-			CWIDGET_update_design((CWIDGET *)THIS);
 			CCONTAINER_arrange(THIS);
 
 			CWIDGET_set_color((CWIDGET *)cont, bg, fg, true);
+			
+			CCONTAINER_update_design(THIS);
 
 			CWIDGET_register_proxy(THIS, cont);
 		}
@@ -1411,12 +1451,12 @@ GB_DESC ContainerDesc[] =
 
 	GB_PROPERTY_READ("Children", "ContainerChildren", Container_Children),
 
-	GB_PROPERTY_READ("ClientX", "i", Container_X),
-	GB_PROPERTY_READ("ClientY", "i", Container_Y),
-	GB_PROPERTY_READ("ClientW", "i", Container_Width),
-	GB_PROPERTY_READ("ClientWidth", "i", Container_Width),
-	GB_PROPERTY_READ("ClientH", "i", Container_Height),
-	GB_PROPERTY_READ("ClientHeight", "i", Container_Height),
+	GB_PROPERTY_READ("ClientX", "i", Container_ClientX),
+	GB_PROPERTY_READ("ClientY", "i", Container_ClientY),
+	GB_PROPERTY_READ("ClientW", "i", Container_ClientWidth),
+	GB_PROPERTY_READ("ClientWidth", "i", Container_ClientWidth),
+	GB_PROPERTY_READ("ClientH", "i", Container_ClientHeight),
+	GB_PROPERTY_READ("ClientHeight", "i", Container_ClientHeight),
 	
 	GB_METHOD("_unknown", "v", Container_unknown, "."),
 	GB_METHOD("FindChild", "Control", Container_FindChild, "(X)i(Y)i"),

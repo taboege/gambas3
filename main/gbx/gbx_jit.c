@@ -52,17 +52,21 @@ static JIT_FUNCTION *_jit_func = NULL;
 
 static bool _debug = FALSE;
 
+static void find_method(GB_FUNCTION *func, const char *method, const char *sign, const char *type)
+{
+	if (GB_GetFunction(func, CLASS_find_global("Jit"), method, sign, type))
+		ERROR_panic("Unable to find JIT.&1() method", method);
+}
+
 void JIT_abort(void)
 {
-	static GB_FUNCTION _func;
+	GB_FUNCTION func;
 	
 	if (!_component_loaded || JIT_disabled)
 		return;
 	
-	if (GB_GetFunction(&_func, CLASS_find_global("Jit"), "_Abort", NULL, NULL))
-		ERROR_panic("Unable to find JIT._Abort() method");
-	
-	GB_Call(&_func, 0, FALSE);
+	find_method(&func, "_Abort", NULL, NULL);
+	GB_Call(&func, 0, FALSE);
 	GB_Wait(0);
 }
 
@@ -94,6 +98,8 @@ void JIT_compile(ARCHIVE *arch)
 	if (!_component_loaded)
 	{
 		char *var;
+		GB_FUNCTION init_func;
+		GB_VALUE *ret;
 		
 		_component_loaded = TRUE;
 		
@@ -112,10 +118,19 @@ void JIT_compile(ARCHIVE *arch)
 			fprintf(stderr, "gbx3: loading gb.jit component\n");
 		
 		COMPONENT_load(COMPONENT_create("gb.jit"));
-		if (GB_GetFunction(&_jit_compile_func, CLASS_find_global("Jit"), "_Compile", "s", "b"))
-			ERROR_panic("Unable to find JIT._Compile() method");
-		if (GB_GetFunction(&_jit_wait_func, CLASS_find_global("Jit"), "_Wait", "s", "s"))
-			ERROR_panic("Unable to find JIT._Wait() method");
+
+		find_method(&init_func, "_Search", NULL, NULL);
+		
+		ret = GB_Call(&init_func, 0, FALSE);
+		if (ret->_boolean.value)
+		{
+			JIT_disabled = TRUE;
+			fprintf(stderr, "gbx3: no compiler found. JIT is disabled.\n");
+			return;
+		}
+		
+		find_method(&_jit_compile_func, "_Compile", "s", "b");
+		find_method(&_jit_wait_func, "_Wait", "s", "s");
 	}
 	
 	arch ? (arch->jit_state = JIT_COMPILING) : (_jit_state = JIT_COMPILING);

@@ -6,8 +6,6 @@
   Expand = True
   Spacing = "8mm"
   Count = 2
-  Index = 0
-  Text = ("")
   { ReportHBox1 ReportHBox
     #MoveScaled(1,1,107,20)
     Height = "4cm"
@@ -19,6 +17,7 @@
       #MoveScaled(1,1,19,18)
       Width = "4cm"
       Height = "4cm"
+      Visible = False
       AutoResize = True
       Image = Image.Load("gambas.svg")
     }
@@ -37,12 +36,4 @@
     Font = Font["+12"]
     Text = ("=\"PAGE \" & Page & \" / \" & pages")
   }
-  Index = 1
-  Text = ("")
-  { ReportLabel2 ReportLabel
-    #MoveScaled(1,1,107,29)
-    Font = Font["+12"]
-    Text = ("=\"PAGE \" & Page & \" / \" & pages")
-  }
-  Index = 0
 }

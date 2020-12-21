@@ -130,11 +130,11 @@ Public Sub btnForward_Click()
 
 End
 
-Public Sub webAboutComponent_Click((Frame) As WebFrame)
-
-  btnForward.Enabled = webAboutComponent.History.Index < webAboutComponent.History.Max
-
-End
+' Public Sub webAboutComponent_Click((Frame) As WebFrame)
+' 
+'   btnForward.Enabled = webAboutComponent.History.Index < webAboutComponent.History.Max
+' 
+' End
 
 Public Sub btnStop_Click()
   
@@ -150,26 +150,26 @@ End
 
 Public Sub btnZoomIn_Click()
   
-  webAboutComponent.TextZoom = Round(webAboutComponent.TextZoom * 1.125, -3)
+  webAboutComponent.Zoom = Round(webAboutComponent.Zoom * 1.125, -3)
   
 End
 
 Public Sub btnZoomOut_Click()
   
-  webAboutComponent.TextZoom = Round(webAboutComponent.TextZoom / 1.125, -3)
+  webAboutComponent.Zoom = Round(webAboutComponent.Zoom / 1.125, -3)
   
 End
 
 Public Sub btnZoomNormal_Click()
   
-  webAboutComponent.TextZoom = DEFAULT_ZOOM
+  webAboutComponent.Zoom = DEFAULT_ZOOM
   
 End
 
 
 Public Sub btnBack_Click()
 
-  If webAboutComponent.History.Index Then
+  If webAboutComponent.History.CanGoBack Then
     webAboutComponent.Back
   Else
     webAboutComponent.Stop

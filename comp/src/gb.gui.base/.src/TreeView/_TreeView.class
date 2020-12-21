@@ -798,16 +798,28 @@ Public Sub GridView_KeyPress()
   
   If Key.Code = Key.F2 Then 
     hItem = Current_Read()
-    If hItem Then hItem.Rename
+    If hItem Then 
+      hItem.Rename
+      Stop Event
+    Endif
   Else If Key.Text = "+" Then
     hItem = Current_Read()
-    If hItem Then hItem.Expanded = True
+    If hItem Then 
+      hItem.Expanded = True
+      Stop Event
+    Endif
   Else If Key.Text = "-" Then
     hItem = Current_Read()
-    If hItem Then hItem.Expanded = False
+    If hItem Then 
+      hItem.Expanded = False
+      Stop Event
+    Endif
   Else If Key.Code = Key.Space Or If Key.Code = Key.Return Or If Key.Code = Key.Enter Then
     hItem = Current_Read()
-    If hItem Then hItem.Expanded = Not hItem.Expanded
+    If hItem Then
+      hItem.Expanded = Not hItem.Expanded
+      Stop Event
+    Endif
   Endif
   
 End
@@ -1396,6 +1408,8 @@ Public Sub _Rename(hItem As _TreeView_Item, iCol As Integer)
   Dim SX As Integer
   
   If iCol < 0 Or If iCol >= $hView.Columns.Count Then Error.Raise("Out of bounds")
+  
+  Cancel()
   
   _EnsureVisible(hItem)
   Wait

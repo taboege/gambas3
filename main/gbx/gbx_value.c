@@ -1341,7 +1341,7 @@ void VALUE_free(void *addr, TYPE type)
 
 
 
-void VALUE_to_string(VALUE *value, char **addr, int *len)
+void VALUE_to_local_string(VALUE *value, char **addr, int *len)
 {
 	static void *jump[16] = {
 		&&__VOID, &&__BOOLEAN, &&__BYTE, &&__SHORT, &&__INTEGER, &&__LONG, &&__SINGLE, &&__FLOAT, &&__DATE,
@@ -1365,15 +1365,13 @@ __BOOLEAN:
 
 	if (value->_boolean.value)
 	{
-		*addr = (char *)LOCAL_gettext("True");
-		*len = strlen(*addr);
+		*addr = LOCAL_local.true_str;
+		*len = LOCAL_local.len_true_str;
 	}
 	else
 	{
-		*addr = (char *)LOCAL_gettext("False");
-		*len = strlen(*addr);
-		//*addr = LOCAL_local.false_str;
-		//*len = LOCAL_local.len_false_str;
+		*addr = LOCAL_local.false_str;
+		*len = LOCAL_local.len_false_str;
 	}
 	return;
 
@@ -1474,7 +1472,7 @@ __FUNCTION:
 }
 
 
-void VALUE_from_string(VALUE *value, const char *addr, int len)
+void VALUE_from_local_string(VALUE *value, const char *addr, int len)
 {
 	while (len > 0 && isspace(*addr))
 		addr++, len--;

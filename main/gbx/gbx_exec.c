@@ -922,7 +922,7 @@ void EXEC_function_loop()
 					PROPAGATE();
 				}
 
-				if (EXEC_break_on_error)
+				if (EXEC_break_on_error && EXEC_debug)
 					DEBUG.Main(TRUE);
 
 				if (ERROR->info.code == E_ASSERT)

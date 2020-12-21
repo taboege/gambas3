@@ -53,7 +53,7 @@ void CDRAWINGAREA_send_change_event(void)
 	while (iter)
 	{
 		control = (gControl *)iter->data;
-		if (control->getClass() == Type_gDrawingArea)
+		if (control->isDrawingArea())
 			GB.Raise(control->hFree, EVENT_Change, 0);
 		iter = g_list_next(iter);
 	}

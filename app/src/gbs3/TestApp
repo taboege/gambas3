@@ -1,0 +1,18 @@
+#!/usr/bin/gbs3
+use "gb.eval.highlight","gb.pcre"
+Public x as string = "hello"
+class Testit
+public a as integer
+public sub GetA() as integer
+return a
+end
+end class
+public struct testStruct
+H as string 
+g as integer
+f as variant
+end struct
+for i as integer = 0 to 20
+print x;;i
+next
+INCLUDE "TestAppInclude"

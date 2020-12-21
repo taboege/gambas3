@@ -40,7 +40,6 @@
 #include <QWindow>
 #endif
 
-
 //#define DEBUG_MENU 1
 
 DECLARE_EVENT(EVENT_Click);
@@ -397,11 +396,12 @@ BEGIN_METHOD(Menu_new, GB_OBJECT parent; GB_BOOLEAN hidden)
 
 		if (!menu->menu)
 		{
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0) && QT_VERSION < QT_VERSION_CHECK(5,5,0)
-			menu->menu = new MyMenu();
-#else
-			menu->menu = new QMenu();
-#endif
+			#if QT_VERSION >= QT_VERSION_CHECK(5,0,0) && QT_VERSION < QT_VERSION_CHECK(5,5,0)
+				menu->menu = new MyMenu();
+			#else
+				menu->menu = new QMenu();
+			#endif
+			
 			menu->menu->setSeparatorsCollapsible(true);
 			((QAction *)(menu->widget.widget))->setMenu(menu->menu);
 
@@ -428,6 +428,7 @@ BEGIN_METHOD(Menu_new, GB_OBJECT parent; GB_BOOLEAN hidden)
 		if (!menuBar)
 		{
 			menuBar = new QMenuBar(topLevel);
+			menuBar->setNativeMenuBar(false);
 			//menuBar->setAutoFillBackground(true);
 			window->menuBar = menuBar;
 		}
@@ -1032,9 +1033,12 @@ void CMenu::slotShown(void)
 {
 	static bool init = FALSE;
 
-	//qDebug("slotShown: sender = %p  menuAction = %p", sender(), ((QMenu *)sender())->menuAction());
 	GET_MENU_SENDER(menu);
+	if (!menu)
+		return;
 	HANDLE_PROXY(menu);
+
+	//fprintf(stderr, "slotShown: %s: menuAction = %s\n", menu->widget.name, TO_UTF8(((QMenu *)sender())->menuAction()->text()));
 	
 	#ifdef QT5
 	if (menu->menu->windowHandle())
@@ -1071,6 +1075,8 @@ void CMenu::slotHidden(void)
 {
 	//qDebug("slotHidden: sender = %p  menuAction = %p", sender(), ((QMenu *)sender())->menuAction());
 	GET_MENU_SENDER(menu);
+	if (!menu)
+		return;
 	HANDLE_PROXY(menu);
 
 	menu->opened = FALSE;

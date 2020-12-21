@@ -1,7 +1,5 @@
 ' Gambas class file
 
-' TODO: Vérifier si la variable d'environnement EDITOR est bien disponible
-
 Inherits CVersionControl
 Create Static
 
@@ -257,7 +255,7 @@ Public Sub GetVersion(sDir As String) As String
 
 End
 
-Public Sub Diff(sPath As String, Optional (bFull) As Boolean) As String
+Public Sub Diff(sPath As String, Optional (bFull) As Boolean, (bNoWhiteSpace) As Boolean) As String
 
   Dim sDiff As String
 

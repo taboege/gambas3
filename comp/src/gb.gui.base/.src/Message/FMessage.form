@@ -1,37 +1,50 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,64,18)
+  MoveScaled(0,0,69,31)
   Resizable = False
   Arrangement = Arrange.Vertical
   Margin = True
+  { mnuPopup Menu
+    #Translate = False
+    Text = "Menu1"
+    Visible = False
+    { mnuCopy Menu
+      Text = ("Copy message")
+      Shortcut = "Ctrl+C"
+    }
+  }
   { panMessage HBox
-    MoveScaled(1,1,58,8)
+    MoveScaled(1,1,65,20)
     Expand = True
     { Panel3 Panel
-      MoveScaled(0,0,8,9)
+      MoveScaled(1,1,8,17)
       { picMessage PictureBox
         MoveScaled(0,0,8,8)
         Mode = PictureBox.Fill
       }
     }
     { Panel2 Panel
-      MoveScaled(10,2,2,4)
+      MoveScaled(10,2,1,4)
     }
-    { txtMessage TextLabel
-      MoveScaled(16,0,41,4)
+    { Panel4 VBox
+      MoveScaled(14,1,43,18)
       Expand = True
+      PopupMenu = "mnuPopup"
+      { txtMessage TextLabel
+        MoveScaled(1,1,41,4)
+        Expand = True
+      }
     }
   }
+  { Panel5 Panel
+    MoveScaled(30,22,7,2)
+  }
   { panButton HBox
-    MoveScaled(1,13,62,4)
+    MoveScaled(11,25,37,4)
     Spacing = True
-    { btnCopy ToolButton
-      MoveScaled(2,0,4,4)
-      ToolTip = ("Copy message")
-    }
     { Panel1 Panel
-      MoveScaled(9,0,4,4)
+      MoveScaled(2,0,4,4)
       Expand = True
     }
   }

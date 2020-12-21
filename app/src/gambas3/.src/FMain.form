@@ -248,7 +248,7 @@
     Visible = False
     { mnuRun Menu
       Action = "start"
-      Text = Shortcut(("Run"), "R")
+      Text = ("Run")
       Picture = Picture["icon:/small/play"]
       Shortcut = "F5"
     }

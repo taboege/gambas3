@@ -31,7 +31,6 @@
 #include "watcher.h"
 #include "gglarea.h"
 #include "gkey.h"
-#include "gmessage.h"
 
 #include "x11.h"
 #include "desktop.h"
@@ -62,7 +61,6 @@
 #include "CSlider.h"
 #include "CTabStrip.h"
 #include "CTrayIcon.h"
-#include "CStock.h"
 #include "CSeparator.h"
 #include "cprinter.h"
 #include "csvgimage.h"
@@ -90,8 +88,6 @@ static void hook_post(void);
 static int hook_loop();
 static void hook_watch(int fd, int type, void *callback, intptr_t param);
 
-static GtkWidget *GTK_CreateGLArea(void *_object, void *parent, void (*init)(GtkWidget *));
-
 static bool _post_check = false;
 static bool _must_check_quit = false;
 
@@ -104,6 +100,66 @@ bool MAIN_display_x11 = FALSE;
 int MAIN_scale = 0;
 bool MAIN_debug_busy = false;
 bool MAIN_rtl = false;
+
+//-------------------------------------------------------------------------
+
+static void GTK_CreateControl(CWIDGET *ob, void *parent, GtkWidget *widget)
+{
+	gControl *ctrl;
+	bool recreate;
+	
+	if (!parent)
+	{
+		recreate = true;
+		ctrl = ob->widget;
+		ctrl->parent()->remove(ctrl);
+		ctrl->createBorder(widget);
+	}
+	else
+	{
+		recreate = false;
+		ctrl = new gControl(CONTAINER(parent));
+		ctrl->border = widget;
+	}
+	
+	ctrl->widget = ctrl->border;
+	InitControl(ctrl, ob);
+	ctrl->realize(false);
+	ctrl->_has_input_method = TRUE;
+	
+	if (recreate)
+		ctrl->updateGeometry(true);
+}
+
+static GtkWidget *GTK_CreateGLArea(void *_object, void *parent, void (*init)(GtkWidget *))
+{
+	gControl *ctrl = new gGLArea(CONTAINER(parent), init);
+	InitControl(ctrl, (CWIDGET *)_object);
+	//WIDGET->onExpose = Darea_Expose;
+	return ctrl->widget;
+}
+
+static void *GTK_CreatePicture(cairo_surface_t *surf, int w, int h)
+{
+	gPicture *p = new gPicture(surf);
+	
+	if (w > 0 && h > 0)
+	{
+		gPicture *p2 = p->stretch(w, h, true);
+		p->unref();
+		p = p2;
+	}
+	
+	return CPICTURE_create(p);
+}
+
+static int GTK_GetDesktopScale(void)
+{
+	return MAIN_scale;
+}
+
+
+//-------------------------------------------------------------------------
 
 extern "C"
 {
@@ -183,16 +239,22 @@ GB_DESC *GB_CLASSES[] EXPORT =
 	CTabStripContainerChildrenDesc,
 	CPluginDesc,
 	CSeparatorDesc,
-	CStockDesc,
 	PrinterDesc,
 	SvgImageDesc,
 	NULL
 };
 
+#ifdef GTK3
+void *GB_GTK3_1[] EXPORT =
+#else
 void *GB_GTK_1[] EXPORT =
+#endif
 {
 	(void *)GTK_INTERFACE_VERSION,
+	(void *)GTK_CreateControl,
 	(void *)GTK_CreateGLArea,
+	(void *)GTK_CreatePicture,
+	(void *)GTK_GetDesktopScale,
 	NULL
 };
 
@@ -206,6 +268,8 @@ int EXPORT GB_INIT(void)
 	if (env && atoi(env))
 		MAIN_debug_busy = true;
 
+	putenv((char *)"GTK_OVERLAY_SCROLLING=0");
+	
 	GB.Hook(GB_HOOK_QUIT, (void *)hook_quit);
 	_old_hook_main = GB.Hook(GB_HOOK_MAIN, (void *)hook_main);
 	GB.Hook(GB_HOOK_WAIT, (void *)hook_wait);
@@ -219,10 +283,10 @@ int EXPORT GB_INIT(void)
 	GB.Component.Load("gb.draw");
 	GB.Component.Load("gb.image");
 	GB.Component.Load("gb.gui.base");
-	
+
 	GB.GetInterface("gb.image", IMAGE_INTERFACE_VERSION, &IMAGE);
 	GB.GetInterface("gb.geom", GEOM_INTERFACE_VERSION, &GEOM);
-	
+
 	IMAGE.SetDefaultFormat(GB_IMAGE_RGBA);
 	DRAW_init();
 
@@ -270,7 +334,7 @@ int EXPORT GB_INFO(const char *key, void **value)
 			return TRUE;
 		}
 	}
-	
+
 	if (!strcasecmp(key, "GET_HANDLE"))
 	{
 		*value = (void *)CWIDGET_get_handle;
@@ -407,7 +471,7 @@ static void hook_main(int *argc, char ***argv)
 	}
 
 	init = true;
-
+	
 	CALL_HOOK_MAIN(_old_hook_main, argc, argv);
 }
 
@@ -513,7 +577,7 @@ static void hook_wait(int duration)
 		return;
 	}
 
-	if (duration && gKey::valid())
+	if (duration && gKey::isValid())
 	{
 #ifdef GTK3
 		fprintf(stderr, "gb.gtk3: warning: calling the event loop during a keyboard event handler is ignored\n");
@@ -533,22 +597,35 @@ static void hook_watch(int fd, int type, void *callback, intptr_t param)
 
 static bool hook_error(int code, char *error, char *where, bool can_ignore)
 {
-	char *showstr;
-	char scode[10];
-	bool ignore = FALSE;
+	gMainWindow *active;
+	GtkWidget *dialog;
+	char *msg;
+	char scode[16];
+	gint res;
 
-	sprintf(scode, "%d", code);
-
-	showstr = g_strconcat("<b>This application has raised an unexpected<br>error and must abort.</b>\n\n[", scode, "] ", error, ".\n\n<tt>", where, "</tt>", (void *)NULL);
-
-	gMessage::setTitle(GB.Application.Title());
-	if (can_ignore)
-		ignore = gMessage::showError(showstr, GB.Translate("Ignore"), GB.Translate("Close"), NULL) == 1;
+	if (code > 0)
+		sprintf(scode, " (#%d)", code);
 	else
-		gMessage::showError(showstr, NULL, NULL, NULL);
+		*scode = 0;
+	
+	msg = g_strconcat("<b>This application has raised an unexpected error and must abort.</b>\n\n", error, scode, ".\n\n<tt>", where, "</tt>", NULL);
 
-	g_free(showstr);
-	return ignore;
+	dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_NONE, NULL);
+	gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);
+	if (can_ignore)
+		gtk_dialog_add_button(GTK_DIALOG(dialog), GB.Translate("Ignore"), 2);
+	gtk_dialog_add_button(GTK_DIALOG(dialog), GB.Translate("Close"), 1);
+	
+	active = gDesktop::activeWindow();
+	if (active)
+    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(active->border));
+	
+	res = gtk_dialog_run(GTK_DIALOG(dialog));
+	
+	gtk_widget_destroy(dialog);
+	
+	g_free(msg);
+	return (res == 2);
 }
 
 static void hook_lang(char *lang, int rtl)
@@ -600,12 +677,3 @@ void MAIN_do_iteration(bool do_not_block)
 
 	gControl::cleanRemovedControls();
 }
-
-static GtkWidget *GTK_CreateGLArea(void *_object, void *parent, void (*init)(GtkWidget *))
-{
-	gControl *ctrl = new gGLArea(CONTAINER(parent), init);
-	InitControl(ctrl, (CWIDGET*)_object);
-	//WIDGET->onExpose = Darea_Expose;
-	return ctrl->widget;
-}
-

@@ -128,6 +128,7 @@ lib/geom/Makefile \
 lib/draw/Makefile \
 lib/gui/Makefile \
 lib/gui.opengl/Makefile \
+lib/gui.webview/Makefile \
 lib/gui.qt/Makefile \
 lib/gui.qt.webkit/Makefile \
 lib/gui.qt.opengl/Makefile \

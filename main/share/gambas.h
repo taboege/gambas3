@@ -29,8 +29,17 @@
 #endif
 
 #ifndef NO_CONFIG_H
+#ifdef PACKAGE_NAME
+	#undef PACKAGE_NAME
+	#undef PACKAGE_BUGREPORT
+	#undef PACKAGE_STRING
+	#undef PACKAGE_TARNAME
+	#undef PACKAGE_VERSION
+	#undef PACKAGE_URL
+#endif
 #include "config.h"
 #endif
+
 #include <stdint.h>
 #include <stddef.h>
 #include <sys/types.h>
@@ -787,6 +796,25 @@ typedef
 	GB_STREAM;
 
 
+/* File constants */
+
+#define GB_ST_READ         1
+#define GB_ST_WRITE        2
+#define GB_ST_READ_WRITE   3
+#define GB_ST_MODE         3
+#define GB_ST_EXEC         4
+#define GB_ST_APPEND       4
+#define GB_ST_CREATE       8
+#define GB_ST_ACCESS       15
+#define GB_ST_BUFFERED     16
+#define GB_ST_LOCK         32
+#define GB_ST_WATCH        64
+#define GB_ST_PIPE         128
+#define GB_ST_MEMORY       256
+#define GB_ST_STRING       512
+#define GB_ST_NULL         1024
+
+
 /* Constants used by the GB.NumberFromString() API function */
 
 #define GB_NB_READ_INTEGER    1
@@ -804,7 +832,7 @@ typedef
 #define GB_COMP_NOCASE      1
 
 
-/* Constant used by GB.ConvString to convert to 32 bits Unicode (that needs some special processing) */
+/* Constant used by GB.ConvString to convert to 32 bits Unicode (it needs some special processing) */
 
 #define GB_SC_UNICODE ((char *)-1)
 
@@ -907,7 +935,10 @@ typedef
 		int64_t size;
 		uid_t uid;
 		gid_t gid;
-		char hidden;
+		dev_t device;
+		unsigned hidden : 1;
+		unsigned blkdev : 1;
+		unsigned chrdev : 1;
 		}
 	GB_FILE_STAT;
 
@@ -966,6 +997,7 @@ typedef
 		char *(*GetLastEventName)(void);
 		void (*RaiseTimer)(void *);
 		bool (*Stopped)(void);
+		bool (*IsRaiseLocked)(void *);
 
 		int (*NParam)(void);
 		bool (*Conv)(GB_VALUE *, GB_TYPE);
@@ -997,6 +1029,7 @@ typedef
 		void *(*New)(GB_CLASS, char *, void *);
 		void *(*AutoCreate)(GB_CLASS, int);
 		bool (*CheckObject)(void *);
+		bool (*IsLocked)(void *);
 
 		void *(*GetEnum)(void);
 		void (*StopEnum)(void);

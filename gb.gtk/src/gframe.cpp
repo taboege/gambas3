@@ -37,7 +37,7 @@ void gPanel::create(void)
 	GtkWidget *ch, *box;
 	bool doReparent = false;
 	bool was_visible = isVisible();
-	GdkRectangle rect;
+	GdkRectangle rect = { 0 };
 	int bg, fg;
 	gControl *nextSibling;
 	
@@ -56,15 +56,12 @@ void gPanel::create(void)
 			gtk_container_remove(GTK_CONTAINER(widget), ch);
 		}
 		
-		_no_delete = true;
-		gtk_widget_destroy(border);
-		_no_delete = false;
 		doReparent = true;
 	}
 	
 	if (_bg_set)
 	{
-		border = gtk_event_box_new();
+		createBorder(gtk_event_box_new());
 		widget = gtk_fixed_new();
 		box = widget;
 		//gtk_widget_set_app_paintable(border, TRUE);
@@ -72,7 +69,8 @@ void gPanel::create(void)
 	}
 	else
 	{
-		border = widget = gtk_fixed_new();
+		createBorder(gtk_fixed_new());
+		widget = border;
 		box = NULL;
 	}
 
@@ -121,11 +119,12 @@ void gPanel::create(void)
 
 gPanel::gPanel(gContainer *parent) : gContainer(parent)
 {
-	g_typ = Type_gPanel;
 	border = NULL;
 	create();
 }
 
+#ifdef GTK3
+#else
 void gPanel::setBackground(gColor color)
 {
 	bool set = _bg_set;
@@ -135,6 +134,7 @@ void gPanel::setBackground(gColor color)
 	if (set != _bg_set)
 		create();
 }
+#endif
 
 /****************************************************************************
 
@@ -144,8 +144,6 @@ Frame
 
 gFrame::gFrame(gContainer *parent) : gContainer(parent)
 {
-	g_typ=Type_gFrame;
-
 	border = widget = gtk_fixed_new();
 	
 	fr = gtk_frame_new(NULL);
@@ -248,8 +246,11 @@ int gFrame::containerHeight()
 	return clientHeight() - containerY() - gApplication::getFrameWidth();
 }
 
-void gFrame::resize(int w, int h)
+bool gFrame::resize(int w, int h)
 {
-	gContainer::resize(w, h);
-	gtk_widget_set_size_request(fr, w, h);
+	if (gContainer::resize(w, h))
+		return true;
+	
+	gtk_widget_set_size_request(fr, width(), height());
+	return false;
 }

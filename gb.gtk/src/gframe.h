@@ -34,7 +34,9 @@ public:
 
 	int getBorder() { return getFrameBorder(); }
 	void setBorder(int vl) { setFrameBorder(vl); }
+#ifndef GTK3
 	virtual void setBackground(gColor color = COLOR_DEFAULT);
+#endif
 
 private:
 
@@ -65,7 +67,7 @@ public:
 	virtual void setRealForeground(gColor color);
 #endif
 
-	virtual void resize(int w, int h);
+	virtual bool resize(int w, int h);
 	
 //"Private"
 	GtkWidget *fr;

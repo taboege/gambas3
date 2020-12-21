@@ -56,6 +56,7 @@ double gt_from_alignment(int align, bool vertical = false);
 
 gboolean gcb_focus_in(GtkWidget *widget, GdkEventFocus *event, gControl *data);
 gboolean gcb_focus_out(GtkWidget *widget, GdkEventFocus *event, gControl *data);
+gboolean gcb_focus(GtkWidget *widget, GtkDirectionType direction, gControl *data);
 
 // Where to scroll to ensure that a specific area is visible
 
@@ -112,7 +113,8 @@ void gt_set_cell_renderer_text_from_font(GtkCellRendererText *cell, gFont *font)
 void gt_set_layout_from_font(PangoLayout *layout, gFont *font, int dpi = 0);
 void gt_add_layout_from_font(PangoLayout *layout, gFont *font, int dpi = 0);
 
-#define gt_pango_to_pixel(_pango) (((_pango) + (PANGO_SCALE / 2)) / PANGO_SCALE)
+#define gt_pango_to_pixel(_pango) (PANGO_PIXELS_CEIL(_pango))
+//(_pango) + (PANGO_SCALE / 2)) / PANGO_SCALE)
 
 // Grab a window
 
@@ -146,7 +148,7 @@ void gt_cairo_draw_pixbuf(cairo_t *cr, GdkPixbuf *pixbuf, float x, float y, floa
 
 // Color functions
 
-gColor get_gdk_color(GdkColor *gcol);
+gColor gt_gdkcolor_to_color(GdkColor *gcol);
 #ifdef GTK3
 void fill_gdk_color(GdkColor *gcol, gColor color);
 #else
@@ -190,12 +192,14 @@ void gt_draw_border(cairo_t *cr, GtkStyleContext *st, GtkStateFlags state, int b
 // Style management
 
 #ifdef GTK3
-GtkStyleContext *gt_get_style(GType type);
+GtkStyleContext *gt_get_style(GType type, const char *node = NULL, const char *more_klass = NULL);
 #else
 GtkStyle *gt_get_style(GType type);
 #endif
 
 void gt_get_style_property(GType type, const char *name, void *pvalue);
+
+void gt_on_theme_change();
 
 void gMnemonic_correctText(char *st,char **buf);
 guint gMnemonic_correctMarkup(char *st,char **buf);
@@ -219,8 +223,14 @@ void gt_widget_reparent(GtkWidget *widget, GtkWidget *new_parent);
 
 #if GTK_CHECK_VERSION(3, 20, 0)
 #define gt_set_focus_on_click(_widget, _flag) gtk_widget_set_focus_on_click(GTK_WIDGET(_widget), (_flag))
+#define gt_get_focus_on_click(_widget) gtk_widget_get_focus_on_click(GTK_WIDGET(_widget))
 #else
-#define gt_set_focus_on_click(_widget, _flag) gtk_button_set_focus_on_click(GTK_BUTTON(_widget), (_flag))
+#define gt_set_focus_on_click(_widget, _flag) (gtk_button_set_focus_on_click(GTK_BUTTON(_widget), (_flag)))
+#define gt_get_focus_on_click(_widget) (gtk_button_get_focus_on_click(GTK_BUTTON(_widget)))
+#endif
+
+#if GTK_CHECK_VERSION(3, 22, 0)
+int gt_find_monitor(GdkMonitor *monitor);
 #endif
 
 #endif

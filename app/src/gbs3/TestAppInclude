@@ -1,0 +1,4 @@
+public sub WriteSomething()
+print "Write Something"
+end
+INCLUDE "TestAppInclude2"

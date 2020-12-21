@@ -178,6 +178,9 @@ int COMMON_get_unicode_char()
 	int lc;
 	uint uc;
 	
+	if (COMMON_pos > COMMON_len)
+		return -1;
+	
 	lc = STRING_utf8_get_char_length(*COMMON_get_current());
 	if (COMMON_pos + lc > COMMON_len)
 		return -1;

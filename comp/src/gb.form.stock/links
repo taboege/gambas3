@@ -42,3 +42,4 @@ text-x-chdr -> h
 text-x-csrc -> c
 text-x-generic -> text
 video-x-generic -> video
+font-x-generic -> font
