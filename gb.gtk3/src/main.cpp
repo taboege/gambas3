@@ -450,10 +450,23 @@ static bool global_key_event_handler(int type)
 static void hook_main(int *argc, char ***argv)
 {
 	static bool init = false;
+	
+	char *env;
 
 	if (init)
 		return;
 
+	env = getenv("GB_GUI_PLATFORM");
+	if (env && *env)
+	{
+		if (!strcasecmp(env, "X11"))
+			putenv((char *)"GDK_BACKEND=x11");
+		else if (!strcasecmp(env, "WAYLAND"))
+			putenv((char *)"GDK_BACKEND=wayland");
+		else
+			fprintf(stderr, "gb.gtk3: warning: unknown platform: %s\n", env);
+	}
+	
 	gApplication::init(argc, argv);
 
 	load_platform();
