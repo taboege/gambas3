@@ -718,11 +718,23 @@ static void hook_main(int *argc, char ***argv)
 {
 	QString platform;
 	const char *comp;
+	char *env;
 	
+	env = getenv("GB_GUI_PLATFORM");
+	if (env && *env)
+	{
+		if (!strcasecmp(env, "X11"))
+			putenv((char *)"QT_QPA_PLATFORM=xcb");
+		else if (!strcasecmp(env, "WAYLAND"))
+			putenv((char *)"QT_QPA_PLATFORM=wayland");
+		else
+			fprintf(stderr, QT_NAME ": warning: unknown platform: %s\n", env);
+	}
+
 	new MyApplication(*argc, *argv);
 	
 	platform = qApp->platformName();
-	fprintf(stderr, "platform = %s\n", TO_UTF8(platform));
+
 	if (platform == "wayland")
 	{
 		comp = "gb.qt5.wayland";
