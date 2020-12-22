@@ -30,8 +30,8 @@ class gPicture;
 class gMenu
 {
 public:
-	gMenu(gMainWindow *par,bool hidden);
-	gMenu(gMenu *par,bool hidden);
+	gMenu(gMainWindow *par, bool hidden);
+	gMenu(gMenu *par, bool hidden);
 	~gMenu();
 
 	void *hFree;

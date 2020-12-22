@@ -1706,7 +1706,7 @@ void gMainWindow::configure()
 		if (layout)
 		{
 			if (menuBar)
-				gtk_fixed_move(GTK_FIXED(layout), GTK_WIDGET(menuBar), 0, -h);
+				gtk_fixed_move(GTK_FIXED(layout), GTK_WIDGET(menuBar), -width(), -h);
 			gtk_fixed_move(GTK_FIXED(layout), widget, 0, 0);
 		}
 		gtk_widget_set_size_request(widget, width(), height());
