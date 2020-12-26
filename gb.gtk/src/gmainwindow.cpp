@@ -362,17 +362,6 @@ static gboolean my_key_press_event(GtkWidget *widget, GdkEventKey *event)
 
 void gMainWindow::initialize()
 {
-	// workaround GTK+ accelerator management
-
-	static bool _init = FALSE;
-	if (!_init)
-	{
-		GtkWidgetClass *klass = (GtkWidgetClass*)g_type_class_peek(GTK_TYPE_WINDOW);
-		klass->key_press_event = my_key_press_event;
-		_init = TRUE;
-	}
-		
-	
 	//fprintf(stderr, "new window: %p in %p\n", this, parent());
 
 	stack = 0;
@@ -472,24 +461,19 @@ void gMainWindow::initWindow()
 	have_cursor = true; //parent() == 0 && !_xembed;
 }
 
-#if 0 //def GTK3
 
-static void (*old_fixed_get_preferred_width)(GtkWidget *, gint *, gint *);
-static void (*old_fixed_get_preferred_height)(GtkWidget *, gint *, gint *);
+// workaround GTK+ accelerator management
 
-static void gtk_fixed_get_preferred_width(GtkWidget *widget, gint *minimum_size, gint *natural_size)
+static void workaround_accel_management()
 {
-	(*old_fixed_get_preferred_width)(widget, minimum_size, natural_size);
-	*minimum_size = 0;
+	static bool _init = FALSE;
+	if (_init)
+		return;
+	
+	GtkWidgetClass *klass = (GtkWidgetClass*)g_type_class_peek(GTK_TYPE_WINDOW);
+	klass->key_press_event = my_key_press_event;
+	_init = TRUE;
 }
-
-static void gtk_fixed_get_preferred_height(GtkWidget *widget, gint *minimum_size, gint *natural_size)
-{
-	(*old_fixed_get_preferred_height)(widget, minimum_size, natural_size);
-	*minimum_size = 0;
-}
-
-#endif
 
 gMainWindow::gMainWindow(int plug) : gContainer(NULL)
 {
@@ -510,7 +494,10 @@ gMainWindow::gMainWindow(int plug) : gContainer(NULL)
 		#endif
 	}
 	else
+	{
 		border = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		workaround_accel_management();
+	}
 
 	widget = gtk_fixed_new(); //gtk_layout_new(0,0);
 

@@ -145,11 +145,28 @@ BEGIN_PROPERTY(Desktop_HasSystemTray)
 
 END_PROPERTY
 
+BEGIN_PROPERTY(Desktop_Scale)
+
+	GB.ReturnInteger(MAIN_scale);
+
+END_PROPERTY
+
 BEGIN_PROPERTY(Desktop_Type)
 
 	GB.ReturnConstZeroString(DESKTOP_get_type());
 
 END_PROPERTY
+
+BEGIN_PROPERTY(Desktop_Platform)
+
+	#ifdef GTK3
+		GB.ReturnConstZeroString(MAIN_platform);
+	#else
+		GB.ReturnConstZeroString("x11");
+	#endif
+
+END_PROPERTY
+
 
 //-------------------------------------------------------------------------
 
@@ -211,13 +228,6 @@ BEGIN_PROPERTY(Application_Busy)
 		if (MAIN_debug_busy)
 			fprintf(stderr, "%s: Application.Busy = %d\n", GB.Debug.GetCurrentPosition(), busy);
 	}
-
-END_PROPERTY
-
-
-BEGIN_PROPERTY(Desktop_Scale)
-
-	GB.ReturnInteger(MAIN_scale);
 
 END_PROPERTY
 
@@ -480,6 +490,7 @@ GB_DESC DesktopDesc[] =
 	GB_STATIC_METHOD("Screenshot", "Picture", Desktop_Screenshot, "[(X)i(Y)i(Width)i(Height)i]"),
 
 	GB_STATIC_PROPERTY_READ("Type", "s", Desktop_Type),
+	GB_STATIC_PROPERTY_READ("Platform", "s", Desktop_Platform),
 
 	GB_END_DECLARE
 };
