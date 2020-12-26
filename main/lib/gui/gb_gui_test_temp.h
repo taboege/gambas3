@@ -62,7 +62,7 @@ static int GUI_should_use()
 {
 	const char *env = getenv("XDG_CURRENT_DESKTOP");
 	
-	if (strncasecmp(env, "KDE", 3) == 0)
+	if (env && strncasecmp(env, "KDE", 3) == 0)
 	{
 		env = getenv("KDE_FULL_SESSION");
 		
