@@ -52,7 +52,7 @@ Public Sub _new()
   $aStyle[Highlight.Breakpoint] = New TextEditorStyle(&HFF5F5F&) As "Style"
   $aStyle[Highlight.Current] = New TextEditorStyle(&H42C9FF&) As "Style"
   $aStyle[Highlight.Selection] = New TextEditorStyle(Color.SelectedBackground) As "Style"
-  $aStyle[Highlight.Highlight] = New TextEditorStyle(&H7FFF00&) As "Style"
+  $aStyle[Highlight.Highlight] = New TextEditorStyle(&H6FE06F) As "Style"
   $aStyle[Highlight.CurrentLine] = New TextEditorStyle(Color.LightBackground) As "Style"
   $aStyle[Highlight.Error] = New TextEditorStyle(&HBF0303&, False, True) As "Style"
   $aStyle[Highlight.Escape] = New TextEditorStyle(&H7F0000&, True, False, True) As "Style"

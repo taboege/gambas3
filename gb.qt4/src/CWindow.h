@@ -171,7 +171,9 @@ typedef
 	}
 	MODAL_INFO;
 
+#ifndef QT5
 enum { PROP_ALL = -1, PROP_STACKING = 1, PROP_SKIP_TASKBAR = 2, PROP_BORDER = 4, PROP_STICKY = 8 };
+#endif
 	
 class MyMainWindow : public QWidget
 {
@@ -187,7 +189,7 @@ private:
 	bool _deleted;
 	bool _enterLoop;
 	bool _utility;
-	int _type;
+	//int _type;
 	Qt::WindowStates _state;
 	int _screen;
 	
@@ -234,15 +236,15 @@ public:
 	
 	bool isResizable(void) const { return _resizable; }
 	void setResizable(bool);
-	
+
+	#if 0
 	#ifdef NO_X_WINDOW
 	#else
 	int getType(void);
 	void setType(int type);
 	#endif
+	#endif
 	
-	//bool getTool(void) { return testWFlags(WStyle_Tool); }
-	//void setTool(bool);
 	bool isUtility(void) const { return _utility; }
 	void setUtility(bool b);
 	

@@ -58,5 +58,28 @@ static const char *GUI_can_use(int use)
 	return NULL;
 }
 
+static int GUI_should_use()
+{
+	const char *env = getenv("XDG_CURRENT_DESKTOP");
+	
+	if (env && strncasecmp(env, "KDE", 3) == 0)
+	{
+		env = getenv("KDE_FULL_SESSION");
+		
+		if (env && !strcmp(env, "true"))
+		{
+			env = getenv("KDE_SESSION_VERSION");
+			if (env)
+			{
+				if (strcmp(env, "4") == 0)
+					return USE_GB_QT4;
+				else if (strcmp(env, "5") == 0)
+					return USE_GB_QT5;
+			}
+		}
+	}
+
+	return USE_NOTHING;	
+}
 
  

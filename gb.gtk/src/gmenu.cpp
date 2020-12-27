@@ -29,6 +29,8 @@
 #include "gmenu.h"
 #include "CStyle.h"
 
+//#define DEBUG_DELETE 1
+
 typedef
 	struct {
 		int x;
@@ -41,6 +43,7 @@ int gMenu::_in_popup = 0;
 int gMenu::_popup_count = 0;
 
 static GList *menus = NULL;
+static GList *menus_destroyed = NULL;
 
 static gint my_menu_shell_enter_notify(GtkWidget *widget, GdkEventCrossing *event)
 {
@@ -96,7 +99,7 @@ static void cb_destroy(GtkWidget *object, gMenu *data)
 	if (data->ignoreSignal()) 
 		return;
 	
-	data->destroy();
+	delete data;
 }
 
 static void cb_activate(GtkMenuItem *menuitem, gMenu *data)
@@ -548,29 +551,22 @@ gMenu::gMenu(gMenu *par, bool hidden)
 	setVisible(!hidden);
 }
 
-gMenu::~gMenu()
+void gMenu::dispose()
 {
 	GList *item;
 	gMenu *mn;
 	int i;
-	
+
 	if (_destroyed)
 		return;
-		
-	_destroyed = true;
-  
+	
+	#if DEBUG_DELETE
+	fprintf(stderr, "dispose: %s %p --> %p\n", name(), this, pr);
+	#endif
+	
 	setProxy(NULL);
 	ensureChildMenu();
-
-	if (!_delete_later)
-	{
-		gMenu *parent = parentMenu();
-		if (parent)
-			parent->remove(this);
-	}
-
-  // Remove references to me
-  
+	
   if (_proxy_for)
 	{
 		#define CLEAR_POINTER(_field) if ((_field) == (void *)this) _field = NULL
@@ -585,14 +581,14 @@ gMenu::~gMenu()
 		}
 	}
 	
-	menus = g_list_remove(menus, (gpointer)this);
-	
-	_no_update = true;
+	if (_children)
+	{
+		for (i = 0; i < childCount(); i++)
+			child(i)->removeParent();
+		g_ptr_array_unref(_children);
+		_children = NULL;
+	}
 
-	setText(NULL);
-	setPicture(NULL);
-	setShortcut(NULL);
-	
 	//if (_style != NOTHING)
 	{
 		if (shlabel && (!_toplevel) && pr)
@@ -604,36 +600,48 @@ gMenu::~gMenu()
 		if (accel)
 			g_object_unref(accel);	
 	}
-		
+
+	gMenu *parent = parentMenu();
+	if (parent)
+	{
+		parent->remove(this);
+		parent = NULL;
+	}
+
+	menus = g_list_remove(menus, (gpointer)this);
+	
+	#if DEBUG_DELETE
+	fprintf(stderr, "dispose: >>> %s\n", name());
+	#endif
+}
+
+gMenu::~gMenu()
+{
+	#if DEBUG_DELETE
+	fprintf(stderr, "~gMenu: %s %p --> %p\n", name(), this, pr);
+	#endif
+	
+	dispose();
+  
+	_no_update = true;
+
+	setText(NULL);
+	setPicture(NULL);
+	setShortcut(NULL);
+	
 	_style = NOTHING;
 	
 	if (_popup)
 		g_object_unref(_popup);
-		//gtk_widget_destroy(GTK_WIDGET(_popup));
 	
-	if (image)
-		gtk_widget_destroy(GTK_WIDGET(image));
-		
-	/*if (check)
-		gtk_widget_destroy(GTK_WIDGET(check));*/
-		
-	if (menu)
-	{
-		_ignore_signal = true;
-		gtk_widget_destroy(GTK_WIDGET(menu));
-	}
-	
-	if (_children)
-	{
-		for (i = 0; i < childCount(); i++)
-			child(i)->removeParent();
-		g_ptr_array_unref(_children);
-		_children = NULL;
-	}
-
 	if (_current_popup == this)
 		_current_popup = NULL;
+
+	menus_destroyed = g_list_remove(menus_destroyed, this);
 	
+	#if DEBUG_DELETE
+	fprintf(stderr, "~gMenu: >>> %s\n", name());
+	#endif
 	if (onFinish) onFinish(this);
 }
 
@@ -807,8 +815,12 @@ gMenu *gMenu::child(int index) const
 
 void gMenu::destroy()
 {
-	if (!_destroyed && !_delete_later)
-		delete this;
+	if (_destroyed)
+		return;
+	
+	dispose();
+	menus_destroyed = g_list_prepend(menus_destroyed, (gpointer)this);
+	_destroyed = true;
 }
 
 #if GTK_CHECK_VERSION(3, 22, 0)
@@ -835,7 +847,7 @@ void gMenu::doPopup(bool move, int x, int y)
 	
 #if GTK_CHECK_VERSION(3, 22, 0)
 
-	GdkWindow *window;
+	GdkWindow *win;
 	GdkRectangle rect;
 	GdkEvent *event;
 	bool free = false;
@@ -847,23 +859,23 @@ void gMenu::doPopup(bool move, int x, int y)
 	{
 		event = gdk_event_new(GDK_BUTTON_PRESS);
 		event->button.time = GDK_CURRENT_TIME;
-		event->button.window = gdk_get_default_root_window();
+		event->button.window = gtk_widget_get_window(gtk_widget_get_toplevel(GTK_WIDGET(menu)));
 		gdk_event_set_device(event, gMouse::getPointer());
 		free = true;
 	}
 	
 	if (move)
 	{
-		window = gdk_event_get_window(event);
+		win = gdk_event_get_window(event);
 		/*if (!window)
 			window =*/
-		gdk_window_get_origin(window, &rect.x, &rect.y);
+		gdk_window_get_origin(win, &rect.x, &rect.y);
 
 		rect.x = x - rect.x;
 		rect.y = y - rect.y;
 		rect.width = rect.height = 1;
 		
-		gtk_menu_popup_at_rect(_popup, window, &rect, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, event);
+		gtk_menu_popup_at_rect(_popup, win, &rect, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, event);
 	}
 	else
 		gtk_menu_popup_at_pointer(_popup, event);
@@ -1284,15 +1296,16 @@ void gMenu::remove(gMenu *child)
 
 void gMenu::willBeDeletedLater()
 {
-	gMenu *parent = parentMenu();
-	
+	//gMenu *parent = parentMenu();
 	_delete_later = TRUE;
-	if (parent)
-		parent->remove(this);
+	dispose();
 }
 
 void gMenu::removeParent()
 {
+	#if DEBUG_DELETE
+	fprintf(stderr, "removeParent: %s %p --> %p\n", name(), this, pr);
+	#endif
 	pr = NULL;
 }
 
@@ -1313,4 +1326,23 @@ bool gMenu::ignoreSignal()
 	}
 	else
 		return false;
+}
+
+void gMenu::cleanRemovedMenus()
+{
+	GList *iter;
+	gMenu *menu;
+
+	if (!menus_destroyed) return;
+
+	for(;;)
+	{
+		iter = g_list_first(menus_destroyed);
+		if (!iter)
+			break;
+		menu = (gMenu *)iter->data;
+		gtk_widget_destroy(GTK_WIDGET(menu->menu));
+	}
+
+	menus_destroyed = NULL;
 }

@@ -52,21 +52,7 @@ static void send_click_event(void *_object)
 
 static int CMENU_check(void *_object)
 {
-	return (MENU == NULL);
-}
-
-#ifdef GTK4
-
-static void delete_menu(gMenu *menu)
-{
-	delete menu;
-}
-
-#else
-
-static void delete_later(gMenu *menu)
-{
-	delete menu;
+	return (MENU == NULL || MENU->isDestroyed());
 }
 
 static void delete_menu(gMenu *menu)
@@ -76,13 +62,9 @@ static void delete_menu(gMenu *menu)
 	if (!MENU)
 		return;
 
-	menu->willBeDeletedLater();
+	menu->destroy();
 	THIS->widget = NULL;
-
-	GB.Post((GB_CALLBACK)delete_later, (intptr_t)menu);
 }
-
-#endif
 
 static void cb_finish(gMenu *sender)
 {

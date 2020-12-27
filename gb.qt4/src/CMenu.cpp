@@ -35,9 +35,11 @@
 #include "CWindow.h"
 #include "CMenu.h"
 
+#include "main.h"
 #ifdef QT5
 #include <QWindow>
 #endif
+
 //#define DEBUG_MENU 1
 
 DECLARE_EVENT(EVENT_Click);
@@ -1039,10 +1041,18 @@ void CMenu::slotShown(void)
 	//fprintf(stderr, "slotShown: %s: menuAction = %s\n", menu->widget.name, TO_UTF8(((QMenu *)sender())->menuAction()->text()));
 	
 	#ifdef QT5
-		if (menu->menu->windowHandle())
-			menu->menu->windowHandle()->setTransientParent(menu->toplevel->windowHandle());
+	if (menu->menu->windowHandle())
+	{
+		QWidget *parent = qApp->activePopupWidget();
+		if (!parent) parent = qApp->activeWindow();
+		if (parent)
+		{
+			//fprintf(stderr, "set menu transient to %p\n", parent->windowHandle());
+			menu->menu->windowHandle()->setTransientParent(parent->windowHandle());
+		}
+	}
 	#endif
-
+	
 	GB.Ref(menu);
 	
 	menu->opened = TRUE;

@@ -677,3 +677,4 @@ void MAIN_do_iteration(bool do_not_block)
 
 	gControl::cleanRemovedControls();
 }
+

@@ -42,8 +42,11 @@
 #include "CDrawingArea.h"
 #include "CScreen.h"
 
+#ifndef QT5
 #include <QX11Info>
 #include "x11.h"
+#endif
+
 #include "desktop.h"
 
 #ifdef QT5
@@ -130,11 +133,15 @@ END_PROPERTY
 
 BEGIN_PROPERTY(Desktop_Resolution)
 
+#ifdef QT5
+	GB.ReturnInteger(PLATFORM.Desktop.GetResolutionY());
+#else
 	#ifdef NO_X_WINDOW
 		GB.ReturnInteger(72);
 	#else
 		GB.ReturnInteger(QX11Info::appDpiY());
 	#endif
+#endif
 
 END_PROPERTY
 
@@ -165,6 +172,12 @@ END_PROPERTY
 BEGIN_PROPERTY(Desktop_Type)
 
 	GB.ReturnConstZeroString(DESKTOP_get_type());
+
+END_PROPERTY
+
+BEGIN_PROPERTY(Desktop_Platform)
+
+	GB.ReturnConstZeroString(MAIN_platform);
 
 END_PROPERTY
 
@@ -292,7 +305,11 @@ BEGIN_PROPERTY(Application_MainWindow)
 			if (CWINDOW_MainDesktop >= 0)
 			{
 				MyMainWindow *win = (MyMainWindow *)CWINDOW_Main->widget.widget;
-				X11_window_set_desktop(win->winId(), win->isVisible(), CWINDOW_MainDesktop);
+				#ifdef QT5
+					PLATFORM.Window.SetVirtualDesktop(win, win->isVisible(), CWINDOW_MainDesktop);
+				#else
+					X11_window_set_desktop(win->winId(), win->isVisible(), CWINDOW_MainDesktop);
+				#endif
 				CWINDOW_MainDesktop = -1;
 			}
 			
@@ -518,6 +535,7 @@ GB_DESC DesktopDesc[] =
 	GB_STATIC_METHOD("Screenshot", "Picture", Desktop_Screenshot, "[(X)i(Y)i(Width)i(Height)i]"),
 	
 	GB_STATIC_PROPERTY_READ("Type", "s", Desktop_Type),
+	GB_STATIC_PROPERTY_READ("Platform", "s", Desktop_Platform),
 
 	GB_END_DECLARE
 };

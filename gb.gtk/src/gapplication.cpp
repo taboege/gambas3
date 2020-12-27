@@ -26,7 +26,12 @@
 #include <unistd.h>
 
 #include "widgets.h"
+
+#ifndef GTK3
 #include "x11.h"
+#include "sm/sm.h"
+#endif
+
 #include "gapplication.h"
 #include "gtrayicon.h"
 #include "gdesktop.h"
@@ -36,12 +41,15 @@
 #include "gclipboard.h"
 #include "gmouse.h"
 #include "gprinter.h"
-#include "sm/sm.h"
 #include "gmainwindow.h"
 
 //#define DEBUG_ENTER_LEAVE 1
 //#define DEBUG_FIND_CONTROL 1
 //#define DEBUG_FOCUS 1
+
+#ifdef GTK3
+static GtkApplication *_app;
+#endif
 
 static bool _debug_keypress = false;
 
@@ -509,7 +517,7 @@ __FOUND_WIDGET:
 				fprintf(stderr, "GDK_BUTTON_PRESS: %p / %p / %p\n", control, button_grab, gApplication::_control_grab);*/
 			/*else if (event->type == GDK_BUTTON_RELEASE)
 				fprintf(stderr, "GDK_BUTTON_RELEASE: %p / %p\n", control, button_grab);*/
-			
+
 			switch ((int)event->type)
 			{
 				case GDK_BUTTON_PRESS: type = gEvent_MousePress; break;
@@ -538,7 +546,7 @@ __FOUND_WIDGET:
 			
 				goto __HANDLE_EVENT;
 			}
-			
+
 			control = save_control;
 
 			bool menu = false;
@@ -802,7 +810,7 @@ __FOUND_WIDGET:
 				control = control->_proxy_for;
 				goto __SCROLL_TRY_PROXY;
 			}
-			
+
 			if (!control->_use_wheel)
 			{
 				control = control->parent();
@@ -853,10 +861,10 @@ __RETURN:
 		}
 		gApplication::setButtonGrab(NULL);
 	}
-	
+
 	if (handle_event)
 		gtk_main_do_event(event);
-	
+
 	if (send_to_window)
 		gcb_key_event(widget, event, control);
 
@@ -992,6 +1000,7 @@ static void do_nothing()
 {
 }
 
+#ifndef GTK3
 static gboolean master_client_save_yourself(GnomeClient *client, gint phase, GnomeSaveStyle save_style, gboolean is_shutting_down, GnomeInteractStyle interact_style, gboolean fast, gpointer user_data)
 {
 	if (gApplication::mainWindow())
@@ -1012,6 +1021,7 @@ static void master_client_die(GnomeClient *client, gpointer user_data)
 	gApplication::quit();
 	MAIN_check_quit();
 }
+#endif
 
 static void cb_theme_changed(GtkSettings *settings, GParamSpec *param, gpointer data)
 {
@@ -1026,16 +1036,21 @@ void gApplication::init(int *argc, char ***argv)
 	appEvents = 0;
 
 	gtk_init(argc, argv);
-	
+
+	#ifdef GTK3
+	_app = gtk_application_new(NULL, G_APPLICATION_FLAGS_NONE);
+	g_object_set(G_OBJECT(_app), "register-session", TRUE, NULL);
+	#else
+	session_manager_init(argc, argv);
+	g_signal_connect(gnome_master_client(), "save-yourself", G_CALLBACK(master_client_save_yourself), NULL);
+	g_signal_connect(gnome_master_client(), "die", G_CALLBACK(master_client_die), NULL);
+	#endif
+
 	getStyleName();
 
 	settings = gtk_settings_get_default();
 	g_signal_connect(G_OBJECT(settings), "notify::gtk-theme-name", G_CALLBACK(cb_theme_changed), 0);
 	
-	session_manager_init(argc, argv);
-	g_signal_connect(gnome_master_client(), "save-yourself", G_CALLBACK(master_client_save_yourself), NULL);
-	g_signal_connect(gnome_master_client(), "die", G_CALLBACK(master_client_die), NULL);
-
 	gdk_event_handler_set((GdkEventFunc)gambas_handle_event, NULL, NULL);
 
 	gKey::init();
@@ -1064,7 +1079,11 @@ void gApplication::init(int *argc, char ***argv)
 
 void gApplication::exit()
 {
+	#ifdef GTK3
+	g_object_unref(_app);
+	#else
 	session_manager_exit();
+	#endif
 
 	if (_title)
 		g_free(_title);
@@ -1489,7 +1508,7 @@ int gApplication::getFrameWidth()
 	int w;
 #ifdef GTK3
 	int h;
-	
+
 	getBoxFrame(&w, &h);
 	w = h;
 
@@ -1520,7 +1539,7 @@ void gApplication::getBoxFrame(int *pw, int *ph)
 	int w, h;
 
 #ifdef GTK3
-	
+
 	GtkStyleContext *context = gt_get_style(GTK_TYPE_ENTRY);
   GtkBorder border;
 	GtkBorder padding;
@@ -1534,18 +1553,18 @@ void gApplication::getBoxFrame(int *pw, int *ph)
   gtk_style_context_get(context, STATE_FOCUSED, GTK_STYLE_PROPERTY_BORDER_RADIUS, &radius, NULL);
 	//fprintf(stderr, "border-radius: %d\n", radius);
 	radius /= 2;
-	
+
 	w = MAX(border.left + padding.left, border.right + padding.right);
 	w = MAX(w, radius);
-	
+
 	h = MAX(border.top + padding.top, border.bottom + padding.bottom);//, MAX(padding.top, padding.bottom));
 	h = MAX(h, radius);
-	
+
 	w = MAX(2, w);
 	h = MAX(2, h);
 
 #else
-	
+
 	GtkStyle *style;
 	gint focus_width;
 	gboolean interior_focus;
@@ -1568,7 +1587,7 @@ void gApplication::getBoxFrame(int *pw, int *ph)
 	inner = getInnerWidth();
 	w += inner;
 	h += inner;
-	
+
 #endif
 
 	*pw = w;
@@ -1582,7 +1601,7 @@ char *gApplication::getStyleName()
 		char *p;
 		GtkSettings *settings = gtk_settings_get_default();
 		g_object_get(settings, "gtk-theme-name", &_theme, (char *)NULL);
-		
+
 		p = _theme = g_strdup(_theme);
 		while (*p)
 		{
@@ -1601,6 +1620,7 @@ char *gApplication::getStyleName()
 	return _theme;
 }
 
+#ifndef GTK3
 static GdkFilterReturn x11_event_filter(GdkXEvent *xevent, GdkEvent *event, gpointer data)
 {
 	((X11_EVENT_FILTER)data)((XEvent *)xevent);
@@ -1627,6 +1647,7 @@ void gApplication::setEventFilter(X11_EVENT_FILTER filter)
 
 	save_filter = filter;
 }
+#endif
 
 void gApplication::setMainWindow(gMainWindow *win)
 {

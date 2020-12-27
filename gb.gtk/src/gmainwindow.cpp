@@ -26,12 +26,10 @@
 
 #include "widgets.h"
 
-#ifdef GDK_WINDOWING_X11
-#include <X11/extensions/shape.h>
-#endif
-
+#ifndef GTK3
 #include "x11.h"
 #include "sm/sm.h"
+#endif
 
 #include "gapplication.h"
 #include "gdesktop.h"
@@ -97,7 +95,7 @@ static gboolean cb_frame(GtkWidget *widget,GdkEventWindowState *event,gMainWindo
 	if (event->changed_mask & (GDK_WINDOW_STATE_ICONIFIED | GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN | GDK_WINDOW_STATE_STICKY | GDK_WINDOW_STATE_ABOVE | GDK_WINDOW_STATE_BELOW))
 		data->emit(SIGNAL(data->onState));
 
-	return false; 
+	return false;
 }
 
 static gboolean cb_show(GtkWidget *widget, gMainWindow *data)
@@ -364,21 +362,9 @@ static gboolean my_key_press_event(GtkWidget *widget, GdkEventKey *event)
 
 void gMainWindow::initialize()
 {
-	// workaround GTK+ accelerator management
-
-	static bool _init = FALSE;
-	if (!_init)
-	{
-		GtkWidgetClass *klass = (GtkWidgetClass*)g_type_class_peek(GTK_TYPE_WINDOW);
-		klass->key_press_event = my_key_press_event;
-		_init = TRUE;
-	}
-		
-	
 	//fprintf(stderr, "new window: %p in %p\n", this, parent());
 
 	stack = 0;
-	_type = 0;
 	accel = NULL;
 	_default = NULL;
 	_cancel = NULL;
@@ -475,24 +461,19 @@ void gMainWindow::initWindow()
 	have_cursor = true; //parent() == 0 && !_xembed;
 }
 
-#if 0 //def GTK3
 
-static void (*old_fixed_get_preferred_width)(GtkWidget *, gint *, gint *);
-static void (*old_fixed_get_preferred_height)(GtkWidget *, gint *, gint *);
+// workaround GTK+ accelerator management
 
-static void gtk_fixed_get_preferred_width(GtkWidget *widget, gint *minimum_size, gint *natural_size)
+static void workaround_accel_management()
 {
-	(*old_fixed_get_preferred_width)(widget, minimum_size, natural_size);
-	*minimum_size = 0;
+	static bool _init = FALSE;
+	if (_init)
+		return;
+	
+	GtkWidgetClass *klass = (GtkWidgetClass*)g_type_class_peek(GTK_TYPE_WINDOW);
+	klass->key_press_event = my_key_press_event;
+	_init = TRUE;
 }
-
-static void gtk_fixed_get_preferred_height(GtkWidget *widget, gint *minimum_size, gint *natural_size)
-{
-	(*old_fixed_get_preferred_height)(widget, minimum_size, natural_size);
-	*minimum_size = 0;
-}
-
-#endif
 
 gMainWindow::gMainWindow(int plug) : gContainer(NULL)
 {
@@ -503,9 +484,20 @@ gMainWindow::gMainWindow(int plug) : gContainer(NULL)
 	_xembed = plug != 0;
 
 	if (_xembed)
-		border = gtk_plug_new(plug);
+	{
+		#ifdef GTK3
+			border = PLATFORM.CreatePlug(plug);
+			if (!border)
+				return;
+		#else
+			border = gtk_plug_new(plug);
+		#endif
+	}
 	else
+	{
 		border = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		workaround_accel_management();
+	}
 
 	widget = gtk_fixed_new(); //gtk_layout_new(0,0);
 
@@ -539,7 +531,10 @@ gMainWindow::gMainWindow(gContainer *par) : gContainer(par)
 
 gMainWindow::~gMainWindow()
 {
-	//fprintf(stderr, "delete window %p %s _opened = %d\n", this, name(), _opened);
+	//fprintf(stderr, "delete window %p %s\n", this, name());
+	
+	if (!border)
+		return;
 
 	gApplication::handleFocusNow();
 
@@ -836,6 +831,7 @@ void gMainWindow::setVisible(bool vl)
 					present();
 			}
 
+			#ifndef GTK3
 			if (gApplication::mainWindow() == this)
 			{
 				int desktop = session_manager_get_desktop();
@@ -846,6 +842,7 @@ void gMainWindow::setVisible(bool vl)
 					session_manager_set_desktop(-1);
 				}
 			}
+			#endif
 		}
 		else
 		{
@@ -1121,11 +1118,6 @@ void gMainWindow::setBorder(bool b)
 		return;
 
 	gtk_window_set_decorated(GTK_WINDOW(border), b);
-	/*#ifdef GDK_WINDOWING_X11
-	XSetWindowAttributes attr;
-	attr.override_redirect = !b;
-	XChangeWindowAttributes(GDK_WINDOW_XDISPLAY(border->window), GDK_WINDOW_XID(border->window), CWOverrideRedirect, &attr);
-	#endif*/
 }
 
 void gMainWindow::setResizable(bool b)
@@ -1209,7 +1201,6 @@ void gMainWindow::remap()
 	if (_top_only) { setTopOnly(false); setTopOnly(true); }
 	if (_sticky) { setSticky(false); setSticky(true); }
 	if (stack) { setStacking(0); setStacking(stack); }
-	X11_set_window_type(handle(), _type);
 }
 
 void gMainWindow::drawMask()
@@ -1702,7 +1693,7 @@ void gMainWindow::configure()
 		if (layout)
 		{
 			if (menuBar)
-				gtk_fixed_move(GTK_FIXED(layout), GTK_WIDGET(menuBar), 0, -h);
+				gtk_fixed_move(GTK_FIXED(layout), GTK_WIDGET(menuBar), -width(), -h);
 			gtk_fixed_move(GTK_FIXED(layout), widget, 0, 0);
 		}
 		gtk_widget_set_size_request(widget, width(), height());

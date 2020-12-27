@@ -28,22 +28,23 @@
 
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
-#ifndef GAMBAS_DIRECTFB
-#ifdef GDK_WINDOWING_X11
-#include <gdk/gdkx.h>
-#endif
-#endif
 #include <gtk/gtk.h>
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 #ifdef GTK3
-
-#ifdef GDK_WINDOWING_X11
-#include <gtk/gtkx.h>
-#endif
 #include <gdk/gdkkeysyms-compat.h>
-
+#else
+#ifndef GAMBAS_DIRECTFB
+#ifdef GDK_WINDOWING_X11
+#include <gdk/gdkx.h>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#include <X11/Xutil.h>
+#include <X11/keysymdef.h>
+#include <X11/X.h>
+#endif
+#endif
 #endif
 
 #include <stdio.h>
@@ -118,7 +119,7 @@ typedef
 #define GTK_STATE_FLAG_CHECKED GTK_STATE_FLAG_ACTIVE
 #endif
 
-	
+
 #define gtk_hbox_new(_homogeneous, _spacing) gtk_box_new(GTK_ORIENTATION_HORIZONTAL, _spacing)
 #define gtk_vbox_new(_homogeneous, _spacing) gtk_box_new(GTK_ORIENTATION_VERTICAL, _spacing)
 

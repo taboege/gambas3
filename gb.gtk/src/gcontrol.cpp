@@ -23,29 +23,24 @@
 
 #include <unistd.h>
 
-#ifndef GAMBAS_DIRECTFB
-#ifdef GDK_WINDOWING_X11
-#include <gdk/gdkx.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xutil.h>
-#include <X11/keysymdef.h>
-#include <X11/X.h>
-#endif
-#endif
-
 #include "widgets.h"
 #include "gapplication.h"
 #include "gbutton.h"
 #include "gdrawingarea.h"
 #include "gmainwindow.h"
 #include "gmoviebox.h"
-#include "gplugin.h"
 #include "gscrollbar.h"
 #include "gslider.h"
 #include "gdesktop.h"
 #include "gdrag.h"
 #include "gmouse.h"
+#include "gmenu.h"
+
+#ifdef GTK3
+#else
+#include "gplugin.h"
+#endif
+
 #include "gcontrol.h"
 
 //#define DEBUG_FOCUS 1
@@ -195,6 +190,7 @@ static gboolean cb_background_expose(GtkWidget *wid, GdkEventExpose *e, gControl
 }
 #endif
 
+#ifndef GTK3
 
 /****************************************************************************
 
@@ -281,7 +277,7 @@ void gPlugin::discard()
 	stub("no-X11/gPlugin:discard()");
 	#endif
 }
-
+#endif
 
 /*****************************************************************
 
@@ -294,6 +290,8 @@ void gControl::cleanRemovedControls()
 	GList *iter;
 	gControl *control;
 
+	gMenu::cleanRemovedMenus();
+	
 	if (!controls_destroyed) return;
 
 	for(;;)
@@ -1073,9 +1071,12 @@ gMainWindow* gControl::topLevel()
 	return (gMainWindow *)child;
 }
 
-int gControl::handle()
+long gControl::handle()
 {
-	#ifdef GDK_WINDOWING_X11
+#ifdef GTK3
+	GdkWindow *window = gtk_widget_get_window(border);
+	return PLATFORM.Window.GetId(window);
+#else
 	if (MAIN_display_x11)
 	{
 		GdkWindow *window = gtk_widget_get_window(border);
@@ -1083,10 +1084,7 @@ int gControl::handle()
 	}
 	else
 		return 0;
-	#else
-	stub("no-X11/gControl::handle()");
-	return 0;
-	#endif
+#endif
 }
 
 /*****************************************************************
@@ -1408,10 +1406,6 @@ void gControl::restack(bool raise)
 
 void gControl::setNext(gControl *ctrl)
 {
-	#ifdef GAMBAS_DIRECTFB
-	stub("DIRECTFB/gControl::setNext()");
-	#else
-	Window stack[2];
 	GPtrArray *ch;
 	uint i;
 
@@ -1425,12 +1419,7 @@ void gControl::setNext(gControl *ctrl)
 		return;
 
 	if (gtk_widget_get_has_window(ctrl->border) && gtk_widget_get_has_window(border))
-	{
-		stack[0] = GDK_WINDOW_XID(gtk_widget_get_window(ctrl->border));
-		stack[1] = GDK_WINDOW_XID(gtk_widget_get_window(border));
-
-		XRestackWindows(GDK_WINDOW_XDISPLAY(gtk_widget_get_window(border)), stack, 2 );
-	}
+		gdk_window_restack(gtk_widget_get_window(border), gtk_widget_get_window(ctrl->border), FALSE);
 
 	ch = pr->_children;
 	g_ptr_array_remove(ch, this);
@@ -1447,7 +1436,6 @@ void gControl::setNext(gControl *ctrl)
 	}
 
 	pr->performArrange();
-	#endif
 }
 
 void gControl::setPrevious(gControl *ctrl)
@@ -1755,7 +1743,6 @@ PATCH_DECLARE(GTK_TYPE_SCROLLED_WINDOW)
 PATCH_DECLARE(GTK_TYPE_CHECK_BUTTON)
 PATCH_DECLARE(GTK_TYPE_RADIO_BUTTON)
 PATCH_DECLARE(GTK_TYPE_NOTEBOOK)
-PATCH_DECLARE(GTK_TYPE_SOCKET)
 PATCH_DECLARE(GTK_TYPE_TEXT_VIEW)
 PATCH_DECLARE(GTK_TYPE_SCROLLBAR)
 PATCH_DECLARE(GTK_TYPE_SCALE)
@@ -1782,7 +1769,6 @@ void gt_patch_control(GtkWidget *border, GtkWidget *widget)
 	else PATCH_CLASS(border, GTK_TYPE_CHECK_BUTTON)
 	else PATCH_CLASS(border, GTK_TYPE_RADIO_BUTTON)
 	else PATCH_CLASS(border, GTK_TYPE_NOTEBOOK)
-	else PATCH_CLASS(border, GTK_TYPE_SOCKET)
 	else PATCH_CLASS(border, GTK_TYPE_TEXT_VIEW)
 	else PATCH_CLASS(border, GTK_TYPE_SCROLLBAR)
 	else PATCH_CLASS(border, GTK_TYPE_SCALE)

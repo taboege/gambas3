@@ -58,7 +58,7 @@ public:
 	bool isTransparent() const { return _transparent; }
 	bool isNoTakeFocus() const { return _no_take_focus; }
 	int screen();
-	
+
 	int controlCount();
 	gControl *getControl(char *name);
 	gControl *getControl(int i);
@@ -80,7 +80,7 @@ public:
   void setPersistent(bool vl);
 	void setTransparent(bool vl);
 	void setNoTakeFocus(bool vl);
-	
+
 	virtual void setVisible(bool vl);
 	virtual void setBackground(gColor vl);
 	virtual void setRealBackground(gColor vl);
@@ -94,12 +94,12 @@ public:
 	virtual int containerY();
 
 	//virtual bool getScreenPos(int *x, int *y);
-	
+
 	bool spontaneous() { return !_not_spontaneous; }
-	
+
 	bool setMenuBarVisible(bool v);
 	bool isMenuBarVisible();
-	
+
 	double opacity();
 	void setOpacity(double v);
 
@@ -155,6 +155,7 @@ public:
 	void setGeometryHints();
 	virtual void updateFont();
 	void present();
+	
 	void setTransientFor();
 	void setType(GtkWindowType type);
 	void calcCsdSize();
@@ -165,16 +166,15 @@ public:
 	GtkMenuBar *menuBar;
 	GtkWidget *layout;
 	int stack;
-	int _type;
 	gPicture *_icon;
 	gPicture *_picture;
 	char *_title;
 	GtkStyle *_style;
-	
+
 	gControl *focus;
 	gButton *_default;
 	gButton *_cancel;
-	
+
 	int _resize_last_w;
 	int _resize_last_h;
 

@@ -24,13 +24,8 @@
 #include "widgets.h"
 #include "gb.form.font.h"
 
-#ifndef GAMBAS_DIRECTFB
-#ifdef GDK_WINDOWING_X11
-#include <gdk/gdkx.h>
-#include <X11/X.h>
-#include <X11/Xlib.h>
+#ifndef GTK3
 #include "x11.h"
-#endif
 #endif
 
 #include "gapplication.h"

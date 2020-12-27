@@ -141,6 +141,8 @@ Public Sub Form_Open()
   
   gvwVcInfo.Rows.Count = 0
   
+  Me.Center()
+  
 End
 
 Public Sub Form_Activate()

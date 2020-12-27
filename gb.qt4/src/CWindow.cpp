@@ -45,13 +45,13 @@
 #include <QEventLoop>
 #include <QDesktopWidget>
 #include <QAction>
-#include <QX11Info>
 #include <QTimer>
 
 #include "main.h"
 
 #ifndef NO_X_WINDOW
 #ifndef QT5
+#include <QX11Info>
 #include <QX11EmbedWidget>
 #include <QX11EmbedContainer>
 #endif
@@ -70,9 +70,13 @@
 #include "CWindow.h"
 
 #ifndef NO_X_WINDOW
+	#ifndef QT5
 #include "x11.h"
 #undef FontChange
-#else
+	#endif
+#endif
+
+#ifdef NO_X_WINDOW
 enum
 {
 	_NET_WM_WINDOW_TYPE_NORMAL,
@@ -146,14 +150,18 @@ static void clear_mask(CWINDOW *_object)
 	if (THIS->toplevel)
 	{
 		#ifndef NO_X_WINDOW
-		bool v = !WINDOW->isHidden() && WINDOW->isVisible();
-		//WINDOW->setBorder(WINDOW->hasBorder(), true);
-		//WINDOW->setResizable(WINDOW->isResizable(), true);
-		if (v && THIS->reallyMasked)
-		{
-			X11_window_remap(WINDOW->effectiveWinId());
-			WINDOW->initProperties(PROP_ALL);
-		}
+			bool v = !WINDOW->isHidden() && WINDOW->isVisible();
+			//WINDOW->setBorder(WINDOW->hasBorder(), true);
+			//WINDOW->setResizable(WINDOW->isResizable(), true);
+			if (v && THIS->reallyMasked)
+			{
+				#ifdef QT5
+					PLATFORM.Window.Remap(WINDOW);
+				#else
+					X11_window_remap(WINDOW->effectiveWinId());
+				#endif
+				WINDOW->initProperties(PROP_ALL);
+			}
 		#endif
 	}
 }
@@ -1503,7 +1511,7 @@ MyMainWindow::MyMainWindow(QWidget *parent, const char *name, bool embedded) :
 	_border = true;
 	_resizable = true;
 	_deleted = false;
-	_type = _NET_WM_WINDOW_TYPE_NORMAL;
+	//_type = _NET_WM_WINDOW_TYPE_NORMAL;
 	_enterLoop = false;
 	_utility = false;
 	_state = windowState();
@@ -1599,7 +1607,6 @@ void MyMainWindow::showEvent(QShowEvent *e)
 		raise();
 		//setFocus();
 		activateWindow();
-		//X11_window_activate(effectiveWinId());
 		_activate = false;
 	}
 
@@ -1619,34 +1626,45 @@ void MyMainWindow::initProperties(int which)
 		setWindowTitle(TO_QSTRING(GB.Application.Title()));
 
 	//qDebug("initProperties: %d", which);
-	X11_flush();
+		#ifdef QT5
+			QT_WINDOW_PROP prop;
+			
+			prop.stacking = THIS->stacking;
+			prop.skipTaskbar = THIS->skipTaskbar;
+			prop.border = _border;
+			prop.sticky = THIS->sticky;
+			
+			PLATFORM.Window.SetProperties(this, which, &prop);
+		#else
+			X11_flush();
 
-	if (which & (PROP_STACKING | PROP_SKIP_TASKBAR))
-	{
-		X11_window_change_begin(effectiveWinId(), isVisible());
+			if (which & (PROP_STACKING | PROP_SKIP_TASKBAR))
+			{
+				X11_window_change_begin(effectiveWinId(), isVisible());
 
-		if (which & PROP_STACKING)
-		{
-			X11_window_change_property(X11_atom_net_wm_state_above, THIS->stacking == 1);
-			X11_window_change_property(X11_atom_net_wm_state_stays_on_top, THIS->stacking == 1);
-			X11_window_change_property(X11_atom_net_wm_state_below, THIS->stacking == 2);
-		}
-		if (which & PROP_SKIP_TASKBAR)
-			X11_window_change_property(X11_atom_net_wm_state_skip_taskbar, THIS->skipTaskbar);
+				if (which & PROP_STACKING)
+				{
+					X11_window_change_property(X11_atom_net_wm_state_above, THIS->stacking == 1);
+					X11_window_change_property(X11_atom_net_wm_state_stays_on_top, THIS->stacking == 1);
+					X11_window_change_property(X11_atom_net_wm_state_below, THIS->stacking == 2);
+				}
+				if (which & PROP_SKIP_TASKBAR)
+					X11_window_change_property(X11_atom_net_wm_state_skip_taskbar, THIS->skipTaskbar);
 
-		X11_window_change_end();
-	}
+				X11_window_change_end();
+			}
 
-	//if (which == PROP_ALL)
-	//	X11_set_window_type(effectiveWinId(), _type);
+			//if (which == PROP_ALL)
+			//	X11_set_window_type(effectiveWinId(), _type);
 
-	if (which & PROP_BORDER)
-		X11_set_window_decorated(effectiveWinId(), _border);
+			if (which & PROP_BORDER)
+				X11_set_window_decorated(effectiveWinId(), _border);
 
-	if (which & PROP_STICKY)
-		X11_window_set_desktop(effectiveWinId(), isVisible(), THIS->sticky ? 0xFFFFFFFF : X11_get_current_desktop());
+			if (which & PROP_STICKY)
+				X11_window_set_desktop(effectiveWinId(), isVisible(), THIS->sticky ? 0xFFFFFFFF : X11_get_current_desktop());
 
-	X11_flush();
+			X11_flush();
+		#endif
 	#endif
 }
 
@@ -1702,10 +1720,10 @@ void MyMainWindow::present(QWidget *parent)
 #ifdef QT5
 		//qDebug("createWinId: %p", (void *)effectiveWinId());
 		if (THIS->noTakeFocus)
-			X11_window_set_user_time(effectiveWinId(), 0);
+			PLATFORM.Window.SetUserTime(this, 0);
 		initProperties(PROP_ALL);
 		if (THIS->noTakeFocus)
-			X11_window_set_user_time(effectiveWinId(), 0);
+			PLATFORM.Window.SetUserTime(this, 0);
 #else
 		initProperties(PROP_SKIP_TASKBAR);
 #endif
@@ -1731,10 +1749,12 @@ void MyMainWindow::present(QWidget *parent)
 
 	if (parent)
 	{
-		X11_set_transient_for(effectiveWinId(), parent->effectiveWinId());
 		#ifdef QT5
+			PLATFORM.Window.SetTransientFor(this, parent);
 			if (windowHandle())
 				windowHandle()->setTransientParent(parent->windowHandle());
+		#else
+			X11_set_transient_for(effectiveWinId(), parent->effectiveWinId());
 		#endif
 	}
 
@@ -2110,7 +2130,11 @@ void MyMainWindow::setBorder(bool b)
 	{
 		//qDebug("effectiveWinId");
 		initProperties(PROP_BORDER);
-		X11_window_remap(effectiveWinId());
+		#ifdef QT5
+			PLATFORM.Window.Remap(WINDOW);
+		#else
+			X11_window_remap(effectiveWinId());
+		#endif
 	}
 #ifndef QT5
 	doReparent(parentWidget(), pos());
@@ -2140,6 +2164,7 @@ void MyMainWindow::setUtility(bool b)
 	doReparent(parentWidget(), pos());
 }
 
+#if 0
 #ifdef NO_X_WINDOW
 #else
 int MyMainWindow::getType()
@@ -2158,6 +2183,7 @@ void MyMainWindow::setType(int type)
 	X11_set_window_type(effectiveWinId(), type);
 	_type = type;
 }
+#endif
 #endif
 
 void MyMainWindow::moveEvent(QMoveEvent *e)

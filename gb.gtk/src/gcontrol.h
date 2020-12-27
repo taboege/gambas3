@@ -60,8 +60,7 @@ public:
 	bool isDesignIgnore() const { return _design_ignore; }
 
 	bool hovered();
-	
-	virtual int handle();
+	virtual long handle();
 	
 	int left() const { return bufX; }
 	int x() const { return left(); }

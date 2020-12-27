@@ -24,7 +24,9 @@
 #define __CPAINT_IMPL_CPP
 
 #include <cairo.h>
+#ifndef GTK3
 #include <cairo-xlib.h>
+#endif
 
 #include "gambas.h"
 #include "gb_common.h"
