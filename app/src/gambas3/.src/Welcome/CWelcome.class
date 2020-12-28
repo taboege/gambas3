@@ -249,7 +249,14 @@ Public Sub dwgWelcome_Draw()
         hSnowFlake = $aSnowFlakes[I]
         With hSnowFlake
           S = 1 + .Size \ 2
-          Paint.DrawImage($aImage[.Size], CInt(.X) - S, CInt(.Y) - S)
+          If .Alpha Then
+            'Paint.Background = Color.SetAlpha(&HF0F0F0&, .Alpha)
+            'Paint.Ellipse(CInt(.X) - S \ 2, CInt(.Y) - S \ 2 + 1, S, S)
+            'Paint.Fill
+            Paint.DrawImage($aImage[.Size], CInt(.X) - S, CInt(.Y) - S,,, (255 - .Alpha) / 255)
+          Else
+            Paint.DrawImage($aImage[.Size], CInt(.X) - S, CInt(.Y) - S)
+          Endif
         End With
       Next
       
@@ -288,10 +295,12 @@ Fast Public Sub SnowTimer_Timer()
     While I < $aSnowFlakes.Count
       hSnowFlake = $aSnowFlakes[I]
       With hSnowFlake
+        
         .X += .DX
-        .Y += .DY
+        .Y = Min(H, .Y + .DY)
         X = CInt(.X)
-        Y = Min(H, CInt(.Y))
+        'Y = Min(H, CInt(.Y))
+        Y = CInt(.Y)
         C = $hSnow[X, Y]
         
         If Y < H And If C <> Color.White Then
@@ -300,31 +309,49 @@ Fast Public Sub SnowTimer_Timer()
             Continue
           Endif
         Endif
-        
-        .X -= .DX
-        .Y -= .DY
-        
-        If .DX Then
           
-          If .DX < 1 Then
-            .DX = 0
-          Else
-            .DX *= 0.5
-            .DY *= 0.75
+        If .Alpha Then
+          
+          If .DX Then
+            
+            If Abs(.DX) < 1 Then
+              .DX = 0
+              .DY = 0
+            Else
+              .DX *= 0.5
+              .DY *= 0.75
+            Endif
+            
           Endif
+          
+          .Alpha += 4
+          
+          If .Alpha >= 127 And If .DX = 0 Then
+        
+            $aSnowFlakes.Remove(I)
+            S = 1 + .Size \ 2
+            Paint.DrawImage($aImage[.Size], X - S, Y - S,,, 0.5)
+            'Paint.Ellipse(X - S \ 2, Y - S \ 2 + 1, S, S)
+            'Paint.Fill
+            Continue
+            
+          Endif
+          
           Inc I
           Continue
-          
+  
+        Else
+        
+          If Y >= H Then
+            .DX = 0
+            .DY = 0
+          Endif
+          .Alpha = 1
+          Inc I
+          Continue
+        
         Endif
         
-        $aSnowFlakes.Remove(I)
-        'S = .Size \ 2
-        'Paint.DrawImage($aImage[S], X - S \ 2, Y - S \ 2)
-        'Paint.DrawImage($aImage[.Size], CInt(.X), CInt(.Y))
-        S = 1 + Min(3, .Size \ 2)
-        Paint.Ellipse(X - S \ 2, Y - S \ 2 + 1, S, S)
-        Paint.Fill
-  
       End With
   
     Wend

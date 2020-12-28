@@ -111,9 +111,10 @@ Private Sub PlaySound() As Boolean
   Dim dEaster As Date
   Dim sPlay As String
   Dim sTemp As String
+  Dim bHasTear As Boolean
   
   dNow = Date(Now)
-  'dNow = Date(2020, 8, 15)
+  'dNow = Date(2020, 12, 25)
   iYear = Year(dNow)
   dEaster = Date.EasterDay(iYear)
   
@@ -121,6 +122,7 @@ Private Sub PlaySound() As Boolean
     sPlay = "bells.mp3"
   Else If dNow = Date(iYear, 8, 15) Or If dNow = dEaster Or If dNow = dEaster + 39 Then
     sPlay = "spiritus.mp3"
+    bHasTear = True
   Else
     Return
   Endif
@@ -132,7 +134,7 @@ Private Sub PlaySound() As Boolean
   $hPlayer.URL = Media.URL(sTemp)
   $hPlayer.Play(True)
 
-  Return True
+  Return bHasTear
   
 End
 
