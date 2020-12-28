@@ -850,6 +850,7 @@ Private Sub ScanClass(hModule As Object, cSymbol As Collection, bModule As Boole
           hSymbol2 = hSymbol.Copy()
           hSymbol2.Name = sName
           hSymbol2.LineNumber = hSymbol.LineNumber
+          hSymbol2.NotPublic = True
           cSymbol[sName] = hSymbol2
         Endif
       Endif
