@@ -45,8 +45,6 @@ GB_DESC *GB_CLASSES[] EXPORT =
 int EXPORT GB_INIT(void)
 {
 	GB.GetInterface("gb.gtk3", GTK_INTERFACE_VERSION, &GTK);
-	//GB.GetInterface("gb.opengl", GL_INTERFACE_VERSION, &GL);
-
 	return 0;
 }
 
