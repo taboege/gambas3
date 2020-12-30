@@ -379,12 +379,12 @@ GB_DESC WebSettingsDesc[] =
 	
 	GB_STATIC_METHOD("_exit", NULL, WebSettings_exit, NULL),
 	
-	GB_METHOD("_get", "b", WebSettings_get, "(Flag)i"),
-	GB_METHOD("_put", NULL, WebSettings_put, "(Value)b(Flag)i"),
-	
 	GB_PROPERTY_SELF("Fonts", ".WebSettings.Fonts"),
 	//GB_STATIC_METHOD("_exit", NULL, WebSettings_exit, NULL),
 
+	GB_METHOD("_get", "b", WebSettings_get, "(Flag)i"),
+	GB_METHOD("_put", NULL, WebSettings_put, "(Value)b(Flag)i"),
+	
 	GB_END_DECLARE
 };
 

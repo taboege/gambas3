@@ -1472,6 +1472,7 @@ Public Sub timFillList_Timer()
   
   gvwFind.Columns[0].Width = -1
   gvwFind.Columns[1].Width = -1
+  If gvwFind.Columns[1].Width >= Desktop.Scale * 32 Then gvwFind.Columns[1].Width = Desktop.Scale * 32
   gvwFind.Columns[4].W = -1
       
   timFillList.Stop

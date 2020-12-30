@@ -135,6 +135,7 @@ Private $bIgnoreNextAnimation As Boolean
 Private $bReadOnly As Boolean
 
 Private Const PADDING As Integer = 2
+Private $iDisableUpdateSize As Integer
 
 'Private $bDoubleFont As Boolean = True
 
@@ -254,7 +255,21 @@ Public Sub _RefreshLine(Y As Integer)
   
 End
 
+Public Sub _DisableUpdateSize()
+  
+  Inc $iDisableUpdateSize
+  
+End
+
+Public Sub _EnableUpdateSize()
+  
+  Dec $iDisableUpdateSize
+  
+End
+
 Public Sub _UpdateSize()
+
+  If $iDisableUpdateSize Then Return
   
   $hScroll.MinValue = 0
   $hScroll.MaxValue = Max(0, $hScreen.Lines.Count - $H)
@@ -272,7 +287,7 @@ Private Sub UpdateScreen()
   
   If $bAutoResize Then
   
-    W = Me.W
+    W = Me.W - PADDING * 2
     If Me.Border Then W -= 2
     If $bShowScrollBar Then W -= $hScroll.W
     W = Max(2, W \ $CW)

@@ -91,6 +91,9 @@ Public Lines As New CTerminalLine[]
 Private $W As Integer
 Private $H As Integer
 
+' If a line had to be broken
+Private $bBrokenLine As Boolean
+
 ' Cursor position
 Private $X As Integer
 Private $Y As Integer
@@ -144,18 +147,127 @@ End
 Public Sub Clear()
   
   Lines.Clear
+  $bBrokenLine = False
   GetView()._UpdateSize
   Goto(0, 0)
+  
+End
+
+Fast Private Sub Relayout(W As Integer)
+
+  Dim aAttr As Integer[]
+  Dim aLines As String[]
+  Dim I As Integer
+  Dim hLine As CTerminalLine
+  Dim sText As String
+  Dim SY As Integer
+  Dim L As Integer
+  Dim sLine As String
+  Dim hView As TerminalView
+  Dim D As Integer
+
+  hView = GetView()
+
+  'fTimer = Timer
+  aAttr = New Integer[]
+  aLines = New String[]
+  
+  D = Lines.Count - 10000
+  If D < 0 Then D = 0
+  
+  SY = -1
+
+  For I = D To Lines.Max
+    If I = $Y Then SY = aLines.Count
+    hLine = Lines[I]
+    If hLine Then
+      sText &= hLine.Text
+      aAttr.Insert(hLine.GetFullAttr())
+      If hLine.NewLine Then 
+        aLines.Add(sText)
+        sText = ""
+        'aAttr.Insert(&H00000100)
+      Endif
+    Endif
+  Next
+  
+  aLines.Add(sText)
+  'Debug "#1 "; Timer - fTimer;; $X;; $Y
+  
+  'fTimer = Timer
+  
+  'SX = $X
+  'SY = $Y
+
+  hView._DisableUpdateSize()
+
+  Lines.Remove(D, -1)
+  If D = 0 Then $bBrokenLine = False
+  'GetView()._UpdateSize
+  'Goto(0, D)
+
+  L = D
+  For I = 0 To aLines.Max
+    
+    If I = SY Then $Y = L
+    
+    sLine = aLines[I]
+    While String.Len(sLine) > W
+      With GetLine(L)
+        .Text = String.Left(sLine, W)
+        .Length = W
+      End With
+      sLine = String.Mid$(sLine, W + 1)
+      Inc L
+      $bBrokenLine = True
+      
+      If I = SY Then
+        If $X >= W Then
+          $X -= W
+          $Y = L
+        Endif
+      Endif
+      
+    Wend
+
+    With GetLine(L)
+      .Text = sLine
+      .Length = String.Len(sLine)
+      .NewLine = I < aLines.Max
+    End With
+    Inc L
+    
+  Next
+  
+  'Debug "#2 "; Timer - fTimer;; $X;; $Y
+  
+  'fTimer = Timer
+  
+  For I = D To Lines.Max
+    Lines[I].InitAttr(aAttr)
+  Next
+  
+  'Debug "#3 "; Timer - fTimer
+
+  hView._EnableUpdateSize()
+  hView._UpdateSize
+  'hView.EnsureVisible()
   
 End
 
 Public Sub Resize(W As Integer, H As Integer) As Boolean
   
   If W <> $W Or If H <> $H Then
+    
+    If Not GetView().AlternateScreen And If Lines.Count < 100000 Then
+      If $bBrokenLine Or If W < $W Then
+        Relayout(W)
+      Endif
+    Endif
+      
     $W = W
     $H = H
-    $X = Min($X, $W - 1)
-    $Y = ScreenTop() + Max(0, Min($Y - ScreenTop(), $H - 1))
+
     $X1 = 0
     $Y1 = 0
     $X2 = 0
@@ -163,6 +275,7 @@ Public Sub Resize(W As Integer, H As Integer) As Boolean
     'Debug "$Y = "; $Y
     $iScrollStart = -1
     $iScrollEnd = -1
+
     If GetView().AlternateScreen Then
       If Lines.Count > $H Then
         Lines.Resize($H)
@@ -170,12 +283,17 @@ Public Sub Resize(W As Integer, H As Integer) As Boolean
       Endif
     Endif
     $hLineCache = Null
+    
+    $X = Min($X, $W - 1)
+    $Y = ScreenTop() + Max(0, Min($Y - ScreenTop(), $H - 1))
+
     Return True
+    
   Endif
   
 End
 
-Public Sub GetLine(Y As Integer) As CTerminalLine
+Fast Public Sub GetLine(Y As Integer) As CTerminalLine
   
   Dim hLine As CTerminalLine
   
@@ -234,6 +352,7 @@ Private Sub Insert(sText As String, Optional X As Integer = $X)
       sText = String.Mid$(sText, iLen + 1)
     Endif
     If WrapMode Then
+      $bBrokenLine = True
       Index()
       $X = 0
       Insert(sText)
@@ -323,6 +442,11 @@ Public Sub Print(sText As String)
 End
 
 Private Sub NewLine()
+
+  Dim hLine As CTerminalLine
+  
+  hLine = GetLine($Y)
+  hLine.NewLine = True
   
   If NewlineMode Then $X = 0
   Index()
@@ -853,6 +977,8 @@ Private Sub DrawLine(hView As TerminalView, L As Integer, X As Integer, Y As Int
   Endif
   
   If Paint.W > X Then Paint.FillRect(X, Y, Paint.W - X, LH, hView.Background)
+  
+  'If hLine.NewLine Then Paint.FillRect(Paint.W - 1, Y, 1, 4, Color.Yellow)
   
   Return
   

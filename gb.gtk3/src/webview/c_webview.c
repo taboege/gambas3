@@ -420,7 +420,7 @@ GB_DESC WebViewDesc[] =
 	GB_METHOD("Stop", NULL, WebView_Stop, NULL),
 	
 	GB_PROPERTY_SELF("History", ".WebView.History"),
-	GB_PROPERTY_SELF("Settings", "WebView.Settings"),
+	GB_PROPERTY_SELF("Settings", ".WebView.Settings"),
 
 	GB_CONSTANT("_Properties", "s", "*,Url,Zoom=1"),
   GB_CONSTANT("_Group", "s", "View"),

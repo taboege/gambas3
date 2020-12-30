@@ -1193,7 +1193,6 @@ Public Sub ShowPopup(Control As WebControl) As Variant
   
   _Window = hWindow.Id
   
-  
   hPrevious = _CurrentPopup
   _CurrentPopup = Me
   

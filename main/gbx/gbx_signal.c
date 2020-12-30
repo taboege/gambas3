@@ -136,7 +136,7 @@ static void handle_signal(int signum, siginfo_t *info, void *context)
 {
 	char buffer;
 	int save_errno;
-	static int64_t lock = 0;
+	static volatile int64_t lock = 0;
 
 	if (lock & (1 << signum))
 		return;
