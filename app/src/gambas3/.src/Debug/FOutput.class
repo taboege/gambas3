@@ -118,12 +118,12 @@ Public Sub Form_Close()
 
 End
 
-Public Sub Form_Show()
-
-  trmOutput.AutoResize = True
-  'Action["console"].Value = TRUE
-
-End
+' Public Sub Form_Show()
+' 
+'   trmOutput.AutoResize = True
+'   'Action["console"].Value = TRUE
+' 
+' End
 
 Public Sub btnClear_Click()
 
@@ -503,11 +503,11 @@ Public Sub btnSuspend_Click()
 
 End
 
-Public Sub UpdateWidth(W As Integer)
-  
-  If trmOutput.AutoResize Then Return
-  If Me.W <> W Then
-    trmOutput.ScreenWidth = (W - Style.ScrollbarSize) \ trmOutput.CharWidth
-  Endif
-  
-End
+' Public Sub UpdateWidth(W As Integer)
+'   
+'   If trmOutput.AutoResize Then Return
+'   If Me.W <> W Then
+'     trmOutput.ScreenWidth = (W - Style.ScrollbarSize) \ trmOutput.CharWidth
+'   Endif
+'   
+' End
