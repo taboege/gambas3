@@ -176,7 +176,7 @@ Public Sub History(sPath As String, Optional bFull As Boolean) As String
   Dim sCmd As String
   Dim sFull As String
   
-  If bFull Then sFull = "-p "
+  If bFull Then sFull = "-p -b "
   
   If IsDir(sPath) Then
     sCmd = "cd " & Shell(sPath) & " && git log --date=rfc2822 " & sFull & "."
