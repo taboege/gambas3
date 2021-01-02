@@ -176,8 +176,8 @@ static void add_thousand_sep(int *before)
 	if (before == NULL)
 		return;
 
-	thsep = _currency ? local_current->thousand_sep : local_current->currency_thousand_sep;
-	lthsep = _currency ? local_current->len_thousand_sep : local_current->len_currency_thousand_sep;
+	thsep = _currency ? local_current->currency_thousand_sep : local_current->thousand_sep;
+	lthsep = _currency ? local_current->len_currency_thousand_sep : local_current->len_thousand_sep;
 	
 	if (thsep && thsep)
 	{
@@ -194,7 +194,6 @@ static void add_thousand_sep(int *before)
 
 	(*before)--;
 }
-
 
 static void add_string(const char *src, int len, int *before)
 {
@@ -243,8 +242,7 @@ static void add_currency(const char *sym)
 	}
 }
 
-
-static void add_char(char c, int count, int *before)
+static void add_digit_char(char c, int count, int *before)
 {
 	while (count > 0)
 	{
@@ -257,7 +255,7 @@ static void add_char(char c, int count, int *before)
 
 static void add_zero(int count, int *before)
 {
-	add_char('0', count, before);
+	add_digit_char('0', count, before);
 }
 
 
@@ -1460,7 +1458,7 @@ _FORMAT:
 
 		if (number_exp > 0)
 		{
-			add_char(' ', before - Max(before_zero, number_exp), thousand_ptr);
+			add_digit_char(' ', before - Max(before_zero, number_exp), thousand_ptr);
 			add_zero(before_zero - number_exp, thousand_ptr);
 
 			add_string(buf_addr, Min(number_exp, ndigit), thousand_ptr);
@@ -1470,7 +1468,7 @@ _FORMAT:
 		}
 		else
 		{
-			add_char(' ', before - before_zero, thousand_ptr);
+			add_digit_char(' ', before - before_zero, thousand_ptr);
 			add_zero(before_zero, thousand_ptr);
 		}
 
@@ -1877,7 +1875,10 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 		}
 		
 		if (c == '/')
-			add_date_separator(token);
+		{
+			if (!DATE_SERIAL_has_no_date(date))
+				add_date_separator(token);
+		}
 		else if (c == ':')
 			add_time_separator(token);
 		else if (pos == pos_ampm)
@@ -1894,7 +1895,10 @@ bool LOCAL_format_date(const DATE_SERIAL *date, int fmt_type, const char *fmt, i
 			pos += 4;
 		}
 		else
-			COMMON_put_char(c);
+		{
+			if (c != ' ' || token == 0 || COMMON_pos > 0)
+				COMMON_put_char(c);
+		}
 		
 		token = 0;
 	}

@@ -1392,9 +1392,11 @@ __LONG:
 	return;
 
 __DATE:
-
-	LOCAL_format_date(DATE_split(value), LF_STANDARD, NULL, 0, addr, len);
-	return;
+	{
+		const DATE_SERIAL *date = DATE_split(value);
+		LOCAL_format_date(date, DATE_SERIAL_has_no_date(date) ? LF_LONG_TIME : LF_STANDARD, NULL, 0, addr, len);
+		return;
+	}
 
 __SINGLE:
 
