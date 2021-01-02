@@ -80,11 +80,11 @@ Public Sub ShowButton(iTab As Integer, bShow As Boolean)
   
 End
 
-Public Sub Form_Arrange()
-
-  FOutput.UpdateWidth(Me.W)
-
-End
+' Public Sub Form_Arrange()
+' 
+'   FOutput.UpdateWidth(Me.W)
+' 
+' End
 
 Public Sub OnRefreshSources()
   

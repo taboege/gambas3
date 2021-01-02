@@ -555,11 +555,16 @@ End
 
 Private Sub Font_Write(Value As Font)
 
+  Dim hTree As _TreeView = GetTree()
+
   If Value Then
     $hFont = Value.Copy()
   Else
     $hFont = Null
   Endif
+  
+  hTree._UpdateItemHeight(Me)
+  hTree._RefreshView
 
 End
 

@@ -278,6 +278,10 @@ Public Sub Command(sCommand As String) As String[]
     
     If Main.Class Then Return [Main.GetClassTitle(Main.Path)]
     
+  Else If sCommand = "how-to-install" Then
+    
+    Return Main.GetHowToInstall(aArg[1])
+    
   Else
     
     Return [Subst("<div class=\"error\">Unknown command `@{&1}`</div>", sCommand)]

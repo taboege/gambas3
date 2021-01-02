@@ -157,7 +157,6 @@ Public Sub InitAttr(aInit As Integer[])
   Dim C As Integer
   Dim aAttr As Integer[]
   Dim aTemp As Integer[]
-  Dim N As Integer
   
   L = Length
   aAttr = New Integer[]
