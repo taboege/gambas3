@@ -192,7 +192,7 @@ Static Private Sub SearchTheme(sDesktop As String)
   
   Select sDesktop
       
-    Case "gnome"
+    Case "gnome", "cinnamon"
       
       If Not sTheme Then Try Exec ["gconftool-2", "-g", "/desktop/gnome/interface/icon_theme"] To sTheme
       
