@@ -26,7 +26,7 @@ GB_COMPONENT_PKG_CONFIG(
 
 GB_COMPONENT_PKG_CONFIG(
   gtk3webview, GTK3WEBVIEW, gb.gtk3.webview, [webview],
-  'gtk+-3.0 >= 3.4' 'webkit2gtk-4.0 >= 2.28'
+  'gtk+-3.0 >= 3.4' 'webkit2gtk-4.0 >= 2.20'
 )
 
 AC_OUTPUT( \
