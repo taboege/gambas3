@@ -175,6 +175,27 @@ Static Private Sub FindInConfigFile(aPath As String[], sPattern As String, Optio
 
 End
 
+Static Private Sub GetThemeWithDConf(sDesktop As String) As String
+
+  Dim sTheme As String
+  
+  Try Exec ["dconf", "read", "/org/" & sDesktop & "/desktop/interface/icon-theme"] To sTheme
+  sTheme = Trim(sTheme)
+  
+  If Not sTheme Then
+    Try Exec ["dconf", "read", "/org/" & sDesktop & "/theme/name"] To sTheme
+    sTheme = Trim(sTheme)
+  Endif
+  
+  If sTheme Then
+    If sTheme Begins "'" Then sTheme = Chr$(34) & Mid$(sTheme, 2, -1) & Chr$(34)
+    sTheme = UnQuote(sTheme)
+  Endif
+  
+  Return sTheme
+  
+End
+
 ' TODO: Vérifier les thèmes
 ' FIXME: Mettre à jour
 
@@ -193,47 +214,21 @@ Static Private Sub SearchTheme(sDesktop As String)
 
   Select sDesktop
 
-    Case "gnome", "cinnamon"
+    Case "gnome", "cinnamon", "mate"
 
-      'If Not sTheme Then Try Exec ["gconftool-2", "-g", "/desktop/gnome/interface/icon_theme"] To sTheme
-      If sDesktop = "cinnamon" Then
-        Try Exec ["dconf", "read", "/org/cinnamon/theme/name"] To sTheme
-      Endif
-
-      If Not sTheme Then Try Exec ["dconf", "read", "/org/gnome/desktop/interface/icon-theme"] To sTheme
-
-      If sTheme Then
-        sTheme = Trim(sTheme)
-        If sTheme Begins "'" Then sTheme = Chr$(34) & Mid$(sTheme, 2, -1) & Chr$(34)
-        sTheme = UnQuote(sTheme)
-        sTheme = Trim(sTheme)
-      Endif
-      GetAllThemePath("gnome", $aRoots, sTheme)
-
-
-      AddPath("gnome", "/usr/share/icons/gnome")
-      AddPath("gnome", "/usr/share/icons/hicolor")
-      'AddPath("gnome", "/usr/X11R6/share/icons/hicolor")
-
-    Case "mate"
-
+      sTheme = GetThemeWithDConf(sDesktop)
+      If Not sTheme And If sDesktop <> "gnome" Then sTheme = GetThemeWithDConf("gnome")
       If Not sTheme Then
-        Try Exec ["dconf", "read", "/org/mate/desktop/interface/icon-theme"] To sTheme
-        If sTheme Then
-          sTheme = Trim(sTheme)
-          If sTheme Begins "'" Then sTheme = Chr$(34) & Mid$(sTheme, 2, -1) & Chr$(34)
-          sTheme = UnQuote(sTheme)
-        Else
+        If sDesktop = "mate" Then
           Try Exec ["mateconftool-2", "-g", "/desktop/mate/interface/icon_theme"] To sTheme
-          sTheme = Trim(sTheme)
+        Else
+          Try Exec ["gconftool-2", "-g", "/desktop/gnome/interface/icon_theme"] To sTheme
         Endif
+        sTheme = Trim(sTheme)
       Endif
+      
+      If sTheme Then GetAllThemePath("gnome", $aRoots, sTheme)
 
-      If sTheme Then
-        GetAllThemePath("gnome", $aRoots, sTheme)
-      Endif
-
-      AddPath("gnome", "/usr/share/icons/mate")
       AddPath("gnome", "/usr/share/icons/gnome")
       AddPath("gnome", "/usr/share/icons/hicolor")
       'AddPath("gnome", "/usr/X11R6/share/icons/hicolor")

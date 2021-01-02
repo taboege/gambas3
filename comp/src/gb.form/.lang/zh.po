@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gb.form 3.15.90\n"
-"POT-Creation-Date: 2020-12-19 01:25 UTC\n"
+"POT-Creation-Date: 2020-12-19 13:00 UTC\n"
 "PO-Revision-Date: 2020-11-18 18:23 UTC\n"
 "Last-Translator: Benoît Minisini <g4mba5@gmail.com>\n"
 "Language: zh\n"
@@ -418,7 +418,7 @@ msgstr "预览"
 msgid "Errors"
 msgstr "错误"
 
-#: FFontChooser.class:334
+#: FFontChooser.class:338
 msgid "How quickly daft jumping zebras vex"
 msgstr "One CHINA, One family. 一个中国，一个家。"
 
