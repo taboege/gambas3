@@ -82,6 +82,8 @@ Property Orientation As Integer
 Property Read _Width As Float
 Property Read _Height As Float
 
+Property Path As String Use $sPath
+
 Event Open
 
 Static Public Sub Main()
@@ -322,9 +324,9 @@ End
 '
 
 Public Function Preview()
-  
+  If Me.Path Then FPreview.Path = Me.Path 
   FPreview.Run(Me)
-  
+  If FPreview.Path Then Me.Path = FPreview.Path
 End
 
 
