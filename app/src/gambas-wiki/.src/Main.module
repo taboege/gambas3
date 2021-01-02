@@ -30,6 +30,8 @@ Public SubstClass As String
 Private $aDeveloperTable As String[]
 Private $aTranslatorTable As String[]
 Private $bInitAuthor As Boolean
+Private $bGitLabCI As Boolean
+Private $aGitLabCI As String[]
 
 Private Sub AddLinkSuffix(sReq As String)
 
@@ -1598,4 +1600,76 @@ Private Sub SendPlayground()
   Print sData;
   Response.End  
 
+End
+
+Public Sub GetHowToInstall(sSystem As String) As String[]
+  
+  Dim I As Integer
+  Dim sLine As String
+  Dim sCommand As String
+  Dim aResult As String[]
+  Dim sPath As String
+  Dim sOutput As String
+  
+  If Not $bGitLabCI Then
+    
+    sPath = User.Home &/ "gitlab-ci.yml"
+    If Not Exist(sPath) Or If DateAdd(Stat(sPath).LastModified, gb.Day, 1) < Now Then
+      Try Kill sPath
+      Try Exec ["wget", "-q", "-O", "-", "https://gitlab.com/gambas/gambas/-/raw/master/.gitlab-ci.yml"] To sOutput
+      If sOutput Then File.Save(sPath, sOutput)
+    Endif
+    
+    Try $aGitLabCI = Split(File.Load(sPath), "\n")
+    $bGitLabCI = True
+    
+  Endif
+  
+  If Not $aGitLabCI Then Return ["<div class=\"error\">" & ("Unable to download configuration file from GitLab") & "</div>"]
+  
+  I = $aGitLabCI.Find("build:" & sSystem & ":")
+  If I < 0 Then Return ["<div class=\"error\">" & Subst(("Unable to find build configuration for '&1'"), sSystem) & "</div>"]
+  
+  aResult = New String[]
+  
+  Inc I
+  While I <= $aGitLabCI.Max
+    
+    sLine = $aGitLabCI[I]
+    If sLine Begins "build:" Then Break
+    
+    sLine = Trim(sLine)
+    If sLine Begins "- " Then
+      GoSub ADD_COMMAND
+      sCommand = " "
+      sLine = Mid$(sLine, 3)
+      If sLine <> ">" Then sCommand &= sLine
+    Else If sLine Ends ":" Then
+      GoSub ADD_COMMAND
+    Else
+      If sCommand And If sLine Then sCommand = Trim(sCommand & " " & sLine)
+    Endif
+    
+    Inc I
+  Wend
+  
+  GoSub ADD_COMMAND
+
+  aResult.Add("[[ code", 0)  
+  aResult.Add("]]")  
+  Return aResult
+  
+ADD_COMMAND:
+
+  If sCommand Then 
+    sCommand = Trim(Replace(sCommand, "GAMBAS_CONFIG_FAILURE=1 ", ""))
+    If sCommand Not Begins "make" Then
+      If aResult.Count Then aResult.Add("    ")
+      aResult.Add("    " & sCommand)
+    Endif
+    sCommand = ""
+  Endif
+  Return
+
+  
 End
