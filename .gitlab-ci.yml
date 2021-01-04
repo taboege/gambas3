@@ -215,6 +215,7 @@ build:fedora-latest:
     - GAMBAS_CONFIG_FAILURE=1 ./configure -C
     - make -j$(nproc)
     - make install
+
 build:opensuse-tumbleweed:
   image: opensuse/tumbleweed
   before_script:
