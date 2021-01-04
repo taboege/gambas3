@@ -53,7 +53,7 @@ int EXPORT GB_INIT(void)
 	if (!comp)
 	{
 		// GB_GUI should be set by gb.gui
-		if (!env)
+		if (!env || !*env)
 			fprintf(stderr, "gb.gui.webview: error: no component specified in GB_GUI environment variable\n");
 		else
 			fprintf(stderr, "gb.gui.webview: error: unsupported component specified in GB_GUI environment variable\n");
