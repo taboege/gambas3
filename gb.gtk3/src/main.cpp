@@ -68,7 +68,11 @@
 #include "gb.gtk.platform.h"
 
 #include <gdk/gdkx.h>
+
+#ifdef GDK_WINDOWING_WAYLAND
 #include <gdk/gdkwayland.h>
+#endif
+
 #include <gtk/gtk.h>
 #include <string.h>
 
@@ -461,8 +465,10 @@ static void hook_main(int *argc, char ***argv)
 	{
 		if (!strcasecmp(env, "X11"))
 			putenv((char *)"GDK_BACKEND=x11");
+		#ifdef GDK_WINDOWING_WAYLAND
 		else if (!strcasecmp(env, "WAYLAND"))
 			putenv((char *)"GDK_BACKEND=wayland");
+		#endif
 		else
 			fprintf(stderr, "gb.gtk3: warning: unknown platform: %s\n", env);
 	}
