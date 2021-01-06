@@ -152,6 +152,25 @@ static void window_set_properties(QWidget *window, int which, QT_WINDOW_PROP *pr
 		X11_window_set_desktop(window->effectiveWinId(), window->isVisible(), prop->sticky ? 0xFFFFFFFF : X11_get_current_desktop());
 
 	X11_flush();*/
+	
+	Qt::WindowFlags flags = window->windowFlags();
+	
+	if (prop->stacking == 1)
+		flags |= Qt::WindowStaysOnTopHint;
+	else
+		flags &= ~Qt::WindowStaysOnTopHint;
+	
+	if (prop->stacking == 2)
+		flags |= Qt::WindowStaysOnBottomHint;
+	else
+		flags &= ~Qt::WindowStaysOnBottomHint;
+	
+	if (!prop->border)
+		flags |= Qt::FramelessWindowHint;
+	else
+		flags &= ~Qt::FramelessWindowHint;
+	
+	window->setWindowFlags(flags);
 }
 
 static void window_set_user_time(QWidget *window, int timestamp)

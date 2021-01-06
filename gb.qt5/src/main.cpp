@@ -116,6 +116,7 @@ bool MAIN_init = false;
 bool MAIN_key_debug = false;
 bool MAIN_right_to_left = false;
 const char *MAIN_platform = NULL;
+bool MAIN_platform_is_wayland = false;
 
 GB_CLASS CLASS_Control;
 GB_CLASS CLASS_Container;
@@ -739,6 +740,7 @@ static void hook_main(int *argc, char ***argv)
 	{
 		comp = "gb.qt5.wayland";
 		MAIN_platform = "wayland";
+		MAIN_platform_is_wayland = true;
 	}
 	else if (platform == "xcb")
 	{

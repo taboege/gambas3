@@ -56,7 +56,7 @@ extern bool MAIN_init;
 extern bool MAIN_key_debug;
 extern bool MAIN_right_to_left;
 extern const char *MAIN_platform;
-
+extern bool MAIN_platform_is_wayland;
 extern GB_CLASS CLASS_Control;
 extern GB_CLASS CLASS_Container;
 extern GB_CLASS CLASS_ContainerChildren;

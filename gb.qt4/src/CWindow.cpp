@@ -1700,7 +1700,10 @@ void MyMainWindow::present(QWidget *parent)
 
 		setAttribute(Qt::WA_ShowWithoutActivating, THIS->noTakeFocus);
 
-#ifndef QT5
+#ifdef QT5
+		if (MAIN_platform_is_wayland)
+			initProperties(PROP_ALL);
+#else
 		if (effectiveWinId() == 0)
 		{
 			createWinId();
@@ -1718,12 +1721,15 @@ void MyMainWindow::present(QWidget *parent)
 			show();
 
 #ifdef QT5
-		//qDebug("createWinId: %p", (void *)effectiveWinId());
-		if (THIS->noTakeFocus)
-			PLATFORM.Window.SetUserTime(this, 0);
-		initProperties(PROP_ALL);
-		if (THIS->noTakeFocus)
-			PLATFORM.Window.SetUserTime(this, 0);
+		if (!MAIN_platform_is_wayland)
+		{
+			//qDebug("createWinId: %p", (void *)effectiveWinId());
+			if (THIS->noTakeFocus)
+				PLATFORM.Window.SetUserTime(this, 0);
+			initProperties(PROP_ALL);
+			if (THIS->noTakeFocus)
+				PLATFORM.Window.SetUserTime(this, 0);
+		}
 #else
 		initProperties(PROP_SKIP_TASKBAR);
 #endif
