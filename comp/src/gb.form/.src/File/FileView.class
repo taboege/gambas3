@@ -145,13 +145,10 @@ Public Sub _new()
     .Columns[1].Text = ("Size")
     .Columns[1].Alignment = Align.Right
     .Columns[2].Text = ("Last modified")
-    '.Columns[2].Alignment = Align.Right
-    '.Columns[0].Width = 64
-    '.Columns[1].Width = 64
-    '.Columns[2].Width = 96
     .Visible = False
     .Sorted = True
     .Resizable = True
+    .AutoResize = False
   End With
   
   $hVoidView = New TextLabel(Me)
@@ -353,6 +350,8 @@ Private Sub RefreshView()
   Dim aPreview As New String[]
   Dim sExt As String
   Dim bVoid As Boolean
+  Dim iSort As Integer
+  Dim bSortAscent As Boolean
 
   Inc Application.Busy
   
@@ -369,6 +368,8 @@ Private Sub RefreshView()
       $hColumnView.Clear
       $hColumnView._Begin()
     Endif
+    iSort = $hColumnView.Columns.Sort
+    bSortAscent = $hColumnView.Columns.Ascending
     $hColumnView.Sorted = False
     hPictFile = Picture["icon:/small/file"]
     hPictFolder = Picture["icon:/small/directory"]
@@ -483,6 +484,8 @@ Private Sub RefreshView()
       For I = 1 To $hColumnView.Columns.Max
         $hColumnView.Columns[I].W = -1
       Next
+      $hColumnView.Columns[0].W = -1
+      $hColumnView.Columns[0].Width = Min(Desktop.Scale * 64, $hColumnView.Columns[0].Width)
     Endif
     
     For Each sFile In aSel
@@ -500,6 +503,8 @@ Finally
   If $hColumnView.Visible Then 
     $hColumnView._End
     $hColumnView.Sorted = True
+    $hColumnView.Columns.Sort = iSort
+    $hColumnView.Columns.Ascending = bSortAscent
   Else
     $hIconView._End
   Endif
