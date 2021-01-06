@@ -84,11 +84,16 @@ static void cb_size_allocate(GtkWidget *wid, GtkAllocation *alloc, gTabStrip *da
 	if (wid == data->getContainer() && (alloc->width != data->_client_w || alloc->height != data->_client_h))
 	{
 		int tx, ty, px, py;
+		GdkWindow *win;
 
 		if (data->getScreenPos(&tx, &ty))
 			return;
 
-		gdk_window_get_origin(gtk_widget_get_window(wid), &px, &py);
+		win = gtk_widget_get_window(wid);
+		if (!win)
+			return;
+		
+		gdk_window_get_origin(win, &px, &py);
 		//fprintf(stderr, "alloc: tab = %d %d page = %d %d alloc = %d %d\n", tx, ty, px, py, alloc->x, alloc->y);
 
 		data->_client_x = px - tx + alloc->x;

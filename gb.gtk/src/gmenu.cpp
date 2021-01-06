@@ -239,6 +239,8 @@ void gMenu::update()
 				_ignore_signal = true;
 			gtk_widget_hide(GTK_WIDGET(menu));
 			gtk_widget_destroy(GTK_WIDGET(menu));
+			_shortcut_key = 0;
+			_shortcut_mods = (GdkModifierType)0;
 			//g_debug("%p: delete old menu/separator", this);
 		}
 		else
@@ -684,6 +686,7 @@ void gMenu::updateShortcut()
 	
 	if (_shortcut_key)
 	{
+		//fprintf(stderr, "gtk_widget_remove_accelerator: (%s %p) accel = %p (%d,%d)\n", name(), menu, accel, _shortcut_key, _shortcut_mods);
 		gtk_widget_remove_accelerator(GTK_WIDGET(menu), accel, _shortcut_key, _shortcut_mods);
 		_shortcut_key = 0;
 	}
@@ -692,7 +695,10 @@ void gMenu::updateShortcut()
 	{
 		gt_shortcut_parse(_shortcut, &_shortcut_key, &_shortcut_mods);
 		if (_shortcut_key)
+		{
+			//fprintf(stderr, "gtk_widget_add_accelerator: (%s %p) accel = %p (%d,%d)\n", name(), menu, accel, _shortcut_key, _shortcut_mods);
 			gtk_widget_add_accelerator(GTK_WIDGET(menu), "activate", accel, _shortcut_key, _shortcut_mods, (GtkAccelFlags)0);
+		}
 	}
 }
 
