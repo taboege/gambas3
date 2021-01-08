@@ -50,6 +50,7 @@ GB_CONFIG_SUBDIRS(media, gb.media)
 GB_CONFIG_SUBDIRS(httpd, gb.httpd)
 GB_CONFIG_SUBDIRS(openssl, gb.openssl)
 GB_CONFIG_SUBDIRS(openal, gb.openal)
+GB_CONFIG_SUBDIRS(dwg, gb.dwg)
 
 AC_CONFIG_SUBDIRS(comp)
 AC_CONFIG_SUBDIRS(app)

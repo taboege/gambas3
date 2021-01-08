@@ -38,6 +38,7 @@ SUBDIRS = \
  @httpd_dir@ \
  @openssl_dir@ \
  @openal_dir@ \
+ @dwg_dir@ \
  comp \
  app \
  .
