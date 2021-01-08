@@ -1034,3 +1034,4 @@ GB_DESC token##_Desc[] =                                        \
   }
 ENTITY_COLLECTION (ModelSpace);
 ENTITY_COLLECTION (PaperSpace);
+ENTITY_COLLECTION (Blocks);

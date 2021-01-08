@@ -230,42 +230,50 @@ END_PROPERTY
 
 BEGIN_PROPERTY(Layers_prop)
   const Dwg_Data *dwg = THIS_DWG;
-  GB.ReturnObject (obj_generic_to_gb (&dwg->layer_control));
+  const Dwg_Object *obj = dwg_get_first_object(dwg, DWG_TYPE_LAYER_CONTROL);
+  GB.ReturnObject (obj_generic_to_gb (obj->tio.object->tio.LAYER_CONTROL));
 END_PROPERTY
 
 BEGIN_PROPERTY(TextStyles_prop)
   const Dwg_Data *dwg = THIS_DWG;
-  GB.ReturnObject (obj_generic_to_gb (&dwg->style_control));
+  const Dwg_Object *obj = dwg_get_first_object(dwg, DWG_TYPE_STYLE_CONTROL);
+  GB.ReturnObject (obj_generic_to_gb (obj->tio.object->tio.STYLE_CONTROL));
 END_PROPERTY
 
 BEGIN_PROPERTY(Linetypes_prop)
   const Dwg_Data *dwg = THIS_DWG;
-  GB.ReturnObject (obj_generic_to_gb (&dwg->ltype_control));
+  const Dwg_Object *obj = dwg_get_first_object(dwg, DWG_TYPE_LTYPE_CONTROL);
+  GB.ReturnObject (obj_generic_to_gb (obj->tio.object->tio.LTYPE_CONTROL));
 END_PROPERTY
 
 BEGIN_PROPERTY(Regapps_prop)
   const Dwg_Data *dwg = THIS_DWG;
-  GB.ReturnObject (obj_generic_to_gb (&dwg->appid_control));
+  const Dwg_Object *obj = dwg_get_first_object(dwg, DWG_TYPE_APPID_CONTROL);
+  GB.ReturnObject (obj_generic_to_gb (obj->tio.object->tio.APPID_CONTROL));
 END_PROPERTY
 
 BEGIN_PROPERTY(DimStyles_prop)
   const Dwg_Data *dwg = THIS_DWG;
-  GB.ReturnObject (obj_generic_to_gb (&dwg->dimstyle_control));
+  const Dwg_Object *obj = dwg_get_first_object(dwg, DWG_TYPE_DIMSTYLE_CONTROL);
+  GB.ReturnObject (obj_generic_to_gb (obj->tio.object->tio.DIMSTYLE_CONTROL));
 END_PROPERTY
 
 BEGIN_PROPERTY(UCSs_prop)
   const Dwg_Data *dwg = THIS_DWG;
-  GB.ReturnObject (obj_generic_to_gb (&dwg->ucs_control));
+  const Dwg_Object *obj = dwg_get_first_object(dwg, DWG_TYPE_UCS_CONTROL);
+  GB.ReturnObject (obj_generic_to_gb (obj->tio.object->tio.UCS_CONTROL));
 END_PROPERTY
 
 BEGIN_PROPERTY(Viewports_prop)
   const Dwg_Data *dwg = THIS_DWG;
-  GB.ReturnObject (obj_generic_to_gb (&dwg->vport_control));
+  const Dwg_Object *obj = dwg_get_first_object(dwg, DWG_TYPE_VPORT_CONTROL);
+  GB.ReturnObject (obj_generic_to_gb (obj->tio.object->tio.VPORT_CONTROL));
 END_PROPERTY
 
 BEGIN_PROPERTY(Views_prop)
   const Dwg_Data *dwg = THIS_DWG;
-  GB.ReturnObject (obj_generic_to_gb (&dwg->view_control));
+  const Dwg_Object *obj = dwg_get_first_object(dwg, DWG_TYPE_VIEW_CONTROL);
+  GB.ReturnObject (obj_generic_to_gb (obj->tio.object->tio.VIEW_CONTROL));
 END_PROPERTY
 
 GB_DESC DwgDocument_Desc[] =
